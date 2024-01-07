@@ -28,10 +28,13 @@ module.exports = grammar({
     $._implicit_end_tag,
     $.raw_text,
     $.comment,
+    $.raw_text_expr,
   ],
 
   rules: {
     fragment: $ => repeat($._node),
+
+    cf_condition: ($) => /[^>]+/,
 
     doctype: $ => seq(
       '<!',
@@ -50,6 +53,7 @@ module.exports = grammar({
       $.script_element,
       $.style_element,
       $.erroneous_end_tag,
+      $.cf_if_statement,
     ),
 
     element: $ => choice(
@@ -59,6 +63,20 @@ module.exports = grammar({
         choice($.end_tag, $._implicit_end_tag),
       ),
       $.self_closing_tag,
+    ),
+
+    cf_if_statement: $ => seq(
+      $.cf_if_start_tag,
+      repeat($._node),
+      optional(seq(
+        $.cf_elseif_tag,
+        repeat($._node),
+      )),
+      optional(seq(
+        $.cf_else_tag,
+        repeat($._node),
+      )),
+      $.cf_if_end_tag,
     ),
 
     script_element: $ => seq(
@@ -78,6 +96,22 @@ module.exports = grammar({
       alias($._start_tag_name, $.tag_name),
       repeat($.attribute),
       '>',
+    ),
+
+    cf_if_start_tag: $ => seq(
+      '<cfif',
+      $.cf_condition,
+      '>',
+    ),
+
+    cf_elseif_tag: $ => seq(
+      '<cfelseif',
+      $.cf_condition,
+      '>',
+    ),
+
+    cf_else_tag: $ => seq(
+      '<cfelse>',
     ),
 
     script_start_tag: $ => seq(
@@ -105,6 +139,10 @@ module.exports = grammar({
       '</',
       alias($._end_tag_name, $.tag_name),
       '>',
+    ),
+
+    cf_if_end_tag: $ => seq(
+      '</cfif>',
     ),
 
     erroneous_end_tag: $ => seq(

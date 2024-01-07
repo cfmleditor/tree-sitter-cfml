@@ -8,6 +8,10 @@
         "name": "_node"
       }
     },
+    "cf_condition": {
+      "type": "PATTERN",
+      "value": "[^>]+"
+    },
     "doctype": {
       "type": "SEQ",
       "members": [
@@ -68,6 +72,10 @@
         {
           "type": "SYMBOL",
           "name": "erroneous_end_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_if_statement"
         }
       ]
     },
@@ -106,6 +114,74 @@
         {
           "type": "SYMBOL",
           "name": "self_closing_tag"
+        }
+      ]
+    },
+    "cf_if_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cf_if_start_tag"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "cf_elseif_tag"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_node"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "cf_else_tag"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_node"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_if_end_tag"
         }
       ]
     },
@@ -195,6 +271,49 @@
         {
           "type": "STRING",
           "value": ">"
+        }
+      ]
+    },
+    "cf_if_start_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "<cfif"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_condition"
+        },
+        {
+          "type": "STRING",
+          "value": ">"
+        }
+      ]
+    },
+    "cf_elseif_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "<cfelseif"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_condition"
+        },
+        {
+          "type": "STRING",
+          "value": ">"
+        }
+      ]
+    },
+    "cf_else_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "<cfelse>"
         }
       ]
     },
@@ -304,6 +423,15 @@
         {
           "type": "STRING",
           "value": ">"
+        }
+      ]
+    },
+    "cf_if_end_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "</cfif>"
         }
       ]
     },
@@ -493,6 +621,10 @@
     {
       "type": "SYMBOL",
       "name": "comment"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "raw_text_expr"
     }
   ],
   "inline": [],

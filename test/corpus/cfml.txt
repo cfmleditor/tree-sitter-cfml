@@ -1,0 +1,40 @@
+===================================
+cfif
+===================================
+<cfif z EQ b>Ello</cfif>
+---
+
+(fragment
+  (cf_if_statement
+    (cf_if_start_tag (cf_condition))
+    (text)
+    (cf_if_end_tag)))
+
+
+===================================
+cfif with else
+===================================
+<cfif z EQ b>Yes<cfelse>No</cfif>
+---
+
+(fragment
+  (cf_if_statement
+    (cf_if_start_tag (cf_condition))
+    (text)
+    (cf_else_tag)
+    (text)
+    (cf_if_end_tag)))
+
+===================================
+cfif with elseif
+===================================
+<cfif z EQ b>Yes<cfelseif z NEQ b>No</cfif>
+---
+
+(fragment
+  (cf_if_statement
+    (cf_if_start_tag (cf_condition))
+    (text)
+    (cf_elseif_tag (cf_condition))
+    (text)
+    (cf_if_end_tag)))
