@@ -23,52 +23,7 @@
     }
   },
   {
-    "type": "cf_condition",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "cf_else_tag",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "cf_elseif_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_condition",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_if_end_tag",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "cf_if_start_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_condition",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_if_statement",
+    "type": "cf_else",
     "named": true,
     "fields": {},
     "children": {
@@ -76,47 +31,19 @@
       "required": true,
       "types": [
         {
-          "type": "cf_else_tag",
+          "type": "cf_else_keyword",
           "named": true
         },
         {
-          "type": "cf_elseif_tag",
+          "type": "cf_statement",
           "named": true
         },
         {
-          "type": "cf_if_end_tag",
+          "type": "cf_tag_end",
           "named": true
         },
         {
-          "type": "cf_if_start_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
+          "type": "cf_tag_start",
           "named": true
         },
         {
@@ -127,12 +54,7 @@
     }
   },
   {
-    "type": "doctype",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "element",
+    "type": "cf_elseif",
     "named": true,
     "fields": {},
     "children": {
@@ -140,43 +62,23 @@
       "required": true,
       "types": [
         {
-          "type": "cf_if_statement",
+          "type": "cf_condition",
           "named": true
         },
         {
-          "type": "doctype",
+          "type": "cf_elseif_keyword",
           "named": true
         },
         {
-          "type": "element",
+          "type": "cf_statement",
           "named": true
         },
         {
-          "type": "end_tag",
+          "type": "cf_tag_end",
           "named": true
         },
         {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "self_closing_tag",
-          "named": true
-        },
-        {
-          "type": "start_tag",
-          "named": true
-        },
-        {
-          "type": "style_element",
+          "type": "cf_tag_start",
           "named": true
         },
         {
@@ -187,22 +89,127 @@
     }
   },
   {
-    "type": "end_tag",
+    "type": "cf_function",
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "tag_name",
+          "type": "attribute",
+          "named": true
+        },
+        {
+          "type": "cf_function_keyword",
+          "named": true
+        },
+        {
+          "type": "cf_statement",
+          "named": true
+        },
+        {
+          "type": "cf_tag_close",
+          "named": true
+        },
+        {
+          "type": "cf_tag_end",
+          "named": true
+        },
+        {
+          "type": "cf_tag_start",
+          "named": true
+        },
+        {
+          "type": "text",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "erroneous_end_tag",
+    "type": "cf_if",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_condition",
+          "named": true
+        },
+        {
+          "type": "cf_if_keyword",
+          "named": true
+        },
+        {
+          "type": "cf_statement",
+          "named": true
+        },
+        {
+          "type": "cf_tag_end",
+          "named": true
+        },
+        {
+          "type": "cf_tag_start",
+          "named": true
+        },
+        {
+          "type": "text",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_if_end",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cf_if_keyword",
+          "named": true
+        },
+        {
+          "type": "cf_tag_close",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_ifstatement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_else",
+          "named": true
+        },
+        {
+          "type": "cf_elseif",
+          "named": true
+        },
+        {
+          "type": "cf_if",
+          "named": true
+        },
+        {
+          "type": "cf_if_end",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_statement",
     "named": true,
     "fields": {},
     "children": {
@@ -210,7 +217,11 @@
       "required": true,
       "types": [
         {
-          "type": "erroneous_end_tag_name",
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_ifstatement",
           "named": true
         }
       ]
@@ -225,31 +236,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_if_statement",
+          "type": "cf_statement",
           "named": true
         },
         {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
+          "type": "cf_tag_start",
           "named": true
         },
         {
@@ -275,127 +266,11 @@
     }
   },
   {
-    "type": "script_element",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "raw_text",
-          "named": true
-        },
-        {
-          "type": "start_tag",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "self_closing_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute",
-          "named": true
-        },
-        {
-          "type": "tag_name",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "start_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute",
-          "named": true
-        },
-        {
-          "type": "tag_name",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "style_element",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "raw_text",
-          "named": true
-        },
-        {
-          "type": "start_tag",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "\"",
     "named": false
   },
   {
     "type": "'",
-    "named": false
-  },
-  {
-    "type": "/>",
-    "named": false
-  },
-  {
-    "type": "<",
-    "named": false
-  },
-  {
-    "type": "<!",
-    "named": false
-  },
-  {
-    "type": "</",
-    "named": false
-  },
-  {
-    "type": "</cfif>",
-    "named": false
-  },
-  {
-    "type": "<cfelse>",
-    "named": false
-  },
-  {
-    "type": "<cfelseif",
-    "named": false
-  },
-  {
-    "type": "<cfif",
     "named": false
   },
   {
@@ -415,31 +290,43 @@
     "named": true
   },
   {
-    "type": "comment",
+    "type": "cf_condition",
     "named": true
   },
   {
-    "type": "doctype",
-    "named": false
-  },
-  {
-    "type": "entity",
+    "type": "cf_else_keyword",
     "named": true
   },
   {
-    "type": "erroneous_end_tag_name",
+    "type": "cf_elseif_keyword",
     "named": true
   },
   {
-    "type": "raw_text",
+    "type": "cf_function_keyword",
     "named": true
   },
   {
-    "type": "tag_name",
+    "type": "cf_if_keyword",
+    "named": true
+  },
+  {
+    "type": "cf_tag_close",
+    "named": true
+  },
+  {
+    "type": "cf_tag_end",
+    "named": true
+  },
+  {
+    "type": "cf_tag_start",
     "named": true
   },
   {
     "type": "text",
     "named": true
+  },
+  {
+    "type": "}",
+    "named": false
   }
 ]

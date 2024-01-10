@@ -1,6 +1,6 @@
 /**
- * @file HTML grammar for tree-sitter
- * @author Max Brunsfeld
+ * @file CFML grammar for tree-sitter
+ * @author Gareth Edwards
  * @license MIT
  */
 
@@ -11,144 +11,79 @@
 // @ts-check
 
 module.exports = grammar({
-  name: 'html',
+  name: 'cfml',
 
   extras: $ => [
-    $.comment,
     /\s+/,
   ],
 
   externals: $ => [
-    $._start_tag_name,
-    $._script_start_tag_name,
-    $._style_start_tag_name,
-    $._end_tag_name,
-    $.erroneous_end_tag_name,
-    '/>',
-    $._implicit_end_tag,
-    $.raw_text,
-    $.comment,
-    $.raw_text_expr,
+
   ],
 
   rules: {
+
     fragment: $ => repeat($._node),
-
-    cf_condition: ($) => /[^>]+/,
-
-    doctype: $ => seq(
-      '<!',
-      alias($._doctype, 'doctype'),
-      /[^>]+/,
-      '>',
-    ),
-
-    _doctype: _ => /[Dd][Oo][Cc][Tt][Yy][Pp][Ee]/,
+    cf_condition: ($) => /([^<>]+)/,
+    cf_tag_start: $ => /<cf/i,
+    cf_tag_end: $ => />/,
+    text: _ => /[^\s<>}{()]/,
+    cf_tag_close: $ => /<\/cf/i,
 
     _node: $ => choice(
-      $.doctype,
-      $.entity,
       $.text,
-      $.element,
-      $.script_element,
-      $.style_element,
-      $.erroneous_end_tag,
-      $.cf_if_statement,
-    ),
-
-    element: $ => choice(
       seq(
-        $.start_tag,
-        repeat($._node),
-        choice($.end_tag, $._implicit_end_tag),
+        optional($.cf_tag_start),
+        $.cf_statement,
       ),
-      $.self_closing_tag,
     ),
 
-    cf_if_statement: $ => seq(
-      $.cf_if_start_tag,
+    cf_function: $ => seq(
+      $.cf_function_keyword,
+      repeat($.attribute),
+      $.cf_tag_end,
       repeat($._node),
-      optional(seq(
-        $.cf_elseif_tag,
-        repeat($._node),
-      )),
-      optional(seq(
-        $.cf_else_tag,
-        repeat($._node),
-      )),
-      $.cf_if_end_tag,
+      $.cf_tag_close,
+      $.cf_function_keyword,
+      $.cf_tag_end,
     ),
 
-    script_element: $ => seq(
-      alias($.script_start_tag, $.start_tag),
-      optional($.raw_text),
-      $.end_tag,
+    cf_ifstatement: $ => seq(
+      $.cf_if,
+      repeat($.cf_elseif),
+      optional($.cf_else),
+      $.cf_if_end,
     ),
 
-    style_element: $ => seq(
-      alias($.style_start_tag, $.start_tag),
-      optional($.raw_text),
-      $.end_tag,
-    ),
-
-    start_tag: $ => seq(
-      '<',
-      alias($._start_tag_name, $.tag_name),
-      repeat($.attribute),
-      '>',
-    ),
-
-    cf_if_start_tag: $ => seq(
-      '<cfif',
+    cf_if: $ => prec.right(1, seq(
+      $.cf_if_keyword,
       $.cf_condition,
-      '>',
-    ),
+      optional($.cf_tag_end),
+      repeat($._node),
+    )),
 
-    cf_elseif_tag: $ => seq(
-      '<cfelseif',
+    cf_elseif: $ => prec.right(2, seq(
+      optional($.cf_tag_start),
+      $.cf_elseif_keyword,
       $.cf_condition,
-      '>',
+      optional($.cf_tag_end),
+      repeat($._node),
+    )),
+
+    cf_else: $ => prec.right(3, seq(
+      optional($.cf_tag_start),
+      $.cf_else_keyword,
+      optional($.cf_tag_end),
+      repeat($._node),
+    )),
+
+    cf_if_end: $ => seq(
+      choice(seq($.cf_tag_close, $.cf_if_keyword, '>'), '}'),
     ),
 
-    cf_else_tag: $ => seq(
-      '<cfelse>',
-    ),
-
-    script_start_tag: $ => seq(
-      '<',
-      alias($._script_start_tag_name, $.tag_name),
-      repeat($.attribute),
-      '>',
-    ),
-
-    style_start_tag: $ => seq(
-      '<',
-      alias($._style_start_tag_name, $.tag_name),
-      repeat($.attribute),
-      '>',
-    ),
-
-    self_closing_tag: $ => seq(
-      '<',
-      alias($._start_tag_name, $.tag_name),
-      repeat($.attribute),
-      '/>',
-    ),
-
-    end_tag: $ => seq(
-      '</',
-      alias($._end_tag_name, $.tag_name),
-      '>',
-    ),
-
-    cf_if_end_tag: $ => seq(
-      '</cfif>',
-    ),
-
-    erroneous_end_tag: $ => seq(
-      '</',
-      $.erroneous_end_tag_name,
-      '>',
+    quoted_attribute_value: $ => choice(
+      seq('\'', optional(alias(/[^']+/, $.attribute_value)), '\''),
+      seq('"', optional(alias(/[^"]+/, $.attribute_value)), '"'),
     ),
 
     attribute: $ => seq(
@@ -166,16 +101,15 @@ module.exports = grammar({
 
     attribute_value: _ => /[^<>"'=\s]+/,
 
-    // An entity can be named, numeric (decimal), or numeric (hexacecimal). The
-    // longest entity name is 29 characters long, and the HTML spec says that
-    // no more will ever be added.
-    entity: _ => /&(#([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
-
-    quoted_attribute_value: $ => choice(
-      seq('\'', optional(alias(/[^']+/, $.attribute_value)), '\''),
-      seq('"', optional(alias(/[^"]+/, $.attribute_value)), '"'),
+    cf_statement: $ => choice(
+      $.cf_function,
+      $.cf_ifstatement,
     ),
 
-    text: _ => /[^<>&\s]([^<>&]*[^<>&\s])?/,
+    cf_if_keyword: $ => /(if)+/i,
+    cf_elseif_keyword: $ => /(elseif)+/i,
+    cf_else_keyword: $ => /(else)+/i,
+    cf_function_keyword: $ => /(function)+/i,
+
   },
 });

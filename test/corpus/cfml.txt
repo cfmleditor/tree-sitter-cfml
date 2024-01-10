@@ -1,29 +1,51 @@
 ===================================
 cfif
 ===================================
-<cfif z EQ b>Ello</cfif>
+<cfif z EQ b>test</cfif>
 ---
 
 (fragment
-  (cf_if_statement
-    (cf_if_start_tag (cf_condition))
-    (text)
-    (cf_if_end_tag)))
-
+  (cf_tag_start)
+  (cf_statement
+    (cf_ifstatement
+      (cf_if
+        (cf_if_keyword)
+        (cf_condition)
+        (cf_tag_end)
+        (text)
+        (text)
+        (text)
+        (text))
+      (cf_if_end
+        (cf_tag_close)
+        (cf_if_keyword)))))
 
 ===================================
 cfif with else
 ===================================
-<cfif z EQ b>Yes<cfelse>No</cfif>
+<cfif z EQ b>Yes<cfelse>Noo</cfif>
 ---
-
 (fragment
-  (cf_if_statement
-    (cf_if_start_tag (cf_condition))
-    (text)
-    (cf_else_tag)
-    (text)
-    (cf_if_end_tag)))
+  (cf_tag_start)
+  (cf_statement
+    (cf_ifstatement
+      (cf_if
+        (cf_if_keyword)
+        (cf_condition)
+        (cf_tag_end)
+        (text)
+        (text)
+        (text))
+      (cf_else
+        (cf_tag_start)
+        (cf_else_keyword)
+        (cf_tag_end)
+        (text)
+        (text)
+        (text))
+      (cf_if_end
+        (cf_tag_close)
+        (cf_if_keyword)))))
 
 ===================================
 cfif with elseif
@@ -32,9 +54,82 @@ cfif with elseif
 ---
 
 (fragment
-  (cf_if_statement
-    (cf_if_start_tag (cf_condition))
-    (text)
-    (cf_elseif_tag (cf_condition))
-    (text)
-    (cf_if_end_tag)))
+  (cf_tag_start)
+  (cf_statement
+    (cf_ifstatement
+      (cf_if
+        (cf_if_keyword)
+        (cf_condition)
+        (cf_tag_end)
+        (text)
+        (text)
+        (text))
+      (cf_elseif
+        (cf_tag_start)
+        (cf_elseif_keyword)
+        (cf_condition)
+        (cf_tag_end)
+        (text)
+        (text))
+      (cf_if_end
+        (cf_tag_close)
+        (cf_if_keyword)))))
+
+
+===================================
+cfif with elseif and else
+===================================
+<cfif z EQ b>Yes<cfelseif z NEQ b>No<cfelse>No</cfif>
+---
+
+(fragment
+  (cf_tag_start)
+  (cf_statement
+    (cf_ifstatement
+      (cf_if
+        (cf_if_keyword)
+        (cf_condition)
+        (cf_tag_end)
+        (text)
+        (text)
+        (text))
+      (cf_elseif
+        (cf_tag_start)
+        (cf_elseif_keyword)
+        (cf_condition)
+        (cf_tag_end)
+        (text)
+        (text))
+      (cf_else
+        (cf_tag_start)
+        (cf_else_keyword)
+        (cf_tag_end)
+        (text)
+        (text))
+      (cf_if_end
+        (cf_tag_close)
+        (cf_if_keyword)))))
+
+===================================
+cffunction
+===================================
+
+<cffunction name="Test">
+
+</cffunction>
+
+---
+
+(fragment
+      (cf_tag_start)
+      (cf_statement
+        (cf_function
+          (cf_function_keyword)
+          (attribute
+            (attribute_name)
+            (quoted_attribute_value
+              (attribute_value)))
+          (cf_tag_end)
+          (cf_tag_close)
+          (cf_function_keyword)
+          (cf_tag_end))))
