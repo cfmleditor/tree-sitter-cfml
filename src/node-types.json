@@ -23,6 +23,55 @@
     }
   },
   {
+    "type": "cf_assignment",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "cf_associative",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_assignment",
+          "named": true
+        },
+        {
+          "type": "cf_associative",
+          "named": true
+        },
+        {
+          "type": "cf_comma",
+          "named": true
+        },
+        {
+          "type": "cf_operator",
+          "named": true
+        },
+        {
+          "type": "cf_parens",
+          "named": true
+        },
+        {
+          "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_condition",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "cf_else",
     "named": true,
     "fields": {},
@@ -31,19 +80,27 @@
       "required": true,
       "types": [
         {
+          "type": "cf_associative",
+          "named": true
+        },
+        {
           "type": "cf_else_keyword",
           "named": true
         },
         {
-          "type": "cf_statement",
+          "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_parens",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
           "named": true
         },
         {
           "type": "cf_tag_end",
-          "named": true
-        },
-        {
-          "type": "cf_tag_start",
           "named": true
         },
         {
@@ -62,6 +119,10 @@
       "required": true,
       "types": [
         {
+          "type": "cf_associative",
+          "named": true
+        },
+        {
           "type": "cf_condition",
           "named": true
         },
@@ -70,15 +131,19 @@
           "named": true
         },
         {
-          "type": "cf_statement",
+          "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_parens",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
           "named": true
         },
         {
           "type": "cf_tag_end",
-          "named": true
-        },
-        {
-          "type": "cf_tag_start",
           "named": true
         },
         {
@@ -101,11 +166,23 @@
           "named": true
         },
         {
+          "type": "cf_associative",
+          "named": true
+        },
+        {
           "type": "cf_function_keyword",
           "named": true
         },
         {
-          "type": "cf_statement",
+          "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_parens",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -117,11 +194,46 @@
           "named": true
         },
         {
-          "type": "cf_tag_start",
+          "type": "text",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_hash",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_assignment",
           "named": true
         },
         {
-          "type": "text",
+          "type": "cf_associative",
+          "named": true
+        },
+        {
+          "type": "cf_comma",
+          "named": true
+        },
+        {
+          "type": "cf_operator",
+          "named": true
+        },
+        {
+          "type": "cf_parens",
+          "named": true
+        },
+        {
+          "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_variable",
           "named": true
         }
       ]
@@ -136,7 +248,19 @@
       "required": true,
       "types": [
         {
-          "type": "cf_condition",
+          "type": "cf_assignment",
+          "named": true
+        },
+        {
+          "type": "cf_associative",
+          "named": true
+        },
+        {
+          "type": "cf_comma",
+          "named": true
+        },
+        {
+          "type": "cf_hash",
           "named": true
         },
         {
@@ -144,7 +268,19 @@
           "named": true
         },
         {
-          "type": "cf_statement",
+          "type": "cf_operator",
+          "named": true
+        },
+        {
+          "type": "cf_parens",
+          "named": true
+        },
+        {
+          "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -152,7 +288,7 @@
           "named": true
         },
         {
-          "type": "cf_tag_start",
+          "type": "cf_variable",
           "named": true
         },
         {
@@ -209,7 +345,89 @@
     }
   },
   {
-    "type": "cf_statement",
+    "type": "cf_parens",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_assignment",
+          "named": true
+        },
+        {
+          "type": "cf_associative",
+          "named": true
+        },
+        {
+          "type": "cf_comma",
+          "named": true
+        },
+        {
+          "type": "cf_operator",
+          "named": true
+        },
+        {
+          "type": "cf_parens",
+          "named": true
+        },
+        {
+          "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_set",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_assignment",
+          "named": true
+        },
+        {
+          "type": "cf_associative",
+          "named": true
+        },
+        {
+          "type": "cf_comma",
+          "named": true
+        },
+        {
+          "type": "cf_operator",
+          "named": true
+        },
+        {
+          "type": "cf_parens",
+          "named": true
+        },
+        {
+          "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_tag_end",
+          "named": true
+        },
+        {
+          "type": "cf_variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_tag",
     "named": true,
     "fields": {},
     "children": {
@@ -223,9 +441,22 @@
         {
           "type": "cf_ifstatement",
           "named": true
+        },
+        {
+          "type": "cf_set",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
         }
       ]
     }
+  },
+  {
+    "type": "cf_variable",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "fragment",
@@ -236,11 +467,19 @@
       "required": false,
       "types": [
         {
-          "type": "cf_statement",
+          "type": "cf_associative",
           "named": true
         },
         {
-          "type": "cf_tag_start",
+          "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_parens",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -266,11 +505,28 @@
     }
   },
   {
+    "type": "text",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "\"",
     "named": false
   },
   {
+    "type": "#",
+    "named": false
+  },
+  {
     "type": "'",
+    "named": false
+  },
+  {
+    "type": "(",
+    "named": false
+  },
+  {
+    "type": ")",
     "named": false
   },
   {
@@ -282,6 +538,14 @@
     "named": false
   },
   {
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "]",
+    "named": false
+  },
+  {
     "type": "attribute_name",
     "named": true
   },
@@ -290,7 +554,7 @@
     "named": true
   },
   {
-    "type": "cf_condition",
+    "type": "cf_comma",
     "named": true
   },
   {
@@ -310,6 +574,14 @@
     "named": true
   },
   {
+    "type": "cf_operator",
+    "named": true
+  },
+  {
+    "type": "cf_period",
+    "named": true
+  },
+  {
     "type": "cf_tag_close",
     "named": true
   },
@@ -318,12 +590,8 @@
     "named": true
   },
   {
-    "type": "cf_tag_start",
-    "named": true
-  },
-  {
-    "type": "text",
-    "named": true
+    "type": "set",
+    "named": false
   },
   {
     "type": "}",

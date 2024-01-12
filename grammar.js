@@ -24,18 +24,54 @@ module.exports = grammar({
   rules: {
 
     fragment: $ => repeat($._node),
-    cf_condition: ($) => /([^<>]+)/,
-    cf_tag_start: $ => /<cf/i,
-    cf_tag_end: $ => />/,
-    text: _ => /[^\s<>}{()]/,
+
+    cf_condition: ($) => choice(
+        /([^<>\[\]=]+)/,
+    ),
+
+    _cf_tag_start: $ => /<cf/i,
+    cf_tag_end: $ => /\/?>/,
+    text: _ => /[^\s<>}{\(\)#\[\]=,.]+/,
+    cf_variable: _ => /[^\s<>}{\(\)#\[\]=,.]+/,
     cf_tag_close: $ => /<\/cf/i,
+    cf_operator: $ => /(\sAND\s|\sOR\s|\sEQ\s|\sGTE\s|\sGT\s|\sNOT\s|===)/i,
 
     _node: $ => choice(
       $.text,
-      seq(
-        optional($.cf_tag_start),
-        $.cf_statement,
-      ),
+      $._cf_statement,
+    ),
+
+    cf_hash: $ => seq(
+      '#',
+      $._cf_expression,
+      '#',
+    ),
+
+    cf_associative: $ => seq(
+      '[',
+      $._cf_expression,
+      ']',
+    ),
+
+    _cf_expression: $ => choice(
+      prec.right(1,seq($._cf_expression,$.cf_parens)),
+      prec.right(2,seq($._cf_expression,$.cf_associative)),
+      prec.right(2,seq($._cf_expression,$.cf_assignment,$._cf_expression)),
+      prec.right(3,seq($._cf_expression,$.cf_period,$._cf_expression)),
+      prec.right(4,seq($._cf_expression,$.cf_comma,$._cf_expression)),
+      prec.right(5,seq($._cf_expression,$.cf_operator,$._cf_expression)),
+      
+      prec.right(6,$.cf_variable),
+    ),
+
+    cf_period: $ => '.',
+    cf_comma: $ => ',',
+    cf_assignment: $ => '=',
+
+    cf_parens: $ => seq(
+      '(',
+      $._cf_expression,
+      ')',
     ),
 
     cf_function: $ => seq(
@@ -57,13 +93,19 @@ module.exports = grammar({
 
     cf_if: $ => prec.right(1, seq(
       $.cf_if_keyword,
-      $.cf_condition,
+      $._cf_expression,
       optional($.cf_tag_end),
       repeat($._node),
     )),
 
+    cf_set: $ => prec.right(1, seq(
+      'set',
+      $._cf_expression,
+      $.cf_tag_end
+    )),
+
     cf_elseif: $ => prec.right(2, seq(
-      optional($.cf_tag_start),
+      optional($._cf_tag_start),
       $.cf_elseif_keyword,
       $.cf_condition,
       optional($.cf_tag_end),
@@ -71,7 +113,7 @@ module.exports = grammar({
     )),
 
     cf_else: $ => prec.right(3, seq(
-      optional($.cf_tag_start),
+      optional($._cf_tag_start),
       $.cf_else_keyword,
       optional($.cf_tag_end),
       repeat($._node),
@@ -101,9 +143,21 @@ module.exports = grammar({
 
     attribute_value: _ => /[^<>"'=\s]+/,
 
-    cf_statement: $ => choice(
-      $.cf_function,
-      $.cf_ifstatement,
+    cf_tag: $ => seq(
+      $._cf_tag_start,
+      choice(
+        $.cf_tag,
+        $.cf_function,
+        $.cf_ifstatement,
+        $.cf_set
+      ),
+    ),
+
+    _cf_statement: $ => choice(
+      prec.right(1,$.cf_tag),
+      prec.right(2,$.cf_hash),
+      prec.right(3,$.cf_parens),
+      prec.right(4,$.cf_associative),
     ),
 
     cf_if_keyword: $ => /(if)+/i,

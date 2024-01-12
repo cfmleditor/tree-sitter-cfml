@@ -5,20 +5,18 @@ cfif
 ---
 
 (fragment
-  (cf_tag_start)
-  (cf_statement
-    (cf_ifstatement
-      (cf_if
-        (cf_if_keyword)
-        (cf_condition)
-        (cf_tag_end)
-        (text)
-        (text)
-        (text)
-        (text))
-      (cf_if_end
-        (cf_tag_close)
-        (cf_if_keyword)))))
+      (cf_tag
+        (cf_ifstatement
+          (cf_if
+            (cf_if_keyword)
+            (cf_variable)
+            (cf_operator)
+            (cf_variable)
+            (cf_tag_end)
+            (text))
+          (cf_if_end
+            (cf_tag_close)
+            (cf_if_keyword)))))
 
 ===================================
 cfif with else
@@ -26,89 +24,77 @@ cfif with else
 <cfif z EQ b>Yes<cfelse>Noo</cfif>
 ---
 (fragment
-  (cf_tag_start)
-  (cf_statement
-    (cf_ifstatement
-      (cf_if
-        (cf_if_keyword)
-        (cf_condition)
-        (cf_tag_end)
-        (text)
-        (text)
-        (text))
-      (cf_else
-        (cf_tag_start)
-        (cf_else_keyword)
-        (cf_tag_end)
-        (text)
-        (text)
-        (text))
-      (cf_if_end
-        (cf_tag_close)
-        (cf_if_keyword)))))
+      (cf_tag
+        (cf_ifstatement
+          (cf_if
+            (cf_if_keyword)
+            (cf_variable)
+            (cf_operator)
+            (cf_variable)
+            (cf_tag_end)
+            (text))
+          (cf_else
+            (cf_else_keyword)
+            (cf_tag_end)
+            (text))
+          (cf_if_end
+            (cf_tag_close)
+            (cf_if_keyword)))))
 
 ===================================
 cfif with elseif
 ===================================
-<cfif z EQ b>Yes<cfelseif z NEQ b>No</cfif>
+<cfif z EQ b>Yes<cfelseif z EQ b>No</cfif>
 ---
 
 (fragment
-  (cf_tag_start)
-  (cf_statement
-    (cf_ifstatement
-      (cf_if
-        (cf_if_keyword)
-        (cf_condition)
-        (cf_tag_end)
-        (text)
-        (text)
-        (text))
-      (cf_elseif
-        (cf_tag_start)
-        (cf_elseif_keyword)
-        (cf_condition)
-        (cf_tag_end)
-        (text)
-        (text))
-      (cf_if_end
-        (cf_tag_close)
-        (cf_if_keyword)))))
+      (cf_tag
+        (cf_ifstatement
+          (cf_if
+            (cf_if_keyword)
+            (cf_variable)
+            (cf_operator)
+            (cf_variable)
+            (cf_tag_end)
+            (text))
+          (cf_elseif
+            (cf_elseif_keyword)
+            (cf_condition)
+            (cf_tag_end)
+            (text))
+          (cf_if_end
+            (cf_tag_close)
+            (cf_if_keyword)))))
 
 
 ===================================
 cfif with elseif and else
 ===================================
-<cfif z EQ b>Yes<cfelseif z NEQ b>No<cfelse>No</cfif>
+<cfif z EQ b>Yes<cfelseif z EQ b>No<cfelse>No</cfif>
 ---
 
 (fragment
-  (cf_tag_start)
-  (cf_statement
-    (cf_ifstatement
-      (cf_if
-        (cf_if_keyword)
-        (cf_condition)
-        (cf_tag_end)
-        (text)
-        (text)
-        (text))
-      (cf_elseif
-        (cf_tag_start)
-        (cf_elseif_keyword)
-        (cf_condition)
-        (cf_tag_end)
-        (text)
-        (text))
-      (cf_else
-        (cf_tag_start)
-        (cf_else_keyword)
-        (cf_tag_end)
-        (text)
-        (text))
-      (cf_if_end
-        (cf_tag_close)
-        (cf_if_keyword)))))
+      (cf_tag
+        (cf_ifstatement
+          (cf_if
+            (cf_if_keyword)
+            (cf_variable)
+            (cf_operator)
+            (cf_variable)
+            (cf_tag_end)
+            (text))
+          (cf_elseif
+            (cf_elseif_keyword)
+            (cf_condition)
+            (cf_tag_end)
+            (text))
+          (cf_else
+            (cf_else_keyword)
+            (cf_tag_end)
+            (text))
+          (cf_if_end
+            (cf_tag_close)
+            (cf_if_keyword)))))
 
 ===================================
 cffunction
@@ -116,13 +102,26 @@ cffunction
 
 <cffunction name="Test">
 
+    #testAND AND ANDtestOR#
+
+    #test AND test#
+
+    <cfset test = "test" />
+
+    <cfif test.test EQ test>
+
+    </cfif>
+
+    <cfset test = test[test]>
+    <cfset test = test(test).test>
+    <cfset test = test(test)[test]>
+
 </cffunction>
 
 ---
 
 (fragment
-      (cf_tag_start)
-      (cf_statement
+      (cf_tag
         (cf_function
           (cf_function_keyword)
           (attribute
@@ -130,6 +129,61 @@ cffunction
             (quoted_attribute_value
               (attribute_value)))
           (cf_tag_end)
+          (cf_hash
+            (cf_variable)
+            (cf_operator)
+            (cf_variable))
+          (cf_hash
+            (cf_variable)
+            (cf_operator)
+            (cf_variable))
+          (cf_tag
+            (cf_set
+              (cf_variable)
+              (cf_assignment)
+              (cf_variable)
+              (cf_tag_end)))
+          (cf_tag
+            (cf_ifstatement
+              (cf_if
+                (cf_if_keyword)
+                (cf_variable)
+                (cf_period)
+                (cf_variable)
+                (cf_operator)
+                (cf_variable)
+                (cf_tag_end))
+              (cf_if_end
+                (cf_tag_close)
+                (cf_if_keyword))))
+          (cf_tag
+            (cf_set
+              (cf_variable)
+              (cf_assignment)
+              (cf_variable)
+              (cf_associative
+                (cf_variable))
+              (cf_tag_end)))
+          (cf_tag
+            (cf_set
+              (cf_variable)
+              (cf_assignment)
+              (cf_variable)
+              (cf_parens
+                (cf_variable))
+              (cf_period)
+              (cf_variable)
+              (cf_tag_end)))
+          (cf_tag
+            (cf_set
+              (cf_variable)
+              (cf_assignment)
+              (cf_variable)
+              (cf_parens
+                (cf_variable))
+              (cf_associative
+                (cf_variable))
+              (cf_tag_end)))
           (cf_tag_close)
           (cf_function_keyword)
           (cf_tag_end))))
