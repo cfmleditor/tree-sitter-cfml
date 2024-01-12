@@ -126,8 +126,8 @@ cffunction
           (cf_function_keyword)
           (attribute
             (attribute_name)
-            (quoted_attribute_value
-              (attribute_value)))
+            (cf_dblquotes
+              (cf_variable)))
           (cf_tag_end)
           (cf_hash
             (cf_variable)
@@ -141,7 +141,8 @@ cffunction
             (cf_set
               (cf_variable)
               (cf_assignment)
-              (cf_variable)
+              (cf_dblquotes
+                (cf_variable))
               (cf_tag_end)))
           (cf_tag
             (cf_ifstatement
@@ -183,6 +184,112 @@ cffunction
                 (cf_variable))
               (cf_associative
                 (cf_variable))
+              (cf_tag_end)))
+          (cf_tag_close)
+          (cf_function_keyword)
+          (cf_tag_end))))
+
+===================================
+function call
+===================================
+
+<cfset test = fn("test")["test"]>
+---
+
+(fragment
+      (cf_tag
+        (cf_set
+          (cf_variable)
+          (cf_assignment)
+          (cf_variable)
+          (cf_parens
+            (cf_dblquotes
+              (cf_variable)))
+          (cf_associative
+            (cf_dblquotes
+              (cf_variable)))
+          (cf_tag_end))))
+
+===================================
+get results
+===================================
+<cffunction name="getResults" output="false" returntype="struct" access="public">
+    <cfargument name="id" type="any" required="true" />
+
+    <cfset var result = StructNew() />
+    <cfset var user = VARIABLES.service.getResults(id=ARGUMENTS.id) />
+
+    <cfreturn result />
+</cffunction>
+---
+
+(fragment
+      (cf_tag
+        (cf_function
+          (cf_function_keyword)
+          (attribute
+            (attribute_name)
+            (cf_dblquotes
+              (cf_variable)))
+          (attribute
+            (attribute_name)
+            (cf_dblquotes
+              (cf_variable)))
+          (attribute
+            (attribute_name)
+            (cf_dblquotes
+              (cf_variable)))
+          (attribute
+            (attribute_name)
+            (cf_dblquotes
+              (cf_variable)))
+          (cf_tag_end)
+          (cf_tag
+            (cf_argument
+              (cf_argument_keyword)
+              (attribute
+                (attribute_name)
+                (cf_dblquotes
+                  (cf_variable)))
+              (attribute
+                (attribute_name)
+                (cf_dblquotes
+                  (cf_variable)))
+              (attribute
+                (attribute_name)
+                (cf_dblquotes
+                  (cf_variable)))
+              (cf_tag_end)))
+          (cf_tag
+            (cf_set
+              (cf_var)
+              (cf_variable)
+              (cf_assignment)
+              (cf_variable)
+              (cf_parens_empty)
+              (cf_tag_end)))
+          (cf_tag
+            (cf_set
+              (cf_var)
+              (cf_variable)
+              (cf_assignment)
+              (cf_variable)
+              (cf_period)
+              (cf_variable)
+              (cf_period)
+              (cf_variable)
+              (cf_parens
+                (cf_variable)
+                (cf_assignment)
+                (cf_variable)
+                (cf_period)
+                (cf_variable))
+              (cf_tag_end)))
+          (cf_tag
+            (cf_return
+              (cf_return_keyword)
+              (attribute
+                (attribute_name))
               (cf_tag_end)))
           (cf_tag_close)
           (cf_function_keyword)
