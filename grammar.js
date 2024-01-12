@@ -56,26 +56,34 @@ module.exports = grammar({
       $._cf_expression,
       ']',
     ),
+    
+    cf_bracket: $ => seq(
+      '{',
+      $._cf_expression,
+      '}',
+    ),
 
     _cf_expression: $ => choice(
       prec.right(1,seq($.cf_dblquotes)),
+      prec.right(1,seq($.cf_hash)),
       prec.right(2,seq($.cf_dblquotes_empty)),
+      prec.right(2,seq($.cf_bracket)),
       prec.right(2,seq($._cf_expression,$.cf_parens)),
       prec.right(2,seq($._cf_expression,$.cf_parens_empty)),
       prec.right(2,seq($._cf_expression,$.cf_associative)),
       prec.right(2,seq($._cf_expression,$.cf_assignment,$._cf_expression)),
+      prec.right(2,seq($._cf_expression,$.cf_objectkeyassign,$._cf_expression)),
       prec.right(3,seq($._cf_expression,$.cf_period,$._cf_expression)),
       prec.right(4,seq($._cf_expression,$.cf_comma,$._cf_expression)),
       prec.right(5,seq($._cf_expression,$.cf_operator,$._cf_expression)),
-      
       prec.right(6,$.cf_variable),
     ),
 
     cf_period: $ => /\./,
     cf_comma: $ => ',',
     cf_assignment: $ => '=',
+    cf_objectkeyassign: $ => ':',
 
-      
     cf_dblquotes: $ => seq(
       '"',
       $._cf_expression,
@@ -188,6 +196,7 @@ module.exports = grammar({
 
     _cf_statement: $ => choice(
       prec.right(1,$.cf_dblquotes),
+      prec.right(1,$.cf_bracket),
       prec.right(2,$.cf_dblquotes_empty),
       prec.right(2,$.cf_tag),
       prec.right(2,$.cf_hash),

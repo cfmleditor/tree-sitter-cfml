@@ -88,6 +88,23 @@
         }
       ]
     },
+    "cf_bracket": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_expression"
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
     "_cf_expression": {
       "type": "CHOICE",
       "members": [
@@ -106,6 +123,19 @@
         },
         {
           "type": "PREC_RIGHT",
+          "value": 1,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "cf_hash"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
           "value": 2,
           "content": {
             "type": "SEQ",
@@ -113,6 +143,19 @@
               {
                 "type": "SYMBOL",
                 "name": "cf_dblquotes_empty"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "cf_bracket"
               }
             ]
           }
@@ -181,6 +224,27 @@
               {
                 "type": "SYMBOL",
                 "name": "cf_assignment"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_cf_expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_cf_expression"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "cf_objectkeyassign"
               },
               {
                 "type": "SYMBOL",
@@ -273,6 +337,10 @@
     "cf_assignment": {
       "type": "STRING",
       "value": "="
+    },
+    "cf_objectkeyassign": {
+      "type": "STRING",
+      "value": ":"
     },
     "cf_dblquotes": {
       "type": "SEQ",
@@ -719,6 +787,14 @@
           "content": {
             "type": "SYMBOL",
             "name": "cf_dblquotes"
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
+          "value": 1,
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_bracket"
           }
         },
         {

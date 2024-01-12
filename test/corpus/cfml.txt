@@ -216,8 +216,12 @@ get results
 <cffunction name="getResults" output="false" returntype="struct" access="public">
     <cfargument name="id" type="any" required="true" />
 
-    <cfset var result = StructNew() />
-    <cfset var user = VARIABLES.service.getResults(id=ARGUMENTS.id) />
+    <cfset var user = StructNew() />
+    <cfset var result = VARIABLES.service.getResults(id=ARGUMENTS.id) />
+
+    <cfset result = "#result.children[k].children[i].childid#">
+
+    <cfset user.setChild(child={"childId": childId}) />
 
     <cfreturn result />
 </cffunction>
@@ -284,6 +288,38 @@ get results
                 (cf_variable)
                 (cf_period)
                 (cf_variable))
+              (cf_tag_end)))
+          (cf_tag
+            (cf_set
+              (cf_variable)
+              (cf_assignment)
+              (cf_dblquotes
+                (cf_hash
+                  (cf_variable)
+                  (cf_period)
+                  (cf_variable)
+                  (cf_associative
+                    (cf_variable))
+                  (cf_period)
+                  (cf_variable)
+                  (cf_associative
+                    (cf_variable))
+                  (cf_period)
+                  (cf_variable)))
+              (cf_tag_end)))
+          (cf_tag
+            (cf_set
+              (cf_variable)
+              (cf_period)
+              (cf_variable)
+              (cf_parens
+                (cf_variable)
+                (cf_assignment)
+                (cf_bracket
+                  (cf_dblquotes
+                    (cf_variable))
+                  (cf_objectkeyassign)
+                  (cf_variable)))
               (cf_tag_end)))
           (cf_tag
             (cf_return
