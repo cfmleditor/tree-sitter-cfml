@@ -106,7 +106,7 @@ cffunction
 
     #test AND test#
 
-    <cfset test = "test" />
+    <cfset test = "test">
 
     <cfif test.test EQ test>
 
@@ -124,8 +124,8 @@ cffunction
       (cf_tag
         (cf_function
           (cf_function_keyword)
-          (attribute
-            (attribute_name)
+          (cf_attribute
+            (cf_attribute_name)
             (cf_dblquotes
               (cf_variable)))
           (cf_tag_end)
@@ -143,7 +143,7 @@ cffunction
               (cf_assignment)
               (cf_dblquotes
                 (cf_variable))
-              (cf_tag_end)))
+              (cf_tag_selfclose_end)))
           (cf_tag
             (cf_ifstatement
               (cf_if
@@ -164,7 +164,7 @@ cffunction
               (cf_variable)
               (cf_associative
                 (cf_variable))
-              (cf_tag_end)))
+              (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
               (cf_variable)
@@ -174,7 +174,7 @@ cffunction
                 (cf_variable))
               (cf_period)
               (cf_variable)
-              (cf_tag_end)))
+              (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
               (cf_variable)
@@ -184,7 +184,7 @@ cffunction
                 (cf_variable))
               (cf_associative
                 (cf_variable))
-              (cf_tag_end)))
+              (cf_tag_selfclose_end)))
           (cf_tag_close)
           (cf_function_keyword)
           (cf_tag_end))))
@@ -208,62 +208,68 @@ function call
           (cf_associative
             (cf_dblquotes
               (cf_variable)))
-          (cf_tag_end))))
+          (cf_tag_selfclose_end))))
 
 ===================================
 get results
 ===================================
 <cffunction name="getResults" output="false" returntype="struct" access="public">
-    <cfargument name="id" type="any" required="true" />
+    <cfargument name="id" type="any" required="true">
 
-    <cfset var user = StructNew() />
-    <cfset var result = VARIABLES.service.getResults(id=ARGUMENTS.id) />
+    <cfset var user = StructNew()>
+    <cfset var result = VARIABLES.service.getResults(id=ARGUMENTS.id)>
 
     <cfset result = "#result.children[k].children[i].childid#">
 
-    <cfset user.setChild(child={"childId": childId}) />
+    <cfset user.setChild(child={"childId": childId})>
+
+    <div></div>
+
+    <!--- Comment --->
 
     <cfreturn result />
 </cffunction>
+
+
 ---
 
-(fragment
+    (fragment
       (cf_tag
         (cf_function
           (cf_function_keyword)
-          (attribute
-            (attribute_name)
+          (cf_attribute
+            (cf_attribute_name)
             (cf_dblquotes
               (cf_variable)))
-          (attribute
-            (attribute_name)
+          (cf_attribute
+            (cf_attribute_name)
             (cf_dblquotes
               (cf_variable)))
-          (attribute
-            (attribute_name)
+          (cf_attribute
+            (cf_attribute_name)
             (cf_dblquotes
               (cf_variable)))
-          (attribute
-            (attribute_name)
+          (cf_attribute
+            (cf_attribute_name)
             (cf_dblquotes
               (cf_variable)))
           (cf_tag_end)
           (cf_tag
             (cf_argument
               (cf_argument_keyword)
-              (attribute
-                (attribute_name)
+              (cf_attribute
+                (cf_attribute_name)
                 (cf_dblquotes
                   (cf_variable)))
-              (attribute
-                (attribute_name)
+              (cf_attribute
+                (cf_attribute_name)
                 (cf_dblquotes
                   (cf_variable)))
-              (attribute
-                (attribute_name)
+              (cf_attribute
+                (cf_attribute_name)
                 (cf_dblquotes
                   (cf_variable)))
-              (cf_tag_end)))
+              (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
               (cf_var)
@@ -271,7 +277,7 @@ get results
               (cf_assignment)
               (cf_variable)
               (cf_parens_empty)
-              (cf_tag_end)))
+              (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
               (cf_var)
@@ -288,7 +294,7 @@ get results
                 (cf_variable)
                 (cf_period)
                 (cf_variable))
-              (cf_tag_end)))
+              (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
               (cf_variable)
@@ -306,7 +312,7 @@ get results
                     (cf_variable))
                   (cf_period)
                   (cf_variable)))
-              (cf_tag_end)))
+              (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
               (cf_variable)
@@ -320,13 +326,19 @@ get results
                     (cf_variable))
                   (cf_objectkeyassign)
                   (cf_variable)))
-              (cf_tag_end)))
+              (cf_tag_selfclose_end)))
+          (element
+            (start_tag
+              (tag_name))
+            (end_tag
+              (tag_name)))
+          (comment)
           (cf_tag
             (cf_return
               (cf_return_keyword)
-              (attribute
-                (attribute_name))
-              (cf_tag_end)))
+              (cf_attribute
+                (cf_attribute_name))
+              (cf_tag_selfclose_end)))
           (cf_tag_close)
           (cf_function_keyword)
           (cf_tag_end))))

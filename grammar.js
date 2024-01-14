@@ -14,11 +14,20 @@ module.exports = grammar({
   name: 'cfml',
 
   extras: $ => [
+    $.comment,
     /\s+/,
   ],
 
   externals: $ => [
-
+    $._start_tag_name,
+    $._script_start_tag_name,
+    $._style_start_tag_name,
+    $._end_tag_name,
+    $.erroneous_end_tag_name,
+    '/>',
+    $._implicit_end_tag,
+    $.raw_text,
+    $.comment,
   ],
 
   conflicts: $ => [
@@ -29,20 +38,91 @@ module.exports = grammar({
 
     fragment: $ => repeat($._node),
 
+    doctype: $ => seq(
+      '<!',
+      alias($._doctype, 'doctype'),
+      /[^>]+/,
+      '>',
+    ),
+
+    _doctype: _ => /[Dd][Oo][Cc][Tt][Yy][Pp][Ee]/,
+
     cf_condition: ($) => choice(
         /([^<>\[\]="\']+)/,
     ),
 
     _cf_tag_start: $ => /<cf/i,
-    cf_tag_end: $ => /\/?>/,
+    cf_tag_end: $ => '>',
+    cf_tag_selfclose_end: $ => seq(optional('/'),'>'),
     text: _ => /[^\s<>}{\(\)#\[\]=,."\']+/,
     cf_variable: _ => /[^\s<>}{\(\)#\[\]=,."\']+/,
     cf_tag_close: $ => /<\/cf/i,
     cf_operator: $ => /(\sAND\s|\sOR\s|\sEQ\s|\sGTE\s|\sGT\s|\sNOT\s|===)/i,
 
     _node: $ => choice(
+      $.doctype,
+      $.entity,
       $.text,
-      $._cf_statement,
+      $.element,
+      $.cf_tag,
+      $.cf_hash,
+      $.script_element,
+      $.style_element,
+    ),
+
+    element: $ => choice(
+      seq(
+        $.start_tag,
+        repeat($._node),
+        choice($.end_tag, $._implicit_end_tag),
+      ),
+      $.self_closing_tag,
+    ),
+
+    script_element: $ => seq(
+      alias($.script_start_tag, $.start_tag),
+      optional($.raw_text),
+      $.end_tag,
+    ),
+
+    start_tag: $ => seq(
+      '<',
+      alias($._start_tag_name, $.tag_name),
+      repeat($.attribute),
+      '>',
+    ),
+
+    script_start_tag: $ => seq(
+      '<',
+      alias($._script_start_tag_name, $.tag_name),
+      repeat($.attribute),
+      '>',
+    ),
+
+    style_start_tag: $ => seq(
+      '<',
+      alias($._style_start_tag_name, $.tag_name),
+      repeat($.attribute),
+      '>',
+    ),
+
+    self_closing_tag: $ => seq(
+      '<',
+      alias($._start_tag_name, $.tag_name),
+      repeat($.attribute),
+      '/>',
+    ),
+    
+    end_tag: $ => seq(
+      '</',
+      alias($._end_tag_name, $.tag_name),
+      '>',
+    ),
+
+    style_element: $ => seq(
+      alias($.style_start_tag, $.start_tag),
+      optional($.raw_text),
+      $.end_tag,
     ),
 
     cf_hash: $ => seq(
@@ -109,7 +189,7 @@ module.exports = grammar({
 
     cf_function: $ => seq(
       $.cf_function_keyword,
-      repeat($.attribute),
+      repeat($.cf_attribute),
       $.cf_tag_end,
       repeat($._node),
       $.cf_tag_close,
@@ -119,14 +199,14 @@ module.exports = grammar({
 
     cf_argument: $ => seq(
       $.cf_argument_keyword,
-      repeat($.attribute),
-      $.cf_tag_end,
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
     ),
 
     cf_return: $ => seq(
       $.cf_return_keyword,
-      repeat($.attribute),
-      $.cf_tag_end,
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
     ),
 
     cf_ifstatement: $ => seq(
@@ -147,7 +227,7 @@ module.exports = grammar({
       'set',
       optional($.cf_var),
       $._cf_expression,
-      $.cf_tag_end
+      $.cf_tag_selfclose_end
     )),
 
     cf_elseif: $ => prec.right(2, seq(
@@ -174,12 +254,27 @@ module.exports = grammar({
       optional(seq(
         '=',
         choice(
+          $.attribute_value,
+          $.quoted_attribute_value,
+        ),
+      )),
+    ),
+
+    attribute_name: _ => /[^<>"'/=\s]+/,
+
+    attribute_value: _ => /[^<>"'=\s]+/,
+
+    cf_attribute: $ => seq(
+      $.cf_attribute_name,
+      optional(seq(
+        '=',
+        choice(
           $._cf_expression,
         ),
       )),
     ),
 
-    attribute_name: _ => /[^<>"\'/=\s]+/,
+    cf_attribute_name: _ => /[^<>"\'/=\s]+/,
 
     //attribute_value: _ => /[^<>"'=\s]+/,
 
@@ -198,10 +293,15 @@ module.exports = grammar({
       prec.right(1,$.cf_dblquotes),
       prec.right(1,$.cf_bracket),
       prec.right(2,$.cf_dblquotes_empty),
-      prec.right(2,$.cf_tag),
-      prec.right(2,$.cf_hash),
       prec.right(3,$.cf_parens),
       prec.right(4,$.cf_associative),
+    ),
+
+    entity: _ => /&(#([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
+
+    quoted_attribute_value: $ => choice(
+      seq('\'', optional(alias(/[^']+/, $.attribute_value)), '\''),
+      seq('"', optional(alias(/[^"]+/, $.attribute_value)), '"'),
     ),
 
     cf_var: $ => /(\svar\s)+/i,
