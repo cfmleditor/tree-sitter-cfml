@@ -83,6 +83,14 @@
           "named": true
         },
         {
+          "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_function_call",
+          "named": true
+        },
+        {
           "type": "cf_hash",
           "named": true
         },
@@ -104,6 +112,10 @@
         },
         {
           "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_true",
           "named": true
         },
         {
@@ -150,6 +162,14 @@
           "named": true
         },
         {
+          "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_function_call",
+          "named": true
+        },
+        {
           "type": "cf_hash",
           "named": true
         },
@@ -171,6 +191,10 @@
         },
         {
           "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_true",
           "named": true
         },
         {
@@ -213,6 +237,14 @@
           "named": true
         },
         {
+          "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_function_call",
+          "named": true
+        },
+        {
           "type": "cf_hash",
           "named": true
         },
@@ -234,6 +266,10 @@
         },
         {
           "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_true",
           "named": true
         },
         {
@@ -281,6 +317,14 @@
           "named": true
         },
         {
+          "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_function_call",
+          "named": true
+        },
+        {
           "type": "cf_hash",
           "named": true
         },
@@ -302,6 +346,10 @@
         },
         {
           "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_true",
           "named": true
         },
         {
@@ -482,6 +530,81 @@
     }
   },
   {
+    "type": "cf_function_call",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_assignment",
+          "named": true
+        },
+        {
+          "type": "cf_associative",
+          "named": true
+        },
+        {
+          "type": "cf_bracket",
+          "named": true
+        },
+        {
+          "type": "cf_comma",
+          "named": true
+        },
+        {
+          "type": "cf_dblquotes",
+          "named": true
+        },
+        {
+          "type": "cf_dblquotes_empty",
+          "named": true
+        },
+        {
+          "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_function_call",
+          "named": true
+        },
+        {
+          "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_objectkeyassign",
+          "named": true
+        },
+        {
+          "type": "cf_operator",
+          "named": true
+        },
+        {
+          "type": "cf_parens",
+          "named": true
+        },
+        {
+          "type": "cf_parens_empty",
+          "named": true
+        },
+        {
+          "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_true",
+          "named": true
+        },
+        {
+          "type": "cf_variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_hash",
     "named": true,
     "fields": {},
@@ -514,6 +637,14 @@
           "named": true
         },
         {
+          "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_function_call",
+          "named": true
+        },
+        {
           "type": "cf_hash",
           "named": true
         },
@@ -535,6 +666,10 @@
         },
         {
           "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_true",
           "named": true
         },
         {
@@ -577,6 +712,14 @@
           "named": true
         },
         {
+          "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_function_call",
+          "named": true
+        },
+        {
           "type": "cf_hash",
           "named": true
         },
@@ -610,6 +753,10 @@
         },
         {
           "type": "cf_tag_end",
+          "named": true
+        },
+        {
+          "type": "cf_true",
           "named": true
         },
         {
@@ -722,6 +869,14 @@
           "named": true
         },
         {
+          "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_function_call",
+          "named": true
+        },
+        {
           "type": "cf_hash",
           "named": true
         },
@@ -743,6 +898,10 @@
         },
         {
           "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_true",
           "named": true
         },
         {
@@ -813,6 +972,14 @@
           "named": true
         },
         {
+          "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_function_call",
+          "named": true
+        },
+        {
           "type": "cf_hash",
           "named": true
         },
@@ -838,6 +1005,10 @@
         },
         {
           "type": "cf_tag_selfclose_end",
+          "named": true
+        },
+        {
+          "type": "cf_true",
           "named": true
         },
         {
@@ -1204,6 +1375,10 @@
     "named": true
   },
   {
+    "type": "cf_false",
+    "named": true
+  },
+  {
     "type": "cf_function_keyword",
     "named": true
   },
@@ -1229,6 +1404,10 @@
   },
   {
     "type": "cf_tag_close",
+    "named": true
+  },
+  {
+    "type": "cf_true",
     "named": true
   },
   {

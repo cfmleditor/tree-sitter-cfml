@@ -57,6 +57,8 @@ module.exports = grammar({
     text: _ => /[^\s<>}{\(\)#\[\]=,."\']+/,
     cf_variable: _ => /[^\s<>}{\(\)#\[\]=,."\']+/,
     cf_tag_close: $ => /<\/cf/i,
+    cf_true: $ => token('true'),
+    cf_false: $ => token('false'),
     cf_operator: $ => /(\sAND\s|\sOR\s|\sEQ\s|\sGTE\s|\sGT\s|\sNOT\s|===)/i,
 
     _node: $ => choice(
@@ -148,15 +150,23 @@ module.exports = grammar({
       prec.right(1,seq($.cf_hash)),
       prec.right(2,seq($.cf_dblquotes_empty)),
       prec.right(2,seq($.cf_bracket)),
-      prec.right(2,seq($._cf_expression,$.cf_parens)),
-      prec.right(2,seq($._cf_expression,$.cf_parens_empty)),
+      prec.right(2,$.cf_function_call),
       prec.right(2,seq($._cf_expression,$.cf_associative)),
       prec.right(2,seq($._cf_expression,$.cf_assignment,$._cf_expression)),
       prec.right(2,seq($._cf_expression,$.cf_objectkeyassign,$._cf_expression)),
       prec.right(3,seq($._cf_expression,$.cf_period,$._cf_expression)),
       prec.right(4,seq($._cf_expression,$.cf_comma,$._cf_expression)),
       prec.right(5,seq($._cf_expression,$.cf_operator,$._cf_expression)),
+      prec.right(6,$.cf_parens),
+      prec.right(6,$.cf_parens_empty),
+      prec.right(6,$.cf_true),
+      prec.right(6,$.cf_false),
       prec.right(6,$.cf_variable),
+    ),
+
+    cf_function_call: $ => seq(
+      $._cf_expression,
+      choice($.cf_parens,$.cf_parens_empty)
     ),
 
     cf_period: $ => /\./,

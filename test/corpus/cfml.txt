@@ -167,21 +167,23 @@ cffunction
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
-              (cf_variable)
-              (cf_assignment)
-              (cf_variable)
-              (cf_parens
-                (cf_variable))
+              (cf_function_call
+                (cf_variable)
+                (cf_assignment)
+                (cf_variable)
+                (cf_parens
+                  (cf_variable)))
               (cf_period)
               (cf_variable)
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
-              (cf_variable)
-              (cf_assignment)
-              (cf_variable)
-              (cf_parens
-                (cf_variable))
+              (cf_function_call
+                (cf_variable)
+                (cf_assignment)
+                (cf_variable)
+                (cf_parens
+                  (cf_variable)))
               (cf_associative
                 (cf_variable))
               (cf_tag_selfclose_end)))
@@ -199,13 +201,14 @@ function call
 (fragment
       (cf_tag
         (cf_set
-          (cf_variable)
-          (cf_assignment)
-          (cf_variable)
-          (cf_parens
-            (cf_dblquotes
-              (cf_variable)))
-          (cf_associative
+          (cf_function_call
+            (cf_variable)
+            (cf_assignment)
+            (cf_variable)
+            (cf_parens
+              (cf_dblquotes
+                (cf_variable))))
+                (cf_associative
             (cf_dblquotes
               (cf_variable)))
           (cf_tag_selfclose_end))))
@@ -227,13 +230,19 @@ get results
 
     <!--- Comment --->
 
+    <cfif (true) OR ((true) AND (true))>
+
+    </cfif>
+
+    <cfset test = (test) />
+
     <cfreturn result />
 </cffunction>
 
 
 ---
 
-    (fragment
+(fragment
       (cf_tag
         (cf_function
           (cf_function_keyword)
@@ -244,7 +253,7 @@ get results
           (cf_attribute
             (cf_attribute_name)
             (cf_dblquotes
-              (cf_variable)))
+              (cf_false)))
           (cf_attribute
             (cf_attribute_name)
             (cf_dblquotes
@@ -268,32 +277,34 @@ get results
               (cf_attribute
                 (cf_attribute_name)
                 (cf_dblquotes
-                  (cf_variable)))
+                  (cf_true)))
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
               (cf_var)
-              (cf_variable)
-              (cf_assignment)
-              (cf_variable)
-              (cf_parens_empty)
+              (cf_function_call
+                (cf_variable)
+                (cf_assignment)
+                (cf_variable)
+                (cf_parens_empty))
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
               (cf_var)
-              (cf_variable)
-              (cf_assignment)
-              (cf_variable)
-              (cf_period)
-              (cf_variable)
-              (cf_period)
-              (cf_variable)
-              (cf_parens
+              (cf_function_call
                 (cf_variable)
                 (cf_assignment)
                 (cf_variable)
                 (cf_period)
-                (cf_variable))
+                (cf_variable)
+                (cf_period)
+                (cf_variable)
+                (cf_parens
+                  (cf_variable)
+                  (cf_assignment)
+                  (cf_variable)
+                  (cf_period)
+                  (cf_variable)))
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
@@ -315,17 +326,18 @@ get results
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
-              (cf_variable)
-              (cf_period)
-              (cf_variable)
-              (cf_parens
+              (cf_function_call
                 (cf_variable)
-                (cf_assignment)
-                (cf_bracket
-                  (cf_dblquotes
-                    (cf_variable))
-                  (cf_objectkeyassign)
-                  (cf_variable)))
+                (cf_period)
+                (cf_variable)
+                (cf_parens
+                  (cf_variable)
+                  (cf_assignment)
+                  (cf_bracket
+                    (cf_dblquotes
+                      (cf_variable))
+                    (cf_objectkeyassign)
+                    (cf_variable))))
               (cf_tag_selfclose_end)))
           (element
             (start_tag
@@ -333,6 +345,30 @@ get results
             (end_tag
               (tag_name)))
           (comment)
+          (cf_tag
+            (cf_ifstatement
+              (cf_if
+                (cf_if_keyword)
+                (cf_parens
+                  (cf_true))
+                (cf_operator)
+                (cf_parens
+                  (cf_parens
+                    (cf_true))
+                  (cf_operator)
+                  (cf_parens
+                    (cf_true)))
+                (cf_tag_end))
+              (cf_if_end
+                (cf_tag_close)
+                (cf_if_keyword))))
+          (cf_tag
+            (cf_set
+              (cf_variable)
+              (cf_assignment)
+              (cf_parens
+                (cf_variable))
+              (cf_tag_selfclose_end)))
           (cf_tag
             (cf_return
               (cf_return_keyword)
@@ -342,3 +378,4 @@ get results
           (cf_tag_close)
           (cf_function_keyword)
           (cf_tag_end))))
+     

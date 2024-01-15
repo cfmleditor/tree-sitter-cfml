@@ -88,6 +88,20 @@
       "type": "PATTERN",
       "value": "<\\/cf"
     },
+    "cf_true": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "true"
+      }
+    },
+    "cf_false": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "false"
+      }
+    },
     "cf_operator": {
       "type": "PATTERN",
       "value": "(\\sAND\\s|\\sOR\\s|\\sEQ\\s|\\sGTE\\s|\\sGT\\s|\\sNOT\\s|===)"
@@ -475,34 +489,8 @@
           "type": "PREC_RIGHT",
           "value": 2,
           "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_cf_expression"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "cf_parens"
-              }
-            ]
-          }
-        },
-        {
-          "type": "PREC_RIGHT",
-          "value": 2,
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_cf_expression"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "cf_parens_empty"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "cf_function_call"
           }
         },
         {
@@ -632,8 +620,62 @@
           "value": 6,
           "content": {
             "type": "SYMBOL",
+            "name": "cf_parens"
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
+          "value": 6,
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_parens_empty"
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
+          "value": 6,
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_true"
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
+          "value": 6,
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_false"
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
+          "value": 6,
+          "content": {
+            "type": "SYMBOL",
             "name": "cf_variable"
           }
+        }
+      ]
+    },
+    "cf_function_call": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_expression"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cf_parens"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "cf_parens_empty"
+            }
+          ]
         }
       ]
     },
