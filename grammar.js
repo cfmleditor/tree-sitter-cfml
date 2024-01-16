@@ -77,6 +77,7 @@ module.exports = grammar({
       $.cf_function,
       $.script_element,
       $.style_element,
+      $._assignment_expression,
     ),
 
     element: $ => choice(
@@ -168,6 +169,12 @@ module.exports = grammar({
       $._cf_expression,
       $._semicolon,
     ),
+
+    _assignment_expression: $ => prec.right(3,seq(
+      $.cf_variable,
+      $.cf_assignment,
+      $._cf_expression,
+    )),
     
     _cf_expression: $ => choice(
       prec.right(1,$.cf_dblquotes),
@@ -176,7 +183,7 @@ module.exports = grammar({
       prec.right(2,$.cf_function),
       prec.right(2,seq(optional($._cf_expression),$.cf_associative)),
       prec.right(2,seq(optional($._cf_expression),$.cf_period,$._cf_expression)),
-      prec.right(2,seq($._cf_expression,$.cf_assignment,$._cf_expression)),
+      $._assignment_expression,
       prec.right(2,seq($._cf_expression,$.cf_objectkeyassign,$._cf_expression)),
       prec.right(4,seq($.cf_period,$._cf_expression)),
       prec.right(4,seq($.cf_comma,$._cf_expression)),
@@ -190,7 +197,7 @@ module.exports = grammar({
     ),
 
     cf_function: $ => seq(
-      optional(alias($.text,$.cf_function_access)),
+      optional(alias($.cf_variable,$.cf_function_access)),
       optional($.cf_function_returntype),
       $.cf_function_keyword,
       optional($.cf_function_name),
@@ -215,7 +222,15 @@ module.exports = grammar({
 
     cf_dblquotes: $ => seq(
       '"',
-      $._cf_expression,
+      alias(
+        repeat(
+          choice(
+            /[^"]/,
+            $.cf_hash,
+          ),
+        ),
+        $.quoted_text,
+      ),
       '"',
     ),
 
@@ -231,7 +246,7 @@ module.exports = grammar({
     ),
 
     cf_function_name: $ => choice(
-      $.text,
+      $.cf_variable,
     ),
 
     cf_function_returntype: $ => choice(
@@ -247,7 +262,7 @@ module.exports = grammar({
     ),
 
     cf_function_argument_name: $ => choice(
-      $.text,
+      $.cf_variable,
     ),
 
   //required numeric bites

@@ -127,7 +127,7 @@ cffunction
           (cf_attribute
             (cf_attribute_name)
             (cf_dblquotes
-              (cf_variable)))
+              (quoted_text)))
           (cf_tag_end)
           (cf_hash
             (cf_variable)
@@ -142,7 +142,7 @@ cffunction
               (cf_variable)
               (cf_assignment)
               (cf_dblquotes
-                (cf_variable))
+                (quoted_text))
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_ifstatement
@@ -207,10 +207,10 @@ function call
             (cf_variable)
             (cf_parens
               (cf_dblquotes
-                (cf_variable))))
+                (quoted_text))))
                 (cf_associative
             (cf_dblquotes
-              (cf_variable)))
+              (quoted_text)))
           (cf_tag_selfclose_end))))
 
 ===================================
@@ -248,7 +248,6 @@ get results
 
 
 ---
-
 (fragment
       (cf_tag
         (cf_function_tag
@@ -256,19 +255,19 @@ get results
           (cf_attribute
             (cf_attribute_name)
             (cf_dblquotes
-              (cf_variable)))
+              (quoted_text)))
           (cf_attribute
             (cf_attribute_name)
             (cf_dblquotes
-              (cf_false)))
+              (quoted_text)))
           (cf_attribute
             (cf_attribute_name)
             (cf_dblquotes
-              (cf_variable)))
+              (quoted_text)))
           (cf_attribute
             (cf_attribute_name)
             (cf_dblquotes
-              (cf_variable)))
+              (quoted_text)))
           (cf_tag_end)
           (cf_tag
             (cf_argument_tag
@@ -276,15 +275,15 @@ get results
               (cf_attribute
                 (cf_attribute_name)
                 (cf_dblquotes
-                  (cf_variable)))
+                  (quoted_text)))
               (cf_attribute
                 (cf_attribute_name)
                 (cf_dblquotes
-                  (cf_variable)))
+                  (quoted_text)))
               (cf_attribute
                 (cf_attribute_name)
                 (cf_dblquotes
-                  (cf_true)))
+                  (quoted_text)))
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
@@ -318,28 +317,30 @@ get results
               (cf_variable)
               (cf_assignment)
               (cf_dblquotes
-                (cf_hash
-                  (cf_variable)
-                  (cf_associative
-                    (cf_variable))))
+                (quoted_text
+                  (cf_hash
+                    (cf_variable)
+                    (cf_associative
+                      (cf_variable)))))
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
               (cf_variable)
               (cf_assignment)
               (cf_dblquotes
-                (cf_hash
-                  (cf_variable)
-                  (cf_period)
-                  (cf_variable)
-                  (cf_associative
-                    (cf_variable))
-                  (cf_period)
-                  (cf_variable)
-                  (cf_associative
-                    (cf_variable))
-                  (cf_period)
-                  (cf_variable)))
+                (quoted_text
+                  (cf_hash
+                    (cf_variable)
+                    (cf_period)
+                    (cf_variable)
+                    (cf_associative
+                      (cf_variable))
+                    (cf_period)
+                    (cf_variable)
+                    (cf_associative
+                      (cf_variable))
+                    (cf_period)
+                    (cf_variable))))
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
@@ -352,7 +353,7 @@ get results
                   (cf_assignment)
                   (cf_bracket_expression
                     (cf_dblquotes
-                      (cf_variable))
+                      (quoted_text))
                     (cf_variable))))
               (cf_tag_selfclose_end)))
           (element
@@ -400,7 +401,7 @@ get results
                         (cf_variable)
                         (cf_assignment)
                         (cf_dblquotes
-                          (cf_variable)))
+                          (quoted_text)))
                       (cf_return
                         (cf_return_keyword)
                         (cf_variable))))))
@@ -428,6 +429,8 @@ public function myFunction(required any myArgument={}){
 function myFunction(required any myArgument=[]){
   return true; 
 }
+
+cars = QueryNew("make,model");
 ---
 (fragment
       (cf_function
@@ -435,13 +438,13 @@ function myFunction(required any myArgument=[]){
         (cf_function_returntype)
         (cf_function_keyword)
         (cf_function_name
-          (text))
+          (cf_variable))
         (cf_function_arguments
           (cf_function_argument_required)
           (cf_function_argument_type)
           (cf_function_argument_name
-            (text))
-          (cf_dblquotes_empty))
+            (cf_variable))
+          (cf_dblquotes))
         (cf_bracket_function
           (cf_return
             (cf_return_keyword)
@@ -450,12 +453,12 @@ function myFunction(required any myArgument=[]){
         (cf_function_access)
         (cf_function_keyword)
         (cf_function_name
-          (text))
+          (cf_variable))
         (cf_function_arguments
           (cf_function_argument_required)
           (cf_function_argument_type)
           (cf_function_argument_name
-            (text))
+            (cf_variable))
           (cf_bracket_expression))
         (cf_bracket_function
           (cf_return
@@ -464,14 +467,21 @@ function myFunction(required any myArgument=[]){
       (cf_function
         (cf_function_keyword)
         (cf_function_name
-          (text))
+          (cf_variable))
         (cf_function_arguments
           (cf_function_argument_required)
           (cf_function_argument_type)
           (cf_function_argument_name
-            (text))
+            (cf_variable))
           (cf_associative))
         (cf_bracket_function
           (cf_return
             (cf_return_keyword)
-            (cf_true)))))
+            (cf_true))))
+      (cf_variable)
+      (cf_assignment)
+      (cf_function_call
+        (cf_variable)
+        (cf_parens
+          (cf_dblquotes
+            (quoted_text)))))

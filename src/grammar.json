@@ -144,6 +144,10 @@
         {
           "type": "SYMBOL",
           "name": "style_element"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_assignment_expression"
         }
       ]
     },
@@ -491,6 +495,27 @@
         }
       ]
     },
+    "_assignment_expression": {
+      "type": "PREC_RIGHT",
+      "value": 3,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "cf_variable"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_assignment"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_expression"
+          }
+        ]
+      }
+    },
     "_cf_expression": {
       "type": "CHOICE",
       "members": [
@@ -581,25 +606,8 @@
           }
         },
         {
-          "type": "PREC_RIGHT",
-          "value": 2,
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_cf_expression"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "cf_assignment"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_cf_expression"
-              }
-            ]
-          }
+          "type": "SYMBOL",
+          "name": "_assignment_expression"
         },
         {
           "type": "PREC_RIGHT",
@@ -754,7 +762,7 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "text"
+                "name": "cf_variable"
               },
               "named": true,
               "value": "cf_function_access"
@@ -852,8 +860,25 @@
           "value": "\""
         },
         {
-          "type": "SYMBOL",
-          "name": "_cf_expression"
+          "type": "ALIAS",
+          "content": {
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "[^\"]"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "cf_hash"
+                }
+              ]
+            }
+          },
+          "named": true,
+          "value": "quoted_text"
         },
         {
           "type": "STRING",
@@ -904,7 +929,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "text"
+          "name": "cf_variable"
         }
       ]
     },
@@ -949,7 +974,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "text"
+          "name": "cf_variable"
         }
       ]
     },
