@@ -122,7 +122,7 @@ cffunction
 
 (fragment
       (cf_tag
-        (cf_function
+        (cf_function_tag
           (cf_function_keyword)
           (cf_attribute
             (cf_attribute_name)
@@ -222,9 +222,11 @@ get results
     <cfset var user = StructNew()>
     <cfset var result = VARIABLES.service.getResults(id=ARGUMENTS.id)>
 
+    <cfset result = "#children[k]#">
+    
     <cfset result = "#result.children[k].children[i].childid#">
 
-    <cfset user.setChild(child={"childId": childId})>
+    <cfset user.setChild(child={"childId":childId})>
 
     <div></div>
 
@@ -236,6 +238,10 @@ get results
 
     <cfset test = (test) />
 
+    <cfset result.filter(function(){
+        result = "Test";
+    }) />
+
     <cfreturn result />
 </cffunction>
 
@@ -244,7 +250,7 @@ get results
 
 (fragment
       (cf_tag
-        (cf_function
+        (cf_function_tag
           (cf_function_keyword)
           (cf_attribute
             (cf_attribute_name)
@@ -264,7 +270,7 @@ get results
               (cf_variable)))
           (cf_tag_end)
           (cf_tag
-            (cf_argument
+            (cf_argument_tag
               (cf_argument_keyword)
               (cf_attribute
                 (cf_attribute_name)
@@ -286,7 +292,7 @@ get results
                 (cf_variable)
                 (cf_assignment)
                 (cf_variable)
-                (cf_parens_empty))
+                (cf_parens))
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
@@ -305,6 +311,16 @@ get results
                   (cf_variable)
                   (cf_period)
                   (cf_variable)))
+              (cf_tag_selfclose_end)))
+          (cf_tag
+            (cf_set
+              (cf_variable)
+              (cf_assignment)
+              (cf_dblquotes
+                (cf_hash
+                  (cf_variable)
+                  (cf_associative
+                    (cf_variable))))
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
@@ -333,10 +349,9 @@ get results
                 (cf_parens
                   (cf_variable)
                   (cf_assignment)
-                  (cf_bracket
+                  (cf_bracket_expression
                     (cf_dblquotes
                       (cf_variable))
-                    (cf_objectkeyassign)
                     (cf_variable))))
               (cf_tag_selfclose_end)))
           (element
@@ -370,10 +385,26 @@ get results
                 (cf_variable))
               (cf_tag_selfclose_end)))
           (cf_tag
-            (cf_return
+            (cf_set
+              (cf_function_call
+                (cf_variable)
+                (cf_period)
+                (cf_variable)
+                (cf_parens
+                  (cf_function
+                    (cf_function_keyword)
+                    (cf_parens)
+                    (cf_bracket_function
+                      (expression_statement
+                        (cf_variable)
+                        (cf_assignment)
+                        (cf_dblquotes
+                          (cf_variable)))))))
+              (cf_tag_selfclose_end)))
+          (cf_tag
+            (cf_return_tag
               (cf_return_keyword)
-              (cf_attribute
-                (cf_attribute_name))
+              (cf_variable)
               (cf_tag_selfclose_end)))
           (cf_tag_close)
           (cf_function_keyword)

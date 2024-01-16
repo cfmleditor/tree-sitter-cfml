@@ -379,6 +379,9 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
     }
 
     switch (lexer->lookahead) {
+        case ';':
+            return false;
+        break;
         case '<':
             lexer->mark_end(lexer);
             lexer->advance(lexer, false);

@@ -15,6 +15,7 @@ module.exports = grammar({
 
   extras: $ => [
     $.comment,
+    ';',
     /\s+/,
   ],
 
@@ -32,6 +33,8 @@ module.exports = grammar({
 
   conflicts: $ => [
     [$.cf_dblquotes_empty, $.cf_dblquotes],
+    [$.cf_bracket_expression, $.cf_function_call],
+    [$.cf_return, $.cf_function_call],
   ],
 
   rules: {
@@ -48,14 +51,14 @@ module.exports = grammar({
     _doctype: _ => /[Dd][Oo][Cc][Tt][Yy][Pp][Ee]/,
 
     cf_condition: ($) => choice(
-        /([^<>\[\]="\']+)/,
+        /([^<>\[\]="\';]+)/,
     ),
 
     _cf_tag_start: $ => /<cf/i,
     cf_tag_end: $ => '>',
     cf_tag_selfclose_end: $ => seq(optional('/'),'>'),
-    text: _ => /[^\s<>}{\(\)#\[\]=,."\']+/,
-    cf_variable: _ => /[^\s<>}{\(\)#\[\]=,."\']+/,
+    text: _ => /[^\s<>}{\(\)#\[\]=,."\'`;]+/,
+    cf_variable: _ => /[^\s<>}{\(\)#\[\]=,."\'`;]+/,
     cf_tag_close: $ => /<\/cf/i,
     cf_true: $ => token('true'),
     cf_false: $ => token('false'),
@@ -139,34 +142,63 @@ module.exports = grammar({
       ']',
     ),
     
-    cf_bracket: $ => seq(
+    cf_bracket_function: $ => seq(
       '{',
-      $._cf_expression,
+      repeat($._cf_function_statement),
       '}',
     ),
 
+    cf_bracket_expression: $ => seq(
+      '{',
+      repeat($._cf_expression),
+      '}',
+    ),
+
+    _cf_function_statement: $ => choice(
+      // Maybe nested functions in the future ?? $.cf_function, 
+      $.expression_statement,
+      $.cf_return,
+    ),
+
+    expression_statement: $ => seq(
+      $._cf_expression,
+      $._semicolon,
+    ),
+    
     _cf_expression: $ => choice(
-      prec.right(1,seq($.cf_dblquotes)),
-      prec.right(1,seq($.cf_hash)),
-      prec.right(2,seq($.cf_dblquotes_empty)),
-      prec.right(2,seq($.cf_bracket)),
-      prec.right(2,$.cf_function_call),
-      prec.right(2,seq($._cf_expression,$.cf_associative)),
+      prec.right(1,$.cf_dblquotes),
+      prec.right(1,$.cf_hash),
+      prec.right(2,$.cf_dblquotes_empty),
+      prec.right(2,$.cf_function),
+      prec.right(2,seq(optional($._cf_expression),$.cf_associative)),
+      prec.right(2,seq(optional($._cf_expression),$.cf_period,$._cf_expression)),
       prec.right(2,seq($._cf_expression,$.cf_assignment,$._cf_expression)),
       prec.right(2,seq($._cf_expression,$.cf_objectkeyassign,$._cf_expression)),
-      prec.right(3,seq($._cf_expression,$.cf_period,$._cf_expression)),
-      prec.right(4,seq($._cf_expression,$.cf_comma,$._cf_expression)),
+      prec.right(4,seq($.cf_period,$._cf_expression)),
+      prec.right(4,seq($.cf_comma,$._cf_expression)),
       prec.right(5,seq($._cf_expression,$.cf_operator,$._cf_expression)),
+      prec.right(6,seq($.cf_function_call,optional($._cf_expression))),
       prec.right(6,$.cf_parens),
-      prec.right(6,$.cf_parens_empty),
+      prec.right(6,$.cf_bracket_expression),
       prec.right(6,$.cf_true),
       prec.right(6,$.cf_false),
       prec.right(6,$.cf_variable),
     ),
 
+    cf_function: $ => seq(
+      $.cf_function_keyword,
+      $.cf_parens,
+      $.cf_bracket_function,
+    ),
+
+    cf_return: $ => seq(
+      $.cf_return_keyword,
+      $._cf_expression,
+    ),
+
     cf_function_call: $ => seq(
       $._cf_expression,
-      choice($.cf_parens,$.cf_parens_empty)
+      $.cf_parens
     ),
 
     cf_period: $ => /\./,
@@ -188,16 +220,11 @@ module.exports = grammar({
 
     cf_parens: $ => seq(
       '(',
-      $._cf_expression,
+      optional($._cf_expression),
       ')',
     ),
 
-    cf_parens_empty: $ => seq(
-      '(',
-      ')',
-    ),
-
-    cf_function: $ => seq(
+    cf_function_tag: $ => seq(
       $.cf_function_keyword,
       repeat($.cf_attribute),
       $.cf_tag_end,
@@ -207,15 +234,15 @@ module.exports = grammar({
       $.cf_tag_end,
     ),
 
-    cf_argument: $ => seq(
+    cf_argument_tag: $ => seq(
       $.cf_argument_keyword,
       repeat($.cf_attribute),
       $.cf_tag_selfclose_end,
     ),
 
-    cf_return: $ => seq(
+    cf_return_tag: $ => seq(
       $.cf_return_keyword,
-      repeat($.cf_attribute),
+      $._cf_expression,
       $.cf_tag_selfclose_end,
     ),
 
@@ -234,7 +261,7 @@ module.exports = grammar({
     )),
 
     cf_set: $ => prec.right(1, seq(
-      'set',
+      token('set'),
       optional($.cf_var),
       $._cf_expression,
       $.cf_tag_selfclose_end
@@ -291,21 +318,21 @@ module.exports = grammar({
     cf_tag: $ => seq(
       $._cf_tag_start,
       choice(
-        $.cf_function,
-        $.cf_argument,
-        $.cf_return,
+        $.cf_function_tag,
+        $.cf_argument_tag,
+        $.cf_return_tag,
         $.cf_ifstatement,
         $.cf_set
       ),
     ),
 
-    _cf_statement: $ => choice(
-      prec.right(1,$.cf_dblquotes),
-      prec.right(1,$.cf_bracket),
-      prec.right(2,$.cf_dblquotes_empty),
-      prec.right(3,$.cf_parens),
-      prec.right(4,$.cf_associative),
-    ),
+    // _cf_statement: $ => choice(
+    //   prec.right(1,$.cf_dblquotes),
+    //   prec.right(2,$.cf_dblquotes_empty),
+    //   prec.right(3,$.cf_parens),
+    //   prec.right(4,$.cf_associative),
+    //   prec.right(5,seq($._cf_expression,$.cf_assignment,$._cf_expression)),
+    // ),
 
     entity: _ => /&(#([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
 
@@ -314,13 +341,13 @@ module.exports = grammar({
       seq('"', optional(alias(/[^"]+/, $.attribute_value)), '"'),
     ),
 
-    cf_var: $ => /(\svar\s)+/i,
-    cf_if_keyword: $ => /(if)+/i,
-    cf_elseif_keyword: $ => /(elseif)+/i,
-    cf_else_keyword: $ => /(else)+/i,
-    cf_function_keyword: $ => /(function)+/i,
-    cf_argument_keyword: $ => /(argument)+/i,
-    cf_return_keyword: $ => /(return)+/i,
-
+    cf_var: $ => token('var'),
+    cf_if_keyword: $ => token('if'),
+    cf_elseif_keyword: $ => token('elseif'),
+    cf_else_keyword: $ => token('else'),
+    cf_function_keyword: $ => token('function'),
+    cf_argument_keyword: $ => token('argument'),
+    cf_return_keyword: $ => token('return'),
+    _semicolon: $ => ';',
   },
 });
