@@ -35,6 +35,9 @@ module.exports = grammar({
     [$.cf_dblquotes_empty, $.cf_dblquotes],
     [$.cf_bracket_expression, $.cf_function_call],
     [$.cf_return, $.cf_function_call],
+    [$._node, $.cf_function],
+    [$.text, $.cf_variable],
+    [$.cf_associative, $.cf_function_call],
   ],
 
   rules: {
@@ -71,6 +74,7 @@ module.exports = grammar({
       $.element,
       $.cf_tag,
       $.cf_hash,
+      $.cf_function,
       $.script_element,
       $.style_element,
     ),
@@ -138,7 +142,7 @@ module.exports = grammar({
 
     cf_associative: $ => seq(
       '[',
-      $._cf_expression,
+      optional($._cf_expression),
       ']',
     ),
     
@@ -186,8 +190,11 @@ module.exports = grammar({
     ),
 
     cf_function: $ => seq(
+      optional(alias($.text,$.cf_function_access)),
+      optional($.cf_function_returntype),
       $.cf_function_keyword,
-      $.cf_parens,
+      optional($.cf_function_name),
+      $.cf_function_arguments,
       $.cf_bracket_function,
     ),
 
@@ -217,10 +224,46 @@ module.exports = grammar({
       '"',
     ),
 
-
     cf_parens: $ => seq(
       '(',
       optional($._cf_expression),
+      ')',
+    ),
+
+    cf_function_name: $ => choice(
+      $.text,
+    ),
+
+    cf_function_returntype: $ => choice(
+      token('boolean'),
+    ),
+
+    cf_function_argument_required: $ => choice(
+      token('required'),
+    ),
+
+    cf_function_argument_type: $ => choice(
+      token('any'),
+    ),
+
+    cf_function_argument_name: $ => choice(
+      $.text,
+    ),
+
+  //required numeric bites
+
+    cf_function_arguments: $ => seq(
+      '(',
+        repeat(seq(
+          optional($.cf_function_argument_required),
+          optional($.cf_function_argument_type),
+          $.cf_function_argument_name,
+          optional(seq(
+            '=',
+            $._cf_expression,
+          )),
+          optional(',')
+        )),
       ')',
     ),
 

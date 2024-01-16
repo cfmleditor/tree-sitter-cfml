@@ -394,7 +394,7 @@ get results
                 (cf_parens
                   (cf_function
                     (cf_function_keyword)
-                    (cf_parens)
+                    (cf_function_arguments)
                     (cf_bracket_function
                       (expression_statement
                         (cf_variable)
@@ -414,3 +414,64 @@ get results
           (cf_function_keyword)
           (cf_tag_end))))
      
+===================================
+script function
+===================================
+public boolean function myFunction(required any myArgument=""){
+  return true; 
+}
+
+public function myFunction(required any myArgument={}){
+  return true; 
+}
+
+function myFunction(required any myArgument=[]){
+  return true; 
+}
+---
+(fragment
+      (cf_function
+        (cf_function_access)
+        (cf_function_returntype)
+        (cf_function_keyword)
+        (cf_function_name
+          (text))
+        (cf_function_arguments
+          (cf_function_argument_required)
+          (cf_function_argument_type)
+          (cf_function_argument_name
+            (text))
+          (cf_dblquotes_empty))
+        (cf_bracket_function
+          (cf_return
+            (cf_return_keyword)
+            (cf_true))))
+      (cf_function
+        (cf_function_access)
+        (cf_function_keyword)
+        (cf_function_name
+          (text))
+        (cf_function_arguments
+          (cf_function_argument_required)
+          (cf_function_argument_type)
+          (cf_function_argument_name
+            (text))
+          (cf_bracket_expression))
+        (cf_bracket_function
+          (cf_return
+            (cf_return_keyword)
+            (cf_true))))
+      (cf_function
+        (cf_function_keyword)
+        (cf_function_name
+          (text))
+        (cf_function_arguments
+          (cf_function_argument_required)
+          (cf_function_argument_type)
+          (cf_function_argument_name
+            (text))
+          (cf_associative))
+        (cf_bracket_function
+          (cf_return
+            (cf_return_keyword)
+            (cf_true)))))
