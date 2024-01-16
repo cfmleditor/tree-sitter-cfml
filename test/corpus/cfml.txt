@@ -240,6 +240,7 @@ get results
 
     <cfset result.filter(function(){
         result = "Test";
+        return result;
     }) />
 
     <cfreturn result />
@@ -399,7 +400,10 @@ get results
                         (cf_variable)
                         (cf_assignment)
                         (cf_dblquotes
-                          (cf_variable)))))))
+                          (cf_variable)))
+                      (cf_return
+                        (cf_return_keyword)
+                        (cf_variable))))))
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_return_tag
