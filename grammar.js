@@ -208,18 +208,23 @@ module.exports = grammar({
       $.cf_assignment,
       $._cf_expression,
     )),
+
+    cf_concat: $ => seq(
+       '&',
+    ),
     
     _cf_expression: $ => choice(
       $._cf_member_expression,
       prec.right(1,$.cf_hash),
       prec.right(2,$.cf_function),
       prec.right(2,seq(optional($._cf_expression),$.cf_period,$._cf_expression)),
+      prec.right(2,seq(optional($._cf_expression),$.cf_concat,$._cf_expression)),
       prec.right(2,seq($._cf_expression,$.cf_objectkeyassign,$._cf_expression)),
       prec.right(4,seq($.cf_period,$._cf_expression)),
       prec.right(4,seq($.cf_comma,$._cf_expression)),
       prec.right(5,seq($.cf_prefix_operator,$._cf_expression)),
       prec.right(5,seq($._cf_expression,$.cf_operator,$._cf_expression)),
-      prec.right(6,seq($.cf_function_call,optional($._cf_expression))),
+      prec.right(6,seq($.cf_function_call)),
       prec.right(6,$.cf_expression_parens),
       prec.right(6,$.cf_true),
       prec.right(6,$.cf_false),
@@ -273,7 +278,7 @@ module.exports = grammar({
       alias(
         repeat(
           choice(
-            /[^"]/,
+            /[^']/,
             $.cf_hash,
           ),
         ),
@@ -366,9 +371,22 @@ module.exports = grammar({
       token('</cffunction>'),
     ),
 
+    cf_loop_tag: $ => seq(
+      token('<cfloop'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+      token('</cfloop>'),
+    ),
+
     cf_argument_tag: $ => seq(
       token('<cfargument'),
       repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+    ),
+
+    cf_break_tag: $ => seq(
+      token('<cfbreak'),
       $.cf_tag_selfclose_end,
     ),
 
@@ -401,7 +419,7 @@ module.exports = grammar({
 
     cf_elseif_tag: $ => seq(
       token('<cfelseif'),
-      $.cf_condition,
+      $._cf_expression,
       $._cf_tag_end,
       repeat($._node),
     ),
@@ -451,6 +469,8 @@ module.exports = grammar({
       alias($.cf_component_tag,$.cf_component),
       alias($.cf_function_tag,$.cf_function),
       alias($.cf_argument_tag,$.cf_argument),
+      alias($.cf_loop_tag,$.cf_loop),
+      alias($.cf_break_tag,$.cf_break),
       alias($.cf_return_tag,$.cf_return),
     ),
 

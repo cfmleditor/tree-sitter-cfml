@@ -668,6 +668,15 @@
         ]
       }
     },
+    "cf_concat": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "&"
+        }
+      ]
+    },
     "_cf_expression": {
       "type": "CHOICE",
       "members": [
@@ -712,6 +721,35 @@
               {
                 "type": "SYMBOL",
                 "name": "cf_period"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_cf_expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_cf_expression"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "cf_concat"
               },
               {
                 "type": "SYMBOL",
@@ -822,18 +860,6 @@
               {
                 "type": "SYMBOL",
                 "name": "cf_function_call"
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_cf_expression"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
               }
             ]
           }
@@ -1099,7 +1125,7 @@
               "members": [
                 {
                   "type": "PATTERN",
-                  "value": "[^\"]"
+                  "value": "[^']"
                 },
                 {
                   "type": "SYMBOL",
@@ -1412,6 +1438,43 @@
         }
       ]
     },
+    "cf_loop_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfloop"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cfloop>"
+          }
+        }
+      ]
+    },
     "cf_argument_tag": {
       "type": "SEQ",
       "members": [
@@ -1427,6 +1490,22 @@
           "content": {
             "type": "SYMBOL",
             "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        }
+      ]
+    },
+    "cf_break_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfbreak"
           }
         },
         {
@@ -1558,7 +1637,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "cf_condition"
+          "name": "_cf_expression"
         },
         {
           "type": "SYMBOL",
@@ -1731,6 +1810,24 @@
           },
           "named": true,
           "value": "cf_argument"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_loop_tag"
+          },
+          "named": true,
+          "value": "cf_loop"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_break_tag"
+          },
+          "named": true,
+          "value": "cf_break"
         },
         {
           "type": "ALIAS",

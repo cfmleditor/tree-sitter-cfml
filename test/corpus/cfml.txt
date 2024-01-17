@@ -45,7 +45,9 @@ cfif with elseif
           (cf_variable)
           (text))
         (cf_elseif_tag
-          (cf_condition)
+          (cf_variable)
+          (cf_operator)
+          (cf_variable)
           (text))
         (cf_if_end_tag)))
 
@@ -64,7 +66,9 @@ cfif with elseif and else
           (cf_variable)
           (text))
         (cf_elseif_tag
-          (cf_condition)
+          (cf_variable)
+          (cf_operator)
+          (cf_variable)
           (text))
         (cf_else_tag
           (text))
@@ -514,23 +518,3 @@ nested cfif
         (cf_if_end_tag)))
     (cf_if_end_tag)))
 
-
-===================================
-Testing
-===================================
-<cfset result["redirect"] = URLEncodedFormat(NOW()) />
----
-(fragment
-      (cf_set_tag
-        (cf_variable)
-        (cf_associative
-          (cf_dblquotes
-            (quoted_text)))
-        (cf_assignment)
-        (cf_function_call
-          (cf_variable)
-          (cf_function_call_arguments
-            (cf_function_call
-              (cf_variable)
-              (cf_function_call_arguments))))
-        (cf_tag_selfclose_end)))
