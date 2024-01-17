@@ -352,115 +352,135 @@ get results
           (cf_tag_selfclose_end))))
      
 ===================================
-script function
+cfscript
 ===================================
-public boolean function myFunction(required any myArgument=""){
-  return true; 
-}
+<cfscript>
+  public boolean function myFunction(required any myArgument=""){
+    return true; 
+  }
 
-public function myFunction(required any myArgument={}){
-  return true; 
-}
+  public function myFunction(required any myArgument={}){
+    return true; 
+  }
 
-function myFunction(required any myArgument=[]){
-  return true; 
-}
+  function myFunction(required any myArgument=[]){
+    return true; 
+  }
 
-cars = fn("abc,test","abc");
+  cars = fn("abc,test","abc");
 
-cars = fn(test="abc",abc="test",abc);
+  cars = fn(test="abc",abc="test",abc);
 
-cars = fn["Test"](test="abc",abc="test");
+  cars = fn["Test"](test="abc",abc="test");
+
+  test().test();
+
+</cfscript>
 ---
 (fragment
-  (cf_function
-    (cf_function_access)
-    (cf_function_returntype)
-    (cf_function_keyword)
-    (cf_function_name
-      (cf_variable))
-    (cf_function_arguments
-      (cf_function_argument_required)
-      (cf_function_argument_type)
-      (cf_function_argument_name
-        (cf_variable))
-      (cf_dblquotes))
-    (cf_bracket_function
-      (cf_return
-        (cf_return_keyword)
-        (cf_true))))
-  (cf_function
-    (cf_function_access)
-    (cf_function_keyword)
-    (cf_function_name
-      (cf_variable))
-    (cf_function_arguments
-      (cf_function_argument_required)
-      (cf_function_argument_type)
-      (cf_function_argument_name
-        (cf_variable))
-      (cf_bracket_expression))
-    (cf_bracket_function
-      (cf_return
-        (cf_return_keyword)
-        (cf_true))))
-  (cf_function
-    (cf_function_keyword)
-    (cf_function_name
-      (cf_variable))
-    (cf_function_arguments
-      (cf_function_argument_required)
-      (cf_function_argument_type)
-      (cf_function_argument_name
-        (cf_variable))
-      (cf_associative))
-    (cf_bracket_function
-      (cf_return
-        (cf_return_keyword)
-        (cf_true))))
-  (cf_variable)
-  (cf_assignment)
-  (cf_function_call
-    (cf_function_call
-      (cf_variable)
-      (cf_function_call_arguments
-        (cf_dblquotes
-          (quoted_text))
-        (cf_comma)
-        (cf_dblquotes
-          (quoted_text))))
-    (cf_variable)
-    (cf_assignment)
-    (cf_function_call
-      (cf_variable)
-      (cf_function_call_arguments
-        (cf_variable)
-        (cf_assignment)
-        (cf_dblquotes
-          (quoted_text))
-        (cf_comma)
-        (cf_variable)
-        (cf_assignment)
-        (cf_dblquotes
-          (quoted_text))
-        (cf_comma)
-        (cf_variable)))
-    (cf_variable)
-    (cf_assignment)
-    (cf_variable)
-    (cf_associative
-      (cf_dblquotes
-        (quoted_text)))
-    (cf_function_call_arguments
-      (cf_variable)
-      (cf_assignment)
-      (cf_dblquotes
-        (quoted_text))
-      (cf_comma)
-      (cf_variable)
-      (cf_assignment)
-      (cf_dblquotes
-        (quoted_text)))))
+      (cf_script
+        (cf_script_expression
+          (cf_function
+            (cf_function_access)
+            (cf_function_returntype)
+            (cf_function_keyword)
+            (cf_function_name
+              (cf_variable))
+            (cf_function_arguments
+              (cf_function_argument_required)
+              (cf_function_argument_type)
+              (cf_function_argument_name
+                (cf_variable))
+              (cf_dblquotes))
+            (cf_bracket_function
+              (cf_return
+                (cf_return_keyword)
+                (cf_true)))))
+        (cf_script_expression
+          (cf_function
+            (cf_function_access)
+            (cf_function_keyword)
+            (cf_function_name
+              (cf_variable))
+            (cf_function_arguments
+              (cf_function_argument_required)
+              (cf_function_argument_type)
+              (cf_function_argument_name
+                (cf_variable))
+              (cf_bracket_expression))
+            (cf_bracket_function
+              (cf_return
+                (cf_return_keyword)
+                (cf_true)))))
+        (cf_script_expression
+          (cf_function
+            (cf_function_keyword)
+            (cf_function_name
+              (cf_variable))
+            (cf_function_arguments
+              (cf_function_argument_required)
+              (cf_function_argument_type)
+              (cf_function_argument_name
+                (cf_variable))
+              (cf_associative))
+            (cf_bracket_function
+              (cf_return
+                (cf_return_keyword)
+                (cf_true)))))
+        (cf_script_expression
+          (cf_variable)
+          (cf_assignment)
+          (cf_function_call
+            (cf_variable)
+            (cf_function_call_arguments
+              (cf_dblquotes
+                (quoted_text))
+              (cf_comma)
+              (cf_dblquotes
+                (quoted_text)))))
+        (cf_script_expression
+          (cf_variable)
+          (cf_assignment)
+          (cf_function_call
+            (cf_variable)
+            (cf_function_call_arguments
+              (cf_variable)
+              (cf_assignment)
+              (cf_dblquotes
+                (quoted_text))
+              (cf_comma)
+              (cf_variable)
+              (cf_assignment)
+              (cf_dblquotes
+                (quoted_text))
+              (cf_comma)
+              (cf_variable))))
+        (cf_script_expression
+          (cf_variable)
+          (cf_assignment)
+          (cf_function_call
+            (cf_variable)
+            (cf_associative
+              (cf_dblquotes
+                (quoted_text)))
+            (cf_function_call_arguments
+              (cf_variable)
+              (cf_assignment)
+              (cf_dblquotes
+                (quoted_text))
+              (cf_comma)
+              (cf_variable)
+              (cf_assignment)
+              (cf_dblquotes
+                (quoted_text)))))
+        (cf_script_expression
+          (cf_function_call
+            (cf_variable)
+            (cf_function_call_arguments))
+          (cf_period)
+          (cf_function_call
+            (cf_variable)
+            (cf_function_call_arguments)))))
 
 
 ===================================
@@ -493,3 +513,24 @@ nested cfif
           (text))
         (cf_if_end_tag)))
     (cf_if_end_tag)))
+
+
+===================================
+Testing
+===================================
+<cfset result["redirect"] = URLEncodedFormat(NOW()) />
+---
+(fragment
+      (cf_set_tag
+        (cf_variable)
+        (cf_associative
+          (cf_dblquotes
+            (quoted_text)))
+        (cf_assignment)
+        (cf_function_call
+          (cf_variable)
+          (cf_function_call_arguments
+            (cf_function_call
+              (cf_variable)
+              (cf_function_call_arguments))))
+        (cf_tag_selfclose_end)))

@@ -243,10 +243,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "cf_function"
-        },
-        {
-          "type": "SYMBOL",
           "name": "script_element"
         },
         {
@@ -255,7 +251,55 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_cf_assignment_expression"
+          "name": "cf_script"
+        }
+      ]
+    },
+    "cf_script": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfscript>"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_script_expression"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cfscript>"
+          }
+        }
+      ]
+    },
+    "cf_script_expression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cf_function"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_cf_expression"
+            },
+            {
+              "type": "STRING",
+              "value": ";"
+            }
+          ]
         }
       ]
     },
@@ -605,13 +649,13 @@
     },
     "_cf_assignment_expression": {
       "type": "PREC_RIGHT",
-      "value": 3,
+      "value": 1,
       "content": {
         "type": "SEQ",
         "members": [
           {
             "type": "SYMBOL",
-            "name": "cf_variable"
+            "name": "_cf_expression"
           },
           {
             "type": "SYMBOL",
@@ -1871,6 +1915,10 @@
     [
       "_cf_expression",
       "cf_function_call"
+    ],
+    [
+      "cf_script_expression",
+      "_cf_member_expression"
     ]
   ],
   "precedences": [],

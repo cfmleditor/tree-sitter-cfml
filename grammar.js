@@ -40,6 +40,7 @@ module.exports = grammar({
     [$.cf_variable, $.text],
     [$.cf_associative, $.cf_function_call],
     [$._cf_expression, $.cf_function_call],
+    [$.cf_script_expression, $._cf_member_expression],
   ],
 
   rules: {
@@ -96,10 +97,20 @@ module.exports = grammar({
       $.element,
       $._cf_tag,
       $.cf_hash,
-      $.cf_function,
       $.script_element,
       $.style_element,
-      $._cf_assignment_expression,
+      $.cf_script,
+    ),
+
+    cf_script: $ => seq(
+      token('<cfscript>'),
+      repeat($.cf_script_expression),
+      token('</cfscript>'),
+    ),  
+
+    cf_script_expression: $ => choice(
+        $.cf_function,
+        seq($._cf_expression,';'),
     ),
       
     element: $ => choice(
@@ -192,8 +203,8 @@ module.exports = grammar({
       $._semicolon,
     ),
 
-    _cf_assignment_expression: $ => prec.right(3,seq(
-      $.cf_variable,
+    _cf_assignment_expression: $ => prec.right(1,seq(
+      $._cf_expression,
       $.cf_assignment,
       $._cf_expression,
     )),
