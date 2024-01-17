@@ -395,6 +395,10 @@
           "named": true
         },
         {
+          "type": "cf_hash_empty",
+          "named": true
+        },
+        {
           "type": "cf_if_statement_tag",
           "named": true
         },
@@ -495,6 +499,10 @@
           "named": true
         },
         {
+          "type": "cf_hash_empty",
+          "named": true
+        },
+        {
           "type": "cf_if_statement_tag",
           "named": true
         },
@@ -547,7 +555,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "cf_argument",
@@ -607,6 +615,10 @@
         },
         {
           "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_hash_empty",
           "named": true
         },
         {
@@ -833,6 +845,10 @@
         },
         {
           "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_hash_empty",
           "named": true
         },
         {
@@ -1313,6 +1329,11 @@
     }
   },
   {
+    "type": "cf_hash_empty",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "cf_if_end_tag",
     "named": true,
     "fields": {}
@@ -1350,7 +1371,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "cf_argument",
@@ -1410,6 +1431,10 @@
         },
         {
           "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_hash_empty",
           "named": true
         },
         {
@@ -1521,6 +1546,10 @@
         },
         {
           "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_hash_empty",
           "named": true
         },
         {
@@ -1948,6 +1977,10 @@
           "named": true
         },
         {
+          "type": "cf_hash_empty",
+          "named": true
+        },
+        {
           "type": "cf_if_statement_tag",
           "named": true
         },
@@ -2141,6 +2174,10 @@
           "named": true
         },
         {
+          "type": "cf_hash_empty",
+          "named": true
+        },
+        {
           "type": "cf_if_statement_tag",
           "named": true
         },
@@ -2212,6 +2249,10 @@
       "types": [
         {
           "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_hash_empty",
           "named": true
         }
       ]
@@ -2319,6 +2360,10 @@
     "named": false
   },
   {
+    "type": "##",
+    "named": false
+  },
+  {
     "type": "&",
     "named": false
   },
@@ -2339,7 +2384,19 @@
     "named": false
   },
   {
+    "type": "*",
+    "named": false
+  },
+  {
+    "type": "+",
+    "named": false
+  },
+  {
     "type": ",",
+    "named": false
+  },
+  {
+    "type": "-",
     "named": false
   },
   {
@@ -2475,7 +2532,15 @@
     "named": false
   },
   {
+    "type": "LT",
+    "named": false
+  },
+  {
     "type": "LTE",
+    "named": false
+  },
+  {
+    "type": "NEQ",
     "named": false
   },
   {
@@ -2553,6 +2618,14 @@
   {
     "type": "entity",
     "named": true
+  },
+  {
+    "type": "eq",
+    "named": false
+  },
+  {
+    "type": "neq",
+    "named": false
   },
   {
     "type": "raw_text",

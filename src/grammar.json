@@ -130,6 +130,27 @@
           "type": "TOKEN",
           "content": {
             "type": "STRING",
+            "value": "eq"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "NEQ"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "neq"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
             "value": "GTE"
           }
         },
@@ -138,6 +159,13 @@
           "content": {
             "type": "STRING",
             "value": "LTE"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "LT"
           }
         },
         {
@@ -166,6 +194,27 @@
           "content": {
             "type": "STRING",
             "value": "==="
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "+"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "*"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "-"
           }
         },
         {
@@ -240,6 +289,10 @@
         {
           "type": "SYMBOL",
           "name": "cf_hash"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_hash_empty"
         },
         {
           "type": "SYMBOL",
@@ -540,21 +593,41 @@
       ]
     },
     "cf_hash": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "#"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_cf_expression"
-        },
-        {
-          "type": "STRING",
-          "value": "#"
-        }
-      ]
+      "type": "PREC_RIGHT",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "#"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_expression"
+          },
+          {
+            "type": "STRING",
+            "value": "#"
+          }
+        ]
+      }
+    },
+    "cf_hash_empty": {
+      "type": "PREC_RIGHT",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "##"
+            }
+          }
+        ]
+      }
     },
     "cf_associative": {
       "type": "SEQ",
@@ -1177,6 +1250,10 @@
                 {
                   "type": "SYMBOL",
                   "name": "cf_hash"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "cf_hash_empty"
                 }
               ]
             }
@@ -1577,8 +1654,11 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "_cf_expression"
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_cf_expression"
+          }
         },
         {
           "type": "SYMBOL",
@@ -1636,8 +1716,11 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "_cf_expression"
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_cf_expression"
+          }
         },
         {
           "type": "SYMBOL",

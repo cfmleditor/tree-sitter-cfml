@@ -499,7 +499,12 @@ nested cfif
       test
   </cfif>
   
+  #test# 
+
+  ##
+
 </cfif>
+
 ---
 
 (fragment
@@ -515,6 +520,10 @@ nested cfif
             (cf_operator)
             (cf_true))
           (text))
-        (cf_if_end_tag)))
+        (cf_if_end_tag))
+      (cf_hash
+        (cf_variable))
+      (cf_hash_empty))
     (cf_if_end_tag)))
+
 

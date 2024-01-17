@@ -73,12 +73,20 @@ module.exports = grammar({
       token('AND'),
       token('OR'),
       token('EQ'),
+      token('eq'),
+      token('NEQ'),
+      token('neq'),
       token('GTE'),
       token('LTE'),
+      token('LT'),
       token('IS'),
       token('GT'),
       token('>='),
       token('==='),
+      token('+'),
+      token('*'),
+      //token('/'),
+      token('-'),
       token('=='),
       token('<='),
       token('&&'),
@@ -97,6 +105,7 @@ module.exports = grammar({
       $.element,
       $._cf_tag,
       $.cf_hash,
+      $.cf_hash_empty,
       $.script_element,
       $.style_element,
       $.cf_script,
@@ -168,11 +177,15 @@ module.exports = grammar({
       $.end_tag,
     ),
 
-    cf_hash: $ => seq(
+    cf_hash: $ => prec.right(2,seq(
       '#',
       $._cf_expression,
       '#',
-    ),
+    )),
+
+    cf_hash_empty: $ => prec.right(1,seq(
+      token('##'),
+    )),
 
     cf_associative: $ => seq(
       '[',
@@ -299,6 +312,7 @@ module.exports = grammar({
           choice(
             /[^"]/,
             $.cf_hash,
+            $.cf_hash_empty
           ),
         ),
         $.quoted_text,
@@ -405,7 +419,7 @@ module.exports = grammar({
 
     cf_if_tag: $ => seq(
       token('<cfif'),
-      $._cf_expression,
+      repeat($._cf_expression),
       $._cf_tag_end,
       repeat($._node),
     ),
@@ -419,7 +433,7 @@ module.exports = grammar({
 
     cf_elseif_tag: $ => seq(
       token('<cfelseif'),
-      $._cf_expression,
+      repeat($._cf_expression),
       $._cf_tag_end,
       repeat($._node),
     ),
