@@ -36,8 +36,8 @@ module.exports = grammar({
     [$.cf_singlequotes_empty, $.cf_singlequotes],
     [$.cf_bracket_expression, $.cf_function_call],
     [$.cf_return, $.cf_function_call],
-    [$._node, $.cf_function],
-    [$.text, $.cf_variable],
+    //[$._node, $.cf_function],
+    [$.cf_variable, $.text],
     [$.cf_associative, $.cf_function_call],
     [$._cf_expression, $.cf_function_call],
   ],
@@ -59,41 +59,49 @@ module.exports = grammar({
         /([^<>\[\]="\';]+)/,
     ),
 
-    _cf_tag_start: $ => /<cf/i,
-    cf_tag_end: $ => '>',
+    cf_tag_start: $ => '<',
+    _cf_tag_end: $ => '>',
     cf_tag_selfclose_end: $ => seq(optional('/'),'>'),
-    text: _ => /[^\s<>}{\(\)#\[\]=,."\'`;&]+/,
-    cf_variable: _ => /[^\s<>}{\(\)#\[\]=,."\'`;&]+/,
+    text: $ => /[^\s<>}{\(\)#\[\]=,."\'`;&]+/,
+    cf_variable: $ => /[^\s<>}{\(\)#\[\]=,."\'`;&]+/,
     cf_tag_close: $ => /<\/cf/i,
     cf_true: $ => token('true'),
     cf_false: $ => token('false'),
     
     cf_operator: $ => choice(
-        token('AND'),
-        token('OR'),
-        token('EQ'),
-        token('GTE'),
-        token('LTE'),
-        token('IS'),
-        token('GT'),
-        token('==='),
+      token('AND'),
+      token('OR'),
+      token('EQ'),
+      token('GTE'),
+      token('LTE'),
+      token('IS'),
+      token('GT'),
+      token('>='),
+      token('==='),
+      token('=='),
+      token('<='),
+      token('&&'),
+      token('||'),
     ),
     
-    cf_prefix_operator: $ => token('NOT'),
+    cf_prefix_operator: $ => choice(
+      token('NOT'),
+      '!',
+    ),
 
     _node: $ => choice(
       $.doctype,
       $.entity,
       $.text,
       $.element,
-      $.cf_tag,
+      $._cf_tag,
       $.cf_hash,
       $.cf_function,
       $.script_element,
       $.style_element,
       $._cf_assignment_expression,
     ),
-
+      
     element: $ => choice(
       seq(
         $.start_tag,
@@ -218,13 +226,11 @@ module.exports = grammar({
     ),
 
     cf_component_tag: $ => seq(
-      $.cf_component_keyword,
+      token('<cfcomponent'),
       repeat($.cf_attribute),
-      $.cf_tag_end,
+      $._cf_tag_end,
       repeat($._node),
-      $.cf_tag_close,
-      $.cf_component_keyword,
-      $.cf_tag_end,
+      token('</cfcomponent>'),
     ),
 
     cf_function: $ => seq(
@@ -342,65 +348,61 @@ module.exports = grammar({
     ),
 
     cf_function_tag: $ => seq(
-      $.cf_function_keyword,
+      token('<cffunction'),
       repeat($.cf_attribute),
-      $.cf_tag_end,
+      $._cf_tag_end,
       repeat($._node),
-      $.cf_tag_close,
-      $.cf_function_keyword,
-      $.cf_tag_end,
+      token('</cffunction>'),
     ),
 
     cf_argument_tag: $ => seq(
-      $.cf_argument_keyword,
+      token('<cfargument'),
       repeat($.cf_attribute),
       $.cf_tag_selfclose_end,
     ),
 
     cf_return_tag: $ => seq(
-      $.cf_return_keyword,
+      token('<cfreturn'),
       $._cf_expression,
       $.cf_tag_selfclose_end,
     ),
 
-    cf_ifstatement: $ => seq(
-      $.cf_if,
-      repeat($.cf_elseif),
-      optional($.cf_else),
-      $.cf_if_end,
+    cf_if_statement_tag: $ => seq(
+      $.cf_if_tag,
+      repeat($.cf_elseif_tag),
+      optional($.cf_else_tag),
+      $.cf_if_end_tag,
     ),
 
-    cf_if: $ => prec.right(1, seq(
-      $.cf_if_keyword,
+    cf_if_tag: $ => seq(
+      token('<cfif'),
       $._cf_expression,
-      optional($.cf_tag_end),
+      $._cf_tag_end,
       repeat($._node),
-    )),
+    ),
 
-    cf_set: $ => prec.right(1, seq(
-      token('set'),
+    cf_set_tag: $ => seq(
+      token('<cfset'),
       optional($.cf_var),
       $._cf_expression,
       $.cf_tag_selfclose_end
-    )),
+    ),
 
-    cf_elseif: $ => prec.right(2, seq(
-      optional($._cf_tag_start),
-      $.cf_elseif_keyword,
+    cf_elseif_tag: $ => seq(
+      token('<cfelseif'),
       $.cf_condition,
-      optional($.cf_tag_end),
+      $._cf_tag_end,
       repeat($._node),
-    )),
+    ),
 
-    cf_else: $ => prec.right(3, seq(
-      optional($._cf_tag_start),
-      $.cf_else_keyword,
-      optional($.cf_tag_end),
+    cf_else_tag: $ => seq(
+      token('<cfelse'),
+      $._cf_tag_end,
       repeat($._node),
-    )),
+    ),
 
-    cf_if_end: $ => seq(
-      choice(seq($.cf_tag_close, $.cf_if_keyword, '>'), '}'),
+    cf_if_end_tag: $ => seq(
+      token('</cfif>'),
     ),
 
     attribute: $ => seq(
@@ -432,16 +434,13 @@ module.exports = grammar({
 
     //attribute_value: _ => /[^<>"'=\s]+/,
 
-    cf_tag: $ => seq(
-      $._cf_tag_start,
-      choice(
-        $.cf_component_tag,
-        $.cf_function_tag,
-        $.cf_argument_tag,
-        $.cf_return_tag,
-        $.cf_ifstatement,
-        $.cf_set
-      ),
+    _cf_tag: $ => choice(
+      $.cf_if_statement_tag,
+      $.cf_set_tag,
+      alias($.cf_component_tag,$.cf_component),
+      alias($.cf_function_tag,$.cf_function),
+      alias($.cf_argument_tag,$.cf_argument),
+      alias($.cf_return_tag,$.cf_return),
     ),
 
     // _cf_statement: $ => choice(

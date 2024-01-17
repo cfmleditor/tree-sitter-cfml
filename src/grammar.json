@@ -47,11 +47,11 @@
         }
       ]
     },
-    "_cf_tag_start": {
-      "type": "PATTERN",
-      "value": "<cf"
+    "cf_tag_start": {
+      "type": "STRING",
+      "value": "<"
     },
-    "cf_tag_end": {
+    "_cf_tag_end": {
       "type": "STRING",
       "value": ">"
     },
@@ -158,17 +158,61 @@
           "type": "TOKEN",
           "content": {
             "type": "STRING",
+            "value": ">="
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
             "value": "==="
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "=="
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<="
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "&&"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "||"
           }
         }
       ]
     },
     "cf_prefix_operator": {
-      "type": "TOKEN",
-      "content": {
-        "type": "STRING",
-        "value": "NOT"
-      }
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "NOT"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "!"
+        }
+      ]
     },
     "_node": {
       "type": "CHOICE",
@@ -191,7 +235,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "cf_tag"
+          "name": "_cf_tag"
         },
         {
           "type": "SYMBOL",
@@ -862,8 +906,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "cf_component_keyword"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfcomponent"
+          }
         },
         {
           "type": "REPEAT",
@@ -874,7 +921,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "cf_tag_end"
+          "name": "_cf_tag_end"
         },
         {
           "type": "REPEAT",
@@ -884,16 +931,11 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "cf_tag_close"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_component_keyword"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_tag_end"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cfcomponent>"
+          }
         }
       ]
     },
@@ -1293,8 +1335,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "cf_function_keyword"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cffunction"
+          }
         },
         {
           "type": "REPEAT",
@@ -1305,7 +1350,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "cf_tag_end"
+          "name": "_cf_tag_end"
         },
         {
           "type": "REPEAT",
@@ -1315,16 +1360,11 @@
           }
         },
         {
-          "type": "SYMBOL",
-          "name": "cf_tag_close"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_function_keyword"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_tag_end"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cffunction>"
+          }
         }
       ]
     },
@@ -1332,8 +1372,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "cf_argument_keyword"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfargument"
+          }
         },
         {
           "type": "REPEAT",
@@ -1352,8 +1395,11 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "cf_return_keyword"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfreturn"
+          }
         },
         {
           "type": "SYMBOL",
@@ -1365,18 +1411,18 @@
         }
       ]
     },
-    "cf_ifstatement": {
+    "cf_if_statement_tag": {
       "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "cf_if"
+          "name": "cf_if_tag"
         },
         {
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "cf_elseif"
+            "name": "cf_elseif_tag"
           }
         },
         {
@@ -1384,7 +1430,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "cf_else"
+              "name": "cf_else_tag"
             },
             {
               "type": "BLANK"
@@ -1393,202 +1439,128 @@
         },
         {
           "type": "SYMBOL",
-          "name": "cf_if_end"
+          "name": "cf_if_end_tag"
         }
       ]
     },
-    "cf_if": {
-      "type": "PREC_RIGHT",
-      "value": 1,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "cf_if_keyword"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_cf_expression"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "cf_tag_end"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_node"
-            }
-          }
-        ]
-      }
-    },
-    "cf_set": {
-      "type": "PREC_RIGHT",
-      "value": 1,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "TOKEN",
-            "content": {
-              "type": "STRING",
-              "value": "set"
-            }
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "cf_var"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_cf_expression"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "cf_tag_selfclose_end"
-          }
-        ]
-      }
-    },
-    "cf_elseif": {
-      "type": "PREC_RIGHT",
-      "value": 2,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_cf_tag_start"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "SYMBOL",
-            "name": "cf_elseif_keyword"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "cf_condition"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "cf_tag_end"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_node"
-            }
-          }
-        ]
-      }
-    },
-    "cf_else": {
-      "type": "PREC_RIGHT",
-      "value": 3,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_cf_tag_start"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "SYMBOL",
-            "name": "cf_else_keyword"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "cf_tag_end"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_node"
-            }
-          }
-        ]
-      }
-    },
-    "cf_if_end": {
+    "cf_if_tag": {
       "type": "SEQ",
       "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfif"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        }
+      ]
+    },
+    "cf_set_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfset"
+          }
+        },
         {
           "type": "CHOICE",
           "members": [
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "cf_tag_close"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "cf_if_keyword"
-                },
-                {
-                  "type": "STRING",
-                  "value": ">"
-                }
-              ]
+              "type": "SYMBOL",
+              "name": "cf_var"
             },
             {
-              "type": "STRING",
-              "value": "}"
+              "type": "BLANK"
             }
           ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        }
+      ]
+    },
+    "cf_elseif_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfelseif"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_condition"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        }
+      ]
+    },
+    "cf_else_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfelse"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        }
+      ]
+    },
+    "cf_if_end_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cfif>"
+          }
         }
       ]
     },
@@ -1678,41 +1650,52 @@
       "type": "PATTERN",
       "value": "[^<>\"\\'/=\\s]+"
     },
-    "cf_tag": {
-      "type": "SEQ",
+    "_cf_tag": {
+      "type": "CHOICE",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_cf_tag_start"
+          "name": "cf_if_statement_tag"
         },
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "cf_component_tag"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "cf_function_tag"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "cf_argument_tag"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "cf_return_tag"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "cf_ifstatement"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "cf_set"
-            }
-          ]
+          "type": "SYMBOL",
+          "name": "cf_set_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_component_tag"
+          },
+          "named": true,
+          "value": "cf_component"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_function_tag"
+          },
+          "named": true,
+          "value": "cf_function"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_argument_tag"
+          },
+          "named": true,
+          "value": "cf_argument"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_return_tag"
+          },
+          "named": true,
+          "value": "cf_return"
         }
       ]
     },
@@ -1878,12 +1861,8 @@
       "cf_function_call"
     ],
     [
-      "_node",
-      "cf_function"
-    ],
-    [
-      "text",
-      "cf_variable"
+      "cf_variable",
+      "text"
     ],
     [
       "cf_associative",

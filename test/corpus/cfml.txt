@@ -1,22 +1,19 @@
 ===================================
 cfif
 ===================================
-<cfif z EQ b>test</cfif>
+<cfif z EQ b>
+    test
+</cfif>
 ---
 
 (fragment
-      (cf_tag
-        (cf_ifstatement
-          (cf_if
-            (cf_if_keyword)
-            (cf_variable)
-            (cf_operator)
-            (cf_variable)
-            (cf_tag_end)
-            (text))
-          (cf_if_end
-            (cf_tag_close)
-            (cf_if_keyword)))))
+      (cf_if_statement_tag
+        (cf_if_tag
+          (cf_variable)
+          (cf_operator)
+          (cf_variable)
+          (text))
+        (cf_if_end_tag)))
 
 ===================================
 cfif with else
@@ -24,22 +21,15 @@ cfif with else
 <cfif z EQ b>Yes<cfelse>Noo</cfif>
 ---
 (fragment
-      (cf_tag
-        (cf_ifstatement
-          (cf_if
-            (cf_if_keyword)
-            (cf_variable)
-            (cf_operator)
-            (cf_variable)
-            (cf_tag_end)
-            (text))
-          (cf_else
-            (cf_else_keyword)
-            (cf_tag_end)
-            (text))
-          (cf_if_end
-            (cf_tag_close)
-            (cf_if_keyword)))))
+      (cf_if_statement_tag
+        (cf_if_tag
+          (cf_variable)
+          (cf_operator)
+          (cf_variable)
+          (text))
+        (cf_else_tag
+          (text))
+        (cf_if_end_tag)))
 
 ===================================
 cfif with elseif
@@ -48,23 +38,16 @@ cfif with elseif
 ---
 
 (fragment
-      (cf_tag
-        (cf_ifstatement
-          (cf_if
-            (cf_if_keyword)
-            (cf_variable)
-            (cf_operator)
-            (cf_variable)
-            (cf_tag_end)
-            (text))
-          (cf_elseif
-            (cf_elseif_keyword)
-            (cf_condition)
-            (cf_tag_end)
-            (text))
-          (cf_if_end
-            (cf_tag_close)
-            (cf_if_keyword)))))
+      (cf_if_statement_tag
+        (cf_if_tag
+          (cf_variable)
+          (cf_operator)
+          (cf_variable)
+          (text))
+        (cf_elseif_tag
+          (cf_condition)
+          (text))
+        (cf_if_end_tag)))
 
 
 ===================================
@@ -74,27 +57,18 @@ cfif with elseif and else
 ---
 
 (fragment
-      (cf_tag
-        (cf_ifstatement
-          (cf_if
-            (cf_if_keyword)
-            (cf_variable)
-            (cf_operator)
-            (cf_variable)
-            (cf_tag_end)
-            (text))
-          (cf_elseif
-            (cf_elseif_keyword)
-            (cf_condition)
-            (cf_tag_end)
-            (text))
-          (cf_else
-            (cf_else_keyword)
-            (cf_tag_end)
-            (text))
-          (cf_if_end
-            (cf_tag_close)
-            (cf_if_keyword)))))
+      (cf_if_statement_tag
+        (cf_if_tag
+          (cf_variable)
+          (cf_operator)
+          (cf_variable)
+          (text))
+        (cf_elseif_tag
+          (cf_condition)
+          (text))
+        (cf_else_tag
+          (text))
+        (cf_if_end_tag)))
 
 ===================================
 cffunction
@@ -119,77 +93,62 @@ cffunction
 </cffunction>
 
 ---
-
 (fragment
-      (cf_tag
-        (cf_function_tag
-          (cf_function_keyword)
-          (cf_attribute
-            (cf_attribute_name)
-            (cf_dblquotes
-              (quoted_text)))
-          (cf_tag_end)
-          (cf_hash
+      (cf_function
+        (cf_attribute
+          (cf_attribute_name)
+          (cf_dblquotes
+            (quoted_text)))
+        (cf_hash
+          (cf_variable)
+          (cf_operator)
+          (cf_variable))
+        (cf_hash
+          (cf_variable)
+          (cf_operator)
+          (cf_variable))
+        (cf_set_tag
+          (cf_variable)
+          (cf_assignment)
+          (cf_dblquotes
+            (quoted_text))
+          (cf_tag_selfclose_end))
+        (cf_if_statement_tag
+          (cf_if_tag
+            (cf_variable)
+            (cf_period)
             (cf_variable)
             (cf_operator)
             (cf_variable))
-          (cf_hash
-            (cf_variable)
-            (cf_operator)
+          (cf_if_end_tag))
+        (cf_set_tag
+          (cf_variable)
+          (cf_assignment)
+          (cf_variable)
+          (cf_associative
             (cf_variable))
-          (cf_tag
-            (cf_set
-              (cf_variable)
-              (cf_assignment)
-              (cf_dblquotes
-                (quoted_text))
-              (cf_tag_selfclose_end)))
-          (cf_tag
-            (cf_ifstatement
-              (cf_if
-                (cf_if_keyword)
-                (cf_variable)
-                (cf_period)
-                (cf_variable)
-                (cf_operator)
-                (cf_variable)
-                (cf_tag_end))
-              (cf_if_end
-                (cf_tag_close)
-                (cf_if_keyword))))
-          (cf_tag
-            (cf_set
-              (cf_variable)
-              (cf_assignment)
-              (cf_variable)
-              (cf_associative
-                (cf_variable))
-              (cf_tag_selfclose_end)))
-          (cf_tag
-            (cf_set
-              (cf_variable)
-              (cf_assignment)
-              (cf_function_call
-                (cf_variable)
-                (cf_function_call_arguments
-                  (cf_variable)))
-              (cf_period)
-              (cf_variable)
-              (cf_tag_selfclose_end)))
-          (cf_tag
-            (cf_set
-              (cf_variable)
-              (cf_assignment)
-              (cf_function_call
-                (cf_variable)
-                (cf_function_call_arguments
-                  (cf_variable)))
-              (cf_associative
-                (cf_variable))
-              (cf_tag_selfclose_end)))
-          (cf_tag_close)
-          (cf_function_keyword)
-          (cf_tag_end))))
+          (cf_tag_selfclose_end))
+        (cf_set_tag
+          (cf_variable)
+          (cf_assignment)
+          (cf_function_call
+            (cf_variable)
+            (cf_function_call_arguments
+              (cf_variable)))
+          (cf_period)
+          (cf_variable)
+          (cf_tag_selfclose_end))
+        (cf_set_tag
+          (cf_variable)
+          (cf_assignment)
+          (cf_function_call
+            (cf_variable)
+            (cf_function_call_arguments
+              (cf_variable)))
+          (cf_associative
+            (cf_variable))
+          (cf_tag_selfclose_end))))
+
 
 ===================================
 function call
@@ -199,19 +158,18 @@ function call
 ---
 
 (fragment
-      (cf_tag
-        (cf_set
+      (cf_set_tag
+        (cf_variable)
+        (cf_assignment)
+        (cf_function_call
           (cf_variable)
-          (cf_assignment)
-          (cf_function_call
-            (cf_variable)
-            (cf_function_call_arguments
-              (cf_dblquotes
-                (quoted_text))))
-          (cf_associative
+          (cf_function_call_arguments
             (cf_dblquotes
-              (quoted_text)))
-          (cf_tag_selfclose_end))))
+              (quoted_text))))
+        (cf_associative
+          (cf_dblquotes
+            (quoted_text)))
+        (cf_tag_selfclose_end)))
 
 ===================================
 get results
@@ -249,9 +207,24 @@ get results
 
 ---
 (fragment
-      (cf_tag
-        (cf_function_tag
-          (cf_function_keyword)
+      (cf_function
+        (cf_attribute
+          (cf_attribute_name)
+          (cf_dblquotes
+            (quoted_text)))
+        (cf_attribute
+          (cf_attribute_name)
+          (cf_dblquotes
+            (quoted_text)))
+        (cf_attribute
+          (cf_attribute_name)
+          (cf_dblquotes
+            (quoted_text)))
+        (cf_attribute
+          (cf_attribute_name)
+          (cf_dblquotes
+            (quoted_text)))
+        (cf_argument
           (cf_attribute
             (cf_attribute_name)
             (cf_dblquotes
@@ -264,156 +237,119 @@ get results
             (cf_attribute_name)
             (cf_dblquotes
               (quoted_text)))
-          (cf_attribute
-            (cf_attribute_name)
-            (cf_dblquotes
-              (quoted_text)))
-          (cf_tag_end)
-          (cf_tag
-            (cf_argument_tag
-              (cf_argument_keyword)
-              (cf_attribute
-                (cf_attribute_name)
-                (cf_dblquotes
-                  (quoted_text)))
-              (cf_attribute
-                (cf_attribute_name)
-                (cf_dblquotes
-                  (quoted_text)))
-              (cf_attribute
-                (cf_attribute_name)
-                (cf_dblquotes
-                  (quoted_text)))
-              (cf_tag_selfclose_end)))
-          (cf_tag
-            (cf_set
-              (cf_var)
-              (cf_variable)
-              (cf_assignment)
-              (cf_function_call
-                (cf_variable)
-                (cf_function_call_arguments))
-              (cf_tag_selfclose_end)))
-          (cf_tag
-            (cf_set
-              (cf_var)
+          (cf_tag_selfclose_end))
+        (cf_set_tag
+          (cf_var)
+          (cf_variable)
+          (cf_assignment)
+          (cf_function_call
+            (cf_variable)
+            (cf_function_call_arguments))
+          (cf_tag_selfclose_end))
+        (cf_set_tag
+          (cf_var)
+          (cf_variable)
+          (cf_assignment)
+          (cf_variable)
+          (cf_period)
+          (cf_variable)
+          (cf_period)
+          (cf_function_call
+            (cf_variable)
+            (cf_function_call_arguments
               (cf_variable)
               (cf_assignment)
               (cf_variable)
               (cf_period)
-              (cf_variable)
-              (cf_period)
-              (cf_function_call
+              (cf_variable)))
+          (cf_tag_selfclose_end))
+        (cf_set_tag
+          (cf_variable)
+          (cf_assignment)
+          (cf_dblquotes
+            (quoted_text
+              (cf_hash
                 (cf_variable)
-                (cf_function_call_arguments
-                  (cf_variable)
-                  (cf_assignment)
-                  (cf_variable)
-                  (cf_period)
-                  (cf_variable)))
-              (cf_tag_selfclose_end)))
-          (cf_tag
-            (cf_set
-              (cf_variable)
-              (cf_assignment)
-              (cf_dblquotes
-                (quoted_text
-                  (cf_hash
-                    (cf_variable)
-                    (cf_associative
-                      (cf_variable)))))
-              (cf_tag_selfclose_end)))
-          (cf_tag
-            (cf_set
-              (cf_variable)
-              (cf_assignment)
-              (cf_dblquotes
-                (quoted_text
-                  (cf_hash
-                    (cf_variable)
-                    (cf_period)
-                    (cf_variable)
-                    (cf_associative
-                      (cf_variable))
-                    (cf_period)
-                    (cf_variable)
-                    (cf_associative
-                      (cf_variable))
-                    (cf_period)
-                    (cf_variable))))
-              (cf_tag_selfclose_end)))
-          (cf_tag
-            (cf_set
-              (cf_variable)
-              (cf_period)
-              (cf_function_call
+                (cf_associative
+                  (cf_variable)))))
+          (cf_tag_selfclose_end))
+        (cf_set_tag
+          (cf_variable)
+          (cf_assignment)
+          (cf_dblquotes
+            (quoted_text
+              (cf_hash
                 (cf_variable)
-                (cf_function_call_arguments
-                  (cf_variable)
-                  (cf_assignment)
-                  (cf_bracket_expression
-                    (cf_dblquotes
-                      (quoted_text))
-                    (cf_variable))))
-              (cf_tag_selfclose_end)))
-          (element
-            (start_tag
-              (tag_name))
-            (end_tag
-              (tag_name)))
-          (comment)
-          (cf_tag
-            (cf_ifstatement
-              (cf_if
-                (cf_if_keyword)
-                (cf_expression_parens
-                  (cf_true))
-                (cf_operator)
-                (cf_expression_parens
-                  (cf_expression_parens
-                    (cf_true))
-                  (cf_operator)
-                  (cf_expression_parens
-                    (cf_true)))
-                (cf_tag_end))
-              (cf_if_end
-                (cf_tag_close)
-                (cf_if_keyword))))
-          (cf_tag
-            (cf_set
+                (cf_period)
+                (cf_variable)
+                (cf_associative
+                  (cf_variable))
+                (cf_period)
+                (cf_variable)
+                (cf_associative
+                  (cf_variable))
+                (cf_period)
+                (cf_variable))))
+          (cf_tag_selfclose_end))
+        (cf_set_tag
+          (cf_variable)
+          (cf_period)
+          (cf_function_call
+            (cf_variable)
+            (cf_function_call_arguments
               (cf_variable)
               (cf_assignment)
+              (cf_bracket_expression
+                (cf_dblquotes
+                  (quoted_text))
+                (cf_variable))))
+          (cf_tag_selfclose_end))
+        (element
+          (start_tag
+            (tag_name))
+          (end_tag
+            (tag_name)))
+        (comment)
+        (cf_if_statement_tag
+          (cf_if_tag
+            (cf_expression_parens
+              (cf_true))
+            (cf_operator)
+            (cf_expression_parens
               (cf_expression_parens
-                (cf_variable))
-              (cf_tag_selfclose_end)))
-          (cf_tag
-            (cf_set
-              (cf_variable)
-              (cf_period)
-              (cf_function_call
-                (cf_variable)
-                (cf_function_call_arguments
-                  (cf_function
-                    (cf_function_keyword)
-                    (cf_function_arguments)
-                    (cf_bracket_function
-                      (expression_statement
-                        (cf_variable)
-                        (cf_assignment)
-                        (cf_dblquotes
-                          (quoted_text)))
-                      (cf_return
-                        (cf_return_keyword)
-                        (cf_variable))))))
-              (cf_tag_selfclose_end)))
-          (cf_tag
-            (cf_return_tag
-              (cf_return_keyword)
-              (cf_variable)
-              (cf_tag_selfclose_end)))
-          (cf_tag_close)
-          (cf_function_keyword)
-          (cf_tag_end))))
+                (cf_true))
+              (cf_operator)
+              (cf_expression_parens
+                (cf_true))))
+          (cf_if_end_tag))
+        (cf_set_tag
+          (cf_variable)
+          (cf_assignment)
+          (cf_expression_parens
+            (cf_variable))
+          (cf_tag_selfclose_end))
+        (cf_set_tag
+          (cf_variable)
+          (cf_period)
+          (cf_function_call
+            (cf_variable)
+            (cf_function_call_arguments
+              (cf_function
+                (cf_function_keyword)
+                (cf_function_arguments)
+                (cf_bracket_function
+                  (expression_statement
+                    (cf_variable)
+                    (cf_assignment)
+                    (cf_dblquotes
+                      (quoted_text)))
+                  (cf_return
+                    (cf_return_keyword)
+                    (cf_variable))))))
+          (cf_tag_selfclose_end))
+        (cf_return
+          (cf_variable)
+          (cf_tag_selfclose_end))))
      
 ===================================
 script function
@@ -437,92 +373,123 @@ cars = fn(test="abc",abc="test",abc);
 cars = fn["Test"](test="abc",abc="test");
 ---
 (fragment
-      (cf_function
-        (cf_function_access)
-        (cf_function_returntype)
-        (cf_function_keyword)
-        (cf_function_name
-          (cf_variable))
-        (cf_function_arguments
-          (cf_function_argument_required)
-          (cf_function_argument_type)
-          (cf_function_argument_name
-            (cf_variable))
-          (cf_dblquotes))
-        (cf_bracket_function
-          (cf_return
-            (cf_return_keyword)
-            (cf_true))))
-      (cf_function
-        (cf_function_access)
-        (cf_function_keyword)
-        (cf_function_name
-          (cf_variable))
-        (cf_function_arguments
-          (cf_function_argument_required)
-          (cf_function_argument_type)
-          (cf_function_argument_name
-            (cf_variable))
-          (cf_bracket_expression))
-        (cf_bracket_function
-          (cf_return
-            (cf_return_keyword)
-            (cf_true))))
-      (cf_function
-        (cf_function_keyword)
-        (cf_function_name
-          (cf_variable))
-        (cf_function_arguments
-          (cf_function_argument_required)
-          (cf_function_argument_type)
-          (cf_function_argument_name
-            (cf_variable))
-          (cf_associative))
-        (cf_bracket_function
-          (cf_return
-            (cf_return_keyword)
-            (cf_true))))
+  (cf_function
+    (cf_function_access)
+    (cf_function_returntype)
+    (cf_function_keyword)
+    (cf_function_name
+      (cf_variable))
+    (cf_function_arguments
+      (cf_function_argument_required)
+      (cf_function_argument_type)
+      (cf_function_argument_name
+        (cf_variable))
+      (cf_dblquotes))
+    (cf_bracket_function
+      (cf_return
+        (cf_return_keyword)
+        (cf_true))))
+  (cf_function
+    (cf_function_access)
+    (cf_function_keyword)
+    (cf_function_name
+      (cf_variable))
+    (cf_function_arguments
+      (cf_function_argument_required)
+      (cf_function_argument_type)
+      (cf_function_argument_name
+        (cf_variable))
+      (cf_bracket_expression))
+    (cf_bracket_function
+      (cf_return
+        (cf_return_keyword)
+        (cf_true))))
+  (cf_function
+    (cf_function_keyword)
+    (cf_function_name
+      (cf_variable))
+    (cf_function_arguments
+      (cf_function_argument_required)
+      (cf_function_argument_type)
+      (cf_function_argument_name
+        (cf_variable))
+      (cf_associative))
+    (cf_bracket_function
+      (cf_return
+        (cf_return_keyword)
+        (cf_true))))
+  (cf_variable)
+  (cf_assignment)
+  (cf_function_call
+    (cf_function_call
+      (cf_variable)
+      (cf_function_call_arguments
+        (cf_dblquotes
+          (quoted_text))
+        (cf_comma)
+        (cf_dblquotes
+          (quoted_text))))
+    (cf_variable)
+    (cf_assignment)
+    (cf_function_call
+      (cf_variable)
+      (cf_function_call_arguments
+        (cf_variable)
+        (cf_assignment)
+        (cf_dblquotes
+          (quoted_text))
+        (cf_comma)
+        (cf_variable)
+        (cf_assignment)
+        (cf_dblquotes
+          (quoted_text))
+        (cf_comma)
+        (cf_variable)))
+    (cf_variable)
+    (cf_assignment)
+    (cf_variable)
+    (cf_associative
+      (cf_dblquotes
+        (quoted_text)))
+    (cf_function_call_arguments
       (cf_variable)
       (cf_assignment)
-      (cf_function_call
-        (cf_function_call
-          (cf_variable)
-          (cf_function_call_arguments
-            (cf_dblquotes
-              (quoted_text))
-            (cf_comma)
-            (cf_dblquotes
-              (quoted_text))))
-        (cf_variable)
-        (cf_assignment)
-        (cf_function_call
-          (cf_variable)
-          (cf_function_call_arguments
-            (cf_variable)
-            (cf_assignment)
-            (cf_dblquotes
-              (quoted_text))
-            (cf_comma)
-            (cf_variable)
-            (cf_assignment)
-            (cf_dblquotes
-              (quoted_text))
-            (cf_comma)
-            (cf_variable)))
-        (cf_variable)
-        (cf_assignment)
-        (cf_variable)
-        (cf_associative
-        (cf_dblquotes
-            (quoted_text)))
-        (cf_function_call_arguments
-          (cf_variable)
-          (cf_assignment)
-          (cf_dblquotes
-            (quoted_text))
-          (cf_comma)
-          (cf_variable)
-          (cf_assignment)
-          (cf_dblquotes
-            (quoted_text)))))
+      (cf_dblquotes
+        (quoted_text))
+      (cf_comma)
+      (cf_variable)
+      (cf_assignment)
+      (cf_dblquotes
+        (quoted_text)))))
 
+
+===================================
+nested cfif
+===================================
+
+<cfif (true)>
+  
+  test
+  
+  <cfif (true AND true)>
+      test
+  </cfif>
+  
+</cfif>
+---
+
+(fragment
+  (cf_if_statement_tag
+    (cf_if_tag
+      (cf_expression_parens
+        (cf_true))
+      (text)
+      (cf_if_statement_tag
+        (cf_if_tag
+          (cf_expression_parens
+            (cf_true)
+            (cf_operator)
+            (cf_true))
+          (text))
+        (cf_if_end_tag)))
+    (cf_if_end_tag)))
