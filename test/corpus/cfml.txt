@@ -167,22 +167,22 @@ cffunction
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
+              (cf_variable)
+              (cf_assignment)
               (cf_function_call
                 (cf_variable)
-                (cf_assignment)
-                (cf_variable)
-                (cf_parens
+                (cf_function_call_arguments
                   (cf_variable)))
               (cf_period)
               (cf_variable)
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
+              (cf_variable)
+              (cf_assignment)
               (cf_function_call
                 (cf_variable)
-                (cf_assignment)
-                (cf_variable)
-                (cf_parens
+                (cf_function_call_arguments
                   (cf_variable)))
               (cf_associative
                 (cf_variable))
@@ -201,14 +201,14 @@ function call
 (fragment
       (cf_tag
         (cf_set
+          (cf_variable)
+          (cf_assignment)
           (cf_function_call
             (cf_variable)
-            (cf_assignment)
-            (cf_variable)
-            (cf_parens
+            (cf_function_call_arguments
               (cf_dblquotes
                 (quoted_text))))
-                (cf_associative
+          (cf_associative
             (cf_dblquotes
               (quoted_text)))
           (cf_tag_selfclose_end))))
@@ -288,24 +288,24 @@ get results
           (cf_tag
             (cf_set
               (cf_var)
+              (cf_variable)
+              (cf_assignment)
               (cf_function_call
                 (cf_variable)
-                (cf_assignment)
-                (cf_variable)
-                (cf_parens))
+                (cf_function_call_arguments))
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
               (cf_var)
+              (cf_variable)
+              (cf_assignment)
+              (cf_variable)
+              (cf_period)
+              (cf_variable)
+              (cf_period)
               (cf_function_call
                 (cf_variable)
-                (cf_assignment)
-                (cf_variable)
-                (cf_period)
-                (cf_variable)
-                (cf_period)
-                (cf_variable)
-                (cf_parens
+                (cf_function_call_arguments
                   (cf_variable)
                   (cf_assignment)
                   (cf_variable)
@@ -344,11 +344,11 @@ get results
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
+              (cf_variable)
+              (cf_period)
               (cf_function_call
                 (cf_variable)
-                (cf_period)
-                (cf_variable)
-                (cf_parens
+                (cf_function_call_arguments
                   (cf_variable)
                   (cf_assignment)
                   (cf_bracket_expression
@@ -366,14 +366,14 @@ get results
             (cf_ifstatement
               (cf_if
                 (cf_if_keyword)
-                (cf_parens
+                (cf_expression_parens
                   (cf_true))
                 (cf_operator)
-                (cf_parens
-                  (cf_parens
+                (cf_expression_parens
+                  (cf_expression_parens
                     (cf_true))
                   (cf_operator)
-                  (cf_parens
+                  (cf_expression_parens
                     (cf_true)))
                 (cf_tag_end))
               (cf_if_end
@@ -383,16 +383,16 @@ get results
             (cf_set
               (cf_variable)
               (cf_assignment)
-              (cf_parens
+              (cf_expression_parens
                 (cf_variable))
               (cf_tag_selfclose_end)))
           (cf_tag
             (cf_set
+              (cf_variable)
+              (cf_period)
               (cf_function_call
                 (cf_variable)
-                (cf_period)
-                (cf_variable)
-                (cf_parens
+                (cf_function_call_arguments
                   (cf_function
                     (cf_function_keyword)
                     (cf_function_arguments)
@@ -430,7 +430,11 @@ function myFunction(required any myArgument=[]){
   return true; 
 }
 
-cars = QueryNew("make,model");
+cars = fn("abc,test","abc");
+
+cars = fn(test="abc",abc="test",abc);
+
+cars = fn["Test"](test="abc",abc="test");
 ---
 (fragment
       (cf_function
@@ -481,7 +485,44 @@ cars = QueryNew("make,model");
       (cf_variable)
       (cf_assignment)
       (cf_function_call
+        (cf_function_call
+          (cf_variable)
+          (cf_function_call_arguments
+            (cf_dblquotes
+              (quoted_text))
+            (cf_comma)
+            (cf_dblquotes
+              (quoted_text))))
         (cf_variable)
-        (cf_parens
+        (cf_assignment)
+        (cf_function_call
+          (cf_variable)
+          (cf_function_call_arguments
+            (cf_variable)
+            (cf_assignment)
+            (cf_dblquotes
+              (quoted_text))
+            (cf_comma)
+            (cf_variable)
+            (cf_assignment)
+            (cf_dblquotes
+              (quoted_text))
+            (cf_comma)
+            (cf_variable)))
+        (cf_variable)
+        (cf_assignment)
+        (cf_variable)
+        (cf_associative
+        (cf_dblquotes
+            (quoted_text)))
+        (cf_function_call_arguments
+          (cf_variable)
+          (cf_assignment)
+          (cf_dblquotes
+            (quoted_text))
+          (cf_comma)
+          (cf_variable)
+          (cf_assignment)
           (cf_dblquotes
             (quoted_text)))))
+
