@@ -1,6 +1,7 @@
 #include "tag.h"
 
 #include <wctype.h>
+#include <stdio.h>
 
 enum TokenType {
     START_TAG_NAME,
@@ -362,6 +363,8 @@ static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer) {
         if (scanner->tags.len > 0) {
             VEC_POP(scanner->tags);
             lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
+        } else {
+            lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;   
         }
         return true;
     }

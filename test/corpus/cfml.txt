@@ -198,12 +198,12 @@ get results
 
     </cfif>
 
-    <cfset test = (test) />
+    <cfset test = (test)>
 
     <cfset result.filter(function(){
         result = "Test";
         return result;
-    }) />
+    })>
 
     <cfreturn result />
 </cffunction>
@@ -527,3 +527,43 @@ nested cfif
     (cf_if_end_tag)))
 
 
+
+===================================
+/ Characters used in tags
+===================================
+
+<div style="/"></div>
+
+<cfif (true / true)>
+    test
+</cfif>
+
+<cfset temp = 1 / 1 />
+
+---
+
+(fragment
+  (element
+    (start_tag
+      (tag_name)
+      (attribute
+        (attribute_name)
+        (quoted_attribute_value
+          (attribute_value))))
+    (end_tag
+      (tag_name)))
+  (cf_if_statement_tag
+    (cf_if_tag
+      (cf_expression_parens
+        (cf_true)
+        (cf_operator)
+        (cf_true))
+      (text))
+    (cf_if_end_tag))
+      (cf_set_tag
+        (cf_variable)
+        (cf_assignment)
+        (cf_variable)
+        (cf_operator)
+        (cf_variable)
+        (cf_tag_selfclose_end)))

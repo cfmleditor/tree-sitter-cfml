@@ -62,9 +62,9 @@ module.exports = grammar({
 
     cf_tag_start: $ => '<',
     _cf_tag_end: $ => '>',
-    cf_tag_selfclose_end: $ => seq(optional('/'),'>'),
-    text: $ => /[^\s<>}{\(\)#\[\]=,."\'`;&]+/,
-    cf_variable: $ => /[^\s<>}{\(\)#\[\]=,."\'`;&]+/,
+    cf_tag_selfclose_end: $ => choice('/>','>'),
+    text: $ => /[^\s<>}{\(\)#\[\]=,."\'`;&\/\\]+/,
+    cf_variable: $ => /[^\s<>}{\(\)#\[\]=,."\'`;&\/\\]+/,
     cf_tag_close: $ => /<\/cf/i,
     cf_true: $ => token('true'),
     cf_false: $ => token('false'),
@@ -85,7 +85,7 @@ module.exports = grammar({
       token('==='),
       token('+'),
       token('*'),
-      //token('/'),
+      token('/'),
       token('-'),
       token('=='),
       token('<='),
@@ -287,7 +287,7 @@ module.exports = grammar({
     cf_objectkeyassign: $ => ':',
 
     cf_singlequotes: $ => seq(
-      "'",
+      '\'',
       alias(
         repeat(
           choice(
@@ -297,12 +297,12 @@ module.exports = grammar({
         ),
         $.quoted_text,
       ),
-      "'",
+      '\'',
     ),
 
     cf_singlequotes_empty: $ => seq(
-      "'",
-      "'",
+      '\'',
+      '\'',
     ),
 
     cf_dblquotes: $ => seq(
