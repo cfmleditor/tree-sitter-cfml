@@ -41,6 +41,8 @@ module.exports = grammar({
     [$.cf_associative, $.cf_function_call],
     [$._cf_expression, $.cf_function_call],
     [$.cf_script_expression, $._cf_member_expression],
+    [$.cf_zip_tag, $.cf_zip_tag_standalone],
+    [$.cf_transaction_tag, $.cf_transaction_tag_standalone],
   ],
 
   rules: {
@@ -62,7 +64,7 @@ module.exports = grammar({
 
     cf_tag_start: $ => '<',
     _cf_tag_end: $ => '>',
-    cf_tag_selfclose_end: $ => choice('/>','>'),
+    cf_tag_selfclose_end: $ => choice('/>',$._cf_tag_end),
     text: $ => /[^\s<>}{\(\)#\[\]=,."\'`;&\/\\]+/,
     cf_variable: $ => /[^\s<>}{\(\)#\[\]=,."\'`;&\/\\]+/,
     cf_tag_close: $ => /<\/cf/i,
@@ -385,6 +387,77 @@ module.exports = grammar({
       token('</cffunction>'),
     ),
 
+    cf_transaction_tag_standalone: $ => prec.right(1,seq(
+      token('<cftransaction'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+    )),
+
+    cf_transaction_tag: $ => prec.right(2,seq(
+      token('<cftransaction'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+      token('</cftransaction>'),
+    )),
+
+    cf_try_statement: $ => seq(
+      $.cf_try_tag,
+      $.cf_catch_tag,
+      token('</cftry>'),
+    ),
+
+    cf_try_tag: $ => seq(
+      token('<cftry'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+    ),
+
+    cf_switch_statement: $ => seq(
+      $.cf_switch_tag,
+      repeat($.cf_case_tag),
+      optional($.cf_defaultcase_tag),
+      token('</cfswitch>'),
+    ),
+
+    cf_switch_tag: $ => seq(
+      token('<cfswitch'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+    ),
+
+    cf_wddx_tag: $ => seq(
+      token('<cfwddx'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+    ),
+
+    cf_case_tag: $ => seq(
+      token('<cfcase'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+      token('</cfcase>'),
+    ),
+
+    cf_defaultcase_tag: $ => seq(
+      token('<cfdefaultcase'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+      token('</cfdefaultcase>'),
+    ),
+
+    cf_catch_tag: $ => seq(
+      token('<cfcatch'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+      token('</cfcatch>'),
+    ),
+
     cf_loop_tag: $ => seq(
       token('<cfloop'),
       repeat($.cf_attribute),
@@ -395,6 +468,78 @@ module.exports = grammar({
 
     cf_argument_tag: $ => seq(
       token('<cfargument'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+    ),
+
+    cf_file_tag: $ => seq(
+      token('<cffile'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+    ),
+
+    cf_throw_tag: $ => seq(
+      token('<cfthrow'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+    ),
+
+    cf_image_tag: $ => seq(
+      token('<cfimage'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+    ),
+
+    cf_directory_tag: $ => seq(
+      token('<cfdirectory'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+    ),
+
+    cf_include_tag: $ => seq(
+      token('<cfinclude'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+    ),
+
+    cf_continue_tag: $ => seq(
+      token('<cfcontinue'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+    ),
+
+    cf_zip_tag: $ => seq(
+      token('<cfzip'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+      repeat($._node),
+      token('</cfzip>'),
+    ),
+
+    cf_zip_tag_standalone: $ => seq(
+      token('<cfzip'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+    ),
+
+    cf_savecontent_tag: $ => seq(
+      token('<cfsavecontent'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+      repeat($._node),
+      token('</cfsavecontent>'),
+    ),
+
+    cf_output_tag: $ => seq(
+      token('<cfoutput'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+      repeat($._node),
+      token('</cfoutput>'),
+    ),
+
+    cf_rethrow_tag: $ => seq(
+      token('<cfrethrow'),
       repeat($.cf_attribute),
       $.cf_tag_selfclose_end,
     ),
@@ -479,7 +624,23 @@ module.exports = grammar({
 
     _cf_tag: $ => choice(
       $.cf_if_statement_tag,
+      $.cf_try_statement,
+      $.cf_switch_statement,
+      $.cf_transaction_tag,
+      $.cf_transaction_tag_standalone,
       $.cf_set_tag,
+      $.cf_file_tag,
+      $.cf_throw_tag,
+      $.cf_image_tag,
+      $.cf_include_tag,
+      $.cf_continue_tag,
+      $.cf_directory_tag,
+      $.cf_savecontent_tag,
+      $.cf_output_tag,
+      $.cf_zip_tag,
+      $.cf_zip_tag_standalone,
+      $.cf_rethrow_tag,
+      $.cf_wddx_tag,
       alias($.cf_component_tag,$.cf_component),
       alias($.cf_function_tag,$.cf_function),
       alias($.cf_argument_tag,$.cf_argument),

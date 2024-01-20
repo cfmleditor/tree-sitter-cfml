@@ -207,22 +207,44 @@ static bool scan_comment(TSLexer *lexer) {
     if (lexer->lookahead != '-') {
         return false;
     }
+    
     lexer->advance(lexer, false);
 
     unsigned dashes = 0;
+    unsigned direction = -1;
+    unsigned nesting = 1;
+
     while (lexer->lookahead) {
         switch (lexer->lookahead) {
             case '-':
                 ++dashes;
+                if ( direction == 1 && dashes >= 2 ) {
+                    ++nesting;
+                    dashes = 0;
+                }
                 break;
             case '>':
                 if (dashes >= 2) {
+                    --nesting;
                     lexer->result_symbol = COMMENT;
                     lexer->advance(lexer, false);
                     lexer->mark_end(lexer);
-                    return true;
+                    if ( nesting == 0 ) {
+                        return true;
+                    } else {
+                        break;
+                    }
+                }
+            case '<':
+                direction = 0;
+                break;
+            case '!':
+                if ( direction == 0 ) {
+                    direction = 1;
+                    break;
                 }
             default:
+                direction = -1;
                 dashes = 0;
         }
         lexer->advance(lexer, false);

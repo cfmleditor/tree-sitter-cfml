@@ -540,6 +540,13 @@ nested cfif
 
 <cfset temp = 1 / 1 />
 
+<!--- 
+
+  <!--- --->
+
+--->
+
+
 ---
 
 (fragment
@@ -566,4 +573,5 @@ nested cfif
         (cf_variable)
         (cf_operator)
         (cf_variable)
-        (cf_tag_selfclose_end)))
+        (cf_tag_selfclose_end))
+      (comment))

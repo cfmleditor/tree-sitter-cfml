@@ -63,8 +63,8 @@
           "value": "/>"
         },
         {
-          "type": "STRING",
-          "value": ">"
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
         }
       ]
     },
@@ -1514,6 +1514,323 @@
         }
       ]
     },
+    "cf_transaction_tag_standalone": {
+      "type": "PREC_RIGHT",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "<cftransaction"
+            }
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_attribute"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_tag_selfclose_end"
+          }
+        ]
+      }
+    },
+    "cf_transaction_tag": {
+      "type": "PREC_RIGHT",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "<cftransaction"
+            }
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_attribute"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_tag_end"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_node"
+            }
+          },
+          {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "</cftransaction>"
+            }
+          }
+        ]
+      }
+    },
+    "cf_try_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cf_try_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_catch_tag"
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cftry>"
+          }
+        }
+      ]
+    },
+    "cf_try_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cftry"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        }
+      ]
+    },
+    "cf_switch_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cf_switch_tag"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_case_tag"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cf_defaultcase_tag"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cfswitch>"
+          }
+        }
+      ]
+    },
+    "cf_switch_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfswitch"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        }
+      ]
+    },
+    "cf_wddx_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfwddx"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        }
+      ]
+    },
+    "cf_case_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfcase"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cfcase>"
+          }
+        }
+      ]
+    },
+    "cf_defaultcase_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfdefaultcase"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cfdefaultcase>"
+          }
+        }
+      ]
+    },
+    "cf_catch_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfcatch"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cfcatch>"
+          }
+        }
+      ]
+    },
     "cf_loop_tag": {
       "type": "SEQ",
       "members": [
@@ -1559,6 +1876,301 @@
           "content": {
             "type": "STRING",
             "value": "<cfargument"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        }
+      ]
+    },
+    "cf_file_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cffile"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        }
+      ]
+    },
+    "cf_throw_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfthrow"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        }
+      ]
+    },
+    "cf_image_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfimage"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        }
+      ]
+    },
+    "cf_directory_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfdirectory"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        }
+      ]
+    },
+    "cf_include_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfinclude"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        }
+      ]
+    },
+    "cf_continue_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfcontinue"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        }
+      ]
+    },
+    "cf_zip_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfzip"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cfzip>"
+          }
+        }
+      ]
+    },
+    "cf_zip_tag_standalone": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfzip"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        }
+      ]
+    },
+    "cf_savecontent_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfsavecontent"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cfsavecontent>"
+          }
+        }
+      ]
+    },
+    "cf_output_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfoutput"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cfoutput>"
+          }
+        }
+      ]
+    },
+    "cf_rethrow_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfrethrow"
           }
         },
         {
@@ -1864,7 +2476,71 @@
         },
         {
           "type": "SYMBOL",
+          "name": "cf_try_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_switch_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_transaction_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_transaction_tag_standalone"
+        },
+        {
+          "type": "SYMBOL",
           "name": "cf_set_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_file_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_throw_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_image_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_include_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_continue_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_directory_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_savecontent_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_output_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_zip_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_zip_tag_standalone"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_rethrow_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_wddx_tag"
         },
         {
           "type": "ALIAS",
@@ -2098,6 +2774,14 @@
     [
       "cf_script_expression",
       "_cf_member_expression"
+    ],
+    [
+      "cf_zip_tag",
+      "cf_zip_tag_standalone"
+    ],
+    [
+      "cf_transaction_tag",
+      "cf_transaction_tag_standalone"
     ]
   ],
   "precedences": [],
