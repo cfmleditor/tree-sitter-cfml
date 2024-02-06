@@ -426,6 +426,10 @@
           "named": true
         },
         {
+          "type": "cf_query",
+          "named": true
+        },
+        {
           "type": "cf_rethrow_tag",
           "named": true
         },
@@ -570,6 +574,10 @@
         },
         {
           "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
           "named": true
         },
         {
@@ -722,6 +730,10 @@
         },
         {
           "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
           "named": true
         },
         {
@@ -916,6 +928,10 @@
           "named": true
         },
         {
+          "type": "cf_query",
+          "named": true
+        },
+        {
           "type": "cf_rethrow_tag",
           "named": true
         },
@@ -1075,6 +1091,10 @@
         },
         {
           "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
           "named": true
         },
         {
@@ -1274,6 +1294,10 @@
         },
         {
           "type": "cf_prefix_operator",
+          "named": true
+        },
+        {
+          "type": "cf_query",
           "named": true
         },
         {
@@ -1574,6 +1598,10 @@
           "named": true
         },
         {
+          "type": "cf_query",
+          "named": true
+        },
+        {
           "type": "cf_rethrow_tag",
           "named": true
         },
@@ -1651,11 +1679,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "cf_function_access",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "cf_function_argument_name",
@@ -2240,6 +2263,10 @@
           "named": true
         },
         {
+          "type": "cf_query",
+          "named": true
+        },
+        {
           "type": "cf_rethrow_tag",
           "named": true
         },
@@ -2441,6 +2468,10 @@
           "named": true
         },
         {
+          "type": "cf_query",
+          "named": true
+        },
+        {
           "type": "cf_rethrow_tag",
           "named": true
         },
@@ -2593,6 +2624,10 @@
           "named": true
         },
         {
+          "type": "cf_query",
+          "named": true
+        },
+        {
           "type": "cf_rethrow_tag",
           "named": true
         },
@@ -2679,6 +2714,157 @@
     "type": "cf_prefix_operator",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "cf_query",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cf_argument",
+          "named": true
+        },
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_break",
+          "named": true
+        },
+        {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_continue_tag",
+          "named": true
+        },
+        {
+          "type": "cf_directory_tag",
+          "named": true
+        },
+        {
+          "type": "cf_file_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_hash_empty",
+          "named": true
+        },
+        {
+          "type": "cf_if_statement_tag",
+          "named": true
+        },
+        {
+          "type": "cf_image_tag",
+          "named": true
+        },
+        {
+          "type": "cf_include_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_rethrow_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_statement",
+          "named": true
+        },
+        {
+          "type": "cf_throw_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag_standalone",
+          "named": true
+        },
+        {
+          "type": "cf_try_statement",
+          "named": true
+        },
+        {
+          "type": "cf_wddx_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag_standalone",
+          "named": true
+        },
+        {
+          "type": "doctype",
+          "named": true
+        },
+        {
+          "type": "element",
+          "named": true
+        },
+        {
+          "type": "entity",
+          "named": true
+        },
+        {
+          "type": "script_element",
+          "named": true
+        },
+        {
+          "type": "style_element",
+          "named": true
+        },
+        {
+          "type": "text",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "cf_rethrow_tag",
@@ -2864,6 +3050,10 @@
         },
         {
           "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
           "named": true
         },
         {
@@ -3266,6 +3456,10 @@
           "named": true
         },
         {
+          "type": "cf_query",
+          "named": true
+        },
+        {
           "type": "cf_rethrow_tag",
           "named": true
         },
@@ -3434,6 +3628,10 @@
         },
         {
           "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
           "named": true
         },
         {
@@ -3622,6 +3820,10 @@
           "named": true
         },
         {
+          "type": "cf_query",
+          "named": true
+        },
+        {
           "type": "cf_rethrow_tag",
           "named": true
         },
@@ -3699,11 +3901,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "cf_variable",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "cf_wddx_tag",
@@ -3790,6 +3987,10 @@
         },
         {
           "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
           "named": true
         },
         {
@@ -3961,6 +4162,10 @@
         },
         {
           "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
           "named": true
         },
         {
@@ -4225,6 +4430,10 @@
           "named": true
         },
         {
+          "type": "cf_query",
+          "named": true
+        },
+        {
           "type": "cf_rethrow_tag",
           "named": true
         },
@@ -4422,11 +4631,6 @@
     }
   },
   {
-    "type": "text",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "!",
     "named": false
   },
@@ -4535,6 +4739,10 @@
     "named": false
   },
   {
+    "type": "</cfquery>",
+    "named": false
+  },
+  {
     "type": "</cfsavecontent>",
     "named": false
   },
@@ -4628,6 +4836,10 @@
   },
   {
     "type": "<cfoutput",
+    "named": false
+  },
+  {
+    "type": "<cfquery",
     "named": false
   },
   {
@@ -4767,6 +4979,10 @@
     "named": true
   },
   {
+    "type": "cf_function_access",
+    "named": true
+  },
+  {
     "type": "cf_function_keyword",
     "named": true
   },
@@ -4788,6 +5004,10 @@
   },
   {
     "type": "cf_var",
+    "named": true
+  },
+  {
+    "type": "cf_variable",
     "named": true
   },
   {
@@ -4820,6 +5040,10 @@
   },
   {
     "type": "tag_name",
+    "named": true
+  },
+  {
+    "type": "text",
     "named": true
   },
   {

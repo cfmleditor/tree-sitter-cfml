@@ -21,14 +21,14 @@ let code = r#"
         return x * 2
 "#;
 let mut parser = Parser::new();
-parser.set_language(tree_sitter_html::language()).expect("Error loading HTML grammar");
+parser.set_language(tree_sitter_cfml::language()).expect("Error loading HTML grammar");
 let parsed = parser.parse(code, None);
 ```
 
 If you have any questions, please reach out to us in the [tree-sitter
 discussions] page.
 
-[language func]: https://docs.rs/tree-sitter-html/*/tree_sitter_html/fn.language.html
+[language func]: https://docs.rs/tree-sitter-html/*/tree_sitter_cfml/fn.language.html
 [Parser]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Parser.html
 [tree-sitter]: https://tree-sitter.github.io/
 [tree-sitter crate]: https://crates.io/crates/tree-sitter

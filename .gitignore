@@ -11,3 +11,7 @@ Cargo.lock
 bindings/c/*.h
 bindings/c/*.pc
 .build/
+scanner.obj
+parser.obj
+parser.lib
+parser.exp

@@ -70,7 +70,7 @@
     },
     "text": {
       "type": "PATTERN",
-      "value": "[^\\s<>}{\\(\\)#\\[\\]=,.\"\\'`;&\\/\\\\]+"
+      "value": "[^<>&\\s]([^<>&]*[^<>&\\s])?"
     },
     "cf_variable": {
       "type": "PATTERN",
@@ -275,10 +275,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "text"
-        },
-        {
-          "type": "SYMBOL",
           "name": "element"
         },
         {
@@ -304,6 +300,10 @@
         {
           "type": "SYMBOL",
           "name": "cf_script"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "text"
         }
       ]
     },
@@ -1514,6 +1514,43 @@
         }
       ]
     },
+    "cf_query_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<cfquery"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</cfquery>"
+          }
+        }
+      ]
+    },
     "cf_transaction_tag_standalone": {
       "type": "PREC_RIGHT",
       "value": 1,
@@ -2559,6 +2596,15 @@
           },
           "named": true,
           "value": "cf_function"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_query_tag"
+          },
+          "named": true,
+          "value": "cf_query"
         },
         {
           "type": "ALIAS",

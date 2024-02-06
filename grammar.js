@@ -65,7 +65,7 @@ module.exports = grammar({
     cf_tag_start: $ => '<',
     _cf_tag_end: $ => '>',
     cf_tag_selfclose_end: $ => choice('/>',$._cf_tag_end),
-    text: $ => /[^\s<>}{\(\)#\[\]=,."\'`;&\/\\]+/,
+    text: $ => /[^<>&\s]([^<>&]*[^<>&\s])?/,
     cf_variable: $ => /[^\s<>}{\(\)#\[\]=,."\'`;&\/\\]+/,
     cf_tag_close: $ => /<\/cf/i,
     cf_true: $ => token('true'),
@@ -103,7 +103,6 @@ module.exports = grammar({
     _node: $ => choice(
       $.doctype,
       $.entity,
-      $.text,
       $.element,
       $._cf_tag,
       $.cf_hash,
@@ -111,6 +110,7 @@ module.exports = grammar({
       $.script_element,
       $.style_element,
       $.cf_script,
+      $.text,
     ),
 
     cf_script: $ => seq(
@@ -387,6 +387,14 @@ module.exports = grammar({
       token('</cffunction>'),
     ),
 
+    cf_query_tag: $ => seq(
+      token('<cfquery'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+      token('</cfquery>'),
+    ),
+
     cf_transaction_tag_standalone: $ => prec.right(1,seq(
       token('<cftransaction'),
       repeat($.cf_attribute),
@@ -643,6 +651,7 @@ module.exports = grammar({
       $.cf_wddx_tag,
       alias($.cf_component_tag,$.cf_component),
       alias($.cf_function_tag,$.cf_function),
+      alias($.cf_query_tag,$.cf_query),
       alias($.cf_argument_tag,$.cf_argument),
       alias($.cf_loop_tag,$.cf_loop),
       alias($.cf_break_tag,$.cf_break),
