@@ -3,7 +3,7 @@
 (doctype) @constant
 (attribute_name) @attribute
 (attribute_value) @string
-(comment) @comment
+(cf_comment) @comment
 
 [
   "<"

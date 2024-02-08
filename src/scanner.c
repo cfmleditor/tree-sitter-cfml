@@ -1,3 +1,4 @@
+#include "tree_sitter/parser.h"
 #include "tag.h"
 
 #include <wctype.h>
@@ -24,6 +25,10 @@ typedef struct {
 typedef struct {
     tags_vec tags;
 } Scanner;
+
+static void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
+
+static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -199,7 +204,45 @@ static String scan_tag_name(TSLexer *lexer) {
     return tag_name;
 }
 
+static bool scan_whitespace_and_comments(TSLexer *lexer) {
+    for (;;) {
+        while (iswspace(lexer->lookahead)) {
+            skip(lexer);
+        }
+
+        if (lexer->lookahead == '/') {
+            skip(lexer);
+
+            if (lexer->lookahead == '/') {
+                skip(lexer);
+                while (lexer->lookahead != 0 && lexer->lookahead != '\n' && lexer->lookahead != 0x2028 &&
+                       lexer->lookahead != 0x2029) {
+                    skip(lexer);
+                }
+            } else if (lexer->lookahead == '*') {
+                skip(lexer);
+                while (lexer->lookahead != 0) {
+                    if (lexer->lookahead == '*') {
+                        skip(lexer);
+                        if (lexer->lookahead == '/') {
+                            skip(lexer);
+                            break;
+                        }
+                    } else {
+                        skip(lexer);
+                    }
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
+}
+
 static bool scan_comment(TSLexer *lexer) {
+    
     if (lexer->lookahead != '-') {
         return false;
     }
@@ -250,6 +293,37 @@ static bool scan_comment(TSLexer *lexer) {
         lexer->advance(lexer, false);
     }
     return false;
+}
+
+static bool scan_script_comment(TSLexer *lexer) {
+    
+    for (;;) {
+
+        if (lexer->lookahead == '/') {
+            skip(lexer);
+            while (lexer->lookahead != 0 && lexer->lookahead != '\n' && lexer->lookahead != 0x2028 &&
+                    lexer->lookahead != 0x2029) {
+                skip(lexer);
+            }
+            //*scanned_comment = true;
+        } else if (lexer->lookahead == '*') {
+            skip(lexer);
+            while (lexer->lookahead != 0) {
+                if (lexer->lookahead == '*') {
+                    skip(lexer);
+                    if (lexer->lookahead == '/') {
+                        skip(lexer);
+                        //*scanned_comment = true;
+                        break;
+                    }
+                } else {
+                    skip(lexer);
+                }
+            }
+        } else {
+            return false;
+        }
+    }
 }
 
 static bool scan_raw_text(Scanner *scanner, TSLexer *lexer) {
@@ -380,17 +454,13 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer) {
 
 static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer) {
     lexer->advance(lexer, false);
-    if (lexer->lookahead == '>') {
-        lexer->advance(lexer, false);
-        if (scanner->tags.len > 0) {
-            VEC_POP(scanner->tags);
-            lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
-        } else {
-            lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;   
-        }
-        return true;
+    if (scanner->tags.len > 0) {
+        VEC_POP(scanner->tags);
+        lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
+    } else {
+        lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;   
     }
-    return false;
+    return true;
 }
 
 static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
@@ -428,9 +498,19 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
             break;
 
         case '/':
-            if (valid_symbols[SELF_CLOSING_TAG_DELIMITER]) {
-                return scan_self_closing_tag_delimiter(scanner, lexer);
+            if (lexer->lookahead == '/') {
+                lexer->advance(lexer, false);
+                if (lexer->lookahead == '>') {
+                    if (valid_symbols[SELF_CLOSING_TAG_DELIMITER]) {
+                        return scan_self_closing_tag_delimiter(scanner, lexer);
+                    }  
+                } else if ( lexer->lookahead == '/' || lexer->lookahead == '*' ) {
+                   if ( !scan_script_comment(lexer) ) {
+                        return false; 
+                   }
+                }
             }
+            
             break;
 
         default:

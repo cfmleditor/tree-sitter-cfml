@@ -306,7 +306,7 @@ get results
             (tag_name))
           (end_tag
             (tag_name)))
-        (comment)
+        (cf_comment)
         (cf_if_statement_tag
           (cf_if_tag
             (cf_expression_parens
@@ -536,7 +536,6 @@ nested cfif
   <!--- --->
 
 --->
-
 ---
 
 (fragment
@@ -564,5 +563,28 @@ nested cfif
         (cf_operator)
         (cf_variable)
         (cf_tag_selfclose_end))
-      (comment))
+      (cf_comment))
 
+
+===================================
+cfscript comments
+===================================
+<cfscript>
+    // test
+    test(); // test
+    /* test */
+</cfscript>
+---
+
+(fragment
+      (cf_script
+        (cf_script_expression
+          (cf_script_comment))
+        (cf_script_expression
+          (cf_function_call
+            (cf_variable)
+            (cf_function_call_arguments)))
+        (cf_script_expression
+        (cf_script_comment))
+        (cf_script_expression
+          (cf_script_comment))))
