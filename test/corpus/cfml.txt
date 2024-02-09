@@ -377,9 +377,11 @@ cfscript
 (fragment
       (cf_script
         (cf_script_expression
+          (cf_variable))
+        (cf_script_expression
+          (cf_variable))
+        (cf_script_expression
           (cf_function
-            (cf_function_access)
-            (cf_function_returntype)
             (cf_function_keyword)
             (cf_function_name
               (cf_variable))
@@ -394,8 +396,9 @@ cfscript
                 (cf_return_keyword)
                 (cf_true)))))
         (cf_script_expression
+          (cf_variable))
+        (cf_script_expression
           (cf_function
-            (cf_function_access)
             (cf_function_keyword)
             (cf_function_name
               (cf_variable))

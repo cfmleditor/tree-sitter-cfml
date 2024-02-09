@@ -121,9 +121,9 @@ module.exports = grammar({
     ),  
 
     cf_script_expression: $ => choice(
-        $.cf_script_comment,
-        $.cf_function,
-        seq($._cf_expression,';'),
+      $.cf_script_comment,
+      $.cf_function,
+      seq($._cf_expression,optional(';')),
     ),
       
     element: $ => choice(
@@ -269,13 +269,34 @@ module.exports = grammar({
     ),  
 
     cf_if_statement: $ => seq(
-      keyword('if'),
+      $.cf_if,
+      repeat($.cf_script_expression),
+      '}',
+      repeat($.cf_elseif),
+      optional(
+        $.cf_else,
+      )
+    ),
+
+    cf_if: $ => seq(
+       keyword('if'),
+       $.cf_expression_parens,
+       '{',
+    ),
+
+    cf_elseif: $ => seq(
+      keyword('else if'),
       $.cf_expression_parens,
       '{',
-      repeat($._cf_expression),
-      repeat(seq('}',keyword('else if'),$.cf_expression_parens,'{',repeat($._cf_expression),)),
-      optional(seq('}',keyword('else'),'{',repeat($._cf_expression),)),
-      '}'
+      repeat($.cf_script_expression),
+      '}',
+    ),
+
+    cf_else: $ => seq(
+      keyword('else'),
+      '{',
+      repeat($.cf_script_expression),
+      '}',
     ),
 
     cf_case: $ => seq(
@@ -292,12 +313,12 @@ module.exports = grammar({
     _cf_member_expression: $ => choice(
       $._cf_assignment_expression,
       prec.right(1,$.cf_dblquotes),
+      prec.right(1,$.cf_variable),
       prec.right(2,$.cf_dblquotes_empty),
       prec.right(1,$.cf_singlequotes),
       prec.right(2,$.cf_singlequotes_empty),
       prec.right(2,seq(optional($._cf_expression),$.cf_associative)),
       prec.right(6,$.cf_bracket_expression),
-      prec.right(6,$.cf_variable),
     ),
 
     cf_component_tag: $ => seq(
@@ -309,7 +330,7 @@ module.exports = grammar({
     ),
 
     cf_function: $ => seq(
-      optional(alias($.cf_variable,$.cf_function_access)),
+      optional($.cf_function_access),
       optional($.cf_function_returntype),
       $.cf_function_keyword,
       optional($.cf_function_name),
@@ -385,7 +406,7 @@ module.exports = grammar({
 
     cf_expression_parens: $ => seq(
       '(',
-      optional($._cf_expression),
+      repeat($._cf_expression),
       ')',
     ),
 
@@ -400,8 +421,12 @@ module.exports = grammar({
       $.cf_variable,
     ),
 
+    cf_function_access: $ => choice(
+      $.cf_variable,
+    ),
+
     cf_function_returntype: $ => choice(
-      keyword('boolean'),
+      $.cf_variable,
     ),
 
     cf_function_argument_required: $ => choice(
@@ -409,7 +434,7 @@ module.exports = grammar({
     ),
 
     cf_function_argument_type: $ => choice(
-      keyword('any'),
+      $.cf_variable,
     ),
 
     cf_function_argument_name: $ => choice(
