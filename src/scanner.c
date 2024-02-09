@@ -26,10 +26,6 @@ typedef struct {
     tags_vec tags;
 } Scanner;
 
-static void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
-
-static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
-
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 #define VEC_RESIZE(vec, _cap)                                                  \
@@ -204,42 +200,6 @@ static String scan_tag_name(TSLexer *lexer) {
     return tag_name;
 }
 
-static bool scan_whitespace_and_comments(TSLexer *lexer) {
-    for (;;) {
-        while (iswspace(lexer->lookahead)) {
-            skip(lexer);
-        }
-
-        if (lexer->lookahead == '/') {
-            skip(lexer);
-
-            if (lexer->lookahead == '/') {
-                skip(lexer);
-                while (lexer->lookahead != 0 && lexer->lookahead != '\n' && lexer->lookahead != 0x2028 &&
-                       lexer->lookahead != 0x2029) {
-                    skip(lexer);
-                }
-            } else if (lexer->lookahead == '*') {
-                skip(lexer);
-                while (lexer->lookahead != 0) {
-                    if (lexer->lookahead == '*') {
-                        skip(lexer);
-                        if (lexer->lookahead == '/') {
-                            skip(lexer);
-                            break;
-                        }
-                    } else {
-                        skip(lexer);
-                    }
-                }
-            } else {
-                return false;
-            }
-        } else {
-            return true;
-        }
-    }
-}
 
 static bool scan_comment(TSLexer *lexer) {
     
@@ -300,24 +260,24 @@ static bool scan_script_comment(TSLexer *lexer) {
     for (;;) {
 
         if (lexer->lookahead == '/') {
-            skip(lexer);
+            lexer->advance(lexer, true);
             while (lexer->lookahead != 0 && lexer->lookahead != '\n' && lexer->lookahead != 0x2028 &&
                     lexer->lookahead != 0x2029) {
-                skip(lexer);
+                lexer->advance(lexer, true);
             }
             //*scanned_comment = true;
         } else if (lexer->lookahead == '*') {
-            skip(lexer);
+            lexer->advance(lexer, true);
             while (lexer->lookahead != 0) {
                 if (lexer->lookahead == '*') {
-                    skip(lexer);
+                    lexer->advance(lexer, true);
                     if (lexer->lookahead == '/') {
-                        skip(lexer);
+                        lexer->advance(lexer, true);
                         //*scanned_comment = true;
                         break;
                     }
                 } else {
-                    skip(lexer);
+                    lexer->advance(lexer, true);
                 }
             }
         } else {
@@ -464,14 +424,16 @@ static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer) {
 }
 
 static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
+    while (iswspace(lexer->lookahead)) {
+        lexer->advance(lexer, true);
+    }
+    
     if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] &&
         !valid_symbols[END_TAG_NAME]) {
         return scan_raw_text(scanner, lexer);
     }
 
-    while (iswspace(lexer->lookahead)) {
-        lexer->advance(lexer, true);
-    }
+    
 
     switch (lexer->lookahead) {
         case ';':

@@ -17,6 +17,7 @@ module.exports = grammar({
     $.cf_comment,
     ';',
     /\s+/,
+    $.cf_script_comment,
   ],
 
   externals: $ => [
@@ -69,7 +70,7 @@ module.exports = grammar({
     _cf_tag_end: $ => '>',
     cf_tag_selfclose_end: $ => choice('/>',$._cf_tag_end),
     text: $ => /[^<>&\s]([^<>&]*[^<>&\s])?/,
-    cf_variable: $ => /[^\s<>}{\(\)#\[\]=,."\'`;&\/\\]+/,
+    cf_variable: $ => /[a-zA-Z0-9_-]+/,
     cf_tag_close: $ => /<\/cf/i,
     cf_true: $ => keyword('true'),
     cf_false: $ => keyword('false'),
@@ -84,16 +85,16 @@ module.exports = grammar({
       keyword('lt'),
       keyword('is'),
       keyword('gt'),
-      keyword('>='),
-      keyword('==='),
-      keyword('+'),
-      keyword('*'),
-      keyword('/'),
-      keyword('-'),
-      keyword('=='),
-      keyword('<='),
-      keyword('&&'),
-      keyword('||'),
+      '>=',
+      '===',
+      '+',
+      '*',
+      '/',
+      '-',
+      '==',
+      '<=',
+      '&&',
+      '||',
     ),
     
     cf_prefix_operator: $ => choice(
@@ -123,7 +124,6 @@ module.exports = grammar({
     ),  
 
     cf_script_expression: $ => choice(
-      $.cf_script_comment,
       seq($._cf_expression,optional(';')),
     ),
       

@@ -3890,10 +3890,6 @@
           "named": true
         },
         {
-          "type": "cf_script_comment",
-          "named": true
-        },
-        {
           "type": "cf_singlequotes",
           "named": true
         },

@@ -584,30 +584,29 @@ cfscript comments
 
 (fragment
       (cf_script
-        (cf_script_expression
-          (cf_script_comment))
+        (cf_script_comment)
         (cf_script_expression
           (cf_function_call
             (cf_variable)
             (cf_function_call_arguments)))
-        (cf_script_expression
-        (cf_script_comment))
-        (cf_script_expression
-          (cf_script_comment))))
+        (cf_script_comment)
+        (cf_script_comment)))
 
 ===================================
 cfscript switch
 ===================================
 
 <cfscript>
+// test
 			switch (test) {
 				case "1":
-          test();
+          test();//test
+          
 					break;
-        defaultcase:
+        defaultcase: //test
           test();
 			}
-      for (test) {
+      for (test) { //test
         test();
       }
 		</cfscript>
@@ -615,6 +614,7 @@ cfscript switch
 
 (fragment
       (cf_script
+        (cf_script_comment)
         (cf_script_expression
           (cf_switch_statement
             (cf_switch
@@ -627,15 +627,18 @@ cfscript switch
               (cf_function_call
                 (cf_variable)
                 (cf_function_call_arguments))
+              (cf_script_comment)
               (cf_break))
             (cf_defaultcase
+              (cf_script_comment)
               (cf_function_call
                 (cf_variable)
-                (cf_function_call_arguments)))))        
+                (cf_function_call_arguments)))))
         (cf_script_expression
           (cf_for_statement
             (cf_expression_parens
               (cf_variable))
+            (cf_script_comment)
             (cf_script_expression
               (cf_function_call
                 (cf_variable)
