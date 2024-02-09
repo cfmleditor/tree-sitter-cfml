@@ -44,6 +44,8 @@ module.exports = grammar({
     [$.cf_zip_tag, $.cf_zip_tag_standalone],
     [$.cf_transaction_tag, $.cf_transaction_tag_standalone],
     [$.cf_ternary, $.cf_objectkeyassign],
+    [$.cf_function_access, $.cf_function_returntype],
+    [$.cf_function_argument_name, $.cf_function_argument_type],
   ],
 
   rules: {
@@ -251,9 +253,7 @@ module.exports = grammar({
     ),
 
     cf_switch_statement: $ => seq(
-      keyword('switch'),
-      $.cf_expression_parens,
-      keyword('{'),
+      $.cf_switch,
       repeat(seq(
         $.cf_case,
         optional($._cf_expression),
@@ -268,14 +268,20 @@ module.exports = grammar({
       keyword('}'),
     ),  
 
+    cf_switch: $ => seq(
+      keyword('switch'),
+      $.cf_expression_parens,
+      keyword('{'),
+    ),
+
     cf_if_statement: $ => seq(
       $.cf_if,
       repeat($.cf_script_expression),
-      '}',
+      token('}'),
       repeat($.cf_elseif),
       optional(
         $.cf_else,
-      )
+      ),
     ),
 
     cf_if: $ => seq(
@@ -283,6 +289,14 @@ module.exports = grammar({
        $.cf_expression_parens,
        '{',
     ),
+
+    cf_for_statement: $ => seq(
+      keyword('for'),
+      $.cf_expression_parens,
+      '{',
+      repeat($.cf_script_expression),
+      '}',
+   ),
 
     cf_elseif: $ => seq(
       keyword('else if'),
@@ -486,7 +500,7 @@ module.exports = grammar({
       keyword('</cftransaction>'),
     )),
 
-    cf_try_statement: $ => seq(
+    cf_try_statement_tag: $ => seq(
       $.cf_try_tag,
       $.cf_catch_tag,
       keyword('</cftry>'),
@@ -499,7 +513,7 @@ module.exports = grammar({
       repeat($._node),
     ),
 
-    cf_switch_statement: $ => seq(
+    cf_switch_statement_tag: $ => seq(
       $.cf_switch_tag,
       repeat($.cf_case_tag),
       optional($.cf_defaultcase_tag),
@@ -709,8 +723,8 @@ module.exports = grammar({
 
     _cf_tag: $ => choice(
       $.cf_if_statement_tag,
-      $.cf_try_statement,
-      $.cf_switch_statement,
+      $.cf_try_statement_tag,
+      $.cf_switch_statement_tag,
       $.cf_transaction_tag,
       $.cf_transaction_tag_standalone,
       $.cf_set_tag,
