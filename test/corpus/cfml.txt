@@ -602,9 +602,17 @@ cfscript switch
 <cfscript>
 			switch (test) {
 				case "1":
+          test();
 					break;
+        defaultcase:
+          test();
 			}
+      for (test) {
+        test();
+      }
 		</cfscript>
+---
+
 (fragment
       (cf_script
         (cf_script_expression
@@ -612,7 +620,23 @@ cfscript switch
             (cf_switch
               (cf_expression_parens
                 (cf_variable)))
-            (cf_case
-              (cf_dblquotes
-                (quoted_text)))
-            (cf_break)))))
+            (cf_case_statement
+              (cf_case
+                (cf_dblquotes
+                  (quoted_text)))
+              (cf_function_call
+                (cf_variable)
+                (cf_function_call_arguments))
+              (cf_break))
+            (cf_defaultcase
+              (cf_function_call
+                (cf_variable)
+                (cf_function_call_arguments)))))        
+        (cf_script_expression
+          (cf_for_statement
+            (cf_expression_parens
+              (cf_variable))
+            (cf_script_expression
+              (cf_function_call
+                (cf_variable)
+                (cf_function_call_arguments)))))))

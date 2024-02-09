@@ -543,10 +543,6 @@
           "name": "cf_script_comment"
         },
         {
-          "type": "SYMBOL",
-          "name": "cf_function"
-        },
-        {
           "type": "SEQ",
           "members": [
             {
@@ -999,6 +995,14 @@
           "value": 2,
           "content": {
             "type": "SYMBOL",
+            "name": "cf_for_statement"
+          }
+        },
+        {
+          "type": "PREC_RIGHT",
+          "value": 2,
+          "content": {
+            "type": "SYMBOL",
             "name": "cf_if_statement"
           }
         },
@@ -1222,80 +1226,64 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "cf_case"
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_cf_expression"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "cf_break"
-                  },
-                  {
-                    "type": "BLANK"
-                  }
-                ]
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "cf_case_statement"
           }
         },
         {
           "type": "CHOICE",
           "members": [
             {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "TOKEN",
-                    "content": {
-                      "type": "PREC",
-                      "value": 1,
-                      "content": {
-                        "type": "PATTERN",
-                        "value": "[dD][eE][fF][aA][uU][lL][tT][cC][aA][sS][eE][::]"
-                      }
-                    }
-                  },
-                  "named": false,
-                  "value": "defaultcase:"
-                },
-                {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "_cf_expression"
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
-                }
-              ]
+              "type": "SYMBOL",
+              "name": "cf_defaultcase"
             },
             {
               "type": "BLANK"
             }
           ]
         },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "cf_case_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cf_case"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_cf_expression"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cf_break"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "cf_defaultcase": {
+      "type": "SEQ",
+      "members": [
         {
           "type": "ALIAS",
           "content": {
@@ -1305,12 +1293,24 @@
               "value": 1,
               "content": {
                 "type": "PATTERN",
-                "value": "[}}]"
+                "value": "[dD][eE][fF][aA][uU][lL][tT][cC][aA][sS][eE][::]"
               }
             }
           },
           "named": false,
-          "value": "}"
+          "value": "defaultcase:"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_cf_expression"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ]
     },
@@ -1338,19 +1338,7 @@
           "name": "cf_expression_parens"
         },
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[{{]"
-              }
-            }
-          },
-          "named": false,
+          "type": "STRING",
           "value": "{"
         }
       ]

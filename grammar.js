@@ -124,7 +124,6 @@ module.exports = grammar({
 
     cf_script_expression: $ => choice(
       $.cf_script_comment,
-      $.cf_function,
       seq($._cf_expression,optional(';')),
     ),
       
@@ -237,6 +236,7 @@ module.exports = grammar({
       prec.right(1,$.cf_hash),
       prec.right(2,$.cf_function),
       prec.right(2,$.cf_switch_statement),
+      prec.right(2,$.cf_for_statement),
       prec.right(2,$.cf_if_statement),
       prec.right(2,seq(optional($._cf_expression),$.cf_period,$._cf_expression)),
       prec.right(2,seq(optional($._cf_expression),$.cf_concat,$._cf_expression)),
@@ -254,24 +254,28 @@ module.exports = grammar({
 
     cf_switch_statement: $ => seq(
       $.cf_switch,
-      repeat(seq(
-        $.cf_case,
-        optional($._cf_expression),
-        optional($.cf_break),
-      )),
+      repeat($.cf_case_statement),
       optional(
-        seq(
-          keyword('defaultcase:'),
-          optional($._cf_expression),
-        ),
+        $.cf_defaultcase,
       ),
-      keyword('}'),
+      '}',
     ),  
 
+    cf_case_statement: $ => seq(
+      $.cf_case,
+      optional($._cf_expression),
+      optional($.cf_break),
+    ),
+
+    cf_defaultcase: $ => seq(
+      keyword('defaultcase:'),
+      optional($._cf_expression),
+    ),
+    
     cf_switch: $ => seq(
       keyword('switch'),
       $.cf_expression_parens,
-      keyword('{'),
+      '{',
     ),
 
     cf_if_statement: $ => seq(

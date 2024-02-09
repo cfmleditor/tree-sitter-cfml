@@ -91,6 +91,10 @@
           "named": true
         },
         {
+          "type": "cf_for_statement",
+          "named": true
+        },
+        {
           "type": "cf_function",
           "named": true
         },
@@ -198,6 +202,10 @@
           "named": true
         },
         {
+          "type": "cf_for_statement",
+          "named": true
+        },
+        {
           "type": "cf_function",
           "named": true
         },
@@ -298,6 +306,10 @@
         },
         {
           "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_for_statement",
           "named": true
         },
         {
@@ -435,6 +447,125 @@
         },
         {
           "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_for_statement",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_function_call",
+          "named": true
+        },
+        {
+          "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_if_statement",
+          "named": true
+        },
+        {
+          "type": "cf_objectkeyassign",
+          "named": true
+        },
+        {
+          "type": "cf_operator",
+          "named": true
+        },
+        {
+          "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_prefix_operator",
+          "named": true
+        },
+        {
+          "type": "cf_singlequotes",
+          "named": true
+        },
+        {
+          "type": "cf_singlequotes_empty",
+          "named": true
+        },
+        {
+          "type": "cf_switch_statement",
+          "named": true
+        },
+        {
+          "type": "cf_ternary",
+          "named": true
+        },
+        {
+          "type": "cf_true",
+          "named": true
+        },
+        {
+          "type": "cf_variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_case_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_assignment",
+          "named": true
+        },
+        {
+          "type": "cf_associative",
+          "named": true
+        },
+        {
+          "type": "cf_bracket_expression",
+          "named": true
+        },
+        {
+          "type": "cf_break",
+          "named": true
+        },
+        {
+          "type": "cf_case",
+          "named": true
+        },
+        {
+          "type": "cf_comma",
+          "named": true
+        },
+        {
+          "type": "cf_concat",
+          "named": true
+        },
+        {
+          "type": "cf_dblquotes",
+          "named": true
+        },
+        {
+          "type": "cf_dblquotes_empty",
+          "named": true
+        },
+        {
+          "type": "cf_expression_parens",
+          "named": true
+        },
+        {
+          "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_for_statement",
           "named": true
         },
         {
@@ -999,6 +1130,113 @@
     "fields": {}
   },
   {
+    "type": "cf_defaultcase",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cf_assignment",
+          "named": true
+        },
+        {
+          "type": "cf_associative",
+          "named": true
+        },
+        {
+          "type": "cf_bracket_expression",
+          "named": true
+        },
+        {
+          "type": "cf_comma",
+          "named": true
+        },
+        {
+          "type": "cf_concat",
+          "named": true
+        },
+        {
+          "type": "cf_dblquotes",
+          "named": true
+        },
+        {
+          "type": "cf_dblquotes_empty",
+          "named": true
+        },
+        {
+          "type": "cf_expression_parens",
+          "named": true
+        },
+        {
+          "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_for_statement",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_function_call",
+          "named": true
+        },
+        {
+          "type": "cf_hash",
+          "named": true
+        },
+        {
+          "type": "cf_if_statement",
+          "named": true
+        },
+        {
+          "type": "cf_objectkeyassign",
+          "named": true
+        },
+        {
+          "type": "cf_operator",
+          "named": true
+        },
+        {
+          "type": "cf_period",
+          "named": true
+        },
+        {
+          "type": "cf_prefix_operator",
+          "named": true
+        },
+        {
+          "type": "cf_singlequotes",
+          "named": true
+        },
+        {
+          "type": "cf_singlequotes_empty",
+          "named": true
+        },
+        {
+          "type": "cf_switch_statement",
+          "named": true
+        },
+        {
+          "type": "cf_ternary",
+          "named": true
+        },
+        {
+          "type": "cf_true",
+          "named": true
+        },
+        {
+          "type": "cf_variable",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_defaultcase_tag",
     "named": true,
     "fields": {},
@@ -1418,6 +1656,10 @@
           "named": true
         },
         {
+          "type": "cf_for_statement",
+          "named": true
+        },
+        {
           "type": "cf_function",
           "named": true
         },
@@ -1625,6 +1867,10 @@
           "named": true
         },
         {
+          "type": "cf_for_statement",
+          "named": true
+        },
+        {
           "type": "cf_function",
           "named": true
         },
@@ -1702,6 +1948,25 @@
         },
         {
           "type": "cf_tag_selfclose_end",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_for_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_expression_parens",
+          "named": true
+        },
+        {
+          "type": "cf_script_expression",
           "named": true
         }
       ]
@@ -1977,6 +2242,10 @@
           "named": true
         },
         {
+          "type": "cf_for_statement",
+          "named": true
+        },
+        {
           "type": "cf_function",
           "named": true
         },
@@ -2092,6 +2361,10 @@
           "named": true
         },
         {
+          "type": "cf_for_statement",
+          "named": true
+        },
+        {
           "type": "cf_function",
           "named": true
         },
@@ -2196,6 +2469,10 @@
         },
         {
           "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_for_statement",
           "named": true
         },
         {
@@ -2334,6 +2611,10 @@
         },
         {
           "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_for_statement",
           "named": true
         },
         {
@@ -2540,6 +2821,10 @@
         },
         {
           "type": "cf_file_tag",
+          "named": true
+        },
+        {
+          "type": "cf_for_statement",
           "named": true
         },
         {
@@ -3274,6 +3559,10 @@
           "named": true
         },
         {
+          "type": "cf_for_statement",
+          "named": true
+        },
+        {
           "type": "cf_function",
           "named": true
         },
@@ -3565,6 +3854,10 @@
           "named": true
         },
         {
+          "type": "cf_for_statement",
+          "named": true
+        },
+        {
           "type": "cf_function",
           "named": true
         },
@@ -3669,6 +3962,10 @@
         },
         {
           "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_for_statement",
           "named": true
         },
         {
@@ -3782,107 +4079,15 @@
       "required": true,
       "types": [
         {
-          "type": "cf_assignment",
+          "type": "cf_case_statement",
           "named": true
         },
         {
-          "type": "cf_associative",
-          "named": true
-        },
-        {
-          "type": "cf_bracket_expression",
-          "named": true
-        },
-        {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_case",
-          "named": true
-        },
-        {
-          "type": "cf_comma",
-          "named": true
-        },
-        {
-          "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_false",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_function_call",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_objectkeyassign",
-          "named": true
-        },
-        {
-          "type": "cf_operator",
-          "named": true
-        },
-        {
-          "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
+          "type": "cf_defaultcase",
           "named": true
         },
         {
           "type": "cf_switch",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_ternary",
-          "named": true
-        },
-        {
-          "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_variable",
           "named": true
         }
       ]
@@ -4109,6 +4314,10 @@
         },
         {
           "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_for_statement",
           "named": true
         },
         {
@@ -4953,6 +5162,10 @@
         },
         {
           "type": "cf_false",
+          "named": true
+        },
+        {
+          "type": "cf_for_statement",
           "named": true
         },
         {
