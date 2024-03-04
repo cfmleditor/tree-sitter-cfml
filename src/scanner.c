@@ -5,6 +5,9 @@
 #include <stdio.h>
 
 enum TokenType {
+    AUTOMATIC_SEMICOLON,
+    TERNARY_QMARK,
+    LOGICAL_OR,
     START_TAG_NAME,
     SCRIPT_START_TAG_NAME,
     STYLE_START_TAG_NAME,
@@ -110,6 +113,10 @@ typedef struct {
         (vec).len = 0;                                                         \
         memset((vec).data, 0, (vec).cap * sizeof(char));                       \
     }
+
+static void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
+
+static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 
 static unsigned serialize(Scanner *scanner, char *buffer) {
     uint16_t tag_count =
@@ -253,6 +260,45 @@ static bool scan_comment(TSLexer *lexer) {
         lexer->advance(lexer, false);
     }
     return false;
+}
+
+static bool scan_whitespace_and_comments(TSLexer *lexer, bool *scanned_comment) {
+    for (;;) {
+        while (iswspace(lexer->lookahead)) {
+            skip(lexer);
+        }
+
+        if (lexer->lookahead == '/') {
+            skip(lexer);
+
+            if (lexer->lookahead == '/') {
+                skip(lexer);
+                while (lexer->lookahead != 0 && lexer->lookahead != '\n' && lexer->lookahead != 0x2028 &&
+                       lexer->lookahead != 0x2029) {
+                    skip(lexer);
+                }
+                *scanned_comment = true;
+            } else if (lexer->lookahead == '*') {
+                skip(lexer);
+                while (lexer->lookahead != 0) {
+                    if (lexer->lookahead == '*') {
+                        skip(lexer);
+                        if (lexer->lookahead == '/') {
+                            skip(lexer);
+                            *scanned_comment = true;
+                            break;
+                        }
+                    } else {
+                        skip(lexer);
+                    }
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
 }
 
 static bool scan_script_comment(TSLexer *lexer) {
@@ -423,17 +469,168 @@ static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer) {
     return true;
 }
 
+static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, bool *scanned_comment) {
+    lexer->result_symbol = AUTOMATIC_SEMICOLON;
+    lexer->mark_end(lexer);
+
+    for (;;) {
+        if (lexer->lookahead == 0) {
+            return true;
+        }
+
+        if (lexer->lookahead == '/') {
+            if (!scan_whitespace_and_comments(lexer, scanned_comment)) {
+                return false;
+            }
+            if (comment_condition && lexer->lookahead != ',' && lexer->lookahead != '=') {
+                return true;
+            }
+        }
+
+        if (lexer->lookahead == '}') {
+            return true;
+        }
+
+        if (lexer->is_at_included_range_start(lexer)) {
+            return true;
+        }
+
+        if (lexer->lookahead == '\n' || lexer->lookahead == 0x2028 || lexer->lookahead == 0x2029) {
+            break;
+        }
+
+        if (!iswspace(lexer->lookahead)) {
+            return false;
+        }
+
+        skip(lexer);
+    }
+
+    skip(lexer);
+
+    if (!scan_whitespace_and_comments(lexer, scanned_comment)) {
+        return false;
+    }
+
+    switch (lexer->lookahead) {
+        case ',':
+        case '.':
+        case ':':
+        case ';':
+        case '*':
+        case '%':
+        case '>':
+        case '<':
+        case '=':
+        case '[':
+        case '(':
+        case '?':
+        case '^':
+        case '|':
+        case '&':
+        case '/':
+            return false;
+
+        // Insert a semicolon before `--` and `++`, but not before binary `+` or `-`.
+        case '+':
+            skip(lexer);
+            return lexer->lookahead == '+';
+        case '-':
+            skip(lexer);
+            return lexer->lookahead == '-';
+
+        // Don't insert a semicolon before `!=`, but do insert one before a unary `!`.
+        case '!':
+            skip(lexer);
+            return lexer->lookahead != '=';
+
+        // Don't insert a semicolon before `in` or `instanceof`, but do insert one
+        // before an identifier.
+        case 'i':
+            skip(lexer);
+
+            if (lexer->lookahead != 'n') {
+                return true;
+            }
+            skip(lexer);
+
+            if (!iswalpha(lexer->lookahead)) {
+                return false;
+            }
+
+            for (unsigned i = 0; i < 8; i++) {
+                if (lexer->lookahead != "stanceof"[i]) {
+                    return true;
+                }
+                skip(lexer);
+            }
+
+            if (!iswalpha(lexer->lookahead)) {
+                return false;
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    return true;
+}
+
+static bool scan_ternary_qmark(TSLexer *lexer) {
+    for (;;) {
+        if (!iswspace(lexer->lookahead)) {
+            break;
+        }
+        skip(lexer);
+    }
+
+    if (lexer->lookahead == '?') {
+        advance(lexer);
+
+        if (lexer->lookahead == '?') {
+            return false;
+        }
+
+        lexer->mark_end(lexer);
+        lexer->result_symbol = TERNARY_QMARK;
+
+        if (lexer->lookahead == '.') {
+            advance(lexer);
+            if (iswdigit(lexer->lookahead)) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+    return false;
+}
+
 static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
+    
     while (iswspace(lexer->lookahead)) {
         lexer->advance(lexer, true);
     }
+
+    if (valid_symbols[AUTOMATIC_SEMICOLON]) {
+        bool scanned_comment = false;
+        bool ret = scan_automatic_semicolon(lexer, !valid_symbols[LOGICAL_OR], &scanned_comment);
+        if (!ret && !scanned_comment && valid_symbols[TERNARY_QMARK] && lexer->lookahead == '?') {
+            return scan_ternary_qmark(lexer);
+        }
+        return ret;
+    }
+
+    if (valid_symbols[TERNARY_QMARK]) {
+        return scan_ternary_qmark(lexer);
+    }
+
     
     if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] &&
         !valid_symbols[END_TAG_NAME]) {
         return scan_raw_text(scanner, lexer);
     }
-
-    
 
     switch (lexer->lookahead) {
         case ';':

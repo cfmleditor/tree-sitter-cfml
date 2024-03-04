@@ -352,17 +352,6 @@ get results
 cfscript
 ===================================
 <cfscript>
-  public boolean function myFunction(required any myArgument=""){
-    return true; 
-  }
-
-  public function myFunction(required any myArgument={}){
-    return true; 
-  }
-
-  function myFunction(required any myArgument=[]){
-    return true; 
-  }
 
   cars = fn("abc,test","abc");
 
@@ -391,7 +380,7 @@ cfscript
                 (cf_variable))
               (cf_function_argument_name
                 (cf_variable))
-              (cf_dblquotes))
+              (cf_dblquotes_empty))
             (cf_bracket_function
               (cf_return
                 (cf_return_keyword)
@@ -578,6 +567,10 @@ cfscript comments
 <cfscript>
     // test
     test(); // test
+
+    if ( test EQ test ) {
+       test();
+    }
     /* test */
 </cfscript>
 ---
@@ -606,9 +599,6 @@ cfscript switch
         defaultcase: //test
           test();
 			}
-      for (test) { //test
-        test();
-      }
 		</cfscript>
 ---
 
