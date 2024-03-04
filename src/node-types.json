@@ -847,14 +847,6 @@
           "named": true
         },
         {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
           "type": "cf_expression_parens",
           "named": true
         },
@@ -863,23 +855,11 @@
           "named": true
         },
         {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
           "type": "cf_function_call",
           "named": true
         },
         {
           "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
           "named": true
         },
         {
@@ -895,22 +875,6 @@
           "named": true
         },
         {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
           "type": "cf_ternary",
           "named": true
         },
@@ -920,6 +884,18 @@
         },
         {
           "type": "cf_variable",
+          "named": true
+        },
+        {
+          "type": "function_expression",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
           "named": true
         }
       ]
@@ -934,103 +910,11 @@
       "required": true,
       "types": [
         {
-          "type": "cf_assignment",
-          "named": true
-        },
-        {
-          "type": "cf_associative",
-          "named": true
-        },
-        {
           "type": "cf_attribute_name",
           "named": true
         },
         {
-          "type": "cf_bracket_expression",
-          "named": true
-        },
-        {
-          "type": "cf_comma",
-          "named": true
-        },
-        {
-          "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_false",
-          "named": true
-        },
-        {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_function_call",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_objectkeyassign",
-          "named": true
-        },
-        {
-          "type": "cf_operator",
-          "named": true
-        },
-        {
-          "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_ternary",
-          "named": true
-        },
-        {
-          "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_variable",
+          "type": "expression",
           "named": true
         }
       ]
@@ -1065,14 +949,6 @@
           "named": true
         },
         {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
           "type": "cf_expression_parens",
           "named": true
         },
@@ -1081,23 +957,11 @@
           "named": true
         },
         {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
           "type": "cf_function_call",
           "named": true
         },
         {
           "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
           "named": true
         },
         {
@@ -1113,22 +977,6 @@
           "named": true
         },
         {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
           "type": "cf_ternary",
           "named": true
         },
@@ -1139,24 +987,17 @@
         {
           "type": "cf_variable",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_bracket_function",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
+        },
         {
-          "type": "cf_expression_statement",
+          "type": "function_expression",
           "named": true
         },
         {
-          "type": "cf_return",
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
           "named": true
         }
       ]
@@ -1168,232 +1009,10 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "cf_tag_selfclose_end",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_case",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_assignment",
-          "named": true
-        },
-        {
-          "type": "cf_associative",
-          "named": true
-        },
-        {
-          "type": "cf_bracket_expression",
-          "named": true
-        },
-        {
-          "type": "cf_comma",
-          "named": true
-        },
-        {
-          "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_false",
-          "named": true
-        },
-        {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_function_call",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_objectkeyassign",
-          "named": true
-        },
-        {
-          "type": "cf_operator",
-          "named": true
-        },
-        {
-          "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_ternary",
-          "named": true
-        },
-        {
-          "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_variable",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_case_statement",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_assignment",
-          "named": true
-        },
-        {
-          "type": "cf_associative",
-          "named": true
-        },
-        {
-          "type": "cf_bracket_expression",
-          "named": true
-        },
-        {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_case",
-          "named": true
-        },
-        {
-          "type": "cf_comma",
-          "named": true
-        },
-        {
-          "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_false",
-          "named": true
-        },
-        {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_function_call",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_objectkeyassign",
-          "named": true
-        },
-        {
-          "type": "cf_operator",
-          "named": true
-        },
-        {
-          "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_ternary",
-          "named": true
-        },
-        {
-          "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_variable",
           "named": true
         }
       ]
@@ -1408,143 +1027,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "cf_node",
           "named": true
         }
       ]
@@ -1559,143 +1046,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "cf_node",
           "named": true
         }
       ]
@@ -1715,143 +1070,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "cf_node",
           "named": true
         }
       ]
@@ -1882,133 +1105,6 @@
     }
   },
   {
-    "type": "cf_dblquotes",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "quoted_text",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_dblquotes_empty",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "cf_defaultcase",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_assignment",
-          "named": true
-        },
-        {
-          "type": "cf_associative",
-          "named": true
-        },
-        {
-          "type": "cf_bracket_expression",
-          "named": true
-        },
-        {
-          "type": "cf_comma",
-          "named": true
-        },
-        {
-          "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_false",
-          "named": true
-        },
-        {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_function_call",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_objectkeyassign",
-          "named": true
-        },
-        {
-          "type": "cf_operator",
-          "named": true
-        },
-        {
-          "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_ternary",
-          "named": true
-        },
-        {
-          "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_variable",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cf_defaultcase_tag",
     "named": true,
     "fields": {},
@@ -2017,143 +1113,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "cf_node",
           "named": true
         }
       ]
@@ -2179,21 +1143,6 @@
     }
   },
   {
-    "type": "cf_else",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_script_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cf_else_tag",
     "named": true,
     "fields": {},
@@ -2202,158 +1151,7 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_elseif",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_script_expression",
+          "type": "cf_node",
           "named": true
         }
       ]
@@ -2368,10 +1166,6 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_assignment",
           "named": true
         },
@@ -2384,35 +1178,11 @@
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
           "type": "cf_comma",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
           "named": true
         },
         {
@@ -2424,18 +1194,6 @@
           "named": true
         },
         {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
           "type": "cf_function_call",
           "named": true
         },
@@ -2444,27 +1202,7 @@
           "named": true
         },
         {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
+          "type": "cf_node",
           "named": true
         },
         {
@@ -2476,55 +1214,7 @@
           "named": true
         },
         {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
           "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
           "named": true
         },
         {
@@ -2532,23 +1222,7 @@
           "named": true
         },
         {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
           "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
           "named": true
         },
         {
@@ -2556,39 +1230,15 @@
           "named": true
         },
         {
-          "type": "cf_wddx_tag",
+          "type": "function_expression",
           "named": true
         },
         {
-          "type": "cf_zip_tag",
+          "type": "string",
           "named": true
         },
         {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "unary_operator",
           "named": true
         }
       ]
@@ -2623,14 +1273,6 @@
           "named": true
         },
         {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
           "type": "cf_expression_parens",
           "named": true
         },
@@ -2639,23 +1281,11 @@
           "named": true
         },
         {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
           "type": "cf_function_call",
           "named": true
         },
         {
           "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
           "named": true
         },
         {
@@ -2671,22 +1301,6 @@
           "named": true
         },
         {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
           "type": "cf_ternary",
           "named": true
         },
@@ -2697,112 +1311,17 @@
         {
           "type": "cf_variable",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_expression_statement",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
+        },
         {
-          "type": "cf_assignment",
+          "type": "function_expression",
           "named": true
         },
         {
-          "type": "cf_associative",
+          "type": "string",
           "named": true
         },
         {
-          "type": "cf_bracket_expression",
-          "named": true
-        },
-        {
-          "type": "cf_comma",
-          "named": true
-        },
-        {
-          "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_false",
-          "named": true
-        },
-        {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_function_call",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_objectkeyassign",
-          "named": true
-        },
-        {
-          "type": "cf_operator",
-          "named": true
-        },
-        {
-          "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_ternary",
-          "named": true
-        },
-        {
-          "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_variable",
+          "type": "unary_operator",
           "named": true
         }
       ]
@@ -2833,25 +1352,6 @@
     }
   },
   {
-    "type": "cf_for_statement",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_script_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cf_function",
     "named": true,
     "fields": {},
@@ -2860,336 +1360,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_bracket_function",
-          "named": true
-        },
-        {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_function_access",
-          "named": true
-        },
-        {
-          "type": "cf_function_arguments",
-          "named": true
-        },
-        {
-          "type": "cf_function_keyword",
-          "named": true
-        },
-        {
-          "type": "cf_function_name",
-          "named": true
-        },
-        {
-          "type": "cf_function_returntype",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_function_access",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_variable",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_function_argument_name",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_variable",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_function_argument_required",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "cf_function_argument_type",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_variable",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_function_arguments",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_assignment",
-          "named": true
-        },
-        {
-          "type": "cf_associative",
-          "named": true
-        },
-        {
-          "type": "cf_bracket_expression",
-          "named": true
-        },
-        {
-          "type": "cf_comma",
-          "named": true
-        },
-        {
-          "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_false",
-          "named": true
-        },
-        {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_function_argument_name",
-          "named": true
-        },
-        {
-          "type": "cf_function_argument_required",
-          "named": true
-        },
-        {
-          "type": "cf_function_argument_type",
-          "named": true
-        },
-        {
-          "type": "cf_function_call",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_objectkeyassign",
-          "named": true
-        },
-        {
-          "type": "cf_operator",
-          "named": true
-        },
-        {
-          "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_ternary",
-          "named": true
-        },
-        {
-          "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_variable",
+          "type": "cf_node",
           "named": true
         }
       ]
@@ -3204,116 +1379,9 @@
       "required": true,
       "types": [
         {
-          "type": "cf_assignment",
+          "type": "arguments",
           "named": true
         },
-        {
-          "type": "cf_associative",
-          "named": true
-        },
-        {
-          "type": "cf_bracket_expression",
-          "named": true
-        },
-        {
-          "type": "cf_comma",
-          "named": true
-        },
-        {
-          "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_false",
-          "named": true
-        },
-        {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_function_call",
-          "named": true
-        },
-        {
-          "type": "cf_function_call_arguments",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_objectkeyassign",
-          "named": true
-        },
-        {
-          "type": "cf_operator",
-          "named": true
-        },
-        {
-          "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_ternary",
-          "named": true
-        },
-        {
-          "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_variable",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_function_call_arguments",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
         {
           "type": "cf_assignment",
           "named": true
@@ -3335,14 +1403,6 @@
           "named": true
         },
         {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
           "type": "cf_expression_parens",
           "named": true
         },
@@ -3351,23 +1411,11 @@
           "named": true
         },
         {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
           "type": "cf_function_call",
           "named": true
         },
         {
           "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
           "named": true
         },
         {
@@ -3383,22 +1431,6 @@
           "named": true
         },
         {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
           "type": "cf_ternary",
           "named": true
         },
@@ -3409,40 +1441,17 @@
         {
           "type": "cf_variable",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_function_keyword",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "cf_function_name",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
+        },
         {
-          "type": "cf_variable",
+          "type": "function_expression",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_function_returntype",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
+        },
         {
-          "type": "cf_variable",
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
           "named": true
         }
       ]
@@ -3453,103 +1462,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "cf_assignment",
-          "named": true
-        },
-        {
-          "type": "cf_associative",
-          "named": true
-        },
-        {
-          "type": "cf_bracket_expression",
-          "named": true
-        },
-        {
-          "type": "cf_comma",
-          "named": true
-        },
-        {
-          "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_false",
-          "named": true
-        },
-        {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_function_call",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_objectkeyassign",
-          "named": true
-        },
-        {
-          "type": "cf_operator",
-          "named": true
-        },
-        {
-          "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_ternary",
-          "named": true
-        },
-        {
-          "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_variable",
+          "type": "expression",
           "named": true
         }
       ]
@@ -3561,51 +1478,9 @@
     "fields": {}
   },
   {
-    "type": "cf_if",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cf_if_end_tag",
     "named": true,
     "fields": {}
-  },
-  {
-    "type": "cf_if_statement",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_else",
-          "named": true
-        },
-        {
-          "type": "cf_elseif",
-          "named": true
-        },
-        {
-          "type": "cf_if",
-          "named": true
-        },
-        {
-          "type": "cf_script_expression",
-          "named": true
-        }
-      ]
-    }
   },
   {
     "type": "cf_if_statement_tag",
@@ -3643,10 +1518,6 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_assignment",
           "named": true
         },
@@ -3659,35 +1530,11 @@
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
           "type": "cf_comma",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
           "named": true
         },
         {
@@ -3699,18 +1546,6 @@
           "named": true
         },
         {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
           "type": "cf_function_call",
           "named": true
         },
@@ -3719,27 +1554,7 @@
           "named": true
         },
         {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
+          "type": "cf_node",
           "named": true
         },
         {
@@ -3751,55 +1566,7 @@
           "named": true
         },
         {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
           "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
           "named": true
         },
         {
@@ -3807,23 +1574,7 @@
           "named": true
         },
         {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
           "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
           "named": true
         },
         {
@@ -3831,39 +1582,15 @@
           "named": true
         },
         {
-          "type": "cf_wddx_tag",
+          "type": "function_expression",
           "named": true
         },
         {
-          "type": "cf_zip_tag",
+          "type": "string",
           "named": true
         },
         {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "unary_operator",
           "named": true
         }
       ]
@@ -3916,11 +1643,26 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
+          "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_attribute",
+          "type": "cf_node",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_node",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_argument",
           "named": true
         },
         {
@@ -3981,10 +1723,6 @@
         },
         {
           "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
           "named": true
         },
         {
@@ -4077,156 +1815,19 @@
       "required": true,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
+          "type": "cf_node",
           "named": true
         },
         {
           "type": "cf_tag_selfclose_end",
           "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
         }
       ]
     }
-  },
-  {
-    "type": "cf_prefix_operator",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "cf_query",
@@ -4237,143 +1838,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "cf_node",
           "named": true
         }
       ]
@@ -4399,126 +1868,6 @@
     }
   },
   {
-    "type": "cf_return",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_assignment",
-          "named": true
-        },
-        {
-          "type": "cf_associative",
-          "named": true
-        },
-        {
-          "type": "cf_bracket_expression",
-          "named": true
-        },
-        {
-          "type": "cf_comma",
-          "named": true
-        },
-        {
-          "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_false",
-          "named": true
-        },
-        {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_function_call",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_objectkeyassign",
-          "named": true
-        },
-        {
-          "type": "cf_operator",
-          "named": true
-        },
-        {
-          "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_return_keyword",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_tag_selfclose_end",
-          "named": true
-        },
-        {
-          "type": "cf_ternary",
-          "named": true
-        },
-        {
-          "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_variable",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_return_keyword",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "cf_savecontent_tag",
     "named": true,
     "fields": {},
@@ -4527,147 +1876,15 @@
       "required": true,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
+          "type": "cf_node",
           "named": true
         },
         {
           "type": "cf_tag_selfclose_end",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
           "named": true
         }
       ]
@@ -4692,113 +1909,6 @@
     "type": "cf_script_comment",
     "named": true,
     "fields": {}
-  },
-  {
-    "type": "cf_script_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_assignment",
-          "named": true
-        },
-        {
-          "type": "cf_associative",
-          "named": true
-        },
-        {
-          "type": "cf_bracket_expression",
-          "named": true
-        },
-        {
-          "type": "cf_comma",
-          "named": true
-        },
-        {
-          "type": "cf_concat",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        },
-        {
-          "type": "cf_false",
-          "named": true
-        },
-        {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_function_call",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
-          "named": true
-        },
-        {
-          "type": "cf_objectkeyassign",
-          "named": true
-        },
-        {
-          "type": "cf_operator",
-          "named": true
-        },
-        {
-          "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
-          "type": "cf_ternary",
-          "named": true
-        },
-        {
-          "type": "cf_true",
-          "named": true
-        },
-        {
-          "type": "cf_variable",
-          "named": true
-        }
-      ]
-    }
   },
   {
     "type": "cf_set_tag",
@@ -4829,14 +1939,6 @@
           "named": true
         },
         {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
           "type": "cf_expression_parens",
           "named": true
         },
@@ -4845,23 +1947,11 @@
           "named": true
         },
         {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
           "type": "cf_function_call",
           "named": true
         },
         {
           "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
           "named": true
         },
         {
@@ -4874,22 +1964,6 @@
         },
         {
           "type": "cf_period",
-          "named": true
-        },
-        {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
           "named": true
         },
         {
@@ -4911,63 +1985,17 @@
         {
           "type": "cf_variable",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_singlequotes",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
+        },
         {
-          "type": "quoted_text",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_singlequotes_empty",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "cf_switch",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_expression_parens",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_switch_statement",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_case_statement",
+          "type": "function_expression",
           "named": true
         },
         {
-          "type": "cf_defaultcase",
+          "type": "string",
           "named": true
         },
         {
-          "type": "cf_switch",
+          "type": "unary_operator",
           "named": true
         }
       ]
@@ -5005,143 +2033,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "cf_node",
           "named": true
         }
       ]
@@ -5181,14 +2077,6 @@
           "named": true
         },
         {
-          "type": "cf_dblquotes",
-          "named": true
-        },
-        {
-          "type": "cf_dblquotes_empty",
-          "named": true
-        },
-        {
           "type": "cf_expression_parens",
           "named": true
         },
@@ -5197,23 +2085,11 @@
           "named": true
         },
         {
-          "type": "cf_for_statement",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
           "type": "cf_function_call",
           "named": true
         },
         {
           "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement",
           "named": true
         },
         {
@@ -5229,22 +2105,6 @@
           "named": true
         },
         {
-          "type": "cf_prefix_operator",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes",
-          "named": true
-        },
-        {
-          "type": "cf_singlequotes_empty",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement",
-          "named": true
-        },
-        {
           "type": "cf_ternary",
           "named": true
         },
@@ -5254,6 +2114,18 @@
         },
         {
           "type": "cf_variable",
+          "named": true
+        },
+        {
+          "type": "function_expression",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        },
+        {
+          "type": "unary_operator",
           "named": true
         }
       ]
@@ -5287,143 +2159,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "cf_node",
           "named": true
         }
       ]
@@ -5481,143 +2221,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "cf_node",
           "named": true
         }
       ]
@@ -5656,147 +2264,15 @@
       "required": true,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
+          "type": "cf_node",
           "named": true
         },
         {
           "type": "cf_tag_selfclose_end",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
           "named": true
         }
       ]
@@ -6016,135 +2492,11 @@
       "required": true,
       "types": [
         {
-          "type": "cf_argument",
-          "named": true
-        },
-        {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
+          "type": "cf_node",
           "named": true
         },
         {
           "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
           "named": true
         },
         {
@@ -6153,14 +2505,6 @@
         },
         {
           "type": "start_tag",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
           "named": true
         }
       ]
@@ -6505,152 +2849,13 @@
         {
           "type": "pattern",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "fragment",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
+        },
         {
-          "type": "cf_argument",
+          "type": "required",
           "named": true
         },
         {
-          "type": "cf_break",
-          "named": true
-        },
-        {
-          "type": "cf_component",
-          "named": true
-        },
-        {
-          "type": "cf_continue_tag",
-          "named": true
-        },
-        {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
-          "named": true
-        },
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
-          "named": true
-        },
-        {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag_standalone",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "type",
           "named": true
         }
       ]
@@ -6690,6 +2895,20 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "access_type",
+          "named": true
+        },
+        {
+          "type": "return_type",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -7332,6 +3551,21 @@
     }
   },
   {
+    "type": "program",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cf_node",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "quoted_attribute_value",
     "named": true,
     "fields": {},
@@ -7341,29 +3575,6 @@
       "types": [
         {
           "type": "attribute_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "quoted_text",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
-          "type": "text",
           "named": true
         }
       ]
@@ -7834,36 +4045,17 @@
         "required": true,
         "types": [
           {
-            "type": "!",
-            "named": false
-          },
-          {
-            "type": "+",
-            "named": false
-          },
-          {
-            "type": "-",
-            "named": false
-          },
-          {
-            "type": "delete",
-            "named": false
-          },
-          {
-            "type": "typeof",
-            "named": false
-          },
-          {
-            "type": "void",
-            "named": false
-          },
-          {
-            "type": "~",
-            "named": false
+            "type": "unary_operator",
+            "named": true
           }
         ]
       }
     }
+  },
+  {
+    "type": "unary_operator",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "update_expression",
@@ -8424,6 +4616,10 @@
     "named": false
   },
   {
+    "type": "access_type",
+    "named": true
+  },
+  {
     "type": "and",
     "named": false
   },
@@ -8504,10 +4700,6 @@
     "named": false
   },
   {
-    "type": "defaultcase:",
-    "named": false
-  },
-  {
     "type": "delete",
     "named": false
   },
@@ -8521,10 +4713,6 @@
   },
   {
     "type": "else",
-    "named": false
-  },
-  {
-    "type": "else if",
     "named": false
   },
   {
@@ -8628,6 +4816,10 @@
     "named": false
   },
   {
+    "type": "not",
+    "named": false
+  },
+  {
     "type": "null",
     "named": true
   },
@@ -8669,11 +4861,15 @@
   },
   {
     "type": "required",
-    "named": false
+    "named": true
   },
   {
     "type": "return",
     "named": false
+  },
+  {
+    "type": "return_type",
+    "named": true
   },
   {
     "type": "set",
@@ -8742,6 +4938,10 @@
   {
     "type": "try",
     "named": false
+  },
+  {
+    "type": "type",
+    "named": true
   },
   {
     "type": "typeof",
