@@ -289,14 +289,28 @@ get results
           (assignment_expression
             (identifier)
             (string
-              (string_fragment)))
+              (hash_expression
+                (subscript_expression
+                  (identifier)
+                  (identifier)))))
           (cf_tag_selfclose_end)))
       (cf_node
         (cf_set_tag
           (assignment_expression
             (identifier)
             (string
-              (string_fragment)))
+              (hash_expression
+                (member_expression
+                  (subscript_expression
+                    (member_expression
+                      (subscript_expression
+                        (member_expression
+                          (identifier)
+                          (property_identifier))
+                        (identifier))
+                      (property_identifier))
+                    (identifier))
+                  (property_identifier)))))
           (cf_tag_selfclose_end)))
       (cf_node
         (cf_set_tag
@@ -359,11 +373,9 @@ get results
                     (identifier))))))
           (cf_tag_selfclose_end)))
       (cf_node
-        (element
-          (self_closing_tag
-            (tag_name)
-            (attribute
-              (attribute_name))))))))
+        (cf_return
+          (identifier)
+          (cf_tag_selfclose_end))))))
      
 ===================================
 cfscript
@@ -503,10 +515,11 @@ nested cfif
     (element
       (start_tag
         (tag_name)
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
-            (attribute_value))))
+        (tag_attributes
+          (attribute
+            (attribute_name)
+            (quoted_attribute_value
+              (attribute_value)))))
       (end_tag
         (tag_name))))
   (cf_node
@@ -570,16 +583,16 @@ cfscript switch
 ===================================
 
 <cfscript>
-// test
-			switch (test) {
-				case "1":
-          test();//test
-          
-					break;
-        defaultcase: //test
-          test();
-			}
-		</cfscript>
+  // test
+  switch (test) {
+    case "1":
+      test();//test
+      
+      break;
+    defaultcase: //test
+      test();
+  }
+</cfscript>
 ---
 
 (program

@@ -114,10 +114,6 @@
         "named": true
       },
       {
-        "type": "class",
-        "named": true
-      },
-      {
         "type": "false",
         "named": true
       },
@@ -127,6 +123,14 @@
       },
       {
         "type": "generator_function",
+        "named": true
+      },
+      {
+        "type": "hash_empty",
+        "named": true
+      },
+      {
+        "type": "hash_expression",
         "named": true
       },
       {
@@ -1030,26 +1034,6 @@
     }
   },
   {
-    "type": "cf_hash",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_hash_empty",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "cf_if_end_tag",
     "named": true,
     "fields": {}
@@ -1194,14 +1178,6 @@
           "named": true
         },
         {
-          "type": "cf_hash",
-          "named": true
-        },
-        {
-          "type": "cf_hash_empty",
-          "named": true
-        },
-        {
           "type": "cf_if_statement_tag",
           "named": true
         },
@@ -1227,6 +1203,10 @@
         },
         {
           "type": "cf_rethrow_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return",
           "named": true
         },
         {
@@ -1283,6 +1263,14 @@
         },
         {
           "type": "entity",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         },
         {
@@ -1356,6 +1344,25 @@
         },
         {
           "type": "cf_tag_selfclose_end",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_return",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_tag_selfclose_end",
+          "named": true
+        },
+        {
+          "type": "expression",
           "named": true
         }
       ]
@@ -1631,107 +1638,6 @@
     }
   },
   {
-    "type": "class",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "class_body",
-            "named": true
-          }
-        ]
-      },
-      "decorator": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "decorator",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "class_heritage",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "class_body",
-    "named": true,
-    "fields": {
-      "member": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "class_static_block",
-            "named": true
-          },
-          {
-            "type": "field_definition",
-            "named": true
-          },
-          {
-            "type": "method_definition",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
-    "type": "class_heritage",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "class_static_block",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "statement_block",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "comment",
     "named": true,
     "fields": {}
@@ -1937,56 +1843,9 @@
     }
   },
   {
-    "type": "field_definition",
+    "type": "false",
     "named": true,
-    "fields": {
-      "decorator": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "decorator",
-            "named": true
-          }
-        ]
-      },
-      "property": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "computed_property_name",
-            "named": true
-          },
-          {
-            "type": "number",
-            "named": true
-          },
-          {
-            "type": "private_property_identifier",
-            "named": true
-          },
-          {
-            "type": "property_identifier",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          }
-        ]
-      },
-      "value": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "expression",
-            "named": true
-          }
-        ]
-      }
-    }
+    "fields": {}
   },
   {
     "type": "finally_clause",
@@ -2358,6 +2217,26 @@
     }
   },
   {
+    "type": "hash_empty",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "hash_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "if_statement",
     "named": true,
     "fields": {
@@ -2604,6 +2483,14 @@
             "named": true
           },
           {
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
+            "named": true
+          },
+          {
             "type": "number",
             "named": true
           },
@@ -2702,6 +2589,10 @@
       "required": false,
       "types": [
         {
+          "type": "assignment_expression",
+          "named": true
+        },
+        {
           "type": "method_definition",
           "named": true
         },
@@ -2794,6 +2685,14 @@
             "named": true
           },
           {
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
+            "named": true
+          },
+          {
             "type": "number",
             "named": true
           },
@@ -2833,6 +2732,14 @@
         "types": [
           {
             "type": "computed_property_name",
+            "named": true
+          },
+          {
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
             "named": true
           },
           {
@@ -3026,7 +2933,7 @@
       "required": true,
       "types": [
         {
-          "type": "attribute",
+          "type": "tag_attributes",
           "named": true
         },
         {
@@ -3075,7 +2982,7 @@
       "required": true,
       "types": [
         {
-          "type": "attribute",
+          "type": "tag_attributes",
           "named": true
         },
         {
@@ -3110,6 +3017,14 @@
       "types": [
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         },
         {
@@ -3274,6 +3189,129 @@
     }
   },
   {
+    "type": "tag_attributes",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute",
+          "named": true
+        },
+        {
+          "type": "cf_argument",
+          "named": true
+        },
+        {
+          "type": "cf_break",
+          "named": true
+        },
+        {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_continue_tag",
+          "named": true
+        },
+        {
+          "type": "cf_directory_tag",
+          "named": true
+        },
+        {
+          "type": "cf_file_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_if_statement_tag",
+          "named": true
+        },
+        {
+          "type": "cf_image_tag",
+          "named": true
+        },
+        {
+          "type": "cf_include_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_rethrow_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_statement_tag",
+          "named": true
+        },
+        {
+          "type": "cf_throw_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag_standalone",
+          "named": true
+        },
+        {
+          "type": "cf_try_statement_tag",
+          "named": true
+        },
+        {
+          "type": "cf_wddx_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag_standalone",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "ternary_expression",
     "named": true,
     "fields": {
@@ -3327,6 +3365,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "true",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "try_statement",
@@ -3558,15 +3601,15 @@
     "named": false
   },
   {
+    "type": "\"\"",
+    "named": false
+  },
+  {
     "type": "#",
     "named": false
   },
   {
     "type": "##",
-    "named": false
-  },
-  {
-    "type": "${",
     "named": false
   },
   {
@@ -3595,6 +3638,10 @@
   },
   {
     "type": "'",
+    "named": false
+  },
+  {
+    "type": "''",
     "named": false
   },
   {
@@ -3994,10 +4041,6 @@
     "named": true
   },
   {
-    "type": "class",
-    "named": false
-  },
-  {
     "type": "const",
     "named": false
   },
@@ -4042,12 +4085,8 @@
     "named": false
   },
   {
-    "type": "extends",
-    "named": false
-  },
-  {
     "type": "false",
-    "named": true
+    "named": false
   },
   {
     "type": "finally",
@@ -4207,7 +4246,7 @@
   },
   {
     "type": "true",
-    "named": true
+    "named": false
   },
   {
     "type": "try",
