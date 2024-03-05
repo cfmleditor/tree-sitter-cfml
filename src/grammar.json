@@ -603,6 +603,54 @@
         }
       ]
     },
+    "cf_queryparam_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[<<][cC][fF][qQ][uU][eE][rR][yY][pP][aA][rR][aA][mM]"
+              }
+            }
+          },
+          "named": false,
+          "value": "<cfqueryparam"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[<<][//][cC][fF][qQ][uU][eE][rR][yY][pP][aA][rR][aA][mM][>>]"
+              }
+            }
+          },
+          "named": false,
+          "value": "</cfqueryparam>"
+        }
+      ]
+    },
     "cf_transaction_tag_standalone": {
       "type": "PREC_RIGHT",
       "value": 1,
@@ -1247,6 +1295,38 @@
           },
           "named": false,
           "value": "<cfdirectory"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_selfclose_end"
+        }
+      ]
+    },
+    "cf_speadsheet_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[<<][cC][fF][sS][pP][rR][eE][aA][dD][sS][hH][eE][eE][tT]"
+              }
+            }
+          },
+          "named": false,
+          "value": "<cfspreadsheet"
         },
         {
           "type": "REPEAT",
@@ -1943,6 +2023,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "cf_speadsheet_tag"
+        },
+        {
+          "type": "SYMBOL",
           "name": "cf_savecontent_tag"
         },
         {
@@ -1991,6 +2075,10 @@
           },
           "named": true,
           "value": "cf_query"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_queryparam_tag"
         },
         {
           "type": "ALIAS",
@@ -6740,54 +6828,6 @@
         {
           "type": "STRING",
           "value": "+"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[tT][yY][pP][eE][oO][fF]"
-              }
-            }
-          },
-          "named": false,
-          "value": "typeof"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[vV][oO][iI][dD]"
-              }
-            }
-          },
-          "named": false,
-          "value": "void"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[dD][eE][lL][eE][tT][eE]"
-              }
-            }
-          },
-          "named": false,
-          "value": "delete"
         },
         {
           "type": "ALIAS",

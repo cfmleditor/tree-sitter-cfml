@@ -581,6 +581,13 @@ module.exports = grammar({
       keyword('</cfquery>'),
     ),
 
+    cf_queryparam_tag: $ => seq(
+      keyword('<cfqueryparam'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      keyword('</cfqueryparam>'),
+    ),
+
     cf_transaction_tag_standalone: $ => prec.right(1, seq(
       keyword('<cftransaction'),
       repeat($.cf_attribute),
@@ -686,6 +693,12 @@ module.exports = grammar({
 
     cf_directory_tag: $ => seq(
       keyword('<cfdirectory'),
+      repeat($.cf_attribute),
+      $.cf_tag_selfclose_end,
+    ),
+
+    cf_speadsheet_tag: $ => seq(
+      keyword('<cfspreadsheet'),
       repeat($.cf_attribute),
       $.cf_tag_selfclose_end,
     ),
@@ -827,6 +840,7 @@ module.exports = grammar({
       $.cf_include_tag,
       $.cf_continue_tag,
       $.cf_directory_tag,
+      $.cf_speadsheet_tag,
       $.cf_savecontent_tag,
       $.cf_output_tag,
       $.cf_zip_tag,
@@ -836,6 +850,7 @@ module.exports = grammar({
       alias($.cf_component_tag, $.cf_component),
       alias($.cf_function_tag, $.cf_function),
       alias($.cf_query_tag, $.cf_query),
+      $.cf_queryparam_tag,
       alias($.cf_argument_tag, $.cf_argument),
       alias($.cf_loop_tag, $.cf_loop),
       alias($.cf_break_tag, $.cf_break),
@@ -1586,9 +1601,9 @@ module.exports = grammar({
       '~',
       '-',
       '+',
-      keyword('typeof'),
-      keyword('void'),
-      keyword('delete'),
+      // keyword('typeof'),
+      // keyword('void'),
+      // keyword('delete'),
       keyword('not'),
     ),
 

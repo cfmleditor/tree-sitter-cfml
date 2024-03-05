@@ -1202,6 +1202,10 @@
           "named": true
         },
         {
+          "type": "cf_queryparam_tag",
+          "named": true
+        },
+        {
           "type": "cf_rethrow_tag",
           "named": true
         },
@@ -1219,6 +1223,10 @@
         },
         {
           "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_speadsheet_tag",
           "named": true
         },
         {
@@ -1331,6 +1339,21 @@
     }
   },
   {
+    "type": "cf_queryparam_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_rethrow_tag",
     "named": true,
     "fields": {},
@@ -1424,6 +1447,25 @@
         },
         {
           "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_speadsheet_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_tag_selfclose_end",
           "named": true
         }
       ]
@@ -3253,6 +3295,10 @@
           "named": true
         },
         {
+          "type": "cf_queryparam_tag",
+          "named": true
+        },
+        {
           "type": "cf_rethrow_tag",
           "named": true
         },
@@ -3266,6 +3312,10 @@
         },
         {
           "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_speadsheet_tag",
           "named": true
         },
         {
@@ -3773,6 +3823,10 @@
     "named": false
   },
   {
+    "type": "</cfqueryparam>",
+    "named": false
+  },
+  {
     "type": "</cfsavecontent>",
     "named": false
   },
@@ -3881,6 +3935,10 @@
     "named": false
   },
   {
+    "type": "<cfqueryparam",
+    "named": false
+  },
+  {
     "type": "<cfrethrow",
     "named": false
   },
@@ -3898,6 +3956,10 @@
   },
   {
     "type": "<cfset",
+    "named": false
+  },
+  {
+    "type": "<cfspreadsheet",
     "named": false
   },
   {
@@ -4054,10 +4116,6 @@
   },
   {
     "type": "default",
-    "named": false
-  },
-  {
-    "type": "delete",
     "named": false
   },
   {
@@ -4257,15 +4315,7 @@
     "named": true
   },
   {
-    "type": "typeof",
-    "named": false
-  },
-  {
     "type": "var",
-    "named": false
-  },
-  {
-    "type": "void",
     "named": false
   },
   {
