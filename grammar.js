@@ -15,7 +15,7 @@ module.exports = grammar({
 
   extras: $ => [
     $.cf_comment,
-    $.cf_script_comment,
+    $.comment,
     /[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]/,
   ],
 
@@ -88,11 +88,11 @@ module.exports = grammar({
   conflicts: $ => [
     // [$.cf_dblquotes_empty, $.cf_dblquotes],
     // [$.cf_singlequotes_empty, $.cf_singlequotes],
-    [$.cf_bracket_expression, $.cf_function_call],
+    // [$.cf_bracket_expression, $.cf_function_call],
     // [$.cf_return, $.cf_function_call],
     // [$.cf_variable, $.text],
-    [$.cf_function_call, $.cf_associative],
-    [$.cf_function_call, $._cf_expression],
+    // [$.cf_function_call, $.cf_associative],
+    // [$.cf_function_call, $._cf_expression],
     // [$.cf_script_expression, $._cf_member_expression],
     // [$.cf_if_tag, $.binary_expression],
     // [$.cf_if_tag, $.call_expression],
@@ -104,14 +104,19 @@ module.exports = grammar({
 
     // Tag
     [$.cf_zip_tag, $.cf_zip_tag_standalone],
-    [$.cf_attribute, $.binary_expression],
     [$.cf_transaction_tag, $.cf_transaction_tag_standalone],
+
+    [$.cf_elseif_tag, $.binary_expression],
+    [$.cf_elseif_tag, $.call_expression],
+    [$.cf_elseif_tag, $.subscript_expression],
+    [$.cf_elseif_tag, $.update_expression],
 
     // Script
     [$.primary_expression, $.variable_declaration],
     [$.primary_expression, $.function_expression],
     [$.primary_expression, $._property_name],
     [$.primary_expression, $._property_name, $.arrow_function],
+    [$.primary_expression, $.function_expression, $.generator_function],
     [$.primary_expression, $.arrow_function],
     [$.primary_expression, $.method_definition],
     [$.primary_expression, $.rest_pattern],
@@ -150,36 +155,36 @@ module.exports = grammar({
     _cf_tag_end: $ => '>',
     cf_tag_selfclose_end: $ => choice('/>', $._cf_tag_end),
     text: $ => /[^<>&\s]([^<>&]*[^<>&\s])?/,
-    cf_variable: $ => /[a-zA-Z0-9_-]+/,
+    // cf_variable: $ => /[a-zA-Z0-9_-]+/,
     cf_tag_close: $ => /<\/cf/i,
-    cf_true: $ => keyword('true'),
-    cf_false: $ => keyword('false'),
-    cf_operator: $ => choice(
-      keyword('and'),
-      keyword('or'),
-      keyword('eq'),
-      keyword('neq'),
-      keyword('gte'),
-      keyword('lte'),
-      keyword('lt'),
-      keyword('is'),
-      keyword('gt'),
-      '>=',
-      '===',
-      '+',
-      '*',
-      '/',
-      '-',
-      '==',
-      '<=',
-      '&&',
-      '||',
-    ),
+    // cf_true: $ => keyword('true'),
+    // cf_false: $ => keyword('false'),
+    // cf_operator: $ => choice(
+    //   keyword('and'),
+    //   keyword('or'),
+    //   keyword('eq'),
+    //   keyword('neq'),
+    //   keyword('gte'),
+    //   keyword('lte'),
+    //   keyword('lt'),
+    //   keyword('is'),
+    //   keyword('gt'),
+    //   '>=',
+    //   '===',
+    //   '+',
+    //   '*',
+    //   '/',
+    //   '-',
+    //   '==',
+    //   '<=',
+    //   '&&',
+    //   '||',
+    // ),
 
-    cf_prefix_operator: $ => choice(
-      keyword('NOT'),
-      '!',
-    ),
+    // cf_prefix_operator: $ => choice(
+    //   keyword('NOT'),
+    //   '!',
+    // ),
 
     cf_node: $ => choice(
       $.doctype,
@@ -271,23 +276,23 @@ module.exports = grammar({
       token('##'),
     )),
 
-    cf_associative: $ => seq(
-      '[',
-      optional($._cf_expression),
-      ']',
-    ),
+    // cf_associative: $ => seq(
+    //   '[',
+    //   optional($._cf_expression),
+    //   ']',
+    // ),
 
-    cf_bracket_function: $ => seq(
-      '{',
-      repeat($.statement),
-      '}',
-    ),
+    // cf_bracket_function: $ => seq(
+    //   '{',
+    //   repeat($.statement),
+    //   '}',
+    // ),
 
-    cf_bracket_expression: $ => seq(
-      '{',
-      repeat($._cf_expression),
-      '}',
-    ),
+    // cf_bracket_expression: $ => seq(
+    //   '{',
+    //   repeat($._cf_expression),
+    //   '}',
+    // ),
 
     // _cf_function_statement: $ => choice(
     //   // Maybe nested functions in the future ?? $.cf_function,
@@ -295,41 +300,41 @@ module.exports = grammar({
     //   $.cf_return,
     // ),
 
-    cf_expression_statement: $ => seq(
-      $._cf_expression,
-      $._semicolon,
-    ),
+    // cf_expression_statement: $ => seq(
+    //   $._cf_expression,
+    //   $._semicolon,
+    // ),
 
-    _cf_assignment_expression: $ => prec.right(1, seq(
-      $._cf_expression,
-      $.cf_assignment,
-      $._cf_expression,
-    )),
+    // _cf_assignment_expression: $ => prec.right(1, seq(
+    //   $._cf_expression,
+    //   $.cf_assignment,
+    //   $._cf_expression,
+    // )),
 
-    cf_concat: $ => seq(
-      '&',
-    ),
+    // cf_concat: $ => seq(
+    //   '&',
+    // ),
 
-    _cf_expression: $ => choice(
-      $._cf_member_expression,
-      prec.right(1, $.cf_hash),
-      prec.right(2, $.function_expression),
-      // prec.right(2, $.cf_switch_statement),
-      // prec.right(2, $.cf_for_statement),
-      // prec.right(2, $.cf_if_statement),
-      prec.right(2, seq(optional($._cf_expression), $.cf_period, $._cf_expression)),
-      prec.right(2, seq(optional($._cf_expression), $.cf_concat, $._cf_expression)),
-      prec.right(2, seq($._cf_expression, $.cf_objectkeyassign, $._cf_expression)),
-      prec.right(4, seq($.cf_period, $._cf_expression)),
-      prec.right(4, seq($.cf_comma, $._cf_expression)),
-      prec.right(5, seq($.unary_operator, $._cf_expression)),
-      prec.right(5, seq($._cf_expression, $.cf_operator, $._cf_expression)),
-      prec.right(6, $.cf_function_call),
-      prec.right(6, seq(optional($._cf_expression), $.cf_ternary)),
-      prec.right(6, $.cf_expression_parens),
-      prec.right(6, $.cf_true),
-      prec.right(6, $.cf_false),
-    ),
+    // _cf_expression: $ => choice(
+    //   $._cf_member_expression,
+    //   prec.right(1, $.cf_hash),
+    //   prec.right(2, $.function_expression),
+    //   // prec.right(2, $.cf_switch_statement),
+    //   // prec.right(2, $.cf_for_statement),
+    //   // prec.right(2, $.cf_if_statement),
+    //   prec.right(2, seq(optional($._cf_expression), $.cf_period, $._cf_expression)),
+    //   prec.right(2, seq(optional($._cf_expression), $.cf_concat, $._cf_expression)),
+    //   prec.right(2, seq($._cf_expression, $.cf_objectkeyassign, $._cf_expression)),
+    //   prec.right(4, seq($.cf_period, $._cf_expression)),
+    //   prec.right(4, seq($.cf_comma, $._cf_expression)),
+    //   prec.right(5, seq($.unary_operator, $._cf_expression)),
+    //   prec.right(5, seq($._cf_expression, $.cf_operator, $._cf_expression)),
+    //   prec.right(6, $.cf_function_call),
+    //   prec.right(6, seq(optional($._cf_expression), $.cf_ternary)),
+    //   prec.right(6, $.cf_expression_parens),
+    //   prec.right(6, $.cf_true),
+    //   prec.right(6, $.cf_false),
+    // ),
 
     // cf_switch_statement: $ => seq(
     //   $.cf_switch,
@@ -407,17 +412,17 @@ module.exports = grammar({
     //   optional(';'),
     // ),
 
-    _cf_member_expression: $ => choice(
-      $._cf_assignment_expression,
-      // prec.right(1, $.cf_dblquotes),
-      prec.right(1, $.string),
-      prec.right(1, $.cf_variable),
-      // prec.right(2, $.cf_dblquotes_empty),
-      // prec.right(1, $.cf_singlequotes),
-      // prec.right(2, $.cf_singlequotes_empty),
-      prec.right(2, seq(optional($._cf_expression), $.cf_associative)),
-      prec.right(6, $.cf_bracket_expression),
-    ),
+    // _cf_member_expression: $ => choice(
+    //   $._cf_assignment_expression,
+    //   // prec.right(1, $.cf_dblquotes),
+    //   prec.right(1, $.string),
+    //   prec.right(1, $.cf_variable),
+    //   // prec.right(2, $.cf_dblquotes_empty),
+    //   // prec.right(1, $.cf_singlequotes),
+    //   // prec.right(2, $.cf_singlequotes_empty),
+    //   prec.right(2, seq(optional($._cf_expression), $.cf_associative)),
+    //   prec.right(6, $.cf_bracket_expression),
+    // ),
 
     cf_component_tag: $ => seq(
       keyword('<cfcomponent'),
@@ -439,15 +444,15 @@ module.exports = grammar({
     //   $._cf_expression,
     // ),
 
-    cf_function_call: $ => seq(
-      $._cf_member_expression,
-      $.arguments,
-    ),
+    // cf_function_call: $ => seq(
+    //   $._cf_member_expression,
+    //   $.arguments,
+    // ),
 
-    cf_period: $ => /\./,
-    cf_comma: $ => ',',
-    cf_assignment: $ => '=',
-    cf_objectkeyassign: $ => ':',
+    // cf_period: $ => /\./,
+    // cf_comma: $ => ',',
+    // cf_assignment: $ => '=',
+    // cf_objectkeyassign: $ => ':',
 
     // cf_singlequotes: $ => seq(
     //   '\'',
@@ -500,22 +505,22 @@ module.exports = grammar({
     //   ')',
     // ),
 
-    cf_expression_parens: $ => seq(
-      '(',
-      repeat($._cf_expression),
-      ')',
-    ),
+    // cf_expression_parens: $ => seq(
+    //   '(',
+    //   repeat($._cf_expression),
+    //   ')',
+    // ),
 
-    cf_ternary: $ => seq(
-      keyword('?'),
-      $._cf_expression,
-      keyword(':'),
-      $._cf_expression,
-    ),
+    // cf_ternary: $ => seq(
+    //   keyword('?'),
+    //   $._cf_expression,
+    //   keyword(':'),
+    //   $._cf_expression,
+    // ),
 
-    cf_function_name: $ => choice(
-      $.cf_variable,
-    ),
+    // cf_function_name: $ => choice(
+    //   $.cf_variable,
+    // ),
 
     // cf_function_access: $ => choice(
     //   $.cf_variable,
@@ -732,7 +737,7 @@ module.exports = grammar({
 
     cf_return_tag: $ => seq(
       keyword('<cfreturn'),
-      $._cf_expression,
+      $.expression,
       $.cf_tag_selfclose_end,
     ),
 
@@ -745,7 +750,7 @@ module.exports = grammar({
 
     cf_if_tag: $ => seq(
       keyword('<cfif'),
-      repeat($._cf_expression),
+      $.expression,
       $._cf_tag_end,
       repeat($.cf_node),
     ),
@@ -753,13 +758,13 @@ module.exports = grammar({
     cf_set_tag: $ => seq(
       keyword('<cfset'),
       optional($.cf_var),
-      $._cf_expression,
+      $.expression,
       $.cf_tag_selfclose_end,
     ),
 
     cf_elseif_tag: $ => seq(
       keyword('<cfelseif'),
-      repeat($._cf_expression),
+      repeat($.expression),
       $._cf_tag_end,
       repeat($.cf_node),
     ),
@@ -845,21 +850,21 @@ module.exports = grammar({
     ),
 
     cf_var: $ => keyword('var'),
-    cf_function_keyword: $ => keyword('function'),
-    cf_component_keyword: $ => keyword('component'),
-    cf_argument_keyword: $ => keyword('argument'),
-    cf_return_keyword: $ => keyword('return'),
+    // cf_function_keyword: $ => keyword('function'),
+    // cf_component_keyword: $ => keyword('component'),
+    // cf_argument_keyword: $ => keyword('argument'),
+    // cf_return_keyword: $ => keyword('return'),
 
-    cf_script_comment: $ => choice(
-      token(choice(
-        seq('//', /.*/),
-        seq(
-          '/*',
-          /[^*]*\*+([^/*][^*]*\*+)*/,
-          '/',
-        ),
-      )),
-    ),
+    // cf_script_comment: $ => choice(
+    //   token(choice(
+    //     seq('//', /.*/),
+    //     seq(
+    //       '/*',
+    //       /[^*]*\*+([^/*][^*]*\*+)*/,
+    //       '/',
+    //     ),
+    //   )),
+    // ),
 
     namespace_export: $ => seq(
       '*', 'as', $._module_export_name,
@@ -1548,7 +1553,8 @@ module.exports = grammar({
         [/[nN][eE][qQ]/, 'binary_equality'],
         ['>=', 'binary_relation'],
         [/[gG][tT][eE]/, 'binary_relation'],
-        ['>', 'binary_relation'],
+        // This causes issues with tags and expressions
+        // ['>', 'binary_relation'],
         [/[gG][tT]/, 'binary_relation'],
         ['??', 'ternary'],
         ['instanceof', 'binary_relation'],
