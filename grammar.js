@@ -33,6 +33,7 @@ module.exports = grammar({
     $._implicit_end_tag,
     $.raw_text,
     $.cf_comment,
+    $._cfquery_content,
   ],
 
   supertypes: $ => [
@@ -148,13 +149,13 @@ module.exports = grammar({
 
     _doctype: _ => /[Dd][Oo][Cc][Tt][Yy][Pp][Ee]/,
 
-    cf_condition: ($) => choice(
-      /([^<>\[\]="\';]+)/,
-    ),
+    // cf_condition: ($) => choice(
+    //   /([^<>\[\]="\';]+)/,
+    // ),
 
     cf_tag_start: $ => '<',
     _cf_tag_end: $ => '>',
-    cf_tag_selfclose_end: $ => choice('/>', $._cf_tag_end),
+    cf_selfclose_tag_end: $ => choice('/>', $._cf_tag_end),
     text: $ => /[^<>&\s]([^<>&]*[^<>&\s])?/,
     // cf_variable: $ => /[a-zA-Z0-9_-]+/,
     cf_tag_close: $ => /<\/cf/i,
@@ -577,21 +578,20 @@ module.exports = grammar({
       keyword('<cfquery'),
       repeat($.cf_attribute),
       $._cf_tag_end,
-      repeat($.cf_node),
+      $._cfquery_content,
       keyword('</cfquery>'),
     ),
 
     cf_queryparam_tag: $ => seq(
       keyword('<cfqueryparam'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
-      keyword('</cfqueryparam>'),
+      $.cf_selfclose_tag_end,
     ),
 
     cf_transaction_tag_standalone: $ => prec.right(1, seq(
       keyword('<cftransaction'),
       repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
+      $.cf_selfclose_tag_end,
     )),
 
     cf_transaction_tag: $ => prec.right(2, seq(
@@ -629,11 +629,11 @@ module.exports = grammar({
       repeat($.cf_node),
     ),
 
-    cf_wddx_tag: $ => seq(
-      keyword('<cfwddx'),
-      repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
-    ),
+    // cf_wddx_tag: $ => seq(
+    //   keyword('<cfwddx'),
+    //   repeat($.cf_attribute),
+    //   $.cf_selfclose_tag_end,
+    // ),
 
     cf_case_tag: $ => seq(
       keyword('<cfcase'),
@@ -670,55 +670,62 @@ module.exports = grammar({
     cf_argument_tag: $ => seq(
       keyword('<cfargument'),
       repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
+      $.cf_selfclose_tag_end,
     ),
 
-    cf_file_tag: $ => seq(
-      keyword('<cffile'),
+    // cf_file_tag: $ => seq(
+    //   keyword('<cffile'),
+    //   repeat($.cf_attribute),
+    //   $.cf_selfclose_tag_end,
+    // ),
+
+    // cf_throw_tag: $ => seq(
+    //   keyword('<cfthrow'),
+    //   repeat($.cf_attribute),
+    //   $.cf_selfclose_tag_end,
+    // ),
+
+    // cf_image_tag: $ => seq(
+    //   keyword('<cfimage'),
+    //   repeat($.cf_attribute),
+    //   $.cf_selfclose_tag_end,
+    // ),
+
+    cf_selfclose_tag: $ => seq(
+      keyword('<cf'),
+      /[a-zA-Z]+/,
       repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
+      $.cf_selfclose_tag_end,
     ),
 
-    cf_throw_tag: $ => seq(
-      keyword('<cfthrow'),
-      repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
-    ),
+    // cf_directory_tag: $ => seq(
+    //   keyword('<cfdirectory'),
+    //   repeat($.cf_attribute),
+    //   $.cf_selfclose_tag_end,
+    // ),
 
-    cf_image_tag: $ => seq(
-      keyword('<cfimage'),
-      repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
-    ),
+    // cf_speadsheet_tag: $ => seq(
+    //   keyword('<cfspreadsheet'),
+    //   repeat($.cf_attribute),
+    //   $.cf_selfclose_tag_end,
+    // ),
 
-    cf_directory_tag: $ => seq(
-      keyword('<cfdirectory'),
-      repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
-    ),
-
-    cf_speadsheet_tag: $ => seq(
-      keyword('<cfspreadsheet'),
-      repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
-    ),
-
-    cf_include_tag: $ => seq(
-      keyword('<cfinclude'),
-      repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
-    ),
+    // cf_include_tag: $ => seq(
+    //   keyword('<cfinclude'),
+    //   repeat($.cf_attribute),
+    //   $.cf_selfclose_tag_end,
+    // ),
 
     cf_continue_tag: $ => seq(
       keyword('<cfcontinue'),
       repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
+      $.cf_selfclose_tag_end,
     ),
 
     cf_zip_tag: $ => seq(
       keyword('<cfzip'),
       repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
+      $.cf_selfclose_tag_end,
       repeat($.cf_node),
       keyword('</cfzip>'),
     ),
@@ -726,13 +733,13 @@ module.exports = grammar({
     cf_zip_tag_standalone: $ => seq(
       keyword('<cfzip'),
       repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
+      $.cf_selfclose_tag_end,
     ),
 
     cf_savecontent_tag: $ => seq(
       keyword('<cfsavecontent'),
       repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
+      $.cf_selfclose_tag_end,
       repeat($.cf_node),
       keyword('</cfsavecontent>'),
     ),
@@ -740,26 +747,26 @@ module.exports = grammar({
     cf_output_tag: $ => seq(
       keyword('<cfoutput'),
       repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
+      $.cf_selfclose_tag_end,
       repeat($.cf_node),
       keyword('</cfoutput>'),
     ),
 
-    cf_rethrow_tag: $ => seq(
-      keyword('<cfrethrow'),
-      repeat($.cf_attribute),
-      $.cf_tag_selfclose_end,
-    ),
+    // cf_rethrow_tag: $ => seq(
+    //   keyword('<cfrethrow'),
+    //   repeat($.cf_attribute),
+    //   $.cf_selfclose_tag_end,
+    // ),
 
     cf_break_tag: $ => seq(
       keyword('<cfbreak'),
-      $.cf_tag_selfclose_end,
+      $.cf_selfclose_tag_end,
     ),
 
     cf_return_tag: $ => seq(
       keyword('<cfreturn'),
       $.expression,
-      $.cf_tag_selfclose_end,
+      $.cf_selfclose_tag_end,
     ),
 
     cf_if_statement_tag: $ => seq(
@@ -771,16 +778,20 @@ module.exports = grammar({
 
     cf_if_tag: $ => seq(
       keyword('<cfif'),
-      $.expression,
+      $._cf_tag_expression,
       $._cf_tag_end,
       repeat($.cf_node),
+    ),
+
+    _cf_tag_expression: $ => choice(
+      $.expression,
     ),
 
     cf_set_tag: $ => seq(
       keyword('<cfset'),
       optional($.cf_var),
-      $.expression,
-      $.cf_tag_selfclose_end,
+      $._cf_tag_expression,
+      $.cf_selfclose_tag_end,
     ),
 
     cf_elseif_tag: $ => seq(
@@ -834,19 +845,20 @@ module.exports = grammar({
       $.cf_transaction_tag,
       $.cf_transaction_tag_standalone,
       $.cf_set_tag,
-      $.cf_file_tag,
-      $.cf_throw_tag,
-      $.cf_image_tag,
-      $.cf_include_tag,
+      // $.cf_file_tag,
+      // $.cf_throw_tag,
+      // $.cf_image_tag,
+      // $.cf_include_tag,
       $.cf_continue_tag,
-      $.cf_directory_tag,
-      $.cf_speadsheet_tag,
+      // $.cf_directory_tag,
+      $.cf_selfclose_tag,
+      // $.cf_speadsheet_tag,
       $.cf_savecontent_tag,
       $.cf_output_tag,
       $.cf_zip_tag,
       $.cf_zip_tag_standalone,
-      $.cf_rethrow_tag,
-      $.cf_wddx_tag,
+      // $.cf_rethrow_tag,
+      // $.cf_wddx_tag,
       alias($.cf_component_tag, $.cf_component),
       alias($.cf_function_tag, $.cf_function),
       alias($.cf_query_tag, $.cf_query),
@@ -1670,7 +1682,7 @@ module.exports = grammar({
         /[0-7]{1,3}/,
         /x[0-9a-fA-F]{2}/,
         /u[0-9a-fA-F]{4}/,
-        /u{[0-9a-fA-F]+}/,
+        /u\{[0-9a-fA-F]+\}/,
         /[\r?][\n\u2028\u2029]/,
       ),
     )),

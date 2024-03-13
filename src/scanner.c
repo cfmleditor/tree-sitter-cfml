@@ -16,7 +16,8 @@ enum TokenType {
     SELF_CLOSING_TAG_DELIMITER,
     IMPLICIT_END_TAG,
     RAW_TEXT,
-    COMMENT
+    COMMENT,
+    CFQUERY_CONTENT
 };
 
 typedef struct {
@@ -332,6 +333,37 @@ static bool scan_script_comment(TSLexer *lexer) {
     }
 }
 
+static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer) {
+
+    lexer->mark_end(lexer);
+
+    const char *end_delimiter = "</CFQUERY";
+
+    unsigned delimiter_index = 0;
+    
+    while (lexer->lookahead) {
+        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
+            delimiter_index++;
+            if (delimiter_index == strlen(end_delimiter)) {
+                break;
+            }
+            lexer->advance(lexer, false);
+        } else {
+            delimiter_index = 0;
+            lexer->advance(lexer, false);
+            lexer->mark_end(lexer);
+        }
+    }
+
+    lexer->result_symbol = CFQUERY_CONTENT;
+
+    while (lexer->lookahead) {
+        lexer->advance(lexer, false);
+    }
+
+    return true;
+}
+
 static bool scan_raw_text(Scanner *scanner, TSLexer *lexer) {
     if (scanner->tags.len == 0) {
         return false;
@@ -613,23 +645,13 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
         lexer->advance(lexer, true);
     }
 
-    if (valid_symbols[AUTOMATIC_SEMICOLON]) {
-        bool scanned_comment = false;
-        bool ret = scan_automatic_semicolon(lexer, !valid_symbols[LOGICAL_OR], &scanned_comment);
-        if (!ret && !scanned_comment && valid_symbols[TERNARY_QMARK] && lexer->lookahead == '?') {
-            return scan_ternary_qmark(lexer);
-        }
-        return ret;
-    }
-
-    if (valid_symbols[TERNARY_QMARK]) {
-        return scan_ternary_qmark(lexer);
-    }
-
-    
     if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] &&
         !valid_symbols[END_TAG_NAME]) {
         return scan_raw_text(scanner, lexer);
+    }
+
+    if (valid_symbols[CFQUERY_CONTENT]) {
+        return scan_cfquery_content(scanner, lexer);
     }
 
     switch (lexer->lookahead) {
@@ -680,6 +702,19 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
                            ? scan_start_tag_name(scanner, lexer)
                            : scan_end_tag_name(scanner, lexer);
             }
+    }
+
+    if (valid_symbols[AUTOMATIC_SEMICOLON]) {
+        bool scanned_comment = false;
+        bool ret = scan_automatic_semicolon(lexer, !valid_symbols[LOGICAL_OR], &scanned_comment);
+        if (!ret && !scanned_comment && valid_symbols[TERNARY_QMARK] && lexer->lookahead == '?') {
+            return scan_ternary_qmark(lexer);
+        }
+        return ret;
+    }
+
+    if (valid_symbols[TERNARY_QMARK]) {
+        return scan_ternary_qmark(lexer);
     }
 
     return false;

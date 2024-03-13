@@ -807,7 +807,7 @@
           "named": true
         },
         {
-          "type": "cf_tag_selfclose_end",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -841,7 +841,7 @@
       "required": true,
       "types": [
         {
-          "type": "cf_tag_selfclose_end",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -917,7 +917,7 @@
           "named": true
         },
         {
-          "type": "cf_tag_selfclose_end",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -937,25 +937,6 @@
         },
         {
           "type": "cf_node",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_directory_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag_selfclose_end",
           "named": true
         }
       ]
@@ -990,25 +971,6 @@
         },
         {
           "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_file_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag_selfclose_end",
           "named": true
         }
       ]
@@ -1085,44 +1047,6 @@
     }
   },
   {
-    "type": "cf_image_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag_selfclose_end",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_include_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag_selfclose_end",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cf_loop",
     "named": true,
     "fields": {},
@@ -1166,27 +1090,11 @@
           "named": true
         },
         {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
           "type": "cf_function",
           "named": true
         },
         {
           "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
           "named": true
         },
         {
@@ -1206,10 +1114,6 @@
           "named": true
         },
         {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
           "type": "cf_return",
           "named": true
         },
@@ -1222,19 +1126,15 @@
           "named": true
         },
         {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
           "type": "cf_set_tag",
           "named": true
         },
         {
-          "type": "cf_speadsheet_tag",
-          "named": true
-        },
-        {
           "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
           "named": true
         },
         {
@@ -1247,10 +1147,6 @@
         },
         {
           "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
           "named": true
         },
         {
@@ -1313,7 +1209,7 @@
           "named": true
         },
         {
-          "type": "cf_tag_selfclose_end",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -1330,31 +1226,12 @@
         {
           "type": "cf_attribute",
           "named": true
-        },
-        {
-          "type": "cf_node",
-          "named": true
         }
       ]
     }
   },
   {
     "type": "cf_queryparam_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_rethrow_tag",
     "named": true,
     "fields": {},
     "children": {
@@ -1366,7 +1243,7 @@
           "named": true
         },
         {
-          "type": "cf_tag_selfclose_end",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -1381,7 +1258,7 @@
       "required": true,
       "types": [
         {
-          "type": "cf_tag_selfclose_end",
+          "type": "cf_selfclose_tag_end",
           "named": true
         },
         {
@@ -1408,7 +1285,7 @@
           "named": true
         },
         {
-          "type": "cf_tag_selfclose_end",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -1430,30 +1307,7 @@
     }
   },
   {
-    "type": "cf_set_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_tag_selfclose_end",
-          "named": true
-        },
-        {
-          "type": "cf_var",
-          "named": true
-        },
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_speadsheet_tag",
+    "type": "cf_selfclose_tag",
     "named": true,
     "fields": {},
     "children": {
@@ -1465,7 +1319,35 @@
           "named": true
         },
         {
-          "type": "cf_tag_selfclose_end",
+          "type": "cf_selfclose_tag_end",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_selfclose_tag_end",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "cf_set_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_selfclose_tag_end",
+          "named": true
+        },
+        {
+          "type": "cf_var",
+          "named": true
+        },
+        {
+          "type": "expression",
           "named": true
         }
       ]
@@ -1514,30 +1396,6 @@
     }
   },
   {
-    "type": "cf_tag_selfclose_end",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "cf_throw_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag_selfclose_end",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cf_transaction_tag",
     "named": true,
     "fields": {},
@@ -1569,7 +1427,7 @@
           "named": true
         },
         {
-          "type": "cf_tag_selfclose_end",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -1619,25 +1477,6 @@
     "fields": {}
   },
   {
-    "type": "cf_wddx_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag_selfclose_end",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cf_zip_tag",
     "named": true,
     "fields": {},
@@ -1654,7 +1493,7 @@
           "named": true
         },
         {
-          "type": "cf_tag_selfclose_end",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -1673,7 +1512,7 @@
           "named": true
         },
         {
-          "type": "cf_tag_selfclose_end",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -3259,27 +3098,11 @@
           "named": true
         },
         {
-          "type": "cf_directory_tag",
-          "named": true
-        },
-        {
-          "type": "cf_file_tag",
-          "named": true
-        },
-        {
           "type": "cf_function",
           "named": true
         },
         {
           "type": "cf_if_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_image_tag",
-          "named": true
-        },
-        {
-          "type": "cf_include_tag",
           "named": true
         },
         {
@@ -3299,10 +3122,6 @@
           "named": true
         },
         {
-          "type": "cf_rethrow_tag",
-          "named": true
-        },
-        {
           "type": "cf_return",
           "named": true
         },
@@ -3311,19 +3130,15 @@
           "named": true
         },
         {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
           "type": "cf_set_tag",
           "named": true
         },
         {
-          "type": "cf_speadsheet_tag",
-          "named": true
-        },
-        {
           "type": "cf_switch_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_throw_tag",
           "named": true
         },
         {
@@ -3336,10 +3151,6 @@
         },
         {
           "type": "cf_try_statement_tag",
-          "named": true
-        },
-        {
-          "type": "cf_wddx_tag",
           "named": true
         },
         {
@@ -3823,10 +3634,6 @@
     "named": false
   },
   {
-    "type": "</cfqueryparam>",
-    "named": false
-  },
-  {
     "type": "</cfsavecontent>",
     "named": false
   },
@@ -3863,6 +3670,10 @@
     "named": false
   },
   {
+    "type": "<cf",
+    "named": false
+  },
+  {
     "type": "<cfargument",
     "named": false
   },
@@ -3891,10 +3702,6 @@
     "named": false
   },
   {
-    "type": "<cfdirectory",
-    "named": false
-  },
-  {
     "type": "<cfelse",
     "named": false
   },
@@ -3903,23 +3710,11 @@
     "named": false
   },
   {
-    "type": "<cffile",
-    "named": false
-  },
-  {
     "type": "<cffunction",
     "named": false
   },
   {
     "type": "<cfif",
-    "named": false
-  },
-  {
-    "type": "<cfimage",
-    "named": false
-  },
-  {
-    "type": "<cfinclude",
     "named": false
   },
   {
@@ -3939,10 +3734,6 @@
     "named": false
   },
   {
-    "type": "<cfrethrow",
-    "named": false
-  },
-  {
     "type": "<cfreturn",
     "named": false
   },
@@ -3959,15 +3750,7 @@
     "named": false
   },
   {
-    "type": "<cfspreadsheet",
-    "named": false
-  },
-  {
     "type": "<cfswitch",
-    "named": false
-  },
-  {
-    "type": "<cfthrow",
     "named": false
   },
   {
@@ -3976,10 +3759,6 @@
   },
   {
     "type": "<cftry",
-    "named": false
-  },
-  {
-    "type": "<cfwddx",
     "named": false
   },
   {

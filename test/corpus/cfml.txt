@@ -124,7 +124,7 @@ cffunction
             (identifier)
             (string
               (string_fragment)))
-          (cf_tag_selfclose_end)))
+          (cf_selfclose_tag_end)))
       (cf_node
         (cf_if_statement_tag
           (cf_if_tag
@@ -141,7 +141,7 @@ cffunction
             (subscript_expression
               (identifier)
               (identifier)))
-          (cf_tag_selfclose_end)))
+          (cf_selfclose_tag_end)))
       (cf_node
         (cf_set_tag
           (assignment_expression
@@ -152,7 +152,7 @@ cffunction
                 (arguments
                   (identifier)))
               (property_identifier)))
-          (cf_tag_selfclose_end)))
+          (cf_selfclose_tag_end)))
       (cf_node
         (cf_set_tag
           (assignment_expression
@@ -163,7 +163,7 @@ cffunction
                 (arguments
                   (identifier)))
               (identifier)))
-          (cf_tag_selfclose_end))))))
+          (cf_selfclose_tag_end))))))
 
 
 ===================================
@@ -186,7 +186,7 @@ function call
                 (string_fragment))))
           (string
             (string_fragment))))
-      (cf_tag_selfclose_end))))
+      (cf_selfclose_tag_end))))
 
 ===================================
 get results
@@ -256,7 +256,7 @@ get results
             (cf_attribute_name)
             (string
               (string_fragment)))
-          (cf_tag_selfclose_end)))
+          (cf_selfclose_tag_end)))
       (cf_node
         (cf_set_tag
           (cf_var)
@@ -265,7 +265,7 @@ get results
             (call_expression
               (identifier)
               (arguments)))
-          (cf_tag_selfclose_end)))
+          (cf_selfclose_tag_end)))
       (cf_node
         (cf_set_tag
           (cf_var)
@@ -283,7 +283,7 @@ get results
                   (member_expression
                     (identifier)
                     (property_identifier))))))
-          (cf_tag_selfclose_end)))
+          (cf_selfclose_tag_end)))
       (cf_node
         (cf_set_tag
           (assignment_expression
@@ -293,7 +293,7 @@ get results
                 (subscript_expression
                   (identifier)
                   (identifier)))))
-          (cf_tag_selfclose_end)))
+          (cf_selfclose_tag_end)))
       (cf_node
         (cf_set_tag
           (assignment_expression
@@ -311,7 +311,7 @@ get results
                       (property_identifier))
                     (identifier))
                   (property_identifier)))))
-          (cf_tag_selfclose_end)))
+          (cf_selfclose_tag_end)))
       (cf_node
         (cf_set_tag
           (call_expression
@@ -326,7 +326,7 @@ get results
                     (string
                       (string_fragment))
                     (identifier))))))
-          (cf_tag_selfclose_end)))
+          (cf_selfclose_tag_end)))
       (cf_node
         (element
           (start_tag
@@ -353,7 +353,7 @@ get results
             (identifier)
             (parenthesized_expression
               (identifier)))
-          (cf_tag_selfclose_end)))
+          (cf_selfclose_tag_end)))
       (cf_node
         (cf_set_tag
           (call_expression
@@ -371,11 +371,11 @@ get results
                         (string_fragment))))
                   (return_statement
                     (identifier))))))
-          (cf_tag_selfclose_end)))
+          (cf_selfclose_tag_end)))
       (cf_node
         (cf_return
           (identifier)
-          (cf_tag_selfclose_end))))))
+          (cf_selfclose_tag_end))))))
      
 ===================================
 cfscript
@@ -539,7 +539,7 @@ nested cfif
         (binary_expression
           (number)
           (number)))
-      (cf_tag_selfclose_end)))
+      (cf_selfclose_tag_end)))
     (cf_comment))
 
 
@@ -589,10 +589,12 @@ cfscript switch
       test();//test
       
       break;
-    defaultcase: //test
+    default: //test
       test();
   }
 </cfscript>
+
+<cfdirectory />
 ---
 
 (program
@@ -611,11 +613,43 @@ cfscript switch
                 (identifier)
                 (arguments)))
             (comment)
-            (break_statement)
-            (labeled_statement
-              (statement_identifier)
-              (comment)
-              (expression_statement
-                (call_expression
-                  (identifier)
-                  (arguments))))))))))
+            (break_statement))
+              (switch_default
+                (comment)
+                (expression_statement
+                  (call_expression
+                    (identifier)
+                    (arguments))))))))
+      (cf_node
+        (cf_selfclose_tag
+          (cf_selfclose_tag_end))))
+
+
+===================================
+cfquery
+===================================
+<cfquery name="qry">
+    SELECT foo
+    FROM bar
+    WHERE foobar = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.footbar#">
+</cfquery>
+<!--- test --->
+<script>
+    // test
+</script>
+---
+(program
+      (cf_node
+        (cf_query
+          (cf_attribute
+            (cf_attribute_name)
+            (string
+              (string_fragment)))))
+      (cf_comment)
+      (cf_node
+        (script_element
+          (start_tag
+            (tag_name))
+          (raw_text)
+          (end_tag
+            (tag_name)))))
