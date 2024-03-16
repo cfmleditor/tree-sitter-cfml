@@ -1,21 +1,22 @@
 {
-  "name": "tree-sitter-html",
+  "name": "tree-sitter-cfml",
   "version": "0.20.0",
-  "description": "HTML grammar for tree-sitter",
+  "description": "CFML grammar for tree-sitter",
   "main": "bindings/node",
   "keywords": [
     "parser",
     "lexer"
   ],
-  "homepage": "https://github.com/tree-sitter/tree-sitter-html",
+  "homepage": "https://github.com/cfmleditor/tree-sitter-cfml",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tree-sitter/tree-sitter-html.git"
+    "url": "https://github.com/cfmleditor/tree-sitter-cfml.git"
   },
   "bugs": {
-    "url": "https://github.com/tree-sitter/tree-sitter-html/issues"
+    "url": "https://github.com/cfmleditor/tree-sitter-cfml/issues"
   },
   "authors": [
+    "Garet Edwards <ghedwards@gmail.com>",
     "Max Brunsfeld <maxbrunsfeld@gmail.com>",
     "Ashi Krishnan <queerviolet@github.com>",
     "Amaan Qureshi <amaanq12@gmail.com>"
@@ -32,17 +33,18 @@
   "scripts": {
     "build": "tree-sitter generate && node-gyp build",
     "lint": "eslint grammar.js",
-    "test": "tree-sitter test && tree-sitter parse examples/*.html --quiet --time",
+    "test": "tree-sitter test && tree-sitter parse examples/*.cfm --quiet --time",
     "test-windows": "tree-sitter test",
     "build-test": "tree-sitter generate && node-gyp build && tree-sitter test"
   },
   "tree-sitter": [
     {
-      "scope": "text.html.basic",
+      "scope": "text.cfml.basic",
       "file-types": [
-        "html"
+        "cfm",
+        "cfc"
       ],
-      "injection-regex": "html",
+      "injection-regex": "cfml",
       "highlights": [
         "queries/highlights.scm"
       ],

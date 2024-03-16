@@ -210,7 +210,7 @@ static String scan_tag_name(TSLexer *lexer) {
 
 
 static bool scan_comment(TSLexer *lexer) {
-    
+
     if (lexer->lookahead != '-') {
         return false;
     }
@@ -218,7 +218,7 @@ static bool scan_comment(TSLexer *lexer) {
     if (lexer->lookahead != '-') {
         return false;
     }
-    
+
     lexer->advance(lexer, false);
 
     unsigned dashes = 0;
@@ -303,7 +303,7 @@ static bool scan_whitespace_and_comments(TSLexer *lexer, bool *scanned_comment) 
 }
 
 static bool scan_script_comment(TSLexer *lexer) {
-    
+
     for (;;) {
 
         if (lexer->lookahead == '/') {
@@ -340,7 +340,7 @@ static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer) {
     const char *end_delimiter = "</CFQUERY";
 
     unsigned delimiter_index = 0;
-    
+
     while (lexer->lookahead) {
         if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
             delimiter_index++;
@@ -426,7 +426,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
         }
 
         // Otherwise, dig deeper and queue implicit end tags (to be nice in
-        // the case of malformed HTML)
+        // the case of malformed CFML)
         for (unsigned i = scanner->tags.len; i > 0; i--) {
             if (scanner->tags.data[i - 1].type == next_tag.type) {
                 VEC_POP(scanner->tags);
@@ -496,7 +496,7 @@ static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer) {
         VEC_POP(scanner->tags);
         lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
     } else {
-        lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;   
+        lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
     }
     return true;
 }
@@ -640,7 +640,7 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
 }
 
 static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
-    
+
     while (iswspace(lexer->lookahead)) {
         lexer->advance(lexer, true);
     }
@@ -684,14 +684,14 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
                 if (lexer->lookahead == '>') {
                     if (valid_symbols[SELF_CLOSING_TAG_DELIMITER]) {
                         return scan_self_closing_tag_delimiter(scanner, lexer);
-                    }  
+                    }
                 } else if ( lexer->lookahead == '/' || lexer->lookahead == '*' ) {
                    if ( !scan_script_comment(lexer) ) {
-                        return false; 
+                        return false;
                    }
                 }
             }
-            
+
             break;
 
         default:

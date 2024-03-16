@@ -1,4 +1,4 @@
-//! This crate provides HTML language support for the [tree-sitter][] parsing library.
+//! This crate provides CFML language support for the [tree-sitter][] parsing library.
 //!
 //! Typically, you will use the [language][language func] function to add this language to a
 //! tree-sitter [Parser][], and then use the parser to parse some code:
@@ -6,12 +6,12 @@
 //! ```
 //! let code = "";
 //! let mut parser = tree_sitter::Parser::new();
-//! parser.set_language(tree_sitter_cfml::language()).expect("Error loading HTML grammar");
+//! parser.set_language(tree_sitter_cfml::language()).expect("Error loading CFML grammar");
 //! let tree = parser.parse(code, None).unwrap();
 //! ```
 //!
 //! [Language]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Language.html
-//! [language func]: fn.language.html
+//! [language func]: fn.language.cfml
 //! [Parser]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Parser.html
 //! [tree-sitter]: https://tree-sitter.github.io/
 
@@ -45,6 +45,6 @@ mod tests {
         let mut parser = tree_sitter::Parser::new();
         parser
             .set_language(super::language())
-            .expect("Error loading HTML grammar");
+            .expect("Error loading CFML grammar");
     }
 }
