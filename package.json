@@ -2,7 +2,7 @@
   "name": "tree-sitter-cfml",
   "version": "0.20.0",
   "description": "CFML grammar for tree-sitter",
-  "main": "bindings/node",
+  "main": "bindings/node/index.js",
   "keywords": [
     "parser",
     "lexer"
@@ -16,7 +16,7 @@
     "url": "https://github.com/cfmleditor/tree-sitter-cfml/issues"
   },
   "authors": [
-    "Garet Edwards <ghedwards@gmail.com>",
+    "Gareth Edwards <ghedwards@gmail.com>",
     "Max Brunsfeld <maxbrunsfeld@gmail.com>",
     "Ashi Krishnan <queerviolet@github.com>",
     "Amaan Qureshi <amaanq12@gmail.com>"
@@ -33,7 +33,8 @@
   "scripts": {
     "build": "tree-sitter generate && node-gyp build",
     "lint": "eslint grammar.js",
-    "test": "tree-sitter test && tree-sitter parse examples/*.cfm --quiet --time",
+    "test": "tree-sitter test",
+    "test-parse": "tree-sitter parse examples/*.cfm --quiet --time",
     "test-windows": "tree-sitter test",
     "build-test": "tree-sitter generate && node-gyp build && tree-sitter test"
   },
