@@ -65,7 +65,8 @@
     },
     "cf_tag_close": {
       "type": "PATTERN",
-      "value": "<\\/cf"
+      "value": "<\\/cf",
+      "flags": "i"
     },
     "cf_node": {
       "type": "CHOICE",
@@ -8643,4 +8644,3 @@
     "pattern"
   ]
 }
-
