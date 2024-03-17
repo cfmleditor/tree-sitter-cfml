@@ -32,6 +32,7 @@
   },
   "scripts": {
     "build": "tree-sitter generate && node-gyp build",
+    "build-wasm": "tree-sitter build-wasm",
     "lint": "eslint grammar.js",
     "test": "tree-sitter test",
     "test-parse": "tree-sitter parse examples/*.cfm --quiet --time",

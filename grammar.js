@@ -131,7 +131,8 @@ module.exports = grammar({
     [$.labeled_statement, $._property_name],
     [$.computed_property_name, $.array],
     [$.binary_expression, $._initializer],
-
+    [$.attribute_name, $.cf_node],
+    [$.attribute_name, $.tag_attributes],
   ],
 
   rules: {
@@ -198,6 +199,7 @@ module.exports = grammar({
       $.script_element,
       $.style_element,
       $.cf_script,
+      $.attribute,
       $.text,
     ),
 
@@ -281,9 +283,7 @@ module.exports = grammar({
       $.end_tag,
     ),
 
-    hash_empty: $ => prec.right(1, seq(
-      token('##'),
-    )),
+    hash_empty: $ => /#{2}/,
 
     // cf_associative: $ => seq(
     //   '[',
@@ -778,7 +778,7 @@ module.exports = grammar({
 
     cf_if_tag: $ => seq(
       keyword('<cfif'),
-      $._cf_tag_expression,
+      optional($._cf_tag_expression),
       $._cf_tag_end,
       repeat($.cf_node),
     ),
@@ -822,9 +822,16 @@ module.exports = grammar({
       )),
     ),
 
-    attribute_name: _ => /[^<>"'/=\s]+/,
+    attribute_name: $ => choice(
+      /[^<>"'=\s]+/,
+      $.hash_expression,
+    ),
 
-    attribute_value: _ => /[^<>"'=\s]+/,
+    attribute_value: $ => choice(
+      /[^<>"'=\s]+/,
+      $.hash_expression,
+      $._cf_tag,
+    ),
 
     cf_attribute: $ => seq(
       $.cf_attribute_name,
@@ -880,8 +887,24 @@ module.exports = grammar({
     entity: _ => /&(([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
 
     quoted_attribute_value: $ => choice(
-      seq('\'', optional(alias(/[^']+/, $.attribute_value)), '\''),
-      seq('"', optional(alias(/[^"]+/, $.attribute_value)), '"'),
+      seq('\'',
+        optional(
+          choice($.attribute_value,
+            alias(/[^']+/,
+              $.attribute_value,
+            ),
+          ),
+        ),
+        '\''),
+      seq('"',
+        optional(
+          choice($.attribute_value,
+            alias(/[^"]+/,
+              $.attribute_value,
+            ),
+          ),
+        ),
+        '"'),
     ),
 
     cf_var: $ => keyword('var'),
