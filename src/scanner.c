@@ -17,7 +17,10 @@ enum TokenType {
     IMPLICIT_END_TAG,
     RAW_TEXT,
     COMMENT,
-    CFQUERY_CONTENT
+    CFQUERY_CONTENT,
+    OMITTED_HTML_END_TAG,
+    OMITTED_HEAD_END_TAG,
+    OMITTED_BODY_END_TAG,
 };
 
 typedef struct {
@@ -29,6 +32,10 @@ typedef struct {
 typedef struct {
     tags_vec tags;
 } Scanner;
+
+static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
+
+static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -80,9 +87,8 @@ typedef struct {
     void *tmp = realloc((vec).data, ((_cap) + 1) * sizeof((vec).data[0]));     \
     assert(tmp != NULL);                                                       \
     (vec).data = tmp;                                                          \
-    memset((vec).data + (vec).len, 0,                                          \
-           (((_cap) + 1) - (vec).len) * sizeof((vec).data[0]));                \
-    (vec).cap = (_cap);
+    memset((vec).data + (vec).len, 0, (((_cap) + 1) - (vec).len) * sizeof((vec).data[0])); \
+    (vec).cap = (_cap); \
 
 #define STRING_GROW(vec, _cap)                                                 \
     if ((vec).cap < (_cap)) {                                                  \
@@ -115,13 +121,8 @@ typedef struct {
         memset((vec).data, 0, (vec).cap * sizeof(char));                       \
     }
 
-static void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
-
-static void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
-
 static unsigned serialize(Scanner *scanner, char *buffer) {
-    uint16_t tag_count =
-        scanner->tags.len > UINT16_MAX ? UINT16_MAX : scanner->tags.len;
+    uint16_t tag_count = scanner->tags.len > UINT16_MAX ? UINT16_MAX : scanner->tags.len;
     uint16_t serialized_tag_count = 0;
 
     unsigned size = sizeof(tag_count);
@@ -135,8 +136,7 @@ static unsigned serialize(Scanner *scanner, char *buffer) {
             if (name_length > UINT8_MAX) {
                 name_length = UINT8_MAX;
             }
-            if (size + 2 + name_length >=
-                TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
+            if (size + 2 + name_length >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
                 break;
             }
             buffer[size++] = (char)tag.type;
@@ -162,8 +162,7 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length) {
         uint16_t tag_count = 0;
         uint16_t serialized_tag_count = 0;
 
-        memcpy(&serialized_tag_count, &buffer[size],
-               sizeof(serialized_tag_count));
+        memcpy(&serialized_tag_count, &buffer[size], sizeof(serialized_tag_count));
         size += sizeof(serialized_tag_count);
 
         memcpy(&tag_count, &buffer[size], sizeof(tag_count));
@@ -179,10 +178,8 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length) {
                     uint16_t name_length = (uint8_t)buffer[size++];
                     tag.custom_tag_name.len = name_length;
                     tag.custom_tag_name.cap = name_length;
-                    tag.custom_tag_name.data =
-                        (char *)calloc(1, sizeof(char) * (name_length + 1));
-                    strncpy(tag.custom_tag_name.data, &buffer[size],
-                            name_length);
+                    tag.custom_tag_name.data = (char *)calloc(1, sizeof(char) * (name_length + 1));
+                    strncpy(tag.custom_tag_name.data, &buffer[size], name_length);
                     size += name_length;
                 }
                 VEC_PUSH(scanner->tags, tag);
@@ -200,10 +197,9 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length) {
 static String scan_tag_name(TSLexer *lexer) {
     String tag_name;
     STRING_INIT(tag_name);
-    while (iswalnum(lexer->lookahead) || lexer->lookahead == '-' ||
-           lexer->lookahead == ':') {
+    while (iswalnum(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == ':') {
         STRING_PUSH(tag_name, towupper(lexer->lookahead));
-        lexer->advance(lexer, false);
+        advance(lexer);
     }
     return tag_name;
 }
@@ -214,12 +210,12 @@ static bool scan_comment(TSLexer *lexer) {
     if (lexer->lookahead != '-') {
         return false;
     }
-    lexer->advance(lexer, false);
+    advance(lexer);
     if (lexer->lookahead != '-') {
         return false;
     }
 
-    lexer->advance(lexer, false);
+    advance(lexer);
 
     unsigned dashes = 0;
     unsigned direction = -1;
@@ -238,7 +234,7 @@ static bool scan_comment(TSLexer *lexer) {
                 if (dashes >= 2) {
                     --nesting;
                     lexer->result_symbol = COMMENT;
-                    lexer->advance(lexer, false);
+                    advance(lexer);
                     lexer->mark_end(lexer);
                     if ( nesting == 0 ) {
                         return true;
@@ -258,7 +254,7 @@ static bool scan_comment(TSLexer *lexer) {
                 direction = -1;
                 dashes = 0;
         }
-        lexer->advance(lexer, false);
+        advance(lexer);
     }
     return false;
 }
@@ -307,24 +303,24 @@ static bool scan_script_comment(TSLexer *lexer) {
     for (;;) {
 
         if (lexer->lookahead == '/') {
-            lexer->advance(lexer, true);
+            skip(lexer);
             while (lexer->lookahead != 0 && lexer->lookahead != '\n' && lexer->lookahead != 0x2028 &&
                     lexer->lookahead != 0x2029) {
-                lexer->advance(lexer, true);
+                skip(lexer);
             }
             //*scanned_comment = true;
         } else if (lexer->lookahead == '*') {
-            lexer->advance(lexer, true);
+            skip(lexer);
             while (lexer->lookahead != 0) {
                 if (lexer->lookahead == '*') {
-                    lexer->advance(lexer, true);
+                    skip(lexer);
                     if (lexer->lookahead == '/') {
-                        lexer->advance(lexer, true);
+                        skip(lexer);
                         //*scanned_comment = true;
                         break;
                     }
                 } else {
-                    lexer->advance(lexer, true);
+                    skip(lexer);
                 }
             }
         } else {
@@ -347,10 +343,10 @@ static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer) {
             if (delimiter_index == strlen(end_delimiter)) {
                 break;
             }
-            lexer->advance(lexer, false);
+            advance(lexer);
         } else {
             delimiter_index = 0;
-            lexer->advance(lexer, false);
+            advance(lexer);
             lexer->mark_end(lexer);
         }
     }
@@ -358,7 +354,7 @@ static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer) {
     lexer->result_symbol = CFQUERY_CONTENT;
 
     while (lexer->lookahead) {
-        lexer->advance(lexer, false);
+        advance(lexer);
     }
 
     return true;
@@ -371,8 +367,7 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer) {
 
     lexer->mark_end(lexer);
 
-    const char *end_delimiter =
-        VEC_BACK(scanner->tags).type == SCRIPT ? "</SCRIPT" : "</STYLE";
+    const char *end_delimiter = VEC_BACK(scanner->tags).type == SCRIPT ? "</SCRIPT" : "</STYLE";
 
     unsigned delimiter_index = 0;
     while (lexer->lookahead) {
@@ -381,10 +376,10 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer) {
             if (delimiter_index == strlen(end_delimiter)) {
                 break;
             }
-            lexer->advance(lexer, false);
+            advance(lexer);
         } else {
             delimiter_index = 0;
-            lexer->advance(lexer, false);
+            advance(lexer);
             lexer->mark_end(lexer);
         }
     }
@@ -399,7 +394,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
     bool is_closing_tag = false;
     if (lexer->lookahead == '/') {
         is_closing_tag = true;
-        lexer->advance(lexer, false);
+        advance(lexer);
     } else {
         if (parent && is_void(parent)) {
             VEC_POP(scanner->tags);
@@ -409,7 +404,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
     }
 
     String tag_name = scan_tag_name(lexer);
-    if (tag_name.len == 0) {
+    if (tag_name.len == 0 && !lexer->eof(lexer)) {
         STRING_FREE(tag_name);
         return false;
     }
@@ -418,15 +413,14 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
 
     if (is_closing_tag) {
         // The tag correctly closes the topmost element on the stack
-        if (scanner->tags.len > 0 &&
-            tagcmp(&VEC_BACK(scanner->tags), &next_tag)) {
+        if (scanner->tags.len > 0 && tagcmp(&VEC_BACK(scanner->tags), &next_tag)) {
             STRING_FREE(tag_name);
             tag_free(&next_tag);
             return false;
         }
 
         // Otherwise, dig deeper and queue implicit end tags (to be nice in
-        // the case of malformed CFML)
+        // the case of malformed HTML)
         for (unsigned i = scanner->tags.len; i > 0; i--) {
             if (scanner->tags.data[i - 1].type == next_tag.type) {
                 VEC_POP(scanner->tags);
@@ -436,7 +430,9 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
                 return true;
             }
         }
-    } else if (parent && !can_contain(parent, &next_tag)) {
+    } else if (parent &&
+               (!can_contain(parent, &next_tag) ||
+                (parent->type == HTML || parent->type == HEAD || parent->type == BODY) && lexer->eof(lexer))) {
         VEC_POP(scanner->tags);
         lexer->result_symbol = IMPLICIT_END_TAG;
         STRING_FREE(tag_name);
@@ -491,14 +487,16 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer) {
 }
 
 static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer) {
-    lexer->advance(lexer, false);
-    if (scanner->tags.len > 0) {
-        VEC_POP(scanner->tags);
-        lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
-    } else {
-        lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
+    advance(lexer);
+    if (lexer->lookahead == '>') {
+        advance(lexer);
+        if (scanner->tags.len > 0) {
+            VEC_POP(scanner->tags);
+            lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
+        }
+        return true;
     }
-    return true;
+    return false;
 }
 
 static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, bool *scanned_comment) {
@@ -642,11 +640,14 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
 static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
     while (iswspace(lexer->lookahead)) {
-        lexer->advance(lexer, true);
+        skip(lexer);
     }
 
-    if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] &&
-        !valid_symbols[END_TAG_NAME]) {
+    if (scanner->tags.len > 0) {
+        Tag *parent = &VEC_BACK(scanner->tags);
+    }
+
+    if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] && !valid_symbols[END_TAG_NAME]) {
         return scan_raw_text(scanner, lexer);
     }
 
@@ -660,10 +661,10 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
         break;
         case '<':
             lexer->mark_end(lexer);
-            lexer->advance(lexer, false);
+            advance(lexer);
 
             if (lexer->lookahead == '!') {
-                lexer->advance(lexer, false);
+                advance(lexer);
                 return scan_comment(lexer);
             }
 
@@ -680,7 +681,7 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
         case '/':
             if (lexer->lookahead == '/') {
-                lexer->advance(lexer, false);
+                advance(lexer);
                 if (lexer->lookahead == '>') {
                     if (valid_symbols[SELF_CLOSING_TAG_DELIMITER]) {
                         return scan_self_closing_tag_delimiter(scanner, lexer);
@@ -695,11 +696,8 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
             break;
 
         default:
-            if ((valid_symbols[START_TAG_NAME] ||
-                 valid_symbols[END_TAG_NAME]) &&
-                !valid_symbols[RAW_TEXT]) {
-                return valid_symbols[START_TAG_NAME]
-                           ? scan_start_tag_name(scanner, lexer)
+            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME]) && !valid_symbols[RAW_TEXT]) {
+                return valid_symbols[START_TAG_NAME] ? scan_start_tag_name(scanner, lexer)
                            : scan_end_tag_name(scanner, lexer);
             }
     }
@@ -725,21 +723,17 @@ void *tree_sitter_cfml_external_scanner_create() {
     return scanner;
 }
 
-bool tree_sitter_cfml_external_scanner_scan(void *payload, TSLexer *lexer,
-                                            const bool *valid_symbols) {
+bool tree_sitter_cfml_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
     Scanner *scanner = (Scanner *)payload;
     return scan(scanner, lexer, valid_symbols);
 }
 
-unsigned tree_sitter_cfml_external_scanner_serialize(void *payload,
-                                                     char *buffer) {
+unsigned tree_sitter_cfml_external_scanner_serialize(void *payload, char *buffer) {
     Scanner *scanner = (Scanner *)payload;
     return serialize(scanner, buffer);
 }
 
-void tree_sitter_cfml_external_scanner_deserialize(void *payload,
-                                                   const char *buffer,
-                                                   unsigned length) {
+void tree_sitter_cfml_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
     Scanner *scanner = (Scanner *)payload;
     deserialize(scanner, buffer, length);
 }
