@@ -5,6 +5,7 @@ version = "0.20.0"
 authors = [
 	"Max Brunsfeld <maxbrunsfeld@gmail.com>",
 	"Amaan Qureshi <amaanq12@gmail.com>",
+	"Gareth Edwards <ghedwards@gmail.com>",
 ]
 license = "MIT"
 readme = "bindings/rust/README.md"
@@ -24,4 +25,4 @@ path = "bindings/rust/lib.rs"
 tree-sitter = "~0.20.10"
 
 [build-dependencies]
-cc = "~1.0.83"
+cc = "~1.0.90"
