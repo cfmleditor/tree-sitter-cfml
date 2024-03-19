@@ -117,7 +117,15 @@ cffunction
         (string
           (string_fragment)))
       (cf_node
-        (text))
+        (hash_expression
+              (binary_expression
+                (identifier)
+                (identifier))))
+      (cf_node
+        (hash_expression
+              (binary_expression
+                (identifier)
+                (identifier))))
       (cf_node
         (cf_set_tag
           (assignment_expression
@@ -486,7 +494,10 @@ nested cfif
                 (text)))
             (cf_if_end_tag)))
         (cf_node
-          (text)))
+          (hash_expression
+                (identifier)))
+            (cf_node
+              (hash_empty)))
       (cf_if_end_tag))))
 
 
@@ -626,7 +637,7 @@ cfscript switch
 
 
 ===================================
-cfquery
+testing
 ===================================
 <cfquery name="qry">
     SELECT foo
@@ -637,6 +648,31 @@ cfquery
 <script>
     // test
 </script>
+<cfset "variables.#functions[i].name#" = evaluate("decorator.#functions[i].name#") />
+
+
+<cfscript>
+  try {
+
+  } catch (any e) {
+    
+  }
+</cfscript>
+
+<strong>#Replace(arguments.ErrorCollection.Message,"::","<br />")#</strong> <br />
+
+
+<table class="tagcontext">
+						<cfloop from="1" to="#ArrayLen(arguments.ErrorCollection.TagContext)#" index="i">
+							<cfset template = arguments.ErrorCollection.TagContext[i].template />
+							<cfset line = arguments.ErrorCollection.TagContext[i].line />
+							<tr>
+								<td>
+									<cfif structKeyExists(arguments.ErrorCollection.TagContext[i], "codePrintHTML") AND i eq 1>#arguments.ErrorCollection.TagContext[i].codePrintHTML#<br></cfif>
+								</td>
+							</tr>
+						</cfloop>
+					</table>
 ---
 (program
       (cf_node
@@ -651,5 +687,168 @@ cfquery
           (start_tag
             (tag_name))
           (raw_text)
+          (end_tag
+            (tag_name))))
+      (cf_node
+        (cf_set_tag
+          (assignment_expression
+            (string
+              (string_fragment)
+              (hash_expression
+                (member_expression
+                  (subscript_expression
+                    (identifier)
+                    (identifier))
+                  (property_identifier))))
+            (call_expression
+              (identifier)
+              (arguments
+                (string
+                  (string_fragment)
+                  (hash_expression
+                    (member_expression
+                      (subscript_expression
+                        (identifier)
+                        (identifier))
+                      (property_identifier)))))))
+          (cf_selfclose_tag_end)))
+      (cf_node
+        (cf_script
+          (try_statement
+            (statement_block)
+            (catch_clause
+              (identifier)
+              (identifier)
+              (statement_block)))))
+      (cf_node
+        (element
+          (start_tag
+            (tag_name))
+          (cf_node
+            (hash_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (member_expression
+                    (member_expression
+                      (identifier)
+                      (property_identifier))
+                    (property_identifier))
+                  (string
+                    (string_fragment))
+                  (string
+                    (string_fragment))))))
+          (end_tag
+            (tag_name))))
+      (cf_node
+        (element
+          (self_closing_tag
+            (tag_name))))
+      (cf_node
+        (element
+          (start_tag
+            (tag_name)
+            (tag_attributes
+              (attribute
+                (attribute_name)
+                (quoted_attribute_value
+                  (attribute_value)))))
+          (cf_node
+            (cf_loop
+              (cf_attribute
+                (cf_attribute_name)
+                (string
+                  (string_fragment)))
+              (cf_attribute
+                (cf_attribute_name)
+                (string
+                  (hash_expression
+                    (call_expression
+                      (identifier)
+                      (arguments
+                        (member_expression
+                          (member_expression
+                            (identifier)
+                            (property_identifier))
+                          (property_identifier)))))))
+              (cf_attribute
+                (cf_attribute_name)
+                (string
+                  (string_fragment)))
+              (cf_node
+                (cf_set_tag
+                  (assignment_expression
+                    (identifier)
+                    (member_expression
+                      (subscript_expression
+                        (member_expression
+                          (member_expression
+                            (identifier)
+                            (property_identifier))
+                          (property_identifier))
+                        (identifier))
+                      (property_identifier)))
+                  (cf_selfclose_tag_end)))
+              (cf_node
+                (cf_set_tag
+                  (assignment_expression
+                    (identifier)
+                    (member_expression
+                      (subscript_expression
+                        (member_expression
+                          (member_expression
+                            (identifier)
+                            (property_identifier))
+                          (property_identifier))
+                        (identifier))
+                      (property_identifier)))
+                  (cf_selfclose_tag_end)))
+              (cf_node
+                (element
+                  (start_tag
+                    (tag_name))
+                  (cf_node
+                    (element
+                      (start_tag
+                        (tag_name))
+                      (cf_node
+                        (cf_if_statement_tag
+                          (cf_if_tag
+                            (binary_expression
+                              (call_expression
+                                (identifier)
+                                (arguments
+                                  (subscript_expression
+                                    (member_expression
+                                      (member_expression
+                                        (identifier)
+                                        (property_identifier))
+                                      (property_identifier))
+                                    (identifier))
+                                  (string
+                                    (string_fragment))))
+                              (binary_expression
+                                (identifier)
+                                (number)))
+                            (cf_node
+                              (hash_expression
+                                (member_expression
+                                  (subscript_expression
+                                    (member_expression
+                                      (member_expression
+                                        (identifier)
+                                        (property_identifier))
+                                      (property_identifier))
+                                    (identifier))
+                                  (property_identifier))))
+                            (cf_node
+                              (element
+                                (start_tag
+                                  (tag_name)))))
+                          (cf_if_end_tag)))
+                      (end_tag
+                        (tag_name))))
+                  (end_tag
+                    (tag_name))))))
           (end_tag
             (tag_name)))))

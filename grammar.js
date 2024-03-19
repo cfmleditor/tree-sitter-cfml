@@ -90,7 +90,7 @@ module.exports = grammar({
 
     // Tag
     [$.cf_zip_tag, $.cf_zip_tag_standalone],
-    [$.cf_transaction_tag, $.cf_transaction_tag_standalone],
+    // [$.cf_transaction_tag, $.cf_transaction_tag_standalone],
 
     [$.cf_elseif_tag, $.binary_expression],
     [$.cf_elseif_tag, $.call_expression],
@@ -98,7 +98,7 @@ module.exports = grammar({
     [$.cf_elseif_tag, $.update_expression],
 
     // Script
-    [$.primary_expression, $.variable_declaration],
+    // [$.primary_expression, $.variable_declaration],
     [$.primary_expression, $.function_expression],
     [$.primary_expression, $._property_name],
     [$.primary_expression, $._property_name, $.arrow_function],
@@ -138,7 +138,7 @@ module.exports = grammar({
     cf_tag_start: $ => '<',
     _cf_tag_end: $ => '>',
     cf_selfclose_tag_end: $ => choice('/>', $._cf_tag_end),
-    text: $ => /[^<>&\s]([^<>&]*[^<>&\s])?/,
+    text: $ => /[^<>&\s#]([^<>&#]*[^<>&\s#])?/,
     cf_tag_close: $ => /<\/cf/i,
 
     cf_node: $ => choice(
@@ -279,7 +279,7 @@ module.exports = grammar({
 
     cf_try_statement_tag: $ => seq(
       $.cf_try_tag,
-      $.cf_catch_tag,
+      repeat($.cf_catch_tag),
       keyword('</cftry>'),
     ),
 
@@ -392,7 +392,7 @@ module.exports = grammar({
 
     cf_return_tag: $ => seq(
       keyword('<cfreturn'),
-      $.expression,
+      optional($.expression),
       $.cf_selfclose_tag_end,
     ),
 
@@ -450,7 +450,7 @@ module.exports = grammar({
     ),
 
     attribute_name: $ => choice(
-      /[^<>"'=\s]+/,
+      /[^<>"'=\s#]+/,
       $.hash_expression,
     ),
 
@@ -815,7 +815,7 @@ module.exports = grammar({
 
     catch_clause: $ => seq(
       'catch',
-      optional(seq('(', field('parameter', choice($.identifier, $._destructuring_pattern)), ')')),
+      optional(seq('(', field('type', $.identifier), field('parameter', choice($.identifier, $._destructuring_pattern)), ')')),
       field('body', $.statement_block),
     ),
 
@@ -956,34 +956,34 @@ module.exports = grammar({
     )),
 
     function_declaration: $ => prec.right('declaration', seq(
-      optional(alias(choice(
-        token('private'),
-        token('package'),
-        token('public'),
-        token('remote'),
-        token('static'),
-        token('final'),
-        token('abstract'),
-        // 'default',
-      ), $.access_type)),
-      optional(alias(choice(
-        token('any'),
-        token('array'),
-        token('binary'),
-        token('boolean'),
-        token('component'),
-        token('date'),
-        token('function'),
-        token('guid'),
-        token('numeric'),
-        token('query'),
-        token('string'),
-        token('struct'),
-        token('uuid'),
-        token('variablename'),
-        token('void'),
-        token('xml'),
-      ), $.return_type)),
+      // optional(alias(choice(
+      //   token('private'),
+      //   token('package'),
+      //   token('public'),
+      //   token('remote'),
+      //   token('static'),
+      //   token('final'),
+      //   token('abstract'),
+      //   // 'default',
+      // ), $.access_type)),
+      // optional(alias(choice(
+      //   token('any'),
+      //   token('array'),
+      //   token('binary'),
+      //   token('boolean'),
+      //   token('component'),
+      //   token('date'),
+      //   token('function'),
+      //   token('guid'),
+      //   token('numeric'),
+      //   token('query'),
+      //   token('string'),
+      //   token('struct'),
+      //   token('uuid'),
+      //   token('variablename'),
+      //   token('void'),
+      //   token('xml'),
+      // ), $.return_type)),
       optional('async'),
       'function',
       field('name', $.identifier),
@@ -1103,6 +1103,7 @@ module.exports = grammar({
     )),
 
     _lhs_expression: $ => choice(
+      $.string,
       $.member_expression,
       $.subscript_expression,
       $._identifier,

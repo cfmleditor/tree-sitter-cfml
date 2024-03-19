@@ -204,6 +204,25 @@ static String scan_tag_name(TSLexer *lexer) {
     return tag_name;
 }
 
+static bool scan_cftag(TSLexer *lexer) {
+    
+    if (lexer->lookahead == '/') {
+         advance(lexer);
+    }
+
+    if (lexer->lookahead == 'c') {
+        advance(lexer);
+    } else {
+        return false;
+    }
+
+    if (lexer->lookahead == 'f') {
+        return false;
+    }
+
+    return true;
+}
+
 
 static bool scan_comment(TSLexer *lexer) {
 
@@ -391,6 +410,10 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer) {
 static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
     Tag *parent = scanner->tags.len == 0 ? NULL : &VEC_BACK(scanner->tags);
 
+    if ( scan_cftag(lexer) == true ) {
+        return false;
+    }
+
     bool is_closing_tag = false;
     if (lexer->lookahead == '/') {
         is_closing_tag = true;
@@ -446,6 +469,11 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
 }
 
 static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer) {
+
+    if ( scan_cftag(lexer) == true ) {
+        return false;
+    }
+
     String tag_name = scan_tag_name(lexer);
     if (tag_name.len == 0) {
         STRING_FREE(tag_name);
@@ -469,6 +497,11 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer) {
 }
 
 static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer) {
+
+    if ( scan_cftag(lexer) == true ) {
+        return false;
+    }
+    
     String tag_name = scan_tag_name(lexer);
     if (tag_name.len == 0) {
         STRING_FREE(tag_name);

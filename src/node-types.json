@@ -92,6 +92,10 @@
         "named": true
       },
       {
+        "type": "string",
+        "named": true
+      },
+      {
         "type": "subscript_expression",
         "named": true
       }
@@ -384,6 +388,10 @@
           },
           {
             "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "string",
             "named": true
           },
           {
@@ -898,6 +906,16 @@
           },
           {
             "type": "object_pattern",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -1915,6 +1933,10 @@
             "named": true
           },
           {
+            "type": "string",
+            "named": true
+          },
+          {
             "type": "subscript_expression",
             "named": true
           }
@@ -2087,20 +2109,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "access_type",
-          "named": true
-        },
-        {
-          "type": "return_type",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -2863,6 +2871,10 @@
         },
         {
           "type": "object_pattern",
+          "named": true
+        },
+        {
+          "type": "string",
           "named": true
         },
         {
@@ -3943,10 +3955,6 @@
     "named": false
   },
   {
-    "type": "access_type",
-    "named": true
-  },
-  {
     "type": "as",
     "named": false
   },
@@ -4121,10 +4129,6 @@
   {
     "type": "return",
     "named": false
-  },
-  {
-    "type": "return_type",
-    "named": true
   },
   {
     "type": "set",

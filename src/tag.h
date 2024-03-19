@@ -345,39 +345,6 @@ static bool can_contain(Tag *self, const Tag *other) {
     TagType child = other->type;
 
     switch (self->type) {
-        case LI:
-            return child != LI;
-
-        case DT:
-        case DD:
-            return child != DT && child != DD;
-
-        case P:
-            for (int i = 0; i < 26; i++) {
-                if (child == TAG_TYPES_NOT_ALLOWED_IN_PARAGRAPHS[i]) {
-                    return false;
-                }
-            }
-            return true;
-
-        case COLGROUP:
-            return child == COL;
-
-        case RB:
-        case RT:
-        case RP:
-            return child != RB && child != RT && child != RP;
-
-        case OPTGROUP:
-            return child != OPTGROUP;
-
-        case TR:
-            return child != TR;
-
-        case TD:
-        case TH:
-            return child != TD && child != TH && child != TR;
-
         default:
             return true;
     }
