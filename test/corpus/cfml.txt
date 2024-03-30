@@ -668,7 +668,7 @@ testing
 							<cfset line = arguments.ErrorCollection.TagContext[i].line />
 							<tr>
 								<td>
-									<cfif structKeyExists(arguments.ErrorCollection.TagContext[i], "codePrintHTML") AND i eq 1>#arguments.ErrorCollection.TagContext[i].codePrintHTML#<br></cfif>
+									<cfif structKeyExists(arguments.ErrorCollection.TagContext[i], "codePrintHTML") AND i eq 1>#arguments.ErrorCollection.TagContext[i].codePrintHTML#</cfif>
 								</td>
 							</tr>
 						</cfloop>
@@ -840,11 +840,7 @@ testing
                                         (property_identifier))
                                       (property_identifier))
                                     (identifier))
-                                  (property_identifier))))
-                            (cf_node
-                              (element
-                                (start_tag
-                                  (tag_name)))))
+                                  (property_identifier)))))
                           (cf_if_end_tag)))
                       (end_tag
                         (tag_name))))
@@ -852,3 +848,4 @@ testing
                     (tag_name))))))
           (end_tag
             (tag_name)))))
+
