@@ -34,6 +34,8 @@ module.exports = grammar({
     $.raw_text,
     $.cf_comment,
     $._cfquery_content,
+    $._cf_open_tag,
+    $._cf_close_tag,
   ],
 
   supertypes: $ => [
@@ -118,6 +120,15 @@ module.exports = grammar({
     [$.binary_expression, $._initializer],
     [$.attribute_name, $.cf_node],
     [$.attribute_name, $.tag_attributes],
+
+    [$.cf_if_statement_tag, $._cf_tag],
+    [$.start_tag, $.self_closing_tag],
+
+    [$.cf_try_tag],
+    [$.cf_switch_tag],
+    [$.cf_if_tag],
+    [$.cf_else_tag],
+    [$.cf_elseif_tag],
   ],
 
   rules: {
@@ -156,11 +167,13 @@ module.exports = grammar({
     ),
 
     cf_script: $ => seq(
-      keyword('<cfscript>'),
+      $._cf_open_tag,
+      keyword('script>'),
       repeat(
         $.statement,
       ),
-      keyword('</cfscript>'),
+      $._cf_close_tag,
+      keyword('script>'),
     ),
 
     element: $ => choice(
@@ -216,7 +229,8 @@ module.exports = grammar({
       repeat(
         $.tag_attributes,
       ),
-      '/>',
+      optional('/'),
+      '>',
     ),
 
     end_tag: $ => seq(
@@ -234,57 +248,74 @@ module.exports = grammar({
     hash_empty: $ => /#{2}/,
 
     cf_component_tag: $ => seq(
-      keyword('<cfcomponent'),
+      $._cf_open_tag,
+      keyword('component'),
       repeat($.cf_attribute),
       $._cf_tag_end,
       repeat($.cf_node),
-      keyword('</cfcomponent>'),
+      $._cf_close_tag,
+      keyword('component'),
+      $._cf_tag_end,
     ),
 
     cf_function_tag: $ => seq(
-      keyword('<cffunction'),
+      $._cf_open_tag,
+      keyword('function'),
       repeat($.cf_attribute),
       $._cf_tag_end,
       repeat($.cf_node),
-      keyword('</cffunction>'),
+      $._cf_close_tag,
+      keyword('function'),
+      $._cf_tag_end,
     ),
 
     cf_query_tag: $ => seq(
-      keyword('<cfquery'),
+      $._cf_open_tag,
+      keyword('query'),
       repeat($.cf_attribute),
       $._cf_tag_end,
       $._cfquery_content,
-      keyword('</cfquery>'),
+      $._cf_close_tag,
+      keyword('query'),
+      $._cf_tag_end,
     ),
 
     cf_queryparam_tag: $ => seq(
-      keyword('<cfqueryparam'),
+      $._cf_open_tag,
+      keyword('queryparam'),
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
     ),
 
     cf_transaction_tag_standalone: $ => prec.right(1, seq(
-      keyword('<cftransaction'),
+      $._cf_open_tag,
+      keyword('transaction'),
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
     )),
 
     cf_transaction_tag: $ => prec.right(2, seq(
-      keyword('<cftransaction'),
+      $._cf_open_tag,
+      keyword('transaction'),
       repeat($.cf_attribute),
       $._cf_tag_end,
       repeat($.cf_node),
-      keyword('</cftransaction>'),
+      $._cf_close_tag,
+      keyword('transaction'),
+      $._cf_tag_end,
     )),
 
     cf_try_statement_tag: $ => seq(
       $.cf_try_tag,
       repeat($.cf_catch_tag),
-      keyword('</cftry>'),
+      $._cf_close_tag,
+      keyword('try'),
+      $._cf_tag_end,
     ),
 
     cf_try_tag: $ => seq(
-      keyword('<cftry'),
+      $._cf_open_tag,
+      keyword('try'),
       repeat($.cf_attribute),
       $._cf_tag_end,
       repeat($.cf_node),
@@ -294,104 +325,132 @@ module.exports = grammar({
       $.cf_switch_tag,
       repeat($.cf_case_tag),
       optional($.cf_defaultcase_tag),
-      keyword('</cfswitch>'),
+      $._cf_close_tag,
+      keyword('switch'),
+      $._cf_tag_end,
     ),
 
     cf_switch_tag: $ => seq(
-      keyword('<cfswitch'),
+      $._cf_open_tag,
+      keyword('switch'),
       repeat($.cf_attribute),
       $._cf_tag_end,
       repeat($.cf_node),
     ),
 
     cf_case_tag: $ => seq(
-      keyword('<cfcase'),
+      $._cf_open_tag,
+      keyword('case'),
       repeat($.cf_attribute),
       $._cf_tag_end,
       repeat($.cf_node),
-      keyword('</cfcase>'),
+      $._cf_close_tag,
+      keyword('case'),
+      $._cf_tag_end,
     ),
 
     cf_defaultcase_tag: $ => seq(
-      keyword('<cfdefaultcase'),
+      $._cf_open_tag,
+      keyword('defaultcase'),
       repeat($.cf_attribute),
       $._cf_tag_end,
       repeat($.cf_node),
-      keyword('</cfdefaultcase>'),
+      $._cf_close_tag,
+      keyword('defaultcase'),
+      $._cf_tag_end,
     ),
 
     cf_catch_tag: $ => seq(
-      keyword('<cfcatch'),
+      $._cf_open_tag,
+      keyword('catch'),
       repeat($.cf_attribute),
       $._cf_tag_end,
       repeat($.cf_node),
-      keyword('</cfcatch>'),
+      $._cf_close_tag,
+      keyword('catch'),
+      $._cf_tag_end,
     ),
 
     cf_loop_tag: $ => seq(
-      keyword('<cfloop'),
+      $._cf_open_tag,
+      keyword('loop'),
       repeat($.cf_attribute),
       $._cf_tag_end,
       repeat($.cf_node),
-      keyword('</cfloop>'),
+      $._cf_close_tag,
+      keyword('loop'),
+      $._cf_tag_end,
     ),
 
     cf_argument_tag: $ => seq(
-      keyword('<cfargument'),
+      $._cf_open_tag,
+      keyword('argument'),
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
     ),
 
     cf_selfclose_tag: $ => seq(
-      keyword('<cf'),
+      $._cf_open_tag,
       /[a-zA-Z]+/,
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
     ),
 
     cf_continue_tag: $ => seq(
-      keyword('<cfcontinue'),
+      $._cf_open_tag,
+      keyword('continue'),
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
     ),
 
     cf_zip_tag: $ => seq(
-      keyword('<cfzip'),
+      $._cf_open_tag,
+      keyword('zip'),
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
       repeat($.cf_node),
-      keyword('</cfzip>'),
+      $._cf_close_tag,
+      keyword('zip'),
+      $._cf_tag_end,
     ),
 
     cf_zip_tag_standalone: $ => seq(
-      keyword('<cfzip'),
+      $._cf_open_tag,
+      keyword('zip'),
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
     ),
 
     cf_savecontent_tag: $ => seq(
-      keyword('<cfsavecontent'),
+      $._cf_open_tag,
+      keyword('savecontent'),
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
       repeat($.cf_node),
-      keyword('</cfsavecontent>'),
+      $._cf_close_tag,
+      keyword('savecontent'),
+      $._cf_tag_end,
     ),
 
     cf_output_tag: $ => seq(
-      keyword('<cfoutput'),
+      $._cf_open_tag,
+      keyword('output'),
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
       repeat($.cf_node),
-      keyword('</cfoutput>'),
+      $._cf_close_tag,
+      keyword('output>'),
     ),
 
     cf_break_tag: $ => seq(
-      keyword('<cfbreak'),
+      $._cf_open_tag,
+      keyword('break'),
       $.cf_selfclose_tag_end,
     ),
 
     cf_return_tag: $ => seq(
-      keyword('<cfreturn'),
+      $._cf_open_tag,
+      keyword('return'),
       optional($.expression),
       $.cf_selfclose_tag_end,
     ),
@@ -404,7 +463,8 @@ module.exports = grammar({
     ),
 
     cf_if_tag: $ => seq(
-      keyword('<cfif'),
+      $._cf_open_tag,
+      keyword('if'),
       optional($._cf_tag_expression),
       $._cf_tag_end,
       repeat($.cf_node),
@@ -415,27 +475,31 @@ module.exports = grammar({
     ),
 
     cf_set_tag: $ => seq(
-      keyword('<cfset'),
+      $._cf_open_tag,
+      keyword('set'),
       optional($.cf_var),
       $._cf_tag_expression,
       $.cf_selfclose_tag_end,
     ),
 
     cf_elseif_tag: $ => seq(
-      keyword('<cfelseif'),
+      $._cf_open_tag,
+      keyword('elseif'),
       repeat($.expression),
       $._cf_tag_end,
       repeat($.cf_node),
     ),
 
     cf_else_tag: $ => seq(
-      keyword('<cfelse'),
+      $._cf_open_tag,
+      keyword('else'),
       $._cf_tag_end,
       repeat($.cf_node),
     ),
 
     cf_if_end_tag: $ => seq(
-      keyword('</cfif>'),
+      $._cf_close_tag,
+      keyword('if>'),
     ),
 
     attribute: $ => seq(
@@ -472,6 +536,9 @@ module.exports = grammar({
 
     _cf_tag: $ => choice(
       $.cf_if_statement_tag,
+      $.cf_if_tag,
+      $.cf_elseif_tag,
+      $.cf_else_tag,
       $.cf_try_statement_tag,
       $.cf_switch_statement_tag,
       $.cf_transaction_tag,

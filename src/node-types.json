@@ -501,11 +501,23 @@
           "named": true
         },
         {
+          "type": "cf_else_tag",
+          "named": true
+        },
+        {
+          "type": "cf_elseif_tag",
+          "named": true
+        },
+        {
           "type": "cf_function",
           "named": true
         },
         {
           "type": "cf_if_statement_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
           "named": true
         },
         {
@@ -1222,11 +1234,23 @@
           "named": true
         },
         {
+          "type": "cf_else_tag",
+          "named": true
+        },
+        {
+          "type": "cf_elseif_tag",
+          "named": true
+        },
+        {
           "type": "cf_function",
           "named": true
         },
         {
           "type": "cf_if_statement_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
           "named": true
         },
         {
@@ -3219,11 +3243,23 @@
           "named": true
         },
         {
+          "type": "cf_else_tag",
+          "named": true
+        },
+        {
+          "type": "cf_elseif_tag",
+          "named": true
+        },
+        {
           "type": "cf_function",
           "named": true
         },
         {
           "type": "cf_if_statement_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
           "named": true
         },
         {
@@ -3715,66 +3751,6 @@
     "named": false
   },
   {
-    "type": "</cfcase>",
-    "named": false
-  },
-  {
-    "type": "</cfcatch>",
-    "named": false
-  },
-  {
-    "type": "</cfcomponent>",
-    "named": false
-  },
-  {
-    "type": "</cfdefaultcase>",
-    "named": false
-  },
-  {
-    "type": "</cffunction>",
-    "named": false
-  },
-  {
-    "type": "</cfif>",
-    "named": false
-  },
-  {
-    "type": "</cfloop>",
-    "named": false
-  },
-  {
-    "type": "</cfoutput>",
-    "named": false
-  },
-  {
-    "type": "</cfquery>",
-    "named": false
-  },
-  {
-    "type": "</cfsavecontent>",
-    "named": false
-  },
-  {
-    "type": "</cfscript>",
-    "named": false
-  },
-  {
-    "type": "</cfswitch>",
-    "named": false
-  },
-  {
-    "type": "</cftransaction>",
-    "named": false
-  },
-  {
-    "type": "</cftry>",
-    "named": false
-  },
-  {
-    "type": "</cfzip>",
-    "named": false
-  },
-  {
     "type": "<<",
     "named": false
   },
@@ -3784,102 +3760,6 @@
   },
   {
     "type": "<=",
-    "named": false
-  },
-  {
-    "type": "<cf",
-    "named": false
-  },
-  {
-    "type": "<cfargument",
-    "named": false
-  },
-  {
-    "type": "<cfbreak",
-    "named": false
-  },
-  {
-    "type": "<cfcase",
-    "named": false
-  },
-  {
-    "type": "<cfcatch",
-    "named": false
-  },
-  {
-    "type": "<cfcomponent",
-    "named": false
-  },
-  {
-    "type": "<cfcontinue",
-    "named": false
-  },
-  {
-    "type": "<cfdefaultcase",
-    "named": false
-  },
-  {
-    "type": "<cfelse",
-    "named": false
-  },
-  {
-    "type": "<cfelseif",
-    "named": false
-  },
-  {
-    "type": "<cffunction",
-    "named": false
-  },
-  {
-    "type": "<cfif",
-    "named": false
-  },
-  {
-    "type": "<cfloop",
-    "named": false
-  },
-  {
-    "type": "<cfoutput",
-    "named": false
-  },
-  {
-    "type": "<cfquery",
-    "named": false
-  },
-  {
-    "type": "<cfqueryparam",
-    "named": false
-  },
-  {
-    "type": "<cfreturn",
-    "named": false
-  },
-  {
-    "type": "<cfsavecontent",
-    "named": false
-  },
-  {
-    "type": "<cfscript>",
-    "named": false
-  },
-  {
-    "type": "<cfset",
-    "named": false
-  },
-  {
-    "type": "<cfswitch",
-    "named": false
-  },
-  {
-    "type": "<cftransaction",
-    "named": false
-  },
-  {
-    "type": "<cftry",
-    "named": false
-  },
-  {
-    "type": "<cfzip",
     "named": false
   },
   {
@@ -3955,6 +3835,10 @@
     "named": false
   },
   {
+    "type": "argument",
+    "named": false
+  },
+  {
     "type": "as",
     "named": false
   },
@@ -3987,6 +3871,10 @@
     "named": true
   },
   {
+    "type": "component",
+    "named": false
+  },
+  {
     "type": "const",
     "named": false
   },
@@ -4003,6 +3891,10 @@
     "named": false
   },
   {
+    "type": "defaultcase",
+    "named": false
+  },
+  {
     "type": "do",
     "named": false
   },
@@ -4012,6 +3904,10 @@
   },
   {
     "type": "else",
+    "named": false
+  },
+  {
+    "type": "elseif",
     "named": false
   },
   {
@@ -4063,6 +3959,10 @@
     "named": false
   },
   {
+    "type": "if>",
+    "named": false
+  },
+  {
     "type": "import",
     "named": false
   },
@@ -4076,6 +3976,10 @@
   },
   {
     "type": "let",
+    "named": false
+  },
+  {
+    "type": "loop",
     "named": false
   },
   {
@@ -4103,12 +4007,28 @@
     "named": true
   },
   {
+    "type": "output",
+    "named": false
+  },
+  {
+    "type": "output>",
+    "named": false
+  },
+  {
     "type": "private_property_identifier",
     "named": true
   },
   {
     "type": "property_identifier",
     "named": true
+  },
+  {
+    "type": "query",
+    "named": false
+  },
+  {
+    "type": "queryparam",
+    "named": false
   },
   {
     "type": "raw_text",
@@ -4128,6 +4048,14 @@
   },
   {
     "type": "return",
+    "named": false
+  },
+  {
+    "type": "savecontent",
+    "named": false
+  },
+  {
+    "type": "script>",
     "named": false
   },
   {
@@ -4187,6 +4115,10 @@
     "named": false
   },
   {
+    "type": "transaction",
+    "named": false
+  },
+  {
     "type": "true",
     "named": false
   },
@@ -4212,6 +4144,10 @@
   },
   {
     "type": "yield",
+    "named": false
+  },
+  {
+    "type": "zip",
     "named": false
   },
   {
