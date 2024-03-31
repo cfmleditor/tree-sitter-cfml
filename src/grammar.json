@@ -38,7 +38,7 @@
       "type": "PATTERN",
       "value": "[Dd][Oo][Cc][Tt][Yy][Pp][Ee]"
     },
-    "cf_tag_start": {
+    "_cf_tag_start": {
       "type": "STRING",
       "value": "<"
     },
@@ -114,6 +114,14 @@
         {
           "type": "SYMBOL",
           "name": "text"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "end_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "erroneous_end_tag"
         }
       ]
     },
@@ -133,12 +141,16 @@
               "value": 1,
               "content": {
                 "type": "PATTERN",
-                "value": "[sS][cC][rR][iI][pP][tT][>>]"
+                "value": "[sS][cC][rR][iI][pP][tT]"
               }
             }
           },
           "named": false,
-          "value": "script>"
+          "value": "script"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
         },
         {
           "type": "REPEAT",
@@ -160,12 +172,16 @@
               "value": 1,
               "content": {
                 "type": "PATTERN",
-                "value": "[sS][cC][rR][iI][pP][tT][>>]"
+                "value": "[sS][cC][rR][iI][pP][tT]"
               }
             }
           },
           "named": false,
-          "value": "script>"
+          "value": "script"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
         }
       ]
     },
@@ -195,7 +211,7 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "_implicit_end_tag"
+                  "name": "implicit_end_tag"
                 }
               ]
             }
@@ -272,6 +288,10 @@
         {
           "type": "SYMBOL",
           "name": "attribute"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "quoted_attribute_value"
         },
         {
           "type": "SYMBOL",
@@ -373,16 +393,13 @@
           "members": [
             {
               "type": "STRING",
-              "value": "/"
+              "value": "/>"
             },
             {
-              "type": "BLANK"
+              "type": "STRING",
+              "value": ">"
             }
           ]
-        },
-        {
-          "type": "STRING",
-          "value": ">"
         }
       ]
     },
@@ -401,6 +418,23 @@
           },
           "named": true,
           "value": "tag_name"
+        },
+        {
+          "type": "STRING",
+          "value": ">"
+        }
+      ]
+    },
+    "erroneous_end_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "</"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "erroneous_end_tag_name"
         },
         {
           "type": "STRING",
@@ -1553,12 +1587,16 @@
               "value": 1,
               "content": {
                 "type": "PATTERN",
-                "value": "[oO][uU][tT][pP][uU][tT][>>]"
+                "value": "[oO][uU][tT][pP][uU][tT]"
               }
             }
           },
           "named": false,
-          "value": "output>"
+          "value": "output"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
         }
       ]
     },
@@ -1861,12 +1899,16 @@
               "value": 1,
               "content": {
                 "type": "PATTERN",
-                "value": "[iI][fF][>>]"
+                "value": "[iI][fF]"
               }
             }
           },
           "named": false,
-          "value": "if>"
+          "value": "if"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
         }
       ]
     },
@@ -8462,8 +8504,8 @@
       "_cf_tag"
     ],
     [
-      "start_tag",
-      "self_closing_tag"
+      "self_closing_tag",
+      "start_tag"
     ],
     [
       "cf_try_tag"
@@ -8479,6 +8521,10 @@
     ],
     [
       "cf_elseif_tag"
+    ],
+    [
+      "element",
+      "cf_node"
     ]
   ],
   "precedences": [
@@ -8672,7 +8718,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "_implicit_end_tag"
+      "name": "implicit_end_tag"
     },
     {
       "type": "SYMBOL",

@@ -342,8 +342,8 @@ static inline bool tag_eq(const Tag *self, const Tag *other) {
 }
 
 static bool tag_can_contain(Tag *self, const Tag *other) {
-   return true;
    TagType child = other->type;
+   return true;
 
     
 

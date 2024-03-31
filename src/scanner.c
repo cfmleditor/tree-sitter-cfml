@@ -111,7 +111,6 @@ static String scan_tag_name(TSLexer *lexer) {
     String tag_name = array_new();
     while (iswalnum(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == ':') {
         array_push(&tag_name, towupper(lexer->lookahead));
-        // printf("tag_name:%s\n", tag_name);
         advance(lexer);
     }
     return tag_name;
@@ -305,7 +304,7 @@ static void pop_tag(Scanner *scanner) {
 }
 
 static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
-
+    
     Tag *parent = scanner->tags.size == 0 ? NULL : array_back(&scanner->tags);
 
     bool is_closing_tag = false;
@@ -365,6 +364,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
 static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer) {
 
     String tag_name = scan_tag_name(lexer);
+
     if (tag_name.size == 0) {
         array_delete(&tag_name);
         return false;
@@ -560,7 +560,7 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
 }
 
 
-static bool scan_open_cftag(TSLexer *lexer) {
+static bool scan_open_cftag(Scanner *scanner, TSLexer *lexer) {
     
     if ( lexer->lookahead != 'f' && lexer->lookahead != 'F' ) {
         return false;
@@ -576,7 +576,7 @@ static bool scan_open_cftag(TSLexer *lexer) {
     
 }
 
-static bool scan_close_cftag(TSLexer *lexer) {
+static bool scan_close_cftag(Scanner *scanner, TSLexer *lexer) {
     
     if ( lexer->lookahead != 'f' && lexer->lookahead != 'F' ) {
         return false;
@@ -621,14 +621,14 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
             if (lexer->lookahead == 'c') {
                 advance(lexer);
-                return scan_open_cftag(lexer);
+                return scan_open_cftag(scanner, lexer);
             }
 
             if (lexer->lookahead == '/') {
                 advance(lexer);
                 if ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) {
                     advance(lexer);
-                    return scan_close_cftag(lexer);
+                    return scan_close_cftag(scanner, lexer);
                 }
             }
 
@@ -657,7 +657,7 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
                    }
                 } else if ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) {
                     advance(lexer);
-                    return scan_close_cftag(lexer);
+                    return scan_close_cftag(scanner, lexer);
                 }
             }
 
@@ -667,6 +667,9 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
             if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME]) && !valid_symbols[RAW_TEXT]) {
                 return valid_symbols[START_TAG_NAME] ? scan_start_tag_name(scanner, lexer)
                                                      : scan_end_tag_name(scanner, lexer);
+            }
+            if (valid_symbols[IMPLICIT_END_TAG]) {
+                return scan_implicit_end_tag(scanner, lexer);
             }
     }
 

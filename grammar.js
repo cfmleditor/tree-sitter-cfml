@@ -30,7 +30,7 @@ module.exports = grammar({
     $._end_tag_name,
     $.erroneous_end_tag_name,
     '/>',
-    $._implicit_end_tag,
+    $.implicit_end_tag,
     $.raw_text,
     $.cf_comment,
     $._cfquery_content,
@@ -122,13 +122,15 @@ module.exports = grammar({
     [$.attribute_name, $.tag_attributes],
 
     [$.cf_if_statement_tag, $._cf_tag],
-    [$.start_tag, $.self_closing_tag],
+    [$.self_closing_tag, $.start_tag],
 
     [$.cf_try_tag],
     [$.cf_switch_tag],
     [$.cf_if_tag],
     [$.cf_else_tag],
     [$.cf_elseif_tag],
+
+    [$.element, $.cf_node],
   ],
 
   rules: {
@@ -146,9 +148,11 @@ module.exports = grammar({
 
     _doctype: _ => /[Dd][Oo][Cc][Tt][Yy][Pp][Ee]/,
 
-    cf_tag_start: $ => '<',
+    _cf_tag_start: $ => '<',
     _cf_tag_end: $ => '>',
+
     cf_selfclose_tag_end: $ => choice('/>', $._cf_tag_end),
+
     text: $ => /[^<>&\s#]([^<>&#]*[^<>&\s#])?/,
     cf_tag_close: $ => /<\/cf/i,
 
@@ -164,23 +168,27 @@ module.exports = grammar({
       $.cf_script,
       $.attribute,
       $.text,
+      $.end_tag,
+      $.erroneous_end_tag,
     ),
 
     cf_script: $ => seq(
       $._cf_open_tag,
-      keyword('script>'),
+      keyword('script'),
+      $._cf_tag_end,
       repeat(
         $.statement,
       ),
       $._cf_close_tag,
-      keyword('script>'),
+      keyword('script'),
+      $._cf_tag_end,
     ),
 
     element: $ => choice(
       seq(
         $.start_tag,
         repeat($.cf_node),
-        choice($.end_tag, $._implicit_end_tag),
+        choice($.end_tag, $.implicit_end_tag),
       ),
       $.self_closing_tag,
     ),
@@ -200,6 +208,7 @@ module.exports = grammar({
 
     tag_attributes: $ => choice(
       $.attribute,
+      $.quoted_attribute_value,
       $._cf_tag,
       $.hash_expression,
       $.hash_empty,
@@ -229,13 +238,21 @@ module.exports = grammar({
       repeat(
         $.tag_attributes,
       ),
-      optional('/'),
-      '>',
+      choice(
+        '/>',
+        '>',
+      ),
     ),
 
     end_tag: $ => seq(
       '</',
       alias($._end_tag_name, $.tag_name),
+      '>',
+    ),
+
+    erroneous_end_tag: $ => seq(
+      '</',
+      $.erroneous_end_tag_name,
       '>',
     ),
 
@@ -439,7 +456,8 @@ module.exports = grammar({
       $.cf_selfclose_tag_end,
       repeat($.cf_node),
       $._cf_close_tag,
-      keyword('output>'),
+      keyword('output'),
+      $._cf_tag_end,
     ),
 
     cf_break_tag: $ => seq(
@@ -499,7 +517,8 @@ module.exports = grammar({
 
     cf_if_end_tag: $ => seq(
       $._cf_close_tag,
-      keyword('if>'),
+      keyword('if'),
+      $._cf_tag_end,
     ),
 
     attribute: $ => seq(
