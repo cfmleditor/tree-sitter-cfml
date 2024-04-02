@@ -342,10 +342,7 @@ static inline bool tag_eq(const Tag *self, const Tag *other) {
 }
 
 static bool tag_can_contain(Tag *self, const Tag *other) {
-   TagType child = other->type;
-   return true;
-
-    
+    TagType child = other->type;
 
     switch (self->type) {
         case LI:

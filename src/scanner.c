@@ -20,6 +20,7 @@ enum TokenType {
     CFQUERY_CONTENT,
     CF_OPEN_TAG,
     CF_CLOSE_TAG,
+    CFSAVECONTENT_CONTENT,
 };
 
 typedef struct {
@@ -262,6 +263,37 @@ static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer) {
     }
 
     lexer->result_symbol = CFQUERY_CONTENT;
+
+    while (lexer->lookahead) {
+        advance(lexer);
+    }
+
+    return true;
+}
+
+static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer) {
+
+    lexer->mark_end(lexer);
+
+    const char *end_delimiter = "</CFSAVECONTENT";
+
+    unsigned delimiter_index = 0;
+
+    while (lexer->lookahead) {
+        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
+            delimiter_index++;
+            if (delimiter_index == strlen(end_delimiter)) {
+                break;
+            }
+            advance(lexer);
+        } else {
+            delimiter_index = 0;
+            advance(lexer);
+            lexer->mark_end(lexer);
+        }
+    }
+
+    lexer->result_symbol = CFSAVECONTENT_CONTENT;
 
     while (lexer->lookahead) {
         advance(lexer);
@@ -604,6 +636,10 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
     if (valid_symbols[CFQUERY_CONTENT]) {
         return scan_cfquery_content(scanner, lexer);
+    }
+
+    if (valid_symbols[CFSAVECONTENT_CONTENT]) {
+        return scan_cfsavecontent_content(scanner, lexer);
     }
 
     switch (lexer->lookahead) {

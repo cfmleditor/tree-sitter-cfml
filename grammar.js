@@ -36,6 +36,7 @@ module.exports = grammar({
     $._cfquery_content,
     $._cf_open_tag,
     $._cf_close_tag,
+    $._cfsavecontent_content,
   ],
 
   supertypes: $ => [
@@ -118,25 +119,25 @@ module.exports = grammar({
     [$.labeled_statement, $._property_name],
     [$.computed_property_name, $.array],
     [$.binary_expression, $._initializer],
-    [$.attribute_name, $.cf_node],
+    [$.attribute_name, $._node],
     [$.attribute_name, $.tag_attributes],
 
-    [$.cf_if_statement_tag, $._cf_tag],
+    // [$.cf_if_statement_tag, $._cf_tag],
     [$.self_closing_tag, $.start_tag],
 
     [$.cf_try_tag],
     [$.cf_switch_tag],
-    [$.cf_if_tag],
-    [$.cf_else_tag],
+    // [$.cf_if_tag],
+    // [$.cf_else_tag],
     [$.cf_elseif_tag],
 
-    [$.element, $.cf_node],
+    [$.element, $._node],
   ],
 
   rules: {
 
     program: $ => repeat(
-      $.cf_node,
+      $._node,
     ),
 
     doctype: $ => seq(
@@ -154,9 +155,9 @@ module.exports = grammar({
     cf_selfclose_tag_end: $ => choice('/>', $._cf_tag_end),
 
     text: $ => /[^<>&\s#]([^<>&#]*[^<>&\s#])?/,
-    cf_tag_close: $ => /<\/cf/i,
+    // cf_tag_close: $ => /<\/cf/i,
 
-    cf_node: $ => choice(
+    _node: $ => choice(
       $.doctype,
       $.entity,
       $.element,
@@ -187,7 +188,7 @@ module.exports = grammar({
     element: $ => choice(
       seq(
         $.start_tag,
-        repeat($.cf_node),
+        repeat($._node),
         choice($.end_tag, $.implicit_end_tag),
       ),
       $.self_closing_tag,
@@ -269,7 +270,7 @@ module.exports = grammar({
       keyword('component'),
       repeat($.cf_attribute),
       $._cf_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
       $._cf_close_tag,
       keyword('component'),
       $._cf_tag_end,
@@ -280,7 +281,7 @@ module.exports = grammar({
       keyword('function'),
       repeat($.cf_attribute),
       $._cf_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
       $._cf_close_tag,
       keyword('function'),
       $._cf_tag_end,
@@ -316,7 +317,7 @@ module.exports = grammar({
       keyword('transaction'),
       repeat($.cf_attribute),
       $._cf_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
       $._cf_close_tag,
       keyword('transaction'),
       $._cf_tag_end,
@@ -335,7 +336,7 @@ module.exports = grammar({
       keyword('try'),
       repeat($.cf_attribute),
       $._cf_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
     ),
 
     cf_switch_statement_tag: $ => seq(
@@ -352,7 +353,7 @@ module.exports = grammar({
       keyword('switch'),
       repeat($.cf_attribute),
       $._cf_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
     ),
 
     cf_case_tag: $ => seq(
@@ -360,7 +361,7 @@ module.exports = grammar({
       keyword('case'),
       repeat($.cf_attribute),
       $._cf_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
       $._cf_close_tag,
       keyword('case'),
       $._cf_tag_end,
@@ -371,7 +372,7 @@ module.exports = grammar({
       keyword('defaultcase'),
       repeat($.cf_attribute),
       $._cf_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
       $._cf_close_tag,
       keyword('defaultcase'),
       $._cf_tag_end,
@@ -382,7 +383,7 @@ module.exports = grammar({
       keyword('catch'),
       repeat($.cf_attribute),
       $._cf_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
       $._cf_close_tag,
       keyword('catch'),
       $._cf_tag_end,
@@ -393,7 +394,7 @@ module.exports = grammar({
       keyword('loop'),
       repeat($.cf_attribute),
       $._cf_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
       $._cf_close_tag,
       keyword('loop'),
       $._cf_tag_end,
@@ -425,7 +426,7 @@ module.exports = grammar({
       keyword('zip'),
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
       $._cf_close_tag,
       keyword('zip'),
       $._cf_tag_end,
@@ -443,7 +444,7 @@ module.exports = grammar({
       keyword('savecontent'),
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
-      repeat($.cf_node),
+      $._cfsavecontent_content,
       $._cf_close_tag,
       keyword('savecontent'),
       $._cf_tag_end,
@@ -454,7 +455,7 @@ module.exports = grammar({
       keyword('output'),
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
       $._cf_close_tag,
       keyword('output'),
       $._cf_tag_end,
@@ -473,20 +474,18 @@ module.exports = grammar({
       $.cf_selfclose_tag_end,
     ),
 
-    cf_if_statement_tag: $ => seq(
-      $.cf_if_tag,
-      repeat($.cf_elseif_tag),
-      optional($.cf_else_tag),
-      $.cf_if_end_tag,
-    ),
-
-    cf_if_tag: $ => seq(
+    cf_if_tag: $ => prec.right(seq(
       $._cf_open_tag,
       keyword('if'),
       optional($._cf_tag_expression),
       $._cf_tag_end,
-      repeat($.cf_node),
-    ),
+      repeat($._node),
+      optional(repeat($.cf_elseif_tag)),
+      optional($.cf_else_tag),
+      $._cf_close_tag,
+      keyword('if'),
+      $._cf_tag_end,
+    )),
 
     _cf_tag_expression: $ => choice(
       $.expression,
@@ -505,14 +504,14 @@ module.exports = grammar({
       keyword('elseif'),
       repeat($.expression),
       $._cf_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
     ),
 
     cf_else_tag: $ => seq(
       $._cf_open_tag,
       keyword('else'),
       $._cf_tag_end,
-      repeat($.cf_node),
+      repeat($._node),
     ),
 
     cf_if_end_tag: $ => seq(
@@ -554,10 +553,10 @@ module.exports = grammar({
     cf_attribute_name: _ => /[^<>"\'/=\s]+/,
 
     _cf_tag: $ => choice(
-      $.cf_if_statement_tag,
+      // $.cf_if_statement_tag,
       $.cf_if_tag,
-      $.cf_elseif_tag,
-      $.cf_else_tag,
+      // $.cf_elseif_tag,
+      // $.cf_else_tag,
       $.cf_try_statement_tag,
       $.cf_switch_statement_tag,
       $.cf_transaction_tag,
@@ -1255,6 +1254,7 @@ module.exports = grammar({
         ['*', 'binary_times'],
         ['/', 'binary_times'],
         ['%', 'binary_times'],
+        [/[mM][oO][dD]/, 'binary_times'],
         ['**', 'binary_exp', 'right'],
         ['<', 'binary_relation'],
         [/[lL][tT]/, 'binary_relation'],
