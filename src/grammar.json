@@ -121,64 +121,44 @@
       ]
     },
     "cf_script": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_cf_open_tag"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[sS][cC][rR][iI][pP][tT]"
-              }
-            }
-          },
-          "named": false,
-          "value": "script"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_cf_tag_end"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
             "type": "SYMBOL",
-            "name": "statement"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_cf_close_tag"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "STRING",
+            "value": "script"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_tag_end"
+          },
+          {
+            "type": "REPEAT",
             "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[sS][cC][rR][iI][pP][tT]"
-              }
+              "type": "SYMBOL",
+              "name": "statement"
             }
           },
-          "named": false,
-          "value": "script"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_cf_tag_end"
-        }
-      ]
+          {
+            "type": "SYMBOL",
+            "name": "_cf_close_tag"
+          },
+          {
+            "type": "STRING",
+            "value": "script"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_tag_end"
+          }
+        ]
+      }
     },
     "element": {
       "type": "CHOICE",
@@ -605,6 +585,341 @@
         }
       ]
     },
+    "cf_lock_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_open_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[lL][oO][cC][kK]"
+              }
+            }
+          },
+          "named": false,
+          "value": "lock"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_close_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[lL][oO][cC][kK]"
+              }
+            }
+          },
+          "named": false,
+          "value": "lock"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        }
+      ]
+    },
+    "cf_thread_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_open_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[tT][hH][rR][eE][aA][dD]"
+              }
+            }
+          },
+          "named": false,
+          "value": "thread"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_close_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[tT][hH][rR][eE][aA][dD]"
+              }
+            }
+          },
+          "named": false,
+          "value": "thread"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        }
+      ]
+    },
+    "cf_http_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_open_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[hH][tT][tT][pP]"
+              }
+            }
+          },
+          "named": false,
+          "value": "http"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_close_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[hH][tT][tT][pP]"
+              }
+            }
+          },
+          "named": false,
+          "value": "http"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        }
+      ]
+    },
+    "cf_mail_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_open_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[mM][aA][iI][lL]"
+              }
+            }
+          },
+          "named": false,
+          "value": "mail"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_close_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[mM][aA][iI][lL]"
+              }
+            }
+          },
+          "named": false,
+          "value": "mail"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        }
+      ]
+    },
+    "cf_mailpart_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_open_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[mM][aA][iI][lL][pP][aA][rR][tT]"
+              }
+            }
+          },
+          "named": false,
+          "value": "mailpart"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_close_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[mM][aA][iI][lL][pP][aA][rR][tT]"
+              }
+            }
+          },
+          "named": false,
+          "value": "mailpart"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
+        }
+      ]
+    },
     "cf_query_tag": {
       "type": "SEQ",
       "members": [
@@ -816,46 +1131,6 @@
         ]
       }
     },
-    "cf_try_statement_tag": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "cf_try_tag"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "cf_catch_tag"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_cf_close_tag"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[tT][rR][yY]"
-              }
-            }
-          },
-          "named": false,
-          "value": "try"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_cf_tag_end"
-        }
-      ]
-    },
     "cf_try_tag": {
       "type": "SEQ",
       "members": [
@@ -896,34 +1171,13 @@
             "type": "SYMBOL",
             "name": "_node"
           }
-        }
-      ]
-    },
-    "cf_switch_statement_tag": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "cf_switch_tag"
         },
         {
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "cf_case_tag"
+            "name": "cf_catch_tag"
           }
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "cf_defaultcase_tag"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
         },
         {
           "type": "SYMBOL",
@@ -938,12 +1192,12 @@
               "value": 1,
               "content": {
                 "type": "PATTERN",
-                "value": "[sS][wW][iI][tT][cC][hH]"
+                "value": "[tT][rR][yY]"
               }
             }
           },
           "named": false,
-          "value": "switch"
+          "value": "try"
         },
         {
           "type": "SYMBOL",
@@ -991,6 +1245,49 @@
             "type": "SYMBOL",
             "name": "_node"
           }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_case_tag"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cf_defaultcase_tag"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_close_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[sS][wW][iI][tT][cC][hH]"
+              }
+            }
+          },
+          "named": false,
+          "value": "switch"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag_end"
         }
       ]
     },
@@ -2039,11 +2336,31 @@
         },
         {
           "type": "SYMBOL",
-          "name": "cf_try_statement_tag"
+          "name": "cf_thread_tag"
         },
         {
           "type": "SYMBOL",
-          "name": "cf_switch_statement_tag"
+          "name": "cf_lock_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_http_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_try_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_switch_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_mail_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_mailpart_tag"
         },
         {
           "type": "SYMBOL",
@@ -8538,12 +8855,6 @@
     [
       "self_closing_tag",
       "start_tag"
-    ],
-    [
-      "cf_try_tag"
-    ],
-    [
-      "cf_switch_tag"
     ],
     [
       "cf_elseif_tag"

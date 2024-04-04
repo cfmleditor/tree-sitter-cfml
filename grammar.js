@@ -120,13 +120,12 @@ module.exports = grammar({
     [$.computed_property_name, $.array],
     [$.binary_expression, $._initializer],
     [$.attribute_name, $._node],
+    
     [$.attribute_name, $.tag_attributes],
 
     // [$.cf_if_statement_tag, $._cf_tag],
     [$.self_closing_tag, $.start_tag],
 
-    [$.cf_try_tag],
-    [$.cf_switch_tag],
     // [$.cf_if_tag],
     // [$.cf_else_tag],
     [$.cf_elseif_tag],
@@ -173,17 +172,15 @@ module.exports = grammar({
       $.erroneous_end_tag,
     ),
 
-    cf_script: $ => seq(
+    cf_script: $ => prec.right(seq(
       $._cf_open_tag,
-      keyword('script'),
+      'script',
       $._cf_tag_end,
-      repeat(
-        $.statement,
-      ),
+      repeat($.statement),
       $._cf_close_tag,
-      keyword('script'),
+      'script',
       $._cf_tag_end,
-    ),
+    )),
 
     element: $ => choice(
       seq(
@@ -287,6 +284,61 @@ module.exports = grammar({
       $._cf_tag_end,
     ),
 
+    cf_lock_tag: $ => seq(
+      $._cf_open_tag,
+      keyword('lock'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+      $._cf_close_tag,
+      keyword('lock'),
+      $._cf_tag_end,
+    ),
+
+    cf_thread_tag: $ => seq(
+      $._cf_open_tag,
+      keyword('thread'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+      $._cf_close_tag,
+      keyword('thread'),
+      $._cf_tag_end,
+    ),
+
+    cf_http_tag: $ => seq(
+      $._cf_open_tag,
+      keyword('http'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+      $._cf_close_tag,
+      keyword('http'),
+      $._cf_tag_end,
+    ),
+
+    cf_mail_tag: $ => seq(
+      $._cf_open_tag,
+      keyword('mail'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+      $._cf_close_tag,
+      keyword('mail'),
+      $._cf_tag_end,
+    ),
+
+    cf_mailpart_tag: $ => seq(
+      $._cf_open_tag,
+      keyword('mailpart'),
+      repeat($.cf_attribute),
+      $._cf_tag_end,
+      repeat($._node),
+      $._cf_close_tag,
+      keyword('mailpart'),
+      $._cf_tag_end,
+    ),
+
     cf_query_tag: $ => seq(
       $._cf_open_tag,
       keyword('query'),
@@ -323,28 +375,15 @@ module.exports = grammar({
       $._cf_tag_end,
     )),
 
-    cf_try_statement_tag: $ => seq(
-      $.cf_try_tag,
-      repeat($.cf_catch_tag),
-      $._cf_close_tag,
-      keyword('try'),
-      $._cf_tag_end,
-    ),
-
     cf_try_tag: $ => seq(
       $._cf_open_tag,
       keyword('try'),
       repeat($.cf_attribute),
       $._cf_tag_end,
       repeat($._node),
-    ),
-
-    cf_switch_statement_tag: $ => seq(
-      $.cf_switch_tag,
-      repeat($.cf_case_tag),
-      optional($.cf_defaultcase_tag),
+      repeat($.cf_catch_tag),
       $._cf_close_tag,
-      keyword('switch'),
+      keyword('try'),
       $._cf_tag_end,
     ),
 
@@ -354,6 +393,11 @@ module.exports = grammar({
       repeat($.cf_attribute),
       $._cf_tag_end,
       repeat($._node),
+      repeat($.cf_case_tag),
+      optional($.cf_defaultcase_tag),
+      $._cf_close_tag,
+      keyword('switch'),
+      $._cf_tag_end,
     ),
 
     cf_case_tag: $ => seq(
@@ -557,8 +601,13 @@ module.exports = grammar({
       $.cf_if_tag,
       // $.cf_elseif_tag,
       // $.cf_else_tag,
-      $.cf_try_statement_tag,
-      $.cf_switch_statement_tag,
+      $.cf_thread_tag,
+      $.cf_lock_tag,
+      $.cf_http_tag,
+      $.cf_try_tag,
+      $.cf_switch_tag,
+      $.cf_mail_tag,
+      $.cf_mailpart_tag,
       $.cf_transaction_tag,
       $.cf_transaction_tag_standalone,
       $.cf_set_tag,

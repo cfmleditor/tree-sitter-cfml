@@ -625,7 +625,6 @@ static bool scan_close_cftag(Scanner *scanner, TSLexer *lexer) {
 
 static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
-
     if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] && !valid_symbols[END_TAG_NAME]) {
         return scan_raw_text(scanner, lexer);
     }
@@ -655,14 +654,14 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
                 return scan_comment(lexer);
             }
 
-            if (lexer->lookahead == 'c') {
+            if ( valid_symbols[CF_OPEN_TAG] && lexer->lookahead == 'c') {
                 advance(lexer);
                 return scan_open_cftag(scanner, lexer);
             }
 
-            if (lexer->lookahead == '/') {
+            if ( lexer->lookahead == '/') {
                 advance(lexer);
-                if ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) {
+                if ( valid_symbols[CF_CLOSE_TAG] && ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) ) {
                     advance(lexer);
                     return scan_close_cftag(scanner, lexer);
                 }
@@ -681,20 +680,18 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
             break;
 
         case '/':
-            if (lexer->lookahead == '/') {
-                advance(lexer);
-                if (lexer->lookahead == '>') {
-                    if (valid_symbols[SELF_CLOSING_TAG_DELIMITER]) {
-                        return scan_self_closing_tag_delimiter(scanner, lexer);
-                    }
-                } else if ( lexer->lookahead == '/' || lexer->lookahead == '*' ) {
-                   if ( !scan_script_comment(lexer) ) {
-                        return false;
-                   }
-                } else if ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) {
-                    advance(lexer);
-                    return scan_close_cftag(scanner, lexer);
+            advance(lexer);
+            if (lexer->lookahead == '>') {
+                if (valid_symbols[SELF_CLOSING_TAG_DELIMITER]) {
+                    return scan_self_closing_tag_delimiter(scanner, lexer);
                 }
+            } else if ( lexer->lookahead == '/' || lexer->lookahead == '*' ) {
+                if ( !scan_script_comment(lexer) ) {
+                    return false;
+                }
+            } else if ( valid_symbols[CF_CLOSE_TAG] && ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) ) {
+                advance(lexer);
+                return scan_close_cftag(scanner, lexer);
             }
 
             break;
