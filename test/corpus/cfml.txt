@@ -801,6 +801,10 @@ testing3
 ===================================
 <cfset temp = "<cfif></cfif>" />
 <cfset args.log_enable = compareNoCase(log_enable, "Y") EQ 0 ? true : false />
+<cfscript>
+  throw "server returned responseCode: #responseCode#";
+  throw("server returned responseCode: #responseCode#");
+</cfscript>
 ---
 (program
       (cf_set_tag
@@ -825,4 +829,16 @@ testing3
               (number))
             (true)
             (false)))
-        (cf_selfclose_tag_end)))
+        (cf_selfclose_tag_end))
+      (cf_script
+        (throw_statement
+          (string
+            (string_fragment)
+            (hash_expression
+              (identifier))))
+        (throw_statement
+          (arguments
+            (string
+              (string_fragment)
+              (hash_expression
+                (identifier)))))))

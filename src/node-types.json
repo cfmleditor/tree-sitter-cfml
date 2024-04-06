@@ -6992,6 +6992,10 @@
         {
           "type": "arguments",
           "named": true
+        },
+        {
+          "type": "string",
+          "named": true
         }
       ]
     }

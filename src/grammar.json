@@ -4215,8 +4215,17 @@
           "value": "throw"
         },
         {
-          "type": "SYMBOL",
-          "name": "arguments"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "arguments"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "string"
+            }
+          ]
         },
         {
           "type": "SYMBOL",

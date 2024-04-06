@@ -951,7 +951,10 @@ module.exports = grammar({
 
     throw_statement: $ => seq(
       'throw',
-      $.arguments,
+      choice(
+        $.arguments,
+        $.string,
+      ),
       $._semicolon,
     ),
 
