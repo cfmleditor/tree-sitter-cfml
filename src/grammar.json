@@ -963,6 +963,83 @@
         }
       ]
     },
+    "cf_xml_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_open_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[xX][mM][lL]"
+              }
+            }
+          },
+          "named": false,
+          "value": "xml"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_close_tag_delim"
+          },
+          "named": false,
+          "value": ">"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_cf_close_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[xX][mM][lL]"
+              }
+            }
+          },
+          "named": false,
+          "value": "xml"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_close_tag_delim"
+          },
+          "named": false,
+          "value": ">"
+        }
+      ]
+    },
     "cf_mail_tag": {
       "type": "SEQ",
       "members": [
@@ -2666,6 +2743,10 @@
         {
           "type": "SYMBOL",
           "name": "cf_http_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_xml_tag"
         },
         {
           "type": "SYMBOL",

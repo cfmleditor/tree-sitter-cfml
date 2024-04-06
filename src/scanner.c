@@ -726,7 +726,9 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
             }
 
             if (valid_symbols[CLOSE_TAG_DELIM] ) {
-                return scan_closetag_delim(scanner, lexer, valid_symbols);
+                if ( scan_closetag_delim(scanner, lexer, valid_symbols) ) {
+                    return true;
+                }
             }
             
     }

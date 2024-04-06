@@ -344,6 +344,17 @@ module.exports = grammar({
       alias($._close_tag_delim, '>'),
     ),
 
+    cf_xml_tag: $ => seq(
+      $._cf_open_tag,
+      keyword('xml'),
+      repeat($.cf_attribute),
+      alias($._close_tag_delim, '>'),
+      repeat($._node),
+      $._cf_close_tag,
+      keyword('xml'),
+      alias($._close_tag_delim, '>'),
+    ),
+
     cf_mail_tag: $ => seq(
       $._cf_open_tag,
       keyword('mail'),
@@ -632,6 +643,7 @@ module.exports = grammar({
       $.cf_execute_tag,
       $.cf_lock_tag,
       $.cf_http_tag,
+      $.cf_xml_tag,
       $.cf_try_tag,
       $.cf_switch_tag,
       $.cf_mail_tag,

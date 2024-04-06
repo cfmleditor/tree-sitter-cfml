@@ -800,6 +800,7 @@ testing2
 testing3
 ===================================
 <cfset temp = "<cfif></cfif>" />
+<cfset args.log_enable = compareNoCase(log_enable, "Y") EQ 0 ? true : false />
 ---
 (program
       (cf_set_tag
@@ -807,4 +808,21 @@ testing3
           (identifier)
           (string
             (string_fragment)))
+          (cf_selfclose_tag_end))
+      (cf_set_tag
+        (assignment_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (ternary_expression
+            (binary_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (identifier)
+                  (string
+                    (string_fragment))))
+              (number))
+            (true)
+            (false)))
         (cf_selfclose_tag_end)))
