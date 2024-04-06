@@ -21,6 +21,7 @@ enum TokenType {
     CF_OPEN_TAG,
     CF_CLOSE_TAG,
     CFSAVECONTENT_CONTENT,
+    CLOSE_TAG_DELIM
 };
 
 typedef struct {
@@ -623,6 +624,21 @@ static bool scan_close_cftag(Scanner *scanner, TSLexer *lexer) {
     return true;
 }
 
+static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
+
+    if ( lexer->lookahead == '>' ) {
+        advance(lexer);
+        lexer->mark_end(lexer);
+        lexer->result_symbol = CLOSE_TAG_DELIM;
+        return true;
+    } else {
+        return false;
+    }
+    
+}
+
+
+
 static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
     if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] && !valid_symbols[END_TAG_NAME]) {
@@ -685,6 +701,9 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
                 if (valid_symbols[SELF_CLOSING_TAG_DELIMITER]) {
                     return scan_self_closing_tag_delimiter(scanner, lexer);
                 }
+                if (valid_symbols[CLOSE_TAG_DELIM] ) {
+                    return scan_closetag_delim(scanner, lexer, valid_symbols);
+                }
             } else if ( lexer->lookahead == '/' || lexer->lookahead == '*' ) {
                 if ( !scan_script_comment(lexer) ) {
                     return false;
@@ -697,6 +716,7 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
             break;
 
         default:
+            
             if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME]) && !valid_symbols[RAW_TEXT]) {
                 return valid_symbols[START_TAG_NAME] ? scan_start_tag_name(scanner, lexer)
                                                      : scan_end_tag_name(scanner, lexer);
@@ -704,6 +724,11 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
             if (valid_symbols[IMPLICIT_END_TAG]) {
                 return scan_implicit_end_tag(scanner, lexer);
             }
+
+            if (valid_symbols[CLOSE_TAG_DELIM] ) {
+                return scan_closetag_delim(scanner, lexer, valid_symbols);
+            }
+            
     }
 
     if (valid_symbols[AUTOMATIC_SEMICOLON]) {

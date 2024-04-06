@@ -800,8 +800,6 @@ testing2
 testing3
 ===================================
 <cfset temp = "<cfif></cfif>" />
-
-	
 ---
 (program
       (cf_set_tag

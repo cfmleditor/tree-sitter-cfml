@@ -37,6 +37,7 @@ module.exports = grammar({
     $._cf_open_tag,
     $._cf_close_tag,
     $._cfsavecontent_content,
+    $._close_tag_delim,
   ],
 
   supertypes: $ => [
@@ -119,8 +120,22 @@ module.exports = grammar({
     [$.labeled_statement, $._property_name],
     [$.computed_property_name, $.array],
     [$.binary_expression, $._initializer],
+    [$.binary_expression, $.pair],
+    [$.call_expression, $.pair],
+    [$.subscript_expression, $.pair],
+    [$.member_expression, $.pair],
+    [$.update_expression, $.pair],
+    [$.ternary_expression, $.pair],
+    [$.member_expression, $.subscript_expression, $.pair],
     [$.attribute_name, $._node],
-    
+
+    // [$.component_body, $.object],
+    // [$.component_body, $.object_pattern],
+
+    // [$.object_assignment_pattern, $.assignment_expression, $._property_name],
+    // [$.primary_expression, $.field_definition, $.method_definition],
+    // [$.assignment_expression, $._property_name],
+
     [$.attribute_name, $.tag_attributes],
 
     // [$.cf_if_statement_tag, $._cf_tag],
@@ -143,15 +158,15 @@ module.exports = grammar({
       '<!',
       alias($._doctype, 'doctype'),
       /[^>]+/,
-      '>',
+      alias($._close_tag_delim, '>'),
     ),
 
     _doctype: _ => /[Dd][Oo][Cc][Tt][Yy][Pp][Ee]/,
 
     _cf_tag_start: $ => '<',
-    _cf_tag_end: $ => '>',
+    // _close_tag_delim: $ => '>',
 
-    cf_selfclose_tag_end: $ => choice('/>', $._cf_tag_end),
+    cf_selfclose_tag_end: $ => choice('/>', alias($._close_tag_delim, '>')),
 
     text: $ => /[^<>&\s#]([^<>&#]*[^<>&\s#])?/,
     // cf_tag_close: $ => /<\/cf/i,
@@ -167,6 +182,7 @@ module.exports = grammar({
       $.style_element,
       $.cf_script,
       $.attribute,
+      $.component,
       $.text,
       $.end_tag,
       $.erroneous_end_tag,
@@ -175,11 +191,11 @@ module.exports = grammar({
     cf_script: $ => prec.right(seq(
       $._cf_open_tag,
       'script',
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($.statement),
       $._cf_close_tag,
       'script',
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     )),
 
     element: $ => choice(
@@ -201,7 +217,7 @@ module.exports = grammar({
       '<',
       alias($._start_tag_name, $.tag_name),
       repeat($.tag_attributes),
-      '>',
+      alias($._close_tag_delim, '>'),
     ),
 
     tag_attributes: $ => choice(
@@ -218,7 +234,7 @@ module.exports = grammar({
       repeat(
         $.tag_attributes,
       ),
-      '>',
+      alias($._close_tag_delim, '>'),
     ),
 
     style_start_tag: $ => seq(
@@ -227,7 +243,7 @@ module.exports = grammar({
       repeat(
         $.tag_attributes,
       ),
-      '>',
+      alias($._close_tag_delim, '>'),
     ),
 
     self_closing_tag: $ => seq(
@@ -238,20 +254,20 @@ module.exports = grammar({
       ),
       choice(
         '/>',
-        '>',
+        alias($._close_tag_delim, '>'),
       ),
     ),
 
     end_tag: $ => seq(
       '</',
       alias($._end_tag_name, $.tag_name),
-      '>',
+      alias($._close_tag_delim, '>'),
     ),
 
     erroneous_end_tag: $ => seq(
       '</',
       $.erroneous_end_tag_name,
-      '>',
+      alias($._close_tag_delim, '>'),
     ),
 
     style_element: $ => seq(
@@ -266,88 +282,99 @@ module.exports = grammar({
       $._cf_open_tag,
       keyword('component'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('component'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_function_tag: $ => seq(
       $._cf_open_tag,
       keyword('function'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('function'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_lock_tag: $ => seq(
       $._cf_open_tag,
       keyword('lock'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('lock'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_thread_tag: $ => seq(
       $._cf_open_tag,
       keyword('thread'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('thread'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
+    ),
+
+    cf_execute_tag: $ => seq(
+      $._cf_open_tag,
+      keyword('execute'),
+      repeat($.cf_attribute),
+      alias($._close_tag_delim, '>'),
+      repeat($._node),
+      $._cf_close_tag,
+      keyword('execute'),
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_http_tag: $ => seq(
       $._cf_open_tag,
       keyword('http'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('http'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_mail_tag: $ => seq(
       $._cf_open_tag,
       keyword('mail'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('mail'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_mailpart_tag: $ => seq(
       $._cf_open_tag,
       keyword('mailpart'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('mailpart'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_query_tag: $ => seq(
       $._cf_open_tag,
       keyword('query'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       $._cfquery_content,
       $._cf_close_tag,
       keyword('query'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_queryparam_tag: $ => seq(
@@ -368,80 +395,80 @@ module.exports = grammar({
       $._cf_open_tag,
       keyword('transaction'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('transaction'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     )),
 
     cf_try_tag: $ => seq(
       $._cf_open_tag,
       keyword('try'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       repeat($.cf_catch_tag),
       $._cf_close_tag,
       keyword('try'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_switch_tag: $ => seq(
       $._cf_open_tag,
       keyword('switch'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       repeat($.cf_case_tag),
       optional($.cf_defaultcase_tag),
       $._cf_close_tag,
       keyword('switch'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_case_tag: $ => seq(
       $._cf_open_tag,
       keyword('case'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('case'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_defaultcase_tag: $ => seq(
       $._cf_open_tag,
       keyword('defaultcase'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('defaultcase'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_catch_tag: $ => seq(
       $._cf_open_tag,
       keyword('catch'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('catch'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_loop_tag: $ => seq(
       $._cf_open_tag,
       keyword('loop'),
       repeat($.cf_attribute),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('loop'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_argument_tag: $ => seq(
@@ -473,7 +500,7 @@ module.exports = grammar({
       repeat($._node),
       $._cf_close_tag,
       keyword('zip'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_zip_tag_standalone: $ => seq(
@@ -491,7 +518,7 @@ module.exports = grammar({
       $._cfsavecontent_content,
       $._cf_close_tag,
       keyword('savecontent'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_output_tag: $ => seq(
@@ -502,7 +529,7 @@ module.exports = grammar({
       repeat($._node),
       $._cf_close_tag,
       keyword('output'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     cf_break_tag: $ => seq(
@@ -522,13 +549,13 @@ module.exports = grammar({
       $._cf_open_tag,
       keyword('if'),
       optional($._cf_tag_expression),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       optional(repeat($.cf_elseif_tag)),
       optional($.cf_else_tag),
       $._cf_close_tag,
       keyword('if'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     )),
 
     _cf_tag_expression: $ => choice(
@@ -547,21 +574,21 @@ module.exports = grammar({
       $._cf_open_tag,
       keyword('elseif'),
       repeat($.expression),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
     ),
 
     cf_else_tag: $ => seq(
       $._cf_open_tag,
       keyword('else'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
     ),
 
     cf_if_end_tag: $ => seq(
       $._cf_close_tag,
       keyword('if'),
-      $._cf_tag_end,
+      alias($._close_tag_delim, '>'),
     ),
 
     attribute: $ => seq(
@@ -602,6 +629,7 @@ module.exports = grammar({
       // $.cf_elseif_tag,
       // $.cf_else_tag,
       $.cf_thread_tag,
+      $.cf_execute_tag,
       $.cf_lock_tag,
       $.cf_http_tag,
       $.cf_try_tag,
@@ -679,7 +707,6 @@ module.exports = grammar({
     declaration: $ => choice(
       $.function_declaration,
       $.generator_function_declaration,
-      // $.class_declaration,
       $.lexical_declaration,
       $.variable_declaration,
     ),
@@ -912,7 +939,7 @@ module.exports = grammar({
 
     throw_statement: $ => seq(
       'throw',
-      $._expressions,
+      $.arguments,
       $._semicolon,
     ),
 
@@ -960,7 +987,7 @@ module.exports = grammar({
 
     parenthesized_expression: $ => seq(
       '(',
-      $._expressions,
+      optional($._expressions),
       ')',
     ),
 
@@ -983,6 +1010,7 @@ module.exports = grammar({
       $.update_expression,
       $.new_expression,
       $.yield_expression,
+      $.pair,
     ),
 
     primary_expression: $ => choice(
@@ -1005,7 +1033,7 @@ module.exports = grammar({
       $.function_expression,
       $.arrow_function,
       $.generator_function,
-      // $.class,
+      $.component,
       $.meta_property,
       $.call_expression,
       $.hash_expression,
@@ -1090,34 +1118,34 @@ module.exports = grammar({
     )),
 
     function_declaration: $ => prec.right('declaration', seq(
-      // optional(alias(choice(
-      //   token('private'),
-      //   token('package'),
-      //   token('public'),
-      //   token('remote'),
-      //   token('static'),
-      //   token('final'),
-      //   token('abstract'),
-      //   // 'default',
-      // ), $.access_type)),
-      // optional(alias(choice(
-      //   token('any'),
-      //   token('array'),
-      //   token('binary'),
-      //   token('boolean'),
-      //   token('component'),
-      //   token('date'),
-      //   token('function'),
-      //   token('guid'),
-      //   token('numeric'),
-      //   token('query'),
-      //   token('string'),
-      //   token('struct'),
-      //   token('uuid'),
-      //   token('variablename'),
-      //   token('void'),
-      //   token('xml'),
-      // ), $.return_type)),
+      optional(alias(choice(
+        token('private'),
+        token('package'),
+        token('public'),
+        token('remote'),
+        token('static'),
+        token('final'),
+        token('abstract'),
+        // 'default',
+      ), $.access_type)),
+      optional(alias(choice(
+        token('any'),
+        token('array'),
+        token('binary'),
+        token('boolean'),
+        token('component'),
+        token('date'),
+        token('function'),
+        token('guid'),
+        token('numeric'),
+        token('query'),
+        token('string'),
+        token('struct'),
+        token('uuid'),
+        token('variablename'),
+        token('void'),
+        token('xml'),
+      ), $.return_type)),
       optional('async'),
       'function',
       field('name', $.identifier),
@@ -1163,7 +1191,7 @@ module.exports = grammar({
 
     // Override
     _call_signature: $ => field('parameters', alias($.function_dec_parameters, $.formal_parameters)),
-    _formal_parameter: $ => choice($.pattern, $.assignment_pattern),
+    _formal_parameter: $ => choice($.pattern, $.assignment_pattern, $.pair_pattern),
 
     function_dec_parameters: $ => seq(
       '(',
@@ -1319,8 +1347,7 @@ module.exports = grammar({
         [/[cC][oO][nN][tT][aA][iI][nN][sS]/, 'binary_equality'],
         ['>=', 'binary_relation'],
         [/[gG][tT][eE]/, 'binary_relation'],
-        // This causes issues with tags and expressions
-        // ['>', 'binary_relation'],
+        ['>', 'binary_relation'],
         [/[gG][tT]/, 'binary_relation'],
         ['??', 'ternary'],
         ['instanceof', 'binary_relation'],
@@ -1558,16 +1585,12 @@ module.exports = grammar({
       field('arguments', $.arguments),
     )),
 
-    // class_body: $ => seq(
-    //   '{',
-    //   repeat(choice(
-    //     seq(field('member', $.method_definition), optional(';')),
-    //     seq(field('member', $.field_definition), $._semicolon),
-    //     field('member', $.class_static_block),
-    //     ';',
-    //   )),
-    //   '}',
-    // ),
+    component: $ => prec.left(seq(
+      keyword('component'),
+      '{',
+      repeat($.statement),
+      '}',
+    )),
 
     field_definition: $ => seq(
       repeat(field('decorator', $.decorator)),
@@ -1584,11 +1607,6 @@ module.exports = grammar({
       )),
       ')',
     ),
-
-    // class_static_block: $ => seq(
-    //   'static',
-    //   field('body', $.statement_block),
-    // ),
 
     // This negative dynamic precedence ensures that during error recovery,
     // unfinished constructs are generally treated as literal expressions,
@@ -1619,6 +1637,7 @@ module.exports = grammar({
       field('value', $.expression),
     ),
 
+    sequence_pair: $ => prec.right(commaSep1($.pair)),
 
     pair_pattern: $ => seq(
       field('key', $._property_name),
