@@ -195,7 +195,7 @@ module.exports = grammar({
       $.text,
       $.end_tag,
       $.erroneous_end_tag,
-      $.xml_decl
+      $.xml_decl,
     ),
 
     cf_script: $ => prec.right(seq(
@@ -307,6 +307,17 @@ module.exports = grammar({
       repeat($._node),
       $._cf_close_tag,
       keyword('function'),
+      alias($._close_tag_delim, '>'),
+    ),
+
+    cf_silent_tag: $ => seq(
+      $._cf_open_tag,
+      keyword('silent'),
+      repeat($.cf_attribute),
+      alias($._close_tag_delim, '>'),
+      repeat($._node),
+      $._cf_close_tag,
+      keyword('silent'),
       alias($._close_tag_delim, '>'),
     ),
 
@@ -663,6 +674,7 @@ module.exports = grammar({
       // $.cf_else_tag,
       $.cf_thread_tag,
       $.cf_execute_tag,
+      $.cf_silent_tag,
       $.cf_lock_tag,
       $.cf_http_tag,
       $.cf_xml_tag,
@@ -1261,7 +1273,7 @@ module.exports = grammar({
       choice($.pattern, $.assignment_pattern),
     ),
 
-    optional_chain: _ => keyword('?.'),
+    optional_chain: _ => '?.',
 
     call_expression: $ => choice(
       prec('call', seq(

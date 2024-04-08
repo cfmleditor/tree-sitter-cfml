@@ -111,7 +111,7 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length) {
 
 static String scan_tag_name(TSLexer *lexer) {
     String tag_name = array_new();
-    while (iswalnum(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == ':') {
+    while (iswalnum(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '_' || lexer->lookahead == ':') {
         array_push(&tag_name, towupper(lexer->lookahead));
         advance(lexer);
     }
@@ -523,6 +523,9 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
         case '-':
             skip(lexer);
             return lexer->lookahead == '-';
+        case '_':
+            skip(lexer);
+            return lexer->lookahead == '_';
 
         // Don't insert a semicolon before `!=`, but do insert one before a unary `!`.
         case '!':
