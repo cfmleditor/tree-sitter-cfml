@@ -150,8 +150,11 @@ module.exports = grammar({
 
   rules: {
 
-    program: $ => repeat(
-      $._node,
+    program: $ => choice(
+      repeat(
+        $._node,
+      ),
+      $.component,
     ),
 
     doctype: $ => seq(
@@ -159,6 +162,13 @@ module.exports = grammar({
       alias($._doctype, 'doctype'),
       /[^>]+/,
       alias($._close_tag_delim, '>'),
+    ),
+
+    xml_decl: $ => seq(
+      '<?',
+      'xml',
+      repeat($.tag_attributes),
+      '?>',
     ),
 
     _doctype: _ => /[Dd][Oo][Cc][Tt][Yy][Pp][Ee]/,
@@ -182,10 +192,10 @@ module.exports = grammar({
       $.style_element,
       $.cf_script,
       $.attribute,
-      $.component,
       $.text,
       $.end_tag,
       $.erroneous_end_tag,
+      $.xml_decl
     ),
 
     cf_script: $ => prec.right(seq(
@@ -335,12 +345,17 @@ module.exports = grammar({
 
     cf_http_tag: $ => seq(
       $._cf_open_tag,
-      keyword('http'),
+      'http',
       repeat($.cf_attribute),
       alias($._close_tag_delim, '>'),
-      repeat($._node),
+      repeat(
+        choice(
+          $.cf_httparam_tag,
+          $._node,
+        ),
+      ),
       $._cf_close_tag,
-      keyword('http'),
+      'http',
       alias($._close_tag_delim, '>'),
     ),
 
@@ -512,6 +527,13 @@ module.exports = grammar({
       $._cf_close_tag,
       keyword('zip'),
       alias($._close_tag_delim, '>'),
+    ),
+
+    cf_httparam_tag: $ => seq(
+      $._cf_open_tag,
+      'httpparam',
+      repeat($.cf_attribute),
+      $.cf_selfclose_tag_end,
     ),
 
     cf_zip_tag_standalone: $ => seq(
@@ -1048,7 +1070,6 @@ module.exports = grammar({
       $.function_expression,
       $.arrow_function,
       $.generator_function,
-      $.component,
       $.meta_property,
       $.call_expression,
       $.hash_expression,
@@ -1135,7 +1156,7 @@ module.exports = grammar({
     function_declaration: $ => prec.right('declaration', seq(
       optional(alias(choice(
         token('private'),
-        token('package'),
+        // token('package'),
         token('public'),
         token('remote'),
         token('static'),
@@ -1148,7 +1169,7 @@ module.exports = grammar({
         token('array'),
         token('binary'),
         token('boolean'),
-        token('component'),
+        // token('component'),
         token('date'),
         token('function'),
         token('guid'),
@@ -1224,7 +1245,7 @@ module.exports = grammar({
         token('array'),
         token('binary'),
         token('boolean'),
-        token('component'),
+        // token('component'),
         token('date'),
         token('function'),
         token('guid'),
@@ -1240,7 +1261,7 @@ module.exports = grammar({
       choice($.pattern, $.assignment_pattern),
     ),
 
-    optional_chain: _ => '?.',
+    optional_chain: _ => keyword('?.'),
 
     call_expression: $ => choice(
       prec('call', seq(
@@ -1600,12 +1621,12 @@ module.exports = grammar({
       field('arguments', $.arguments),
     )),
 
-    component: $ => prec.left(seq(
+    component: $ => seq(
       keyword('component'),
       '{',
       repeat($.statement),
       '}',
-    )),
+    ),
 
     field_definition: $ => seq(
       repeat(field('decorator', $.decorator)),

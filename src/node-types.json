@@ -122,10 +122,6 @@
         "named": true
       },
       {
-        "type": "component",
-        "named": true
-      },
-      {
         "type": "false",
         "named": true
       },
@@ -1144,10 +1140,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -1185,6 +1177,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -1319,10 +1315,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -1360,6 +1352,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -1494,10 +1490,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -1535,6 +1527,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -1688,10 +1684,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -1729,6 +1721,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -1859,10 +1855,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -1900,6 +1892,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -2030,10 +2026,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -2075,6 +2067,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -2209,10 +2205,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -2250,6 +2242,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -2384,10 +2380,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -2425,6 +2417,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -2472,6 +2468,10 @@
         },
         {
           "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_httparam_tag",
           "named": true
         },
         {
@@ -2559,10 +2559,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -2600,6 +2596,29 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_httparam_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -2738,10 +2757,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -2783,6 +2798,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -2917,10 +2936,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -2958,6 +2973,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -3092,10 +3111,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -3133,6 +3148,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -3267,10 +3286,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -3308,6 +3323,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -3442,10 +3461,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -3483,6 +3498,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -3621,10 +3640,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -3662,6 +3677,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -3938,10 +3957,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -3979,6 +3994,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -4113,10 +4132,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -4154,6 +4169,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -4288,10 +4307,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -4329,6 +4344,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -4486,10 +4505,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -4527,6 +4542,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -4666,10 +4685,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -4707,6 +4722,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -4845,10 +4864,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -4886,6 +4901,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -5140,10 +5159,6 @@
           "named": true
         },
         {
-          "type": "component",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -5193,6 +5208,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -6135,6 +6154,11 @@
     }
   },
   {
+    "type": "optional_chain",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "pair",
     "named": true,
     "fields": {
@@ -6423,6 +6447,10 @@
         },
         {
           "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
           "named": true
         }
       ]
@@ -7204,6 +7232,21 @@
     }
   },
   {
+    "type": "xml_decl",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "tag_attributes",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "yield_expression",
     "named": true,
     "fields": {},
@@ -7379,6 +7422,10 @@
     "named": false
   },
   {
+    "type": "<?",
+    "named": false
+  },
+  {
     "type": "=",
     "named": false
   },
@@ -7420,6 +7467,14 @@
   },
   {
     "type": "?",
+    "named": false
+  },
+  {
+    "type": "?.",
+    "named": false
+  },
+  {
+    "type": "?>",
     "named": false
   },
   {
@@ -7583,6 +7638,10 @@
     "named": false
   },
   {
+    "type": "httpparam",
+    "named": false
+  },
+  {
     "type": "identifier",
     "named": true
   },
@@ -7645,10 +7704,6 @@
   {
     "type": "of",
     "named": false
-  },
-  {
-    "type": "optional_chain",
-    "named": true
   },
   {
     "type": "output",

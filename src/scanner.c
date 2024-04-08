@@ -670,7 +670,7 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
                 return scan_comment(lexer);
             }
 
-            if ( valid_symbols[CF_OPEN_TAG] && lexer->lookahead == 'c') {
+            if ( valid_symbols[CF_OPEN_TAG] && ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) ) {
                 advance(lexer);
                 return scan_open_cftag(scanner, lexer);
             }
