@@ -1289,6 +1289,42 @@
         }
       ]
     },
+    "cf_setting_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_open_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[sS][eE][tT][tT][iI][nN][gG]"
+              }
+            }
+          },
+          "named": false,
+          "value": "setting"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_attribute"
+          }
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_selfclose_tag_end"
+        }
+      ]
+    },
     "cf_query_tag": {
       "type": "SEQ",
       "members": [
@@ -2879,6 +2915,10 @@
         {
           "type": "SYMBOL",
           "name": "cf_mailpart_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_setting_tag"
         },
         {
           "type": "SYMBOL",

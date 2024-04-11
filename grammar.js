@@ -404,6 +404,13 @@ module.exports = grammar({
       alias($._close_tag_delim, '>'),
     ),
 
+    cf_setting_tag: $ => seq(
+      $._cf_open_tag,
+      keyword('setting'),
+      repeat($.cf_attribute),
+      $.cf_selfclose_tag_end,
+    ),
+
     cf_query_tag: $ => seq(
       $._cf_open_tag,
       keyword('query'),
@@ -683,6 +690,7 @@ module.exports = grammar({
       $.cf_switch_tag,
       $.cf_mail_tag,
       $.cf_mailpart_tag,
+      $.cf_setting_tag,
       $.cf_transaction_tag,
       $.cf_transaction_tag_standalone,
       $.cf_set_tag,

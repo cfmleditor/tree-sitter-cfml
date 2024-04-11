@@ -808,6 +808,7 @@ testing3
 <a style="#"></a>
 <cfoutput>#test#</cfoutput>
 <cffile test="##" />
+<cfsetting />
 ---
 (program
       (cf_set_tag
@@ -865,4 +866,6 @@ testing3
           (cf_attribute_name)
           (string
             (hash_empty)))
+          (cf_selfclose_tag_end))
+      (cf_setting_tag
         (cf_selfclose_tag_end)))
