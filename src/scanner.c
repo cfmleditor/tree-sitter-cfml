@@ -21,7 +21,9 @@ enum TokenType {
     CF_OPEN_TAG,
     CF_CLOSE_TAG,
     CFSAVECONTENT_CONTENT,
-    CLOSE_TAG_DELIM
+    CLOSE_TAG_DELIM,
+    CF_OUTPUT_TAG,
+    HTML_HASH,
 };
 
 typedef struct {
@@ -605,6 +607,14 @@ static bool scan_open_cftag(Scanner *scanner, TSLexer *lexer) {
     advance(lexer);
 
     lexer->mark_end(lexer);
+
+    String tag_name = scan_tag_name(lexer);
+    Tag tag = tag_for_name(tag_name);
+    
+    if (tag.type == OUTPUT) {
+        lexer->result_symbol = CF_OUTPUT_TAG;
+        return true;
+    }
     
     lexer->result_symbol = CF_OPEN_TAG;
     
@@ -640,7 +650,18 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, const bool *va
     
 }
 
+static bool scan_hash(Scanner *scanner, TSLexer *lexer) {
 
+    if ( lexer->lookahead == '#' ) {
+        advance(lexer);
+        lexer->mark_end(lexer);
+        lexer->result_symbol = HTML_HASH;
+        return true;
+    } else {
+        return false;
+    }
+    
+}
 
 static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
@@ -658,6 +679,10 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
     if (valid_symbols[CFSAVECONTENT_CONTENT]) {
         return scan_cfsavecontent_content(scanner, lexer);
+    }
+
+    if ( valid_symbols[HTML_HASH] ) {
+        return scan_hash(scanner, lexer);
     }
 
     switch (lexer->lookahead) {

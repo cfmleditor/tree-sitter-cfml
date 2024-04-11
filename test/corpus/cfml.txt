@@ -805,6 +805,9 @@ testing3
   throw "server returned responseCode: #responseCode#";
   throw("server returned responseCode: #responseCode#");
 </cfscript>
+<a style="#"></a>
+<cfoutput>#test#</cfoutput>
+<cffile test="##" />
 ---
 (program
       (cf_set_tag
@@ -841,4 +844,25 @@ testing3
             (string
               (string_fragment)
               (hash_expression
-                (identifier)))))))
+                (identifier))))))
+      (element
+        (self_closing_tag
+          (tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))))
+      (end_tag
+        (tag_name))
+      (cf_output_tag
+        (cf_attribute
+          (cf_attribute_name))
+        (hash_expression
+          (identifier)))
+      (cf_selfclose_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (string
+            (hash_empty)))
+        (cf_selfclose_tag_end)))

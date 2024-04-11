@@ -3573,7 +3573,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "attribute",
@@ -3657,10 +3657,6 @@
         },
         {
           "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag_end",
           "named": true
         },
         {
@@ -6731,7 +6727,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": false,
       "types": [
         {

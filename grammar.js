@@ -38,6 +38,8 @@ module.exports = grammar({
     $._cf_close_tag,
     $._cfsavecontent_content,
     $._close_tag_delim,
+    $._cf_output_tag,
+    $._html_hash,
   ],
 
   supertypes: $ => [
@@ -128,7 +130,6 @@ module.exports = grammar({
     [$.ternary_expression, $.pair],
     [$.member_expression, $.subscript_expression, $.pair],
     [$.attribute_name, $._node],
-
     // [$.component_body, $.object],
     // [$.component_body, $.object_pattern],
 
@@ -566,10 +567,9 @@ module.exports = grammar({
     ),
 
     cf_output_tag: $ => seq(
-      $._cf_open_tag,
-      keyword('output'),
+      $._cf_output_tag,
       repeat($.cf_attribute),
-      $.cf_selfclose_tag_end,
+      alias($._close_tag_delim, '>'),
       repeat($._node),
       $._cf_close_tag,
       keyword('output'),
@@ -652,6 +652,7 @@ module.exports = grammar({
     ),
 
     attribute_value: $ => choice(
+      $._html_hash,
       /[^<>"'=\s]+/,
       $.hash_expression,
       $._cf_tag,
@@ -705,7 +706,7 @@ module.exports = grammar({
 
     quoted_attribute_value: $ => choice(
       seq('\'',
-        optional(
+        repeat(
           choice($.attribute_value,
             alias(/[^']+/,
               $.attribute_value,
@@ -714,8 +715,9 @@ module.exports = grammar({
         ),
         '\''),
       seq('"',
-        optional(
-          choice($.attribute_value,
+        repeat(
+          choice(
+            $.attribute_value,
             alias(/[^"]+/,
               $.attribute_value,
             ),
