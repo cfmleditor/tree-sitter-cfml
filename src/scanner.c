@@ -244,7 +244,7 @@ static bool scan_script_comment(TSLexer *lexer) {
 }
 
 static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer) {
-
+    
     lexer->mark_end(lexer);
 
     const char *end_delimiter = "</CFQUERY";
@@ -597,25 +597,41 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
     return false;
 }
 
-
-static bool scan_open_cftag(Scanner *scanner, TSLexer *lexer) {
+static bool scan_open_cfoutput(Scanner *scanner, TSLexer *lexer, const bool *cf_open_valid) {
     
-    if ( lexer->lookahead != 'f' && lexer->lookahead != 'F' ) {
+    if ( towupper(lexer->lookahead) != 'F' ) {
         return false;
     }
 
     advance(lexer);
 
-    lexer->mark_end(lexer);
+    if ( towupper(lexer->lookahead) == 'O' ) {
+        String tag_name = scan_tag_name(lexer);
+        Tag tag = tag_for_name(tag_name);
+        if (tag.type == OUTPUT) {
+            lexer->mark_end(lexer);
+            lexer->result_symbol = CF_OUTPUT_TAG;
+            return true;
+        }
+    }
 
-    String tag_name = scan_tag_name(lexer);
-    Tag tag = tag_for_name(tag_name);
-    
-    if (tag.type == OUTPUT) {
-        lexer->result_symbol = CF_OUTPUT_TAG;
+    if ( cf_open_valid ) {
+        lexer->mark_end(lexer);
+        lexer->result_symbol = CF_OPEN_TAG;
         return true;
     }
+
+    return false;
+}
+
+static bool scan_open_cftag(Scanner *scanner, TSLexer *lexer) {
     
+    if ( towupper(lexer->lookahead) != 'F' ) {
+        return false;
+    }
+
+    advance(lexer);
+    lexer->mark_end(lexer);
     lexer->result_symbol = CF_OPEN_TAG;
     
     return true;
@@ -624,7 +640,7 @@ static bool scan_open_cftag(Scanner *scanner, TSLexer *lexer) {
 
 static bool scan_close_cftag(Scanner *scanner, TSLexer *lexer) {
     
-    if ( lexer->lookahead != 'f' && lexer->lookahead != 'F' ) {
+    if ( towupper(lexer->lookahead) != 'F' ) {
         return false;
     }
 
@@ -637,7 +653,7 @@ static bool scan_close_cftag(Scanner *scanner, TSLexer *lexer) {
     return true;
 }
 
-static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
+static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer) {
 
     if ( lexer->lookahead == '>' ) {
         advance(lexer);
@@ -698,16 +714,23 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
                 return scan_comment(lexer);
             }
 
-            if ( valid_symbols[CF_OPEN_TAG] && ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) ) {
-                advance(lexer);
-                return scan_open_cftag(scanner, lexer);
+            if ( towupper(lexer->lookahead) == 'C' ) {
+                if ( valid_symbols[CF_OUTPUT_TAG] ) {
+                    advance(lexer);
+                    return scan_open_cfoutput(scanner, lexer, &valid_symbols[CF_OPEN_TAG]);
+                } else if ( valid_symbols[CF_OPEN_TAG] ) {
+                    advance(lexer);
+                    return scan_open_cftag(scanner, lexer);
+                }
             }
 
             if ( lexer->lookahead == '/') {
                 advance(lexer);
-                if ( valid_symbols[CF_CLOSE_TAG] && ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) ) {
-                    advance(lexer);
-                    return scan_close_cftag(scanner, lexer);
+                if ( valid_symbols[CF_CLOSE_TAG] ) {
+                    if ( towupper(lexer->lookahead) == 'C' ) {
+                        advance(lexer);
+                        return scan_close_cftag(scanner, lexer);
+                    }
                 }
             }
 
@@ -730,15 +753,17 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
                     return scan_self_closing_tag_delimiter(scanner, lexer);
                 }
                 if (valid_symbols[CLOSE_TAG_DELIM] ) {
-                    return scan_closetag_delim(scanner, lexer, valid_symbols);
+                    return scan_closetag_delim(scanner, lexer);
                 }
             } else if ( lexer->lookahead == '/' || lexer->lookahead == '*' ) {
                 if ( !scan_script_comment(lexer) ) {
                     return false;
                 }
-            } else if ( valid_symbols[CF_CLOSE_TAG] && ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) ) {
-                advance(lexer);
-                return scan_close_cftag(scanner, lexer);
+            } else if ( towupper(lexer->lookahead) == 'C' ) {
+                if ( valid_symbols[CF_CLOSE_TAG] ) {
+                    advance(lexer);
+                    return scan_close_cftag(scanner, lexer);
+                }
             }
 
             break;
@@ -754,7 +779,7 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
             }
 
             if (valid_symbols[CLOSE_TAG_DELIM] ) {
-                if ( scan_closetag_delim(scanner, lexer, valid_symbols) ) {
+                if ( scan_closetag_delim(scanner, lexer) ) {
                     return true;
                 }
             }

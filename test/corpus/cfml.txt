@@ -219,7 +219,7 @@ get results
           (cf_attribute_name)
           (string
             (string_fragment)))
-        (cf_argument
+        (cf_selfclose_tag
           (cf_attribute
             (cf_attribute_name)
             (string
@@ -806,9 +806,10 @@ testing3
   throw("server returned responseCode: #responseCode#");
 </cfscript>
 <a style="#"></a>
-<cfoutput>#test#</cfoutput>
+<CFOUTPUT>#test#</CFOUTPUT>
 <cffile test="##" />
 <cfsetting />
+<CFSET result = TRUE />
 ---
 (program
       (cf_set_tag
@@ -857,8 +858,6 @@ testing3
       (end_tag
         (tag_name))
       (cf_output_tag
-        (cf_attribute
-          (cf_attribute_name))
         (hash_expression
           (identifier)))
       (cf_selfclose_tag
@@ -867,5 +866,10 @@ testing3
           (string
             (hash_empty)))
           (cf_selfclose_tag_end))
-      (cf_setting_tag
+      (cf_selfclose_tag
+      (cf_selfclose_tag_end))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (true))
         (cf_selfclose_tag_end)))

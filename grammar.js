@@ -95,7 +95,7 @@ module.exports = grammar({
   conflicts: $ => [
 
     // Tag
-    [$.cf_zip_tag, $.cf_zip_tag_standalone],
+    [$.cf_zip_tag, $.cf_selfclose_tag],
     // [$.cf_transaction_tag, $.cf_transaction_tag_standalone],
 
     [$.cf_elseif_tag, $.binary_expression],
@@ -167,7 +167,7 @@ module.exports = grammar({
 
     xml_decl: $ => seq(
       '<?',
-      'xml',
+      keyword('xml'),
       repeat($.tag_attributes),
       '?>',
     ),
@@ -201,11 +201,11 @@ module.exports = grammar({
 
     cf_script: $ => prec.right(seq(
       $._cf_open_tag,
-      'script',
+      keyword('script'),
       alias($._close_tag_delim, '>'),
       repeat($.statement),
       $._cf_close_tag,
-      'script',
+      keyword('script'),
       alias($._close_tag_delim, '>'),
     )),
 
@@ -357,17 +357,14 @@ module.exports = grammar({
 
     cf_http_tag: $ => seq(
       $._cf_open_tag,
-      'http',
+      keyword('http'),
       repeat($.cf_attribute),
       alias($._close_tag_delim, '>'),
       repeat(
-        choice(
-          $.cf_httparam_tag,
-          $._node,
-        ),
+        $._node,
       ),
       $._cf_close_tag,
-      'http',
+      keyword('http'),
       alias($._close_tag_delim, '>'),
     ),
 
@@ -404,9 +401,19 @@ module.exports = grammar({
       alias($._close_tag_delim, '>'),
     ),
 
-    cf_setting_tag: $ => seq(
+    cf_selfclose_tag: $ => seq(
       $._cf_open_tag,
-      keyword('setting'),
+      field('tag_name', choice(
+        keyword('setting'),
+        keyword('queryparam'),
+        keyword('transaction'),
+        keyword('argument'),
+        keyword('continue'),
+        keyword('httpparam'),
+        keyword('zip'),
+        keyword('break'),
+        /[a-zA-Z_]+/,
+      )),
       repeat($.cf_attribute),
       $.cf_selfclose_tag_end,
     ),
@@ -421,20 +428,6 @@ module.exports = grammar({
       keyword('query'),
       alias($._close_tag_delim, '>'),
     ),
-
-    cf_queryparam_tag: $ => seq(
-      $._cf_open_tag,
-      keyword('queryparam'),
-      repeat($.cf_attribute),
-      $.cf_selfclose_tag_end,
-    ),
-
-    cf_transaction_tag_standalone: $ => prec.right(1, seq(
-      $._cf_open_tag,
-      keyword('transaction'),
-      repeat($.cf_attribute),
-      $.cf_selfclose_tag_end,
-    )),
 
     cf_transaction_tag: $ => prec.right(2, seq(
       $._cf_open_tag,
@@ -516,27 +509,6 @@ module.exports = grammar({
       alias($._close_tag_delim, '>'),
     ),
 
-    cf_argument_tag: $ => seq(
-      $._cf_open_tag,
-      keyword('argument'),
-      repeat($.cf_attribute),
-      $.cf_selfclose_tag_end,
-    ),
-
-    cf_selfclose_tag: $ => seq(
-      $._cf_open_tag,
-      /[a-zA-Z]+/,
-      repeat($.cf_attribute),
-      $.cf_selfclose_tag_end,
-    ),
-
-    cf_continue_tag: $ => seq(
-      $._cf_open_tag,
-      keyword('continue'),
-      repeat($.cf_attribute),
-      $.cf_selfclose_tag_end,
-    ),
-
     cf_zip_tag: $ => seq(
       $._cf_open_tag,
       keyword('zip'),
@@ -546,20 +518,6 @@ module.exports = grammar({
       $._cf_close_tag,
       keyword('zip'),
       alias($._close_tag_delim, '>'),
-    ),
-
-    cf_httparam_tag: $ => seq(
-      $._cf_open_tag,
-      'httpparam',
-      repeat($.cf_attribute),
-      $.cf_selfclose_tag_end,
-    ),
-
-    cf_zip_tag_standalone: $ => seq(
-      $._cf_open_tag,
-      keyword('zip'),
-      repeat($.cf_attribute),
-      $.cf_selfclose_tag_end,
     ),
 
     cf_savecontent_tag: $ => seq(
@@ -581,12 +539,6 @@ module.exports = grammar({
       $._cf_close_tag,
       keyword('output'),
       alias($._close_tag_delim, '>'),
-    ),
-
-    cf_break_tag: $ => seq(
-      $._cf_open_tag,
-      keyword('break'),
-      $.cf_selfclose_tag_end,
     ),
 
     cf_return_tag: $ => seq(
@@ -616,7 +568,7 @@ module.exports = grammar({
     cf_set_tag: $ => seq(
       $._cf_open_tag,
       keyword('set'),
-      optional($.cf_var),
+      optional(alias('var', $.cf_var)),
       $._cf_tag_expression,
       $.cf_selfclose_tag_end,
     ),
@@ -690,23 +642,16 @@ module.exports = grammar({
       $.cf_switch_tag,
       $.cf_mail_tag,
       $.cf_mailpart_tag,
-      $.cf_setting_tag,
       $.cf_transaction_tag,
-      $.cf_transaction_tag_standalone,
       $.cf_set_tag,
-      $.cf_continue_tag,
       $.cf_selfclose_tag,
       $.cf_savecontent_tag,
       $.cf_output_tag,
       $.cf_zip_tag,
-      $.cf_zip_tag_standalone,
       alias($.cf_component_tag, $.cf_component),
       alias($.cf_function_tag, $.cf_function),
       alias($.cf_query_tag, $.cf_query),
-      $.cf_queryparam_tag,
-      alias($.cf_argument_tag, $.cf_argument),
       alias($.cf_loop_tag, $.cf_loop),
-      alias($.cf_break_tag, $.cf_break),
       alias($.cf_return_tag, $.cf_return),
     ),
 
@@ -733,8 +678,6 @@ module.exports = grammar({
         ),
         '"'),
     ),
-
-    cf_var: $ => keyword('var'),
 
     namespace_export: $ => seq(
       '*', 'as', $._module_export_name,
@@ -1729,8 +1672,8 @@ module.exports = grammar({
     ),
 
     _reserved_identifier: _ => choice(
-      'get',
-      'set',
+      // 'get',
+      // 'set',
       'async',
       'static',
       'export',

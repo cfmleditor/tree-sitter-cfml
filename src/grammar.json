@@ -56,7 +56,19 @@
           "value": "<?"
         },
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[xX][mM][lL]"
+              }
+            }
+          },
+          "named": false,
           "value": "xml"
         },
         {
@@ -174,7 +186,19 @@
             "name": "_cf_open_tag"
           },
           {
-            "type": "STRING",
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[sS][cC][rR][iI][pP][tT]"
+                }
+              }
+            },
+            "named": false,
             "value": "script"
           },
           {
@@ -198,7 +222,19 @@
             "name": "_cf_close_tag"
           },
           {
-            "type": "STRING",
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[sS][cC][rR][iI][pP][tT]"
+                }
+              }
+            },
+            "named": false,
             "value": "script"
           },
           {
@@ -1004,7 +1040,19 @@
           "name": "_cf_open_tag"
         },
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[hH][tT][tT][pP]"
+              }
+            }
+          },
+          "named": false,
           "value": "http"
         },
         {
@@ -1026,17 +1074,8 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "cf_httparam_tag"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_node"
-              }
-            ]
+            "type": "SYMBOL",
+            "name": "_node"
           }
         },
         {
@@ -1044,7 +1083,19 @@
           "name": "_cf_close_tag"
         },
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "[hH][tT][tT][pP]"
+              }
+            }
+          },
+          "named": false,
           "value": "http"
         },
         {
@@ -1289,7 +1340,7 @@
         }
       ]
     },
-    "cf_setting_tag": {
+    "cf_selfclose_tag": {
       "type": "SEQ",
       "members": [
         {
@@ -1297,20 +1348,145 @@
           "name": "_cf_open_tag"
         },
         {
-          "type": "ALIAS",
+          "type": "FIELD",
+          "name": "tag_name",
           "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PREC",
+                    "value": 1,
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[sS][eE][tT][tT][iI][nN][gG]"
+                    }
+                  }
+                },
+                "named": false,
+                "value": "setting"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PREC",
+                    "value": 1,
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[qQ][uU][eE][rR][yY][pP][aA][rR][aA][mM]"
+                    }
+                  }
+                },
+                "named": false,
+                "value": "queryparam"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PREC",
+                    "value": 1,
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[tT][rR][aA][nN][sS][aA][cC][tT][iI][oO][nN]"
+                    }
+                  }
+                },
+                "named": false,
+                "value": "transaction"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PREC",
+                    "value": 1,
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[aA][rR][gG][uU][mM][eE][nN][tT]"
+                    }
+                  }
+                },
+                "named": false,
+                "value": "argument"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PREC",
+                    "value": 1,
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[cC][oO][nN][tT][iI][nN][uU][eE]"
+                    }
+                  }
+                },
+                "named": false,
+                "value": "continue"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PREC",
+                    "value": 1,
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[hH][tT][tT][pP][pP][aA][rR][aA][mM]"
+                    }
+                  }
+                },
+                "named": false,
+                "value": "httpparam"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PREC",
+                    "value": 1,
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[zZ][iI][pP]"
+                    }
+                  }
+                },
+                "named": false,
+                "value": "zip"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PREC",
+                    "value": 1,
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[bB][rR][eE][aA][kK]"
+                    }
+                  }
+                },
+                "named": false,
+                "value": "break"
+              },
+              {
                 "type": "PATTERN",
-                "value": "[sS][eE][tT][tT][iI][nN][gG]"
+                "value": "[a-zA-Z_]+"
               }
-            }
-          },
-          "named": false,
-          "value": "setting"
+            ]
+          }
         },
         {
           "type": "REPEAT",
@@ -1398,82 +1574,6 @@
           "value": ">"
         }
       ]
-    },
-    "cf_queryparam_tag": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_cf_open_tag"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[qQ][uU][eE][rR][yY][pP][aA][rR][aA][mM]"
-              }
-            }
-          },
-          "named": false,
-          "value": "queryparam"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "cf_attribute"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_selfclose_tag_end"
-        }
-      ]
-    },
-    "cf_transaction_tag_standalone": {
-      "type": "PREC_RIGHT",
-      "value": 1,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_cf_open_tag"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[tT][rR][aA][nN][sS][aA][cC][tT][iI][oO][nN]"
-                }
-              }
-            },
-            "named": false,
-            "value": "transaction"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "cf_attribute"
-            }
-          },
-          {
-            "type": "SYMBOL",
-            "name": "cf_selfclose_tag_end"
-          }
-        ]
-      }
     },
     "cf_transaction_tag": {
       "type": "PREC_RIGHT",
@@ -2044,102 +2144,6 @@
         }
       ]
     },
-    "cf_argument_tag": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_cf_open_tag"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[aA][rR][gG][uU][mM][eE][nN][tT]"
-              }
-            }
-          },
-          "named": false,
-          "value": "argument"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "cf_attribute"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_selfclose_tag_end"
-        }
-      ]
-    },
-    "cf_selfclose_tag": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_cf_open_tag"
-        },
-        {
-          "type": "PATTERN",
-          "value": "[a-zA-Z]+"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "cf_attribute"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_selfclose_tag_end"
-        }
-      ]
-    },
-    "cf_continue_tag": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_cf_open_tag"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[cC][oO][nN][tT][iI][nN][uU][eE]"
-              }
-            }
-          },
-          "named": false,
-          "value": "continue"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "cf_attribute"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_selfclose_tag_end"
-        }
-      ]
-    },
     "cf_zip_tag": {
       "type": "SEQ",
       "members": [
@@ -2209,66 +2213,6 @@
           },
           "named": false,
           "value": ">"
-        }
-      ]
-    },
-    "cf_httparam_tag": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_cf_open_tag"
-        },
-        {
-          "type": "STRING",
-          "value": "httpparam"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "cf_attribute"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_selfclose_tag_end"
-        }
-      ]
-    },
-    "cf_zip_tag_standalone": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_cf_open_tag"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[zZ][iI][pP]"
-              }
-            }
-          },
-          "named": false,
-          "value": "zip"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SYMBOL",
-            "name": "cf_attribute"
-          }
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_selfclose_tag_end"
         }
       ]
     },
@@ -2399,35 +2343,6 @@
           },
           "named": false,
           "value": ">"
-        }
-      ]
-    },
-    "cf_break_tag": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_cf_open_tag"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[bB][rR][eE][aA][kK]"
-              }
-            }
-          },
-          "named": false,
-          "value": "break"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_selfclose_tag_end"
         }
       ]
     },
@@ -2621,8 +2536,13 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "cf_var"
+              "type": "ALIAS",
+              "content": {
+                "type": "STRING",
+                "value": "var"
+              },
+              "named": true,
+              "value": "cf_var"
             },
             {
               "type": "BLANK"
@@ -2918,23 +2838,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "cf_setting_tag"
-        },
-        {
-          "type": "SYMBOL",
           "name": "cf_transaction_tag"
         },
         {
           "type": "SYMBOL",
-          "name": "cf_transaction_tag_standalone"
-        },
-        {
-          "type": "SYMBOL",
           "name": "cf_set_tag"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_continue_tag"
         },
         {
           "type": "SYMBOL",
@@ -2951,10 +2859,6 @@
         {
           "type": "SYMBOL",
           "name": "cf_zip_tag"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cf_zip_tag_standalone"
         },
         {
           "type": "ALIAS",
@@ -2984,19 +2888,6 @@
           "value": "cf_query"
         },
         {
-          "type": "SYMBOL",
-          "name": "cf_queryparam_tag"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "cf_argument_tag"
-          },
-          "named": true,
-          "value": "cf_argument"
-        },
-        {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
@@ -3004,15 +2895,6 @@
           },
           "named": true,
           "value": "cf_loop"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "cf_break_tag"
-          },
-          "named": true,
-          "value": "cf_break"
         },
         {
           "type": "ALIAS",
@@ -3101,22 +2983,6 @@
           ]
         }
       ]
-    },
-    "cf_var": {
-      "type": "ALIAS",
-      "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[vV][aA][rR]"
-          }
-        }
-      },
-      "named": false,
-      "value": "var"
     },
     "namespace_export": {
       "type": "SEQ",
@@ -9548,14 +9414,6 @@
       "members": [
         {
           "type": "STRING",
-          "value": "get"
-        },
-        {
-          "type": "STRING",
-          "value": "set"
-        },
-        {
-          "type": "STRING",
           "value": "async"
         },
         {
@@ -9603,7 +9461,7 @@
   "conflicts": [
     [
       "cf_zip_tag",
-      "cf_zip_tag_standalone"
+      "cf_selfclose_tag"
     ],
     [
       "cf_elseif_tag",
