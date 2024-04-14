@@ -155,7 +155,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "attribute"
+          "name": "tag_attributes"
         },
         {
           "type": "SYMBOL",
@@ -9580,6 +9580,15 @@
     ],
     [
       "attribute_name",
+      "_node"
+    ],
+    [
+      "tag_attributes",
+      "_node"
+    ],
+    [
+      "attribute_name",
+      "tag_attributes",
       "_node"
     ],
     [

@@ -62,9 +62,8 @@ cfif with elseif and else
           (binary_expression
             (identifier)
             (identifier))
-          (text)
-          (cf_selfclose_tag
-            (cf_selfclose_tag_end))
+          (text))
+        (cf_else_tag
           (text))))
 
 ===================================
@@ -810,6 +809,7 @@ testing3
 <cffile test="##" />
 <cfsetting />
 <CFSET result = TRUE />
+<a href="##" <cfif security.view IS true>onClick="test"<cfelse>onClick="Javascript: return false" disabled</cfif> class="dataEntry" id="testing_view_#i#">View</a>
 ---
 (program
       (cf_set_tag
@@ -848,28 +848,60 @@ testing3
               (hash_expression
                 (identifier))))))
       (element
-        (self_closing_tag
+        (start_tag
           (tag_name)
           (tag_attributes
             (attribute
               (attribute_name)
               (quoted_attribute_value
-                (attribute_value))))))
-      (end_tag
-        (tag_name))
-      (cf_output_tag
-        (hash_expression
-          (identifier)))
-      (cf_selfclose_tag
-        (cf_attribute
-          (cf_attribute_name)
-          (string
-            (hash_empty)))
+                (attribute_value)))))
+        (end_tag
+          (tag_name))
+        (cf_output_tag
+          (hash_expression
+            (identifier)))
+        (cf_selfclose_tag
+          (cf_attribute
+            (cf_attribute_name)
+            (string
+              (hash_empty)))
           (cf_selfclose_tag_end))
-      (cf_selfclose_tag
-      (cf_selfclose_tag_end))
-      (cf_set_tag
-        (assignment_expression
-          (identifier)
-          (true))
-        (cf_selfclose_tag_end)))
+        (cf_selfclose_tag
+          (cf_selfclose_tag_end))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (true))
+          (cf_selfclose_tag_end))
+        (element
+          (self_closing_tag
+            (tag_name)
+            (tag_attributes
+              (attribute
+                (attribute_name)
+                (quoted_attribute_value
+                  (attribute_value)
+                  (attribute_value))))
+            (tag_attributes
+              (cf_if_tag
+                (binary_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier))
+                  (true))
+                (text)
+                (cf_else_tag
+                  (text))))
+            (tag_attributes
+              (attribute
+                (attribute_name)
+                (quoted_attribute_value
+                  (attribute_value))))
+            (tag_attributes
+              (attribute
+                (attribute_name)
+                (quoted_attribute_value
+                  (attribute_value))))))
+        (text)
+        (end_tag
+          (tag_name))))

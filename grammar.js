@@ -130,6 +130,8 @@ module.exports = grammar({
     [$.ternary_expression, $.pair],
     [$.member_expression, $.subscript_expression, $.pair],
     [$.attribute_name, $._node],
+    [$.tag_attributes, $._node],
+    [$.attribute_name, $.tag_attributes, $._node],
     // [$.component_body, $.object],
     // [$.component_body, $.object_pattern],
 
@@ -192,7 +194,8 @@ module.exports = grammar({
       $.script_element,
       $.style_element,
       $.cf_script,
-      $.attribute,
+      $.tag_attributes,
+      // $.attribute,
       $.text,
       $.end_tag,
       $.erroneous_end_tag,
