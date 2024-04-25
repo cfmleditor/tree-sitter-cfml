@@ -1,6 +1,6 @@
 # tree-sitter-cfml
 
-** EXPERIMENTAL / PARTIAL IMPLEMENTATION, NOT FOR PRODUCTION USE **
+** USE AT OWN RISK **
 
 [![build](https://github.com/tree-sitter/tree-sitter-html/actions/workflows/ci.yml/badge.svg)](https://github.com/cfmleditor/tree-sitter-cfml/actions/workflows/ci.yml)
 
