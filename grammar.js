@@ -53,12 +53,13 @@ module.exports = grammar({
   inline: $ => [
     $._call_signature,
     $._formal_parameter,
-    $.statement,
+    // $.statement,
     $._expressions,
     $._semicolon,
     $._identifier,
     $._reserved_identifier,
     $._lhs_expression,
+    $._cf_tag,
   ],
 
   precedences: $ => [
@@ -129,7 +130,7 @@ module.exports = grammar({
     [$.update_expression, $.pair],
     [$.ternary_expression, $.pair],
     [$.member_expression, $.subscript_expression, $.pair],
-    [$.attribute_name, $._node],
+    // [$.attribute_name, $._node],
     [$.tag_attributes, $._node],
     [$.attribute_name, $.tag_attributes, $._node],
     // [$.component_body, $.object],
@@ -176,12 +177,12 @@ module.exports = grammar({
 
     _doctype: _ => /[Dd][Oo][Cc][Tt][Yy][Pp][Ee]/,
 
-    _cf_tag_start: $ => '<',
+    // _cf_tag_start: $ => '<',
     // _close_tag_delim: $ => '>',
 
     cf_selfclose_tag_end: $ => choice('/>', alias($._close_tag_delim, '>')),
 
-    text: $ => /[^<>&\s#]([^<>&#]*[^<>&\s#])?/,
+    text: $ => /[^<>&\s#\r\n\u2028\u2029]([^<>&#]*[^<>&\s#\r\n\u2028\u2029])?/,
     // cf_tag_close: $ => /<\/cf/i,
 
     _node: $ => choice(
@@ -1448,7 +1449,7 @@ module.exports = grammar({
     // http://stackoverflow.com/questions/13014947/regex-to-match-a-c-style-multiline-comment/36328890#36328890
     comment: $ => choice(
       token(choice(
-        seq('//', /.*/),
+        seq('//', /[^\r\n\u2028\u2029]*/),
         seq(
           '/*',
           /[^*]*\*+([^/*][^*]*\*+)*/,
@@ -1530,17 +1531,17 @@ module.exports = grammar({
 
     identifier: _ => {
       // eslint-disable-next-line max-len
-      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,<>\/|^&<=>+\-*/\\\/%?!~()\[\]{}\uFEFF\u2060\u200B]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       // eslint-disable-next-line max-len
-      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,<>\/|^&<=>+\-*/\\\/%?!~()\[\]{}\uFEFF\u2060\u200B]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       return token(seq(alpha, repeat(alphanumeric)));
     },
 
     private_property_identifier: _ => {
       // eslint-disable-next-line max-len
-      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,<>\/|^&<=>+\-*/\\\/%?!~()\[\]{}\uFEFF\u2060\u200B]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       // eslint-disable-next-line max-len
-      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,<>\/|^&<=>+\-*/\\\/%?!~()\[\]{}\uFEFF\u2060\u200B]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       return token(seq('~', alpha, repeat(alphanumeric)));
     },
 

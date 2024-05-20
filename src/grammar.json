@@ -88,10 +88,6 @@
       "type": "PATTERN",
       "value": "[Dd][Oo][Cc][Tt][Yy][Pp][Ee]"
     },
-    "_cf_tag_start": {
-      "type": "STRING",
-      "value": "<"
-    },
     "cf_selfclose_tag_end": {
       "type": "CHOICE",
       "members": [
@@ -112,7 +108,7 @@
     },
     "text": {
       "type": "PATTERN",
-      "value": "[^<>&\\s#]([^<>&#]*[^<>&\\s#])?"
+      "value": "[^<>&\\s#\\r\\n\\u2028\\u2029]([^<>&#]*[^<>&\\s#\\r\\n\\u2028\\u2029])?"
     },
     "_node": {
       "type": "CHOICE",
@@ -8010,7 +8006,7 @@
                   },
                   {
                     "type": "PATTERN",
-                    "value": ".*"
+                    "value": "[^\\r\\n\\u2028\\u2029]*"
                   }
                 ]
               },
@@ -8662,13 +8658,13 @@
         "members": [
           {
             "type": "PATTERN",
-            "value": "[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,<>\\/|^&<=>+\\-*/\\\\\\/%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}"
+            "value": "[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}"
           },
           {
             "type": "REPEAT",
             "content": {
               "type": "PATTERN",
-              "value": "[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,<>\\/|^&<=>+\\-*/\\\\\\/%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}"
+              "value": "[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}"
             }
           }
         ]
@@ -8685,13 +8681,13 @@
           },
           {
             "type": "PATTERN",
-            "value": "[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,<>\\/|^&<=>+\\-*/\\\\\\/%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}"
+            "value": "[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}"
           },
           {
             "type": "REPEAT",
             "content": {
               "type": "PATTERN",
-              "value": "[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,<>\\/|^&<=>+\\-*/\\\\\\/%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}"
+              "value": "[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#.,|^&<=>+\\-*/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}"
             }
           }
         ]
@@ -9579,10 +9575,6 @@
       "pair"
     ],
     [
-      "attribute_name",
-      "_node"
-    ],
-    [
       "tag_attributes",
       "_node"
     ],
@@ -9840,12 +9832,12 @@
   "inline": [
     "_call_signature",
     "_formal_parameter",
-    "statement",
     "_expressions",
     "_semicolon",
     "_identifier",
     "_reserved_identifier",
-    "_lhs_expression"
+    "_lhs_expression",
+    "_cf_tag"
   ],
   "supertypes": [
     "statement",

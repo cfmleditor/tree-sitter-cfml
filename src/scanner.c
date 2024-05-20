@@ -599,13 +599,13 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
 
 static bool scan_open_cfoutput(Scanner *scanner, TSLexer *lexer, const bool *cf_open_valid) {
     
-    if ( towupper(lexer->lookahead) != 'F' ) {
+    if ( lexer->lookahead != 'F' && lexer->lookahead != 'f' ) {
         return false;
     }
 
     advance(lexer);
 
-    if ( towupper(lexer->lookahead) == 'O' ) {
+    if ( lexer->lookahead == 'O' || lexer->lookahead == 'o' ) {
         String tag_name = scan_tag_name(lexer);
         Tag tag = tag_for_name(tag_name);
         if (tag.type == OUTPUT) {
@@ -626,7 +626,7 @@ static bool scan_open_cfoutput(Scanner *scanner, TSLexer *lexer, const bool *cf_
 
 static bool scan_open_cftag(Scanner *scanner, TSLexer *lexer) {
     
-    if ( towupper(lexer->lookahead) != 'F' ) {
+    if ( lexer->lookahead != 'F' && lexer->lookahead != 'f' ) {
         return false;
     }
 
@@ -640,7 +640,7 @@ static bool scan_open_cftag(Scanner *scanner, TSLexer *lexer) {
 
 static bool scan_close_cftag(Scanner *scanner, TSLexer *lexer) {
     
-    if ( towupper(lexer->lookahead) != 'F' ) {
+    if ( lexer->lookahead != 'F' && lexer->lookahead != 'f' ) {
         return false;
     }
 
@@ -714,7 +714,7 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
                 return scan_comment(lexer);
             }
 
-            if ( towupper(lexer->lookahead) == 'C' ) {
+            if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
                 if ( valid_symbols[CF_OUTPUT_TAG] ) {
                     advance(lexer);
                     return scan_open_cfoutput(scanner, lexer, &valid_symbols[CF_OPEN_TAG]);
@@ -727,7 +727,7 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
             if ( lexer->lookahead == '/') {
                 advance(lexer);
                 if ( valid_symbols[CF_CLOSE_TAG] ) {
-                    if ( towupper(lexer->lookahead) == 'C' ) {
+                    if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
                         advance(lexer);
                         return scan_close_cftag(scanner, lexer);
                     }
@@ -759,7 +759,7 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
                 if ( !scan_script_comment(lexer) ) {
                     return false;
                 }
-            } else if ( towupper(lexer->lookahead) == 'C' ) {
+            } else if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
                 if ( valid_symbols[CF_CLOSE_TAG] ) {
                     advance(lexer);
                     return scan_close_cftag(scanner, lexer);
