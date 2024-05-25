@@ -23,7 +23,7 @@ enum TokenType {
     CFSAVECONTENT_CONTENT,
     CLOSE_TAG_DELIM,
     CF_OUTPUT_TAG,
-    HTML_HASH,
+    // HTML_HASH,
 };
 
 typedef struct {
@@ -599,6 +599,10 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
 
 static bool scan_open_cfoutput(Scanner *scanner, TSLexer *lexer, const bool *cf_open_valid) {
     
+    if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
+        advance(lexer);
+    }
+
     if ( lexer->lookahead != 'F' && lexer->lookahead != 'f' ) {
         return false;
     }
@@ -666,18 +670,18 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer) {
     
 }
 
-static bool scan_hash(Scanner *scanner, TSLexer *lexer) {
+// static bool scan_hash(Scanner *scanner, TSLexer *lexer) {
 
-    if ( lexer->lookahead == '#' ) {
-        advance(lexer);
-        lexer->mark_end(lexer);
-        lexer->result_symbol = HTML_HASH;
-        return true;
-    } else {
-        return false;
-    }
+//     if ( lexer->lookahead == '#' ) {
+//         advance(lexer);
+//         lexer->mark_end(lexer);
+//         lexer->result_symbol = HTML_HASH;
+//         return true;
+//     } else {
+//         return false;
+//     }
     
-}
+// }
 
 static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
@@ -697,9 +701,9 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
         return scan_cfsavecontent_content(scanner, lexer);
     }
 
-    if ( valid_symbols[HTML_HASH] ) {
-        return scan_hash(scanner, lexer);
-    }
+    // if ( valid_symbols[HTML_HASH] ) {
+    //     return scan_hash(scanner, lexer);
+    // }
 
     switch (lexer->lookahead) {
         case ';':
@@ -726,22 +730,22 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
             if ( lexer->lookahead == '/') {
                 advance(lexer);
-                if ( valid_symbols[CF_CLOSE_TAG] ) {
-                    if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
+                if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
+                    if ( valid_symbols[CF_CLOSE_TAG] ) {
                         advance(lexer);
                         return scan_close_cftag(scanner, lexer);
                     }
                 }
             }
 
-            if (valid_symbols[IMPLICIT_END_TAG]) {
+            if (valid_symbols[IMPLICIT_END_TAG] && !valid_symbols[CF_OPEN_TAG] && !valid_symbols[CF_OUTPUT_TAG]) {
                 return scan_implicit_end_tag(scanner, lexer);
             }
 
             break;
 
         case '\0':
-            if (valid_symbols[IMPLICIT_END_TAG]) {
+            if (valid_symbols[IMPLICIT_END_TAG] && !valid_symbols[CF_OPEN_TAG] && !valid_symbols[CF_OUTPUT_TAG]) {
                 return scan_implicit_end_tag(scanner, lexer);
             }
             break;
@@ -763,6 +767,8 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
                 if ( valid_symbols[CF_CLOSE_TAG] ) {
                     advance(lexer);
                     return scan_close_cftag(scanner, lexer);
+                } else {
+                    return false;
                 }
             }
 

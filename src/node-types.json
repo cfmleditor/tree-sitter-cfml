@@ -577,6 +577,10 @@
           "named": true
         },
         {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
           "type": "hash_expression",
           "named": true
         }
@@ -3358,10 +3362,14 @@
     "type": "cf_selfclose_tag",
     "named": true,
     "fields": {
-      "tag_name": {
+      "cf_tag_name": {
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "abort",
+            "named": false
+          },
           {
             "type": "argument",
             "named": false
@@ -3375,7 +3383,23 @@
             "named": false
           },
           {
+            "type": "htmlhead",
+            "named": false
+          },
+          {
             "type": "httpparam",
+            "named": false
+          },
+          {
+            "type": "img",
+            "named": false
+          },
+          {
+            "type": "import",
+            "named": false
+          },
+          {
+            "type": "param",
             "named": false
           },
           {
@@ -3388,6 +3412,10 @@
           },
           {
             "type": "transaction",
+            "named": false
+          },
+          {
+            "type": "wddx",
             "named": false
           },
           {
@@ -5295,6 +5323,11 @@
     }
   },
   {
+    "type": "hash_empty",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "hash_expression",
     "named": true,
     "fields": {},
@@ -6033,6 +6066,102 @@
       "types": [
         {
           "type": "attribute_value",
+          "named": true
+        },
+        {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         }
       ]
@@ -7049,6 +7178,10 @@
     "named": false
   },
   {
+    "type": "abort",
+    "named": false
+  },
+  {
     "type": "access_type",
     "named": true
   },
@@ -7173,8 +7306,8 @@
     "named": false
   },
   {
-    "type": "hash_empty",
-    "named": true
+    "type": "htmlhead",
+    "named": false
   },
   {
     "type": "http",
@@ -7190,6 +7323,10 @@
   },
   {
     "type": "if",
+    "named": false
+  },
+  {
+    "type": "img",
     "named": false
   },
   {
@@ -7254,6 +7391,10 @@
   },
   {
     "type": "output",
+    "named": false
+  },
+  {
+    "type": "param",
     "named": false
   },
   {
@@ -7390,6 +7531,10 @@
   },
   {
     "type": "var",
+    "named": false
+  },
+  {
+    "type": "wddx",
     "named": false
   },
   {

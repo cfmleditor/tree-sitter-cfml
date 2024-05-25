@@ -39,7 +39,6 @@ module.exports = grammar({
     $._cfsavecontent_content,
     $._close_tag_delim,
     $._cf_output_tag,
-    $._html_hash,
   ],
 
   supertypes: $ => [
@@ -291,7 +290,7 @@ module.exports = grammar({
       $.end_tag,
     ),
 
-    hash_empty: $ => /#{2}/,
+    hash_empty: $ => prec.left(2, /#+/),
 
     cf_component_tag: $ => seq(
       $._cf_open_tag,
@@ -407,18 +406,24 @@ module.exports = grammar({
 
     cf_selfclose_tag: $ => seq(
       $._cf_open_tag,
-      field('tag_name', choice(
+      field('cf_tag_name', choice(
         keyword('setting'),
+        keyword('htmlhead'),
+        keyword('img'),
         keyword('queryparam'),
+        keyword('param'),
+        keyword('import'),
+        keyword('abort'),
         keyword('transaction'),
         keyword('argument'),
         keyword('continue'),
         keyword('httpparam'),
+        keyword('wddx'),
         keyword('zip'),
         keyword('break'),
-        /[a-zA-Z_]+/,
+        /[a-zA-Z0-9_:]+/,
       )),
-      repeat($.cf_attribute),
+      optional(repeat($.cf_attribute)),
       $.cf_selfclose_tag_end,
     ),
 
@@ -615,10 +620,10 @@ module.exports = grammar({
     ),
 
     attribute_value: $ => choice(
-      $._html_hash,
-      /[^<>"'=\s]+/,
-      $.hash_expression,
-      $._cf_tag,
+      prec.left(1, $._cf_tag),
+      prec.left(2, $.hash_expression),
+      prec.left(3, $.hash_empty),
+      prec.left(4, /[^"'=\s#]+/),
     ),
 
     cf_attribute: $ => seq(
@@ -629,7 +634,7 @@ module.exports = grammar({
       )),
     ),
 
-    cf_attribute_name: _ => /[^<>"\'/=\s]+/,
+    cf_attribute_name: _ => /[^<>"\'/=\s#]+/,
 
     _cf_tag: $ => choice(
       // $.cf_if_statement_tag,
@@ -664,20 +669,21 @@ module.exports = grammar({
     quoted_attribute_value: $ => choice(
       seq('\'',
         repeat(
-          choice($.attribute_value,
-            alias(/[^']+/,
-              $.attribute_value,
-            ),
+          choice(
+            prec.left(1, $._cf_tag),
+            prec.left(2, $.hash_expression),
+            prec.left(3, $.hash_empty),
+            prec.left(4, alias(/[^'\s#]+/, $.attribute_value)),
           ),
         ),
         '\''),
       seq('"',
         repeat(
           choice(
-            $.attribute_value,
-            alias(/[^"]+/,
-              $.attribute_value,
-            ),
+            prec.left(1, $._cf_tag),
+            prec.left(2, $.hash_expression),
+            prec.left(3, $.hash_empty),
+            prec.left(4, alias(/[^"\s#]+/, $.attribute_value)),
           ),
         ),
         '"'),
@@ -1404,11 +1410,11 @@ module.exports = grammar({
       seq(
         '"',
         repeat(choice(
-          alias($.unescaped_double_string_fragment, $.string_fragment),
-          $.hash_expression,
-          $.hash_empty,
-          '""',
-          $.escape_sequence,
+          prec.left(1, $.hash_expression),
+          prec.left(2, $.hash_empty),
+          prec.left(4, '""'),
+          prec.left(5, $.escape_sequence),
+          prec.left(6, alias($.unescaped_double_string_fragment, $.string_fragment)),
         )),
         '"',
       ),
@@ -1531,17 +1537,17 @@ module.exports = grammar({
 
     identifier: _ => {
       // eslint-disable-next-line max-len
-      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       // eslint-disable-next-line max-len
-      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       return token(seq(alpha, repeat(alphanumeric)));
     },
 
     private_property_identifier: _ => {
       // eslint-disable-next-line max-len
-      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       // eslint-disable-next-line max-len
-      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       return token(seq('~', alpha, repeat(alphanumeric)));
     },
 
@@ -1663,11 +1669,11 @@ module.exports = grammar({
       $.hash_empty,
     ),
 
-    hash_expression: $ => seq(
+    hash_expression: $ => prec.left(1, seq(
       '#',
       $.expression,
       '#',
-    ),
+    )),
 
     computed_property_name: $ => seq(
       '[',
