@@ -566,8 +566,25 @@
       "type": "PREC_LEFT",
       "value": 2,
       "content": {
-        "type": "PATTERN",
-        "value": "#+"
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "#"
+          },
+          {
+            "type": "STRING",
+            "value": "#"
+          }
+        ]
+      }
+    },
+    "hash_single": {
+      "type": "PREC_LEFT",
+      "value": 3,
+      "content": {
+        "type": "STRING",
+        "value": "#"
       }
     },
     "cf_component_tag": {
@@ -2907,7 +2924,7 @@
     },
     "cf_attribute_name": {
       "type": "PATTERN",
-      "value": "[^<>\"\\'/=\\s#]+"
+      "value": "[^<>\"\\'/=\\s\\n\\r\\t#]+"
     },
     "_cf_tag": {
       "type": "CHOICE",
@@ -3030,6 +3047,87 @@
     "entity": {
       "type": "PATTERN",
       "value": "&(([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});"
+    },
+    "cf_attribute_value": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "'"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "hash_expression"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "hash_empty"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[^'\\s\\n\\r\\t#]+"
+                    },
+                    "named": true,
+                    "value": "attribute_value"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "'"
+            }
+          ]
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "\""
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "hash_expression"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "hash_empty"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[^\"\\s\\n\\r\\t#]+"
+                    },
+                    "named": true,
+                    "value": "attribute_value"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "\""
+            }
+          ]
+        }
+      ]
     },
     "quoted_attribute_value": {
       "type": "CHOICE",
@@ -10019,6 +10117,10 @@
     {
       "type": "SYMBOL",
       "name": "_cf_output_tag"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "html_hash"
     }
   ],
   "inline": [

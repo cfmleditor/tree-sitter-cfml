@@ -23,7 +23,7 @@ enum TokenType {
     CFSAVECONTENT_CONTENT,
     CLOSE_TAG_DELIM,
     CF_OUTPUT_TAG,
-    // HTML_HASH,
+    HTML_HASH,
 };
 
 typedef struct {
@@ -173,7 +173,8 @@ static bool scan_comment(TSLexer *lexer) {
     return false;
 }
 
-static bool scan_whitespace_and_comments(TSLexer *lexer, bool *scanned_comment) {
+static bool scan_whitespace_and_comments(TSLexer *lexer, bool *scanned_comment, bool consume) {
+    bool saw_block_newline = false;
     for (;;) {
         while (iswspace(lexer->lookahead)) {
             skip(lexer);
@@ -197,9 +198,15 @@ static bool scan_whitespace_and_comments(TSLexer *lexer, bool *scanned_comment) 
                         if (lexer->lookahead == '/') {
                             skip(lexer);
                             *scanned_comment = true;
+
+                            if (lexer->lookahead != '/' && !consume) {
+                                return saw_block_newline ? true : false;
+                            }
+
                             break;
                         }
                     } else {
+                        saw_block_newline = true;
                         skip(lexer);
                     }
                 }
@@ -466,10 +473,11 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
         }
 
         if (lexer->lookahead == '/') {
-            if (!scan_whitespace_and_comments(lexer, scanned_comment)) {
+            bool result = scan_whitespace_and_comments(lexer, scanned_comment, false);
+            if (result == false) {
                 return false;
             }
-            if (comment_condition && lexer->lookahead != ',' && lexer->lookahead != '=') {
+            if (result == true && comment_condition && lexer->lookahead != ',' && lexer->lookahead != '=') {
                 return true;
             }
         }
@@ -495,13 +503,12 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
 
     skip(lexer);
 
-    if (!scan_whitespace_and_comments(lexer, scanned_comment)) {
+    if (scan_whitespace_and_comments(lexer, scanned_comment, true) == false) {
         return false;
     }
 
     switch (lexer->lookahead) {
         case ',':
-        case '.':
         case ':':
         case ';':
         case '*':
@@ -517,6 +524,11 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
         case '&':
         case '/':
             return false;
+        
+        // Insert a semicolon before decimals literals but not otherwise.
+        case '.':
+            skip(lexer);
+            return iswdigit(lexer->lookahead);
 
         // Insert a semicolon before `--` and `++`, but not before binary `+` or `-`.
         case '+':
@@ -597,7 +609,7 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
     return false;
 }
 
-static bool scan_open_cfoutput(Scanner *scanner, TSLexer *lexer, const bool *cf_open_valid) {
+static bool scan_open_cfoutput(Scanner *scanner, TSLexer *lexer, const bool *cf_open_valid, bool *scanned_cfoutput) {
     
     if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
         advance(lexer);
@@ -615,6 +627,7 @@ static bool scan_open_cfoutput(Scanner *scanner, TSLexer *lexer, const bool *cf_
         if (tag.type == OUTPUT) {
             lexer->mark_end(lexer);
             lexer->result_symbol = CF_OUTPUT_TAG;
+            *scanned_cfoutput = true;
             return true;
         }
     }
@@ -685,6 +698,8 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer) {
 
 static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
+    bool scanned_cfoutput = false;
+
     if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] && !valid_symbols[END_TAG_NAME]) {
         return scan_raw_text(scanner, lexer);
     }
@@ -721,7 +736,7 @@ static bool scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
             if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
                 if ( valid_symbols[CF_OUTPUT_TAG] ) {
                     advance(lexer);
-                    return scan_open_cfoutput(scanner, lexer, &valid_symbols[CF_OPEN_TAG]);
+                    return scan_open_cfoutput(scanner, lexer, &valid_symbols[CF_OPEN_TAG], &scanned_cfoutput);
                 } else if ( valid_symbols[CF_OPEN_TAG] ) {
                     advance(lexer);
                     return scan_open_cftag(scanner, lexer);

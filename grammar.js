@@ -39,6 +39,7 @@ module.exports = grammar({
     $._cfsavecontent_content,
     $._close_tag_delim,
     $._cf_output_tag,
+    $.html_hash,
   ],
 
   supertypes: $ => [
@@ -290,7 +291,8 @@ module.exports = grammar({
       $.end_tag,
     ),
 
-    hash_empty: $ => prec.left(2, /#+/),
+    hash_empty: $ => prec.left(2, seq('#', '#')),
+    hash_single: $ => prec.left(3, '#'),
 
     cf_component_tag: $ => seq(
       $._cf_open_tag,
@@ -634,7 +636,7 @@ module.exports = grammar({
       )),
     ),
 
-    cf_attribute_name: _ => /[^<>"\'/=\s#]+/,
+    cf_attribute_name: _ => /[^<>"\'/=\s\n\r\t#]+/,
 
     _cf_tag: $ => choice(
       // $.cf_if_statement_tag,
@@ -665,6 +667,28 @@ module.exports = grammar({
     ),
 
     entity: _ => /&(([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
+
+    cf_attribute_value: $ => choice(
+      seq('\'',
+        repeat(
+          choice(
+            $.hash_expression,
+            $.hash_empty,
+            alias(/[^'\s\n\r\t#]+/, $.attribute_value),
+          ),
+        ),
+        '\''),
+      seq('"',
+        repeat(
+          choice(
+            $.hash_expression,
+            $.hash_empty,
+            alias(/[^"\s\n\r\t#]+/, $.attribute_value),
+          ),
+        ),
+        '"'),
+
+    ),
 
     quoted_attribute_value: $ => choice(
       seq('\'',
