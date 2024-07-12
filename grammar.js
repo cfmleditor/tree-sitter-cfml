@@ -135,16 +135,20 @@ module.exports = grammar({
     [$._node, $.tag_attributes, $.attribute_name],
 
     [$.quoted_attribute_value, $.string],
-    [$._quoted_style, $.string],
+    // [$._quoted_style, $.string],
 
     [$.hash_expression, $.hash_empty],
     // [$.primary_expression, $.hash_single],
     [$.hash_expression, $.hash_empty, $.hash_single],
     [$.hash_expression, $.hash_single],
 
+    [$.assignment_expression, $._property_name],
+    
+    [$.switch_case, $._property_name],
+    [$.call_expression, $._property_name],
     // [$.style, $.string],
     // [$.style_property, $.subscript_expression],
-    [$.style_property],
+    // [$.style_property],
     // [$.hash_single, $.primary_expression, $.style_property],
     // [$.component_body, $.object],
     // [$.component_body, $.object_pattern],
@@ -686,7 +690,10 @@ module.exports = grammar({
       $.cf_attribute_name,
       optional(seq(
         '=',
-        $.expression,
+        choice(
+          $.expression,
+          $.hash_expression,
+        ),
       )),
     ),
 
@@ -1100,6 +1107,7 @@ module.exports = grammar({
     //
     _expressions: $ => choice(
       $.expression,
+      $.hash_expression,
       $.sequence_expression,
     ),
 
@@ -1348,7 +1356,7 @@ module.exports = grammar({
 
     call_expression: $ => choice(
       prec('call', seq(
-        field('function', choice($.expression, $.import)),
+        field('function', choice($.expression, $.hash_expression, $.import)),
         field('arguments', $.arguments),
       )),
       prec('member', seq(
@@ -1395,7 +1403,7 @@ module.exports = grammar({
     assignment_expression: $ => prec.right('assign', seq(
       field('left', choice($.parenthesized_expression, $._lhs_expression)),
       '=',
-      field('right', $.expression),
+      field('right', choice($.expression, $.hash_expression)),
     )),
 
     _augmented_assignment_lhs: $ => choice(
@@ -1670,8 +1678,8 @@ module.exports = grammar({
 
     this: _ => 'this',
     super: _ => 'super',
-    true: _ => keyword('true'),
-    false: _ => keyword('false'),
+    true: _ => token('true'),
+    false: _ => token('false'),
     null: _ => 'null',
     // undefined: _ => 'undefined',
 
@@ -1681,7 +1689,7 @@ module.exports = grammar({
 
     arguments: $ => seq(
       '(',
-      commaSep(optional(choice($.expression, $.spread_element))),
+      commaSep(optional(choice($.expression, $.hash_expression, $.spread_element))),
       ')',
     ),
 

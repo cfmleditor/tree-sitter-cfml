@@ -3039,8 +3039,17 @@
                   "value": "="
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "expression"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "expression"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "hash_expression"
+                    }
+                  ]
                 }
               ]
             },
@@ -4890,6 +4899,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "hash_expression"
+        },
+        {
+          "type": "SYMBOL",
           "name": "sequence_expression"
         }
       ]
@@ -6375,6 +6388,10 @@
                     },
                     {
                       "type": "SYMBOL",
+                      "name": "hash_expression"
+                    },
+                    {
+                      "type": "SYMBOL",
                       "name": "import"
                     }
                   ]
@@ -6685,8 +6702,17 @@
             "type": "FIELD",
             "name": "right",
             "content": {
-              "type": "SYMBOL",
-              "name": "expression"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "hash_expression"
+                }
+              ]
             }
           }
         ]
@@ -9167,36 +9193,18 @@
       "value": "super"
     },
     "true": {
-      "type": "ALIAS",
+      "type": "TOKEN",
       "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[tT][rR][uU][eE]"
-          }
-        }
-      },
-      "named": false,
-      "value": "true"
+        "type": "STRING",
+        "value": "true"
+      }
     },
     "false": {
-      "type": "ALIAS",
+      "type": "TOKEN",
       "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[fF][aA][lL][sS][eE]"
-          }
-        }
-      },
-      "named": false,
-      "value": "false"
+        "type": "STRING",
+        "value": "false"
+      }
     },
     "null": {
       "type": "STRING",
@@ -9227,6 +9235,10 @@
                         },
                         {
                           "type": "SYMBOL",
+                          "name": "hash_expression"
+                        },
+                        {
+                          "type": "SYMBOL",
                           "name": "spread_element"
                         }
                       ]
@@ -9254,6 +9266,10 @@
                               {
                                 "type": "SYMBOL",
                                 "name": "expression"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "hash_expression"
                               },
                               {
                                 "type": "SYMBOL",
@@ -10036,10 +10052,6 @@
       "string"
     ],
     [
-      "_quoted_style",
-      "string"
-    ],
-    [
       "hash_expression",
       "hash_empty"
     ],
@@ -10053,7 +10065,16 @@
       "hash_single"
     ],
     [
-      "style_property"
+      "assignment_expression",
+      "_property_name"
+    ],
+    [
+      "switch_case",
+      "_property_name"
+    ],
+    [
+      "call_expression",
+      "_property_name"
     ],
     [
       "tag_attributes",

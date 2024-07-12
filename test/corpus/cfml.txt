@@ -869,7 +869,7 @@ testing3
       (cf_set_tag
         (assignment_expression
           (identifier)
-          (true))
+          (identifier))
         (cf_selfclose_tag_end))
       (element
         (self_closing_tag
@@ -1162,6 +1162,11 @@ testing5
 ===================================
 <a href="#test" style="color: #fff"></a>
 <div test="test" style="color: #fff;" test="test"> </div>
+<cfif compareNoCase(ref_field, "lookup") NEQ 0>
+			<cfset data = getService("general").getlookup(companyCode = user.companyCode, lookupType=#lookupType#, addBlankRow="false") />
+		</cfif>
+<cfloop from="1" to=#arrayLen(test)# index="i"></cfloop>
+		<cfset ARGUMENTS.context.utils("setMaxLength","message_text",#maxMsgChars#)>
 ---
 (program
       (element
@@ -1203,4 +1208,70 @@ testing5
                 (quoted_attribute_value
                   (attribute_value))))))
         (end_tag
-          (tag_name))))
+          (tag_name)))
+      (cf_if_tag
+        (binary_expression
+          (call_expression
+            (identifier)
+            (arguments
+              (identifier)
+              (string
+                (string_fragment))))
+          (number))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (call_expression
+              (member_expression
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (string
+                      (string_fragment))))
+                (property_identifier))
+              (arguments
+                (assignment_expression
+                  (identifier)
+                  (member_expression
+                    (identifier)
+                    (property_identifier)))
+                (assignment_expression
+                  (identifier)
+                  (hash_expression
+                    (identifier)))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment))))))
+          (cf_selfclose_tag_end)))
+      (cf_loop
+        (cf_attribute
+          (cf_attribute_name)
+          (string
+            (string_fragment)))
+        (cf_attribute
+          (cf_attribute_name)
+          (hash_expression
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier)))))
+        (cf_attribute
+          (cf_attribute_name)
+          (string
+            (string_fragment))))
+      (cf_set_tag
+        (call_expression
+          (member_expression
+            (member_expression
+              (identifier)
+              (property_identifier))
+            (property_identifier))
+          (arguments
+            (string
+              (string_fragment))
+            (string
+              (string_fragment))
+            (hash_expression
+              (identifier))))
+        (cf_selfclose_tag_end)))
