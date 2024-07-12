@@ -447,7 +447,7 @@ nested cfif
 / Characters used in tags and nested cfml comments
 ===================================
 
-<div style="/"></div>
+<div style=""></div>
 
 <cfif (true / true)>
     test
@@ -467,10 +467,7 @@ nested cfif
         (start_tag
           (tag_name)
           (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
-                (attribute_value)))))
+            (style_attribute)))
         (end_tag
           (tag_name)))
       (cf_if_tag
@@ -1152,11 +1149,53 @@ testing4
           (self_closing_tag
             (tag_name)
             (tag_attributes
+              (style_attribute
+                (style
+                  (cf_output_tag
+                    (hash_expression
+                      (identifier))))))))
+        (end_tag
+          (tag_name))))
+
+===================================
+testing5
+===================================
+<a href="#test" style="color: #fff"></a>
+<div test="test" style="color: #fff;"> </div>
+---
+(program
+      (element
+        (start_tag
+          (tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (hash_single
+                  (identifier)))))
+          (tag_attributes
+            (style_attribute
+              (style
+                (style_property
+                  (property_identifier)
+                  (hash_single
+                    (identifier)))))))
+        (end_tag
+          (tag_name))
+        (element
+          (self_closing_tag
+            (tag_name)
+            (tag_attributes
               (attribute
                 (attribute_name)
                 (quoted_attribute_value
-                  (cf_output_tag
-                    (hash_expression
+                  (attribute_value))))
+            (tag_attributes
+              (style_attribute
+                (style
+                  (style_property
+                    (property_identifier)
+                    (hash_single
                       (identifier))))))))
         (end_tag
           (tag_name))))

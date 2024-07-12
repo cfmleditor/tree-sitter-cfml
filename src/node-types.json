@@ -134,14 +134,6 @@
         "named": true
       },
       {
-        "type": "hash_empty",
-        "named": true
-      },
-      {
-        "type": "hash_expression",
-        "named": true
-      },
-      {
         "type": "identifier",
         "named": true
       },
@@ -5343,6 +5335,21 @@
     }
   },
   {
+    "type": "hash_single",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "if_statement",
     "named": true,
     "fields": {
@@ -6163,6 +6170,10 @@
         {
           "type": "hash_expression",
           "named": true
+        },
+        {
+          "type": "hash_single",
+          "named": true
         }
       ]
     }
@@ -6381,6 +6392,128 @@
     }
   },
   {
+    "type": "style",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "style_property",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "style_attribute",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "style",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "style_element",
     "named": true,
     "fields": {},
@@ -6401,6 +6534,60 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "style_property",
+    "named": true,
+    "fields": {
+      "key": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "computed_property_name",
+            "named": true
+          },
+          {
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "private_property_identifier",
+            "named": true
+          },
+          {
+            "type": "property_identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": ";",
+            "named": false
+          },
+          {
+            "type": "hash_single",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -6644,6 +6831,10 @@
         },
         {
           "type": "quoted_attribute_value",
+          "named": true
+        },
+        {
+          "type": "style_attribute",
           "named": true
         }
       ]
@@ -7480,6 +7671,10 @@
   {
     "type": "string_fragment",
     "named": true
+  },
+  {
+    "type": "style",
+    "named": false
   },
   {
     "type": "super",

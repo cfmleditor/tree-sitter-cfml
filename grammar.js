@@ -131,8 +131,20 @@ module.exports = grammar({
     [$.ternary_expression, $.pair],
     [$.member_expression, $.subscript_expression, $.pair],
     // [$.attribute_name, $._node],
-    [$.tag_attributes, $._node],
-    [$.attribute_name, $.tag_attributes, $._node],
+    [$._node, $.tag_attributes],
+    [$._node, $.tag_attributes, $.attribute_name],
+    [$.quoted_attribute_value, $.string],
+
+    [$.hash_expression, $.hash_empty],
+    // [$.primary_expression, $.hash_single],
+    [$.hash_expression, $.hash_empty, $.hash_single],
+    [$.hash_expression, $.hash_single],
+
+    // [$.style, $.string],
+    // [$.style_property, $.subscript_expression],
+    [$.style_property],
+    [$.style_attribute, $.string],
+    // [$.hash_single, $.primary_expression, $.style_property],
     // [$.component_body, $.object],
     // [$.component_body, $.object_pattern],
 
@@ -140,7 +152,7 @@ module.exports = grammar({
     // [$.primary_expression, $.field_definition, $.method_definition],
     // [$.assignment_expression, $._property_name],
 
-    [$.attribute_name, $.tag_attributes],
+    [$.tag_attributes, $.attribute_name],
 
     // [$.cf_if_statement_tag, $._cf_tag],
     [$.self_closing_tag, $.start_tag],
@@ -197,6 +209,7 @@ module.exports = grammar({
       $.cf_script,
       $.tag_attributes,
       // $.attribute,
+      // $.style_attribute,
       $.text,
       $.end_tag,
       $.erroneous_end_tag,
@@ -236,6 +249,7 @@ module.exports = grammar({
     ),
 
     tag_attributes: $ => choice(
+      $.style_attribute,
       $.attribute,
       $.quoted_attribute_value,
       $._cf_tag,
@@ -291,8 +305,12 @@ module.exports = grammar({
       $.end_tag,
     ),
 
-    hash_empty: $ => prec.left(2, seq('#', '#')),
-    hash_single: $ => prec.left(3, '#'),
+    hash_empty: $ => seq('#', '#'),
+
+    hash_single: $ => seq(
+      repeat('#'),
+      $.identifier,
+    ),
 
     cf_component_tag: $ => seq(
       $._cf_open_tag,
@@ -605,15 +623,30 @@ module.exports = grammar({
       alias($._close_tag_delim, '>'),
     ),
 
+    style_attribute: $ => seq(
+      keyword('style'),
+      optional(
+        seq(
+          '=',
+          choice(
+            seq('"', repeat($.style), '"'),
+            seq('\'', repeat($.style), '\''),
+          ),
+        ),
+      ),
+    ),
+
     attribute: $ => seq(
       $.attribute_name,
-      optional(seq(
-        '=',
-        choice(
-          $.attribute_value,
-          $.quoted_attribute_value,
+      optional(
+        seq(
+          '=',
+          choice(
+            $.attribute_value,
+            $.quoted_attribute_value,
+          ),
         ),
-      )),
+      ),
     ),
 
     attribute_name: $ => choice(
@@ -625,7 +658,7 @@ module.exports = grammar({
       prec.left(1, $._cf_tag),
       prec.left(2, $.hash_expression),
       prec.left(3, $.hash_empty),
-      prec.left(4, /[^"'=\s#]+/),
+      prec.left(4, /[^"'=\s\n\r\t#]+/),
     ),
 
     cf_attribute: $ => seq(
@@ -674,7 +707,7 @@ module.exports = grammar({
           choice(
             $.hash_expression,
             $.hash_empty,
-            alias(/[^'\s\n\r\t#]+/, $.attribute_value),
+            alias(/[^'\s\n\r\t#:;]+/, $.attribute_value),
           ),
         ),
         '\''),
@@ -683,31 +716,45 @@ module.exports = grammar({
           choice(
             $.hash_expression,
             $.hash_empty,
-            alias(/[^"\s\n\r\t#]+/, $.attribute_value),
+            alias(/[^"\s\n\r\t#:;]+/, $.attribute_value),
           ),
         ),
         '"'),
 
     ),
 
+    // _hash: $ => choice(
+    //   prec.left(1, $.hash_expression),
+    //   prec.left(3, $.hash_empty),
+    //   prec.left(3, $.hash_single),
+    // ),
+
     quoted_attribute_value: $ => choice(
       seq('\'',
-        repeat(
-          choice(
-            prec.left(1, $._cf_tag),
-            prec.left(2, $.hash_expression),
-            prec.left(3, $.hash_empty),
-            prec.left(4, alias(/[^'\s#]+/, $.attribute_value)),
+        choice(
+          alias('#', $.hash_single),
+          $.hash_single,
+          repeat(
+            choice(
+              $._cf_tag,
+              $.hash_expression,
+              $.hash_empty,
+              alias(/[^'\s\n\r\t#]+/, $.attribute_value),
+            ),
           ),
         ),
         '\''),
       seq('"',
-        repeat(
-          choice(
-            prec.left(1, $._cf_tag),
-            prec.left(2, $.hash_expression),
-            prec.left(3, $.hash_empty),
-            prec.left(4, alias(/[^"\s#]+/, $.attribute_value)),
+        choice(
+          alias('#', $.hash_single),
+          $.hash_single,
+          repeat(
+            choice(
+              $._cf_tag,
+              $.hash_expression,
+              $.hash_empty,
+              alias(/[^"\s\n\r\t#]+/, $.attribute_value),
+            ),
           ),
         ),
         '"'),
@@ -1071,8 +1118,8 @@ module.exports = grammar({
       $.generator_function,
       $.meta_property,
       $.call_expression,
-      $.hash_expression,
-      $.hash_empty,
+      // $.hash_expression,
+      // $.hash_empty,
     ),
 
     yield_expression: $ => prec.right(seq(
@@ -1081,6 +1128,30 @@ module.exports = grammar({
         seq('*', $.expression),
         optional($.expression),
       ))),
+
+    style: $ => seq(
+      choice(
+        $.style_property,
+        $._cf_tag,
+        $.hash_expression,
+      ),
+      optional(';'),
+    ),
+
+    style_property: $ => seq(
+      field('key', $._property_name),
+      ':',
+      field('value',
+        seq(
+          choice(
+            // $.expression,
+            $.hash_single,
+            /[a-zA-Z\-_]+/,
+          ),
+          optional(';'),
+        ),
+      ),
+    ),
 
     object: $ => prec('object', seq(
       '{',
@@ -1433,24 +1504,31 @@ module.exports = grammar({
     string: $ => choice(
       seq(
         '"',
-        repeat(choice(
-          prec.left(1, $.hash_expression),
-          prec.left(2, $.hash_empty),
-          prec.left(4, '""'),
-          prec.left(5, $.escape_sequence),
-          prec.left(6, alias($.unescaped_double_string_fragment, $.string_fragment)),
-        )),
+        choice(
+          // $.hash_single,
+          repeat(choice(
+            prec.left(1, $.hash_expression),
+            prec.left(2, $.hash_empty),
+            prec.left(4, '""'),
+            prec.left(5, $.escape_sequence),
+            prec.left(6, alias($.unescaped_double_string_fragment, $.string_fragment)),
+          )),
+        ),
         '"',
       ),
+
       seq(
         '\'',
-        repeat(choice(
-          alias($.unescaped_single_string_fragment, $.string_fragment),
-          $.hash_expression,
-          $.hash_empty,
-          '\'\'',
-          $.escape_sequence,
-        )),
+        choice(
+          // $.hash_single,
+          repeat(choice(
+            alias($.unescaped_single_string_fragment, $.string_fragment),
+            $.hash_expression,
+            $.hash_empty,
+            '\'\'',
+            $.escape_sequence,
+          )),
+        ),
         '\'',
       ),
     ),
@@ -1561,17 +1639,17 @@ module.exports = grammar({
 
     identifier: _ => {
       // eslint-disable-next-line max-len
-      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#&?.,\[\]|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       // eslint-disable-next-line max-len
-      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#&?.,\[\]|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       return token(seq(alpha, repeat(alphanumeric)));
     },
 
     private_property_identifier: _ => {
       // eslint-disable-next-line max-len
-      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#&?.,\[\]|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       // eslint-disable-next-line max-len
-      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#&?.,\[\]|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       return token(seq('~', alpha, repeat(alphanumeric)));
     },
 
@@ -1693,11 +1771,11 @@ module.exports = grammar({
       $.hash_empty,
     ),
 
-    hash_expression: $ => prec.left(1, seq(
+    hash_expression: $ => seq(
       '#',
       $.expression,
       '#',
-    )),
+    ),
 
     computed_property_name: $ => seq(
       '[',

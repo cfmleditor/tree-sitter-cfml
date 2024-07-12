@@ -1,8 +1,7 @@
-<div style="display: flex" draggable>
+<div style="display: flex">
   <!-- <- tag -->
-  <!--^^^^ attribute -->
-  <!--      ^^^^^^^^^^^^^ string -->
-  <!--                     ^^^^^^^^^ attribute -->
+  <!--^^^^ style_attribute -->
+  <!--      ^^^^^^^^^^^^^ style_attribute -->
   <div onclick=tap>Hello, World</div>
   <!-- <- punctuation.bracket -->
   <div onclick=tap>Hello, World</div>
