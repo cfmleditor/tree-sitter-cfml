@@ -1150,7 +1150,7 @@ testing4
             (tag_name)
             (tag_attributes
               (style_attribute
-                (style
+                (style_item
                   (cf_output_tag
                     (hash_expression
                       (identifier))))))))
@@ -1161,7 +1161,7 @@ testing4
 testing5
 ===================================
 <a href="#test" style="color: #fff"></a>
-<div test="test" style="color: #fff;"> </div>
+<div test="test" style="color: #fff;" test="test"> </div>
 ---
 (program
       (element
@@ -1175,9 +1175,9 @@ testing5
                   (identifier)))))
           (tag_attributes
             (style_attribute
-              (style
+              (style_item
                 (style_property
-                  (property_identifier)
+                  (identifier)
                   (hash_single
                     (identifier)))))))
         (end_tag
@@ -1192,10 +1192,15 @@ testing5
                   (attribute_value))))
             (tag_attributes
               (style_attribute
-                (style
+                (style_item
                   (style_property
-                    (property_identifier)
+                    (identifier)
                     (hash_single
-                      (identifier))))))))
+                      (identifier))))))
+            (tag_attributes
+              (attribute
+                (attribute_name)
+                (quoted_attribute_value
+                  (attribute_value))))))
         (end_tag
           (tag_name))))

@@ -133,7 +133,9 @@ module.exports = grammar({
     // [$.attribute_name, $._node],
     [$._node, $.tag_attributes],
     [$._node, $.tag_attributes, $.attribute_name],
+
     [$.quoted_attribute_value, $.string],
+    [$._quoted_style, $.string],
 
     [$.hash_expression, $.hash_empty],
     // [$.primary_expression, $.hash_single],
@@ -143,7 +145,6 @@ module.exports = grammar({
     // [$.style, $.string],
     // [$.style_property, $.subscript_expression],
     [$.style_property],
-    [$.style_attribute, $.string],
     // [$.hash_single, $.primary_expression, $.style_property],
     // [$.component_body, $.object],
     // [$.component_body, $.object_pattern],
@@ -155,7 +156,7 @@ module.exports = grammar({
     [$.tag_attributes, $.attribute_name],
 
     // [$.cf_if_statement_tag, $._cf_tag],
-    [$.self_closing_tag, $.start_tag],
+    [$.start_tag, $.self_closing_tag],
 
     // [$.cf_if_tag],
     // [$.cf_else_tag],
@@ -628,11 +629,31 @@ module.exports = grammar({
       optional(
         seq(
           '=',
-          choice(
-            seq('"', repeat($.style), '"'),
-            seq('\'', repeat($.style), '\''),
-          ),
+          $._quoted_style,
         ),
+      ),
+    ),
+
+    _quoted_style: $ => choice(
+      seq(
+        '"',
+        repeat(
+          seq(
+            $.style_item,
+            optional(';'),
+          )
+        ),
+        '"',
+      ),
+      seq(
+        '\'',
+        repeat(
+          seq(
+            $.style_item,
+            optional(';'),
+          )
+        ),
+        '\''
       ),
     ),
 
@@ -1129,27 +1150,19 @@ module.exports = grammar({
         optional($.expression),
       ))),
 
-    style: $ => seq(
-      choice(
-        $.style_property,
-        $._cf_tag,
-        $.hash_expression,
-      ),
-      optional(';'),
+    style_item: $ => choice(
+      $.style_property,
+      $._cf_tag,
+      $.hash_expression,
     ),
 
     style_property: $ => seq(
-      field('key', $._property_name),
+      $.identifier,
       ':',
-      field('value',
-        seq(
-          choice(
-            // $.expression,
-            $.hash_single,
-            /[a-zA-Z\-_]+/,
-          ),
-          optional(';'),
-        ),
+      choice(
+        // $.expression,
+        $.hash_single,
+        /[a-zA-Z\-_]+/,
       ),
     ),
 
@@ -1507,11 +1520,11 @@ module.exports = grammar({
         choice(
           // $.hash_single,
           repeat(choice(
-            prec.left(1, $.hash_expression),
-            prec.left(2, $.hash_empty),
-            prec.left(4, '""'),
-            prec.left(5, $.escape_sequence),
-            prec.left(6, alias($.unescaped_double_string_fragment, $.string_fragment)),
+            $.hash_expression,
+            $.hash_empty,
+            '""',
+            $.escape_sequence,
+            alias($.unescaped_double_string_fragment, $.string_fragment),
           )),
         ),
         '"',

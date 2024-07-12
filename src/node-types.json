@@ -6392,7 +6392,45 @@
     }
   },
   {
-    "type": "style",
+    "type": "style_attribute",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "style_item",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "style_element",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "end_tag",
+          "named": true
+        },
+        {
+          "type": "raw_text",
+          "named": true
+        },
+        {
+          "type": "start_tag",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "style_item",
     "named": true,
     "fields": {},
     "children": {
@@ -6499,22 +6537,7 @@
     }
   },
   {
-    "type": "style_attribute",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "style",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "style_element",
+    "type": "style_property",
     "named": true,
     "fields": {},
     "children": {
@@ -6522,72 +6545,14 @@
       "required": true,
       "types": [
         {
-          "type": "end_tag",
+          "type": "hash_single",
           "named": true
         },
         {
-          "type": "raw_text",
-          "named": true
-        },
-        {
-          "type": "start_tag",
+          "type": "identifier",
           "named": true
         }
       ]
-    }
-  },
-  {
-    "type": "style_property",
-    "named": true,
-    "fields": {
-      "key": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "computed_property_name",
-            "named": true
-          },
-          {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
-            "named": true
-          },
-          {
-            "type": "number",
-            "named": true
-          },
-          {
-            "type": "private_property_identifier",
-            "named": true
-          },
-          {
-            "type": "property_identifier",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          }
-        ]
-      },
-      "value": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": ";",
-            "named": false
-          },
-          {
-            "type": "hash_single",
-            "named": true
-          }
-        ]
-      }
     }
   },
   {
