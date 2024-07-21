@@ -807,7 +807,7 @@ testing3
 <cfsetting />
 <CFSET result = TRUE />
 <a href="##" <cfif security.view IS true>onClick="test"<cfelse>onClick="Javascript: return false" disabled</cfif> class="dataEntry" id="testing_view_#i#">View</a>
-<cfoutput><a href="##" tabIndex="#tabIndex#" id="eud#ii#_link" onclick="try{parent.setwindowfocus('eud#ii#_link'); parent.loadpopupwindow('extendedudref','p_student_setup_extendedud_ref.cfm?ref_code=#ud_id#&security=#URL.security#&action=#URL.action#&entityType=S&areaCode=#URL.code#','Extended UD Reference Data - #ii#. '+document.getElementById('#arrUDLabelCode[ii].name#_txt').value+'',false,'');}catch(e){alert(e.message);} return false;"><img alt="" src="../images/buttons/lookup2.gif" align="middle" border="0" title="Add/Edit Table Ref data" /></a></cfoutput>
+<cfoutput><a href="##" <!--- tabIndex="#tabIndex#" ---> id="eud#ii#_link" onclick="try{parent.setwindowfocus('eud#ii#_link'); parent.loadpopupwindow('extendedudref','p_student_setup_extendedud_ref.cfm?ref_code=#ud_id#&security=#URL.security#&action=#URL.action#&entityType=S&areaCode=#URL.code#','Extended UD Reference Data - #ii#. '+document.getElementById('#arrUDLabelCode[ii].name#_txt').value+'',false,'');}catch(e){alert(e.message);} return false;"><img alt="" src="../images/buttons/lookup2.gif" align="middle" border="0" title="Add/Edit Table Ref data" /></a></cfoutput>
 ---
 (program
       (cf_set_tag
@@ -913,12 +913,7 @@ testing3
                 (attribute_name)
                 (quoted_attribute_value
                   (hash_empty))))
-            (tag_attributes
-              (attribute
-                (attribute_name)
-                (quoted_attribute_value
-                  (hash_expression
-                    (identifier)))))
+            (cf_comment)
             (tag_attributes
               (attribute
                 (attribute_name)
@@ -1160,8 +1155,8 @@ testing4
 ===================================
 testing5
 ===================================
-<a href="#test" style="color: #fff"></a>
-<div test="test" style="color: #fff;" test="test"> </div>
+<a href="##test" style="color: ##fff"></a>
+<div test="test" style="color: ##fff;" test="test"> </div>
 <cfif compareNoCase(ref_field, "lookup") NEQ 0>
 			<cfset data = getService("general").getlookup(companyCode = user.companyCode, lookupType=#lookupType#, addBlankRow="false") />
 		</cfif>
@@ -1176,15 +1171,14 @@ testing5
             (attribute
               (attribute_name)
               (quoted_attribute_value
-                (hash_single
-                  (identifier)))))
+                (hash_empty)
+                (attribute_value))))
           (tag_attributes
             (style_attribute
               (style_item
                 (style_property
                   (identifier)
-                  (hash_single
-                    (identifier)))))))
+                  (hash_empty))))))
         (end_tag
           (tag_name))
         (element
@@ -1200,8 +1194,7 @@ testing5
                 (style_item
                   (style_property
                     (identifier)
-                    (hash_single
-                      (identifier))))))
+                    (hash_empty)))))
             (tag_attributes
               (attribute
                 (attribute_name)
@@ -1275,3 +1268,27 @@ testing5
             (hash_expression
               (identifier))))
         (cf_selfclose_tag_end)))
+
+
+===================================
+testing6
+===================================
+<cfoutput><a ref="##Test-test" tabindex=""></a></cfoutput>
+---
+(program
+      (cf_output_tag
+        (element
+          (start_tag
+            (tag_name)
+            (tag_attributes
+              (attribute
+                (attribute_name)
+                (quoted_attribute_value
+                  (hash_empty)
+                  (attribute_value))))
+            (tag_attributes
+              (attribute
+                (attribute_name)
+                (quoted_attribute_value))))
+          (end_tag
+            (tag_name)))))

@@ -14,7 +14,8 @@
     "prebuilds/**",
     "bindings/node/*",
     "queries/*",
-    "src/**"
+    "src/**",
+    "common/**"
   ],
   "homepage": "https://github.com/cfmleditor/tree-sitter-cfml",
   "repository": {
@@ -50,14 +51,16 @@
     "prebuildify": "^6.0.1"
   },
   "scripts": {
-    "build": "tree-sitter generate && node-gyp build",
+    "build": "npm run build-cfml && npm run build-cfhtml",
+    "build-test": "npm run build-cfml && npm run build-cfhtml && tree-sitter test",
+    "build-cfml": "cd cfml && npx tree-sitter generate --no-bindings",
+    "build-cfhtml": "cd cfhtml && npx tree-sitter generate  --no-bindings",
     "build-wasm": "tree-sitter build-wasm",
-    "lint": "eslint grammar.js",
+    "lint": "eslint common/define-grammar.js",
     "test": "tree-sitter test",
     "test-parse": "tree-sitter parse examples/*.cfm --quiet --time",
     "test-mxunit": "tree-sitter parse test/mxunit/framework/*.cfc --quiet --time",
     "test-windows": "tree-sitter test",
-    "build-test": "tree-sitter generate && node-gyp build && tree-sitter test",
     "install": "node-gyp-build",
     "prebuildify": "prebuildify --napi --strip"
   },
@@ -68,7 +71,25 @@
         "cfm",
         "cfc"
       ],
+      "path": "cfml",
       "injection-regex": "cfml",
+      "highlights": [
+        "queries/highlights.scm"
+      ],
+      "injections": [
+        "queries/injections.scm"
+      ],
+      "external-files": [
+        "src/tag.h"
+      ]
+    },
+    {
+      "scope": "source.cfhtml",
+      "file-types": [
+        "cfm"
+      ],
+      "path": "cfhtml",
+      "injection-regex": "cfhtml",
       "highlights": [
         "queries/highlights.scm"
       ],

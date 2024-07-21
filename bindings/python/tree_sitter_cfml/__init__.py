@@ -1,5 +1,3 @@
-"Cfml grammar for tree-sitter"
+"Cfml and Cfhtml grammars for tree-sitter"
 
-from ._binding import language
-
-__all__ = ["language"]
+from ._binding import language_cfml, language_cfhtml

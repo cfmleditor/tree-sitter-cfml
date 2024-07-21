@@ -6,16 +6,18 @@
         "<!(node -p \"require('node-addon-api').targets\"):node_addon_api_except",
       ],
       "include_dirs": [
-        "src",
+        "cfml/src",
       ],
       "sources": [
+        "cfml/src/parser.c",
+        "cfml/src/scanner.c",
+        "cfhtml/src/parser.c",
+        "cfhtml/src/scanner.c",
         "bindings/node/binding.cc",
-        "src/parser.c",
-        # NOTE: if your language has an external scanner, add it here.
       ],
       "cflags_c": [
-        "-std=c11",
-      ],
+        "-std=c11"
+      ]
     }
   ]
 }

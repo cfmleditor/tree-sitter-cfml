@@ -9,14 +9,22 @@ authors = [
 ]
 license = "MIT"
 readme = "bindings/rust/README.md"
-keywords = ["incremental", "parsing", "cfml"]
+keywords = ["incremental", "parsing", "cfml", "cfhtml"]
 categories = ["parsing", "text-editors"]
 repository = "https://github.com/cfmleditor/tree-sitter-cfml"
 edition = "2021"
 autoexamples = false
 
 build = "bindings/rust/build.rs"
-include = ["bindings/rust/*", "grammar.js", "queries/*", "src/*"]
+include = [
+  "common",
+  "bindings/rust",
+  "cfml/grammar.js",
+  "cfml/src",
+  "cfhtml/grammar.js",
+  "cfhtml/src",
+  "queries",
+]
 
 [lib]
 path = "bindings/rust/lib.rs"

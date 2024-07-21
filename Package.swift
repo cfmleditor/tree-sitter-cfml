@@ -3,31 +3,44 @@
 import PackageDescription
 
 let package = Package(
-    name: "TreeSitterHTML",
+    name: "TreeSitterCfml",
     products: [
-        .library(name: "TreeSitterHTML", targets: ["TreeSitterHTML"]),
+        .library(name: "TreeSitterCfml", targets: ["TreeSitterCfml"]),
     ],
     dependencies: [],
     targets: [
-        .target(name: "TreeSitterHTML",
+        .target(name: "TreeSitterCfml",
                 path: ".",
                 exclude: [
-                    "binding.gyp",
-                    "bindings",
                     "Cargo.toml",
-                    "grammar.js",
-                    "LICENSE",
+                    "Makefile",
+                    "binding.gyp",
+                    "bindings/go",
+                    "bindings/node",
+                    "bindings/python",
+                    "bindings/rust",
+                    "common/common.mak",
+                    "common/define-grammar.js",
                     "package.json",
-                    "README.md",
+                    "package-lock.json",
+                    "pyproject.toml",
+                    "setup.py",
+                    "test",
+                    ".editorconfig",
+                    ".github",
+                    ".gitignore",
+                    ".gitattributes",
                 ],
                 sources: [
-                    "src/parser.c",
-                    "src/scanner.c",
+                    "cfml/src/parser.c",
+                    "cfml/src/scanner.c",
+                    "cfhtml/src/parser.c",
+                    "cfhtml/src/scanner.c",
                 ],
                 resources: [
                     .copy("queries")
                 ],
                 publicHeadersPath: "bindings/swift",
-                cSettings: [.headerSearchPath("src")])
+                cSettings: [.headerSearchPath("cfml/src")])
     ]
 )

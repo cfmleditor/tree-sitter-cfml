@@ -3,14 +3,22 @@
 typedef struct TSLanguage TSLanguage;
 
 TSLanguage *tree_sitter_cfml(void);
+TSLanguage *tree_sitter_cfhtml(void);
 
-static PyObject* _binding_language(PyObject *self, PyObject *args) {
+static PyObject* _binding_language_cfml(PyObject *self, PyObject *args) {
     return PyLong_FromVoidPtr(tree_sitter_cfml());
 }
 
+static PyObject* _binding_language_cfhtml(PyObject *self, PyObject *args) {
+    return PyLong_FromVoidPtr(tree_sitter_cfhtml());
+}
+
+
 static PyMethodDef methods[] = {
-    {"language", _binding_language, METH_NOARGS,
-     "Get the tree-sitter language for this grammar."},
+    {"language_cfml", _binding_language_cfml, METH_NOARGS,
+     "Get the tree-sitter language for Cfml."},
+    {"language_cfhtml", _binding_language_cfhtml, METH_NOARGS,
+     "Get the tree-sitter language for Cfhtml."},
     {NULL, NULL, 0, NULL}
 };
 

@@ -35,17 +35,22 @@ setup(
             name="_binding",
             sources=[
                 "bindings/python/tree_sitter_cfml/binding.c",
-                "src/parser.c",
+                "cfml/src/parser.c",
+                "cfml/src/scanner.c",
+                "cfhtml/src/parser.c",
+                "cfhtml/src/scanner.c",
                 # NOTE: if your language uses an external scanner, add it here.
             ],
-            extra_compile_args=(
-                ["-std=c11"] if system() != 'Windows' else []
-            ),
+            extra_compile_args=[
+                "-std=c11",
+                "-Wno-unused-parameter",
+                "-Wno-unused-value",
+            ] if system() != "Windows" else [],
             define_macros=[
                 ("Py_LIMITED_API", "0x03080000"),
                 ("PY_SSIZE_T_CLEAN", None)
             ],
-            include_dirs=["src"],
+            include_dirs=["cfml/src"],
             py_limited_api=True,
         )
     ],
