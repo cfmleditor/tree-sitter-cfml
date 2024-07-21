@@ -136,7 +136,7 @@ module.exports = function defineGrammar(dialect) {
       [$._node, $.tag_attributes],
       [$._node, $.tag_attributes, $.attribute_name],
 
-      // [$.quoted_attribute_value, $.string],
+      // [$.quoted_cf_attribute_value, $.cf_attribute_value],
       // [$.quoted_attribute_value],
       // [$._quoted_style, $.string],
 
@@ -319,10 +319,7 @@ module.exports = function defineGrammar(dialect) {
       // @ts-ignore
       hash_empty: $ => seq('#', '#'),
 
-      // hash_single: $ => seq(
-      //   '#',
-      //   optional($.hash_value),
-      // ),
+      // hash_single: $ => '#',
 
       // @ts-ignore
       hash_value: $ => /[a-zA-Z0-9_-]+/,
@@ -700,10 +697,15 @@ module.exports = function defineGrammar(dialect) {
         optional(seq(
           '=',
           choice(
-            $.expression,
-            $._hash,
+            $.quoted_cf_attribute_value,
+            $.cf_attribute_value,
           ),
         )),
+      ),
+
+      cf_attribute_value: $ => choice(
+        $._hash,
+        alias(/[^'"\s\n\r\t#:;]+/, $.attribute_value),
       ),
 
       cf_attribute_name: _ => /[^<>"\'/=\s\n\r\t#]+/,
@@ -738,7 +740,7 @@ module.exports = function defineGrammar(dialect) {
 
       entity: _ => /&(([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
 
-      cf_attribute_value: $ => choice(
+      quoted_cf_attribute_value: $ => choice(
         seq('\'',
           repeat(
             choice(
@@ -755,7 +757,6 @@ module.exports = function defineGrammar(dialect) {
             ),
           ),
           '"'),
-
       ),
 
       // _hash: $ => choice(
@@ -1804,6 +1805,7 @@ module.exports = function defineGrammar(dialect) {
       _hash: $ => choice(
         $.hash_expression,
         $.hash_empty,
+        // $.hash_single,
       ),
 
 

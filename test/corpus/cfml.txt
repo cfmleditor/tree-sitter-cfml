@@ -93,8 +93,8 @@ cffunction
       (cf_function
         (cf_attribute
           (cf_attribute_name)
-          (string
-            (string_fragment)))
+          (quoted_cf_attribute_value
+            (attribute_value)))
         (hash_expression
           (binary_expression
             (identifier)
@@ -204,33 +204,33 @@ get results
       (cf_function
         (cf_attribute
           (cf_attribute_name)
-          (string
-            (string_fragment)))
+          (quoted_cf_attribute_value
+            (attribute_value)))
         (cf_attribute
           (cf_attribute_name)
-          (string
-            (string_fragment)))
+          (quoted_cf_attribute_value
+            (attribute_value)))
         (cf_attribute
           (cf_attribute_name)
-          (string
-            (string_fragment)))
+          (quoted_cf_attribute_value
+            (attribute_value)))
         (cf_attribute
           (cf_attribute_name)
-          (string
-            (string_fragment)))
+          (quoted_cf_attribute_value
+            (attribute_value)))
         (cf_selfclose_tag
           (cf_attribute
             (cf_attribute_name)
-            (string
-              (string_fragment)))
+            (quoted_cf_attribute_value
+              (attribute_value)))
           (cf_attribute
             (cf_attribute_name)
-            (string
-              (string_fragment)))
+            (quoted_cf_attribute_value
+              (attribute_value)))
           (cf_attribute
             (cf_attribute_name)
-            (string
-              (string_fragment)))
+            (quoted_cf_attribute_value
+              (attribute_value)))
           (cf_selfclose_tag_end))
         (cf_set_tag
           (cf_var)
@@ -607,8 +607,8 @@ testing
       (cf_query
         (cf_attribute
           (cf_attribute_name)
-          (string
-            (string_fragment))))
+          (quoted_cf_attribute_value
+            (attribute_value))))
       (cf_comment)
       (script_element
         (start_tag
@@ -677,11 +677,11 @@ testing
       (cf_loop
         (cf_attribute
           (cf_attribute_name)
-          (string
-            (string_fragment)))
+          (quoted_cf_attribute_value
+            (attribute_value)))
         (cf_attribute
           (cf_attribute_name)
-          (string
+          (quoted_cf_attribute_value
             (hash_expression
               (call_expression
                 (identifier)
@@ -693,8 +693,8 @@ testing
                     (property_identifier)))))))
         (cf_attribute
           (cf_attribute_name)
-          (string
-            (string_fragment)))
+          (quoted_cf_attribute_value
+            (attribute_value)))
         (cf_set_tag
           (assignment_expression
             (identifier)
@@ -861,7 +861,7 @@ testing3
       (cf_selfclose_tag
         (cf_attribute
           (cf_attribute_name)
-          (string
+          (quoted_cf_attribute_value
             (hash_empty)))
         (cf_selfclose_tag_end))
       (cf_selfclose_tag
@@ -1069,17 +1069,17 @@ testing4
         (cf_loop
           (cf_attribute
             (cf_attribute_name)
-            (string
-              (string_fragment)))
+            (quoted_cf_attribute_value
+              (attribute_value)))
           (cf_attribute
             (cf_attribute_name)
-            (string
+            (quoted_cf_attribute_value
               (hash_expression
                 (identifier))))
           (cf_attribute
             (cf_attribute_name)
-            (string
-              (string_fragment)))
+            (quoted_cf_attribute_value
+              (attribute_value)))
           (element
             (self_closing_tag
               (tag_name)))
@@ -1240,19 +1240,20 @@ testing5
       (cf_loop
         (cf_attribute
           (cf_attribute_name)
-          (string
-            (string_fragment)))
+          (quoted_cf_attribute_value
+            (attribute_value)))
         (cf_attribute
           (cf_attribute_name)
-          (hash_expression
-            (call_expression
-              (identifier)
-              (arguments
-                (identifier)))))
+          (cf_attribute_value
+            (hash_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (identifier))))))
         (cf_attribute
           (cf_attribute_name)
-          (string
-            (string_fragment))))
+          (quoted_cf_attribute_value
+            (attribute_value))))
       (cf_set_tag
         (call_expression
           (member_expression

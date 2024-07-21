@@ -975,7 +975,26 @@
           "named": true
         },
         {
-          "type": "expression",
+          "type": "cf_attribute_value",
+          "named": true
+        },
+        {
+          "type": "quoted_cf_attribute_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_attribute_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_value",
           "named": true
         },
         {
@@ -6193,6 +6212,29 @@
         },
         {
           "type": "cf_zip_tag",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "quoted_cf_attribute_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "attribute_value",
           "named": true
         },
         {
