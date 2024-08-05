@@ -745,7 +745,7 @@ module.exports = function defineGrammar(dialect) {
           repeat(
             choice(
               $._hash,
-              alias(/[^'\s\n\r\t#:;]+/, $.attribute_value),
+              alias(/[^'\s\n\r\t#]+/, $.attribute_value),
             ),
           ),
           '\''),
@@ -753,7 +753,8 @@ module.exports = function defineGrammar(dialect) {
           repeat(
             choice(
               $._hash,
-              alias(/[^"\s\n\r\t#:;]+/, $.attribute_value),
+              '""',
+              alias(/[^"\s\n\r\t#]+/, $.attribute_value),
             ),
           ),
           '"'),
@@ -785,6 +786,7 @@ module.exports = function defineGrammar(dialect) {
             choice(
               $._cf_tag,
               $._hash,
+              '""',
               alias(/[^"\s\n\r\t#]+/, $.attribute_value),
             ),
           ),
@@ -1642,7 +1644,7 @@ module.exports = function defineGrammar(dialect) {
           seq(decimal_integer_literal, '.', optional(decimal_digits), optional(exponent_part)),
           seq('.', decimal_digits, optional(exponent_part)),
           seq(decimal_integer_literal, exponent_part),
-          seq(decimal_digits),
+          decimal_digits,
         );
 
         return token(choice(

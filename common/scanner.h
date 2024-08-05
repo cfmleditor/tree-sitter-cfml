@@ -16,7 +16,7 @@ enum TokenType {
     SELF_CLOSING_TAG_DELIMITER,
     IMPLICIT_END_TAG,
     RAW_TEXT,
-    COMMENT,
+    CFML_COMMENT,
     CFQUERY_CONTENT,
     CF_OPEN_TAG,
     CF_CLOSE_TAG,
@@ -29,6 +29,12 @@ enum TokenType {
 typedef struct {
     Array(Tag) tags;
 } Scanner;
+
+typedef enum {
+    REJECT,     // Semicolon is illegal, ie a syntax error occurred
+    NO_NEWLINE, // Unclear if semicolon will be legal, continue
+    ACCEPT,     // Semicolon is legal, assuming a comment was encountered
+} WhitespaceResult;
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -147,7 +153,7 @@ static bool scan_comment(TSLexer *lexer) {
             case '>':
                 if (dashes >= 2) {
                     --nesting;
-                    lexer->result_symbol = COMMENT;
+                    lexer->result_symbol = CFML_COMMENT;
                     advance(lexer);
                     lexer->mark_end(lexer);
                     if ( nesting == 0 ) {
@@ -173,7 +179,7 @@ static bool scan_comment(TSLexer *lexer) {
     return false;
 }
 
-static bool scan_whitespace_and_comments(TSLexer *lexer, bool *scanned_comment, bool consume) {
+static WhitespaceResult scan_whitespace_and_comments(TSLexer *lexer, bool *scanned_comment, bool consume) {
     bool saw_block_newline = false;
     for (;;) {
         while (iswspace(lexer->lookahead)) {
@@ -185,8 +191,7 @@ static bool scan_whitespace_and_comments(TSLexer *lexer, bool *scanned_comment, 
 
             if (lexer->lookahead == '/') {
                 skip(lexer);
-                while (lexer->lookahead != 0 && lexer->lookahead != '\n' && lexer->lookahead != 0x2028 &&
-                       lexer->lookahead != 0x2029) {
+                while (lexer->lookahead != 0 && lexer->lookahead != '\n' && lexer->lookahead != 0x2028 && lexer->lookahead != 0x2029) {
                     skip(lexer);
                 }
                 *scanned_comment = true;
@@ -200,21 +205,23 @@ static bool scan_whitespace_and_comments(TSLexer *lexer, bool *scanned_comment, 
                             *scanned_comment = true;
 
                             if (lexer->lookahead != '/' && !consume) {
-                                return saw_block_newline ? true : false;
+                                return saw_block_newline ? ACCEPT : NO_NEWLINE;
                             }
 
                             break;
                         }
-                    } else {
+                    } else if (lexer->lookahead == '\n' || lexer->lookahead == 0x2028 || lexer->lookahead == 0x2029) {
                         saw_block_newline = true;
+                        skip(lexer);
+                    } else {
                         skip(lexer);
                     }
                 }
             } else {
-                return false;
+                return REJECT;
             }
         } else {
-            return true;
+            return ACCEPT;
         }
     }
 }
@@ -473,7 +480,7 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
         }
 
         if (lexer->lookahead == '/') {
-            bool result = scan_whitespace_and_comments(lexer, scanned_comment, false);
+            WhitespaceResult result = scan_whitespace_and_comments(lexer, scanned_comment, false);
             if (result == false) {
                 return false;
             }
@@ -503,11 +510,12 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
 
     skip(lexer);
 
-    if (scan_whitespace_and_comments(lexer, scanned_comment, true) == false) {
+    if (scan_whitespace_and_comments(lexer, scanned_comment, true) == REJECT) {
         return false;
     }
 
     switch (lexer->lookahead) {
+        case '`':
         case ',':
         case ':':
         case ';':
@@ -537,9 +545,6 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
         case '-':
             skip(lexer);
             return lexer->lookahead == '-';
-        case '_':
-            skip(lexer);
-            return lexer->lookahead == '_';
 
         // Don't insert a semicolon before `!=`, but do insert one before a unary `!`.
         case '!':
@@ -728,7 +733,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             lexer->mark_end(lexer);
             advance(lexer);
 
-            if (lexer->lookahead == '!') {
+            if (valid_symbols[CFML_COMMENT] && lexer->lookahead == '!') {
                 advance(lexer);
                 return scan_comment(lexer);
             }
