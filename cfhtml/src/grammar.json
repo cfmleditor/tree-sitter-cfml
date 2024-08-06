@@ -3182,7 +3182,7 @@
           "type": "ALIAS",
           "content": {
             "type": "PATTERN",
-            "value": "[^'\"\\s\\n\\r\\t#:;]+"
+            "value": "[^'\"\\s\\n\\r\\t#:;<>]+"
           },
           "named": true,
           "value": "attribute_value"
@@ -3191,7 +3191,43 @@
     },
     "cf_attribute_name": {
       "type": "PATTERN",
-      "value": "[^<>\"\\'/=\\s\\n\\r\\t#]+"
+      "value": "[^<>\"\\'/=\\s\\n\\r\\t#0-9]+"
+    },
+    "_cf_super_tags": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cf_output_tag"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_component_tag"
+          },
+          "named": true,
+          "value": "cf_component"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_function_tag"
+          },
+          "named": true,
+          "value": "cf_function"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cf_query_tag"
+          },
+          "named": true,
+          "value": "cf_query"
+        }
+      ]
     },
     "_cf_tag": {
       "type": "PREC_RIGHT",
@@ -3199,6 +3235,10 @@
       "content": {
         "type": "CHOICE",
         "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_super_tags"
+          },
           {
             "type": "SYMBOL",
             "name": "cf_if_tag"
@@ -3261,38 +3301,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "cf_output_tag"
-          },
-          {
-            "type": "SYMBOL",
             "name": "cf_zip_tag"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "cf_component_tag"
-            },
-            "named": true,
-            "value": "cf_component"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "cf_function_tag"
-            },
-            "named": true,
-            "value": "cf_function"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "cf_query_tag"
-            },
-            "named": true,
-            "value": "cf_query"
           },
           {
             "type": "ALIAS",
@@ -10358,6 +10367,7 @@
     "declaration",
     "expression",
     "primary_expression",
-    "pattern"
+    "pattern",
+    "_cf_super_tags"
   ]
 }

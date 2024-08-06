@@ -50,6 +50,7 @@ module.exports = function defineGrammar(dialect) {
       $.expression,
       $.primary_expression,
       $.pattern,
+      $._cf_super_tags,
       // $._cf_tag,
     ],
 
@@ -716,13 +717,21 @@ module.exports = function defineGrammar(dialect) {
 
       cf_attribute_value: $ => choice(
         $._hash,
-        alias(/[^'"\s\n\r\t#:;]+/, $.attribute_value),
+        alias(/[^'"\s\n\r\t#:;<>]+/, $.attribute_value),
       ),
 
-      cf_attribute_name: _ => /[^<>"\'/=\s\n\r\t#]+/,
+      cf_attribute_name: _ => /[^<>"\'/=\s\n\r\t#0-9]+/,
+
+      _cf_super_tags: $ => choice(
+        $.cf_output_tag,
+        alias($.cf_component_tag, $.cf_component),
+        alias($.cf_function_tag, $.cf_function),
+        alias($.cf_query_tag, $.cf_query),
+      ),
 
       _cf_tag: $ => prec.right(3, choice(
         // $.cf_if_statement_tag,
+        $._cf_super_tags,
         $.cf_if_tag,
         // $.cf_elseif_tag,
         // $.cf_else_tag,
@@ -740,11 +749,7 @@ module.exports = function defineGrammar(dialect) {
         $.cf_set_tag,
         $.cf_selfclose_tag,
         $.cf_savecontent_tag,
-        $.cf_output_tag,
         $.cf_zip_tag,
-        alias($.cf_component_tag, $.cf_component),
-        alias($.cf_function_tag, $.cf_function),
-        alias($.cf_query_tag, $.cf_query),
         alias($.cf_loop_tag, $.cf_loop),
         alias($.cf_return_tag, $.cf_return),
       )),

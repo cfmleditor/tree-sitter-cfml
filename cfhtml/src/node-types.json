@@ -1,5 +1,27 @@
 [
   {
+    "type": "_cf_super_tags",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "cf_component",
+        "named": true
+      },
+      {
+        "type": "cf_function",
+        "named": true
+      },
+      {
+        "type": "cf_output_tag",
+        "named": true
+      },
+      {
+        "type": "cf_query",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "declaration",
     "named": true,
     "subtypes": [
@@ -501,15 +523,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_component",
+          "type": "_cf_super_tags",
           "named": true
         },
         {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -534,14 +552,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -1017,19 +1027,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -1054,14 +1060,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -1168,19 +1166,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -1205,14 +1199,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -1319,19 +1305,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -1356,14 +1338,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -1470,19 +1444,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -1507,14 +1477,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -1641,19 +1603,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -1678,14 +1636,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -1792,19 +1742,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -1829,14 +1775,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -1943,19 +1881,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -1980,14 +1914,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -2094,7 +2020,7 @@
       "required": true,
       "types": [
         {
-          "type": "cf_component",
+          "type": "_cf_super_tags",
           "named": true
         },
         {
@@ -2107,10 +2033,6 @@
         },
         {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -2135,14 +2057,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -2253,19 +2167,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -2290,14 +2200,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -2404,19 +2306,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -2441,14 +2339,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -2555,19 +2445,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -2592,14 +2478,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -2706,19 +2584,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -2743,14 +2617,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -2857,19 +2723,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -2894,14 +2756,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -3186,19 +3040,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -3223,14 +3073,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -3337,6 +3179,10 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
@@ -3345,19 +3191,11 @@
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_defaultcase_tag",
           "named": true
         },
         {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -3382,14 +3220,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -3496,19 +3326,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -3533,14 +3359,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -3647,19 +3465,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -3684,14 +3498,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -3798,6 +3604,10 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
@@ -3806,15 +3616,7 @@
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -3839,14 +3641,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -3953,19 +3747,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -3990,14 +3780,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -4104,19 +3886,15 @@
       "required": true,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -4141,14 +3919,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -4364,15 +4134,11 @@
       "required": true,
       "types": [
         {
-          "type": "cf_component",
+          "type": "_cf_super_tags",
           "named": true
         },
         {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -4397,14 +4163,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -5598,15 +5356,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_component",
+          "type": "_cf_super_tags",
           "named": true
         },
         {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -5631,14 +5385,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -5749,19 +5495,15 @@
       "required": false,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "attribute_value",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -5786,14 +5528,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -6123,15 +5857,11 @@
       "required": true,
       "types": [
         {
-          "type": "cf_component",
+          "type": "_cf_super_tags",
           "named": true
         },
         {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -6156,14 +5886,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
@@ -6396,19 +6118,15 @@
       "required": true,
       "types": [
         {
+          "type": "_cf_super_tags",
+          "named": true
+        },
+        {
           "type": "attribute",
           "named": true
         },
         {
-          "type": "cf_component",
-          "named": true
-        },
-        {
           "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_function",
           "named": true
         },
         {
@@ -6433,14 +6151,6 @@
         },
         {
           "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query",
           "named": true
         },
         {
