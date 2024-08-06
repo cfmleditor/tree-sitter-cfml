@@ -1293,3 +1293,67 @@ testing6
                 (quoted_attribute_value))))
           (end_tag
             (tag_name)))))
+
+===================================
+testing7
+===================================
+		<cfif true>
+			<cfif true>
+			</cfif>
+      test
+      <cfif true>
+
+      </cfif>
+    <cfelseif true>
+      <cfif true>
+			</cfif>
+      <cfif true>
+      </cfif>
+    <cfelseif true>
+      <cfif true>
+			</cfif>
+      <cfif true>
+      </cfif>
+		</cfif>
+
+    <cfif ARGUMENTS.context.isTarget(id="add-line")
+			AND ARGUMENTS.context.getValue("total_amt","0") GT 0.00>
+				<cfif StructKeyExists(ARGUMENTS.context.getStatus(type="invalid"),"gldistlines")>
+					
+				<cfelseif distAmtTotal EQ ARGUMENTS.context.getValue("total_amt","0")>
+					
+				<cfelseif distAmtTotal GT ARGUMENTS.context.getValue("total_amt","0")>
+					
+				</cfif>
+			</cfif>
+
+      <cfzip action="zip"
+					file="#GetTempDirectory()##objName#_Draft.zip"
+					overwrite="yes">
+
+					<cfloop index="i" from="1" to="#arrayLen(fileInfo)#">
+
+						<cfloop from="1" to="#ArrayLen(files.data)#" index="j">
+							
+							<!--- @CFLintIgnore AVOID_USING_CFFILE_TAG --->
+							<cffile action="readBinary"	file="#files.data[j].physicalpath##files.data[j].filename#" variable="filebin" />
+
+							<cfif CompareNoCasE(files.data[j].file_type,"SD") EQ 0>
+								<cfzipparam
+									content="#filebin#"
+									entrypath="#fileInfo[i].student_uid# - #fileInfo[i].stud_name# - Student_Draft_#files.data[j].attachment_num#.#ListLast(files.data[j].filename,'.')#"
+								/>
+							<cfelseif CompareNoCasE(files.data[j].file_type,"RD") EQ 0>
+								<cfzipparam
+									content="#filebin#"
+									entrypath="#fileInfo[i].student_uid# - #fileInfo[i].stud_name# - Resubmitted_Draft_#files.data[j].attachment_num#.#ListLast(files.data[j].filename,'.')#"
+								/>
+							</cfif>
+
+						</cfloop>
+
+					</cfloop>
+
+				</cfzip>
+---
+(program)

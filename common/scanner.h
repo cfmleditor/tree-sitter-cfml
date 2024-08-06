@@ -119,7 +119,17 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length) {
 
 static String scan_tag_name(TSLexer *lexer) {
     String tag_name = array_new();
-    while (iswalnum(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '_' || lexer->lookahead == ':') {
+    String empty_tag_name = array_new();
+
+    if ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) {
+        array_push(&tag_name, towupper(lexer->lookahead));
+        advance(lexer);
+        if ( lexer->lookahead == 'f' || lexer->lookahead == 'F' ) {
+            return empty_tag_name;
+        }
+    }
+
+    while (( iswalnum(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '_' || lexer->lookahead == ':' )) {
         array_push(&tag_name, towupper(lexer->lookahead));
         advance(lexer);
     }
@@ -738,7 +748,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                 return scan_comment(lexer);
             }
 
-            if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
+            if ( ( valid_symbols[CF_OUTPUT_TAG] || valid_symbols[CF_OPEN_TAG] ) && ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) ) {
                 if ( valid_symbols[CF_OUTPUT_TAG] ) {
                     advance(lexer);
                     return scan_open_cfoutput(scanner, lexer, &valid_symbols[CF_OPEN_TAG], &scanned_cfoutput);
@@ -748,7 +758,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                 }
             }
 
-            if ( lexer->lookahead == '/') {
+            if ( valid_symbols[CF_CLOSE_TAG] && lexer->lookahead == '/') {
                 advance(lexer);
                 if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
                     if ( valid_symbols[CF_CLOSE_TAG] ) {
