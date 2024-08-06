@@ -50,7 +50,7 @@ module.exports = function defineGrammar(dialect) {
       $.expression,
       $.primary_expression,
       $.pattern,
-      $._cf_tag,
+      // $._cf_tag,
     ],
 
     inline: $ => [
@@ -325,7 +325,7 @@ module.exports = function defineGrammar(dialect) {
       // @ts-ignore
       hash_value: $ => /[a-zA-Z0-9_-]+/,
 
-      cf_component_tag: $ => prec.right(2, seq(
+      cf_component_tag: $ => prec.right(1, seq(
         $._cf_open_tag,
         keyword('component'),
         repeat($.cf_attribute),
@@ -347,7 +347,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_silent_tag: $ => prec.right(2, seq(
+      cf_silent_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('silent'),
         repeat($.cf_attribute),
@@ -358,7 +358,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_lock_tag: $ => prec.right(2, seq(
+      cf_lock_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('lock'),
         repeat($.cf_attribute),
@@ -369,7 +369,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_thread_tag: $ => prec.right(2, seq(
+      cf_thread_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('thread'),
         repeat($.cf_attribute),
@@ -380,7 +380,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_execute_tag: $ => prec.right(2, seq(
+      cf_execute_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('execute'),
         repeat($.cf_attribute),
@@ -404,7 +404,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_xml_tag: $ => prec.right(2, seq(
+      cf_xml_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('xml'),
         repeat($.cf_attribute),
@@ -415,7 +415,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_mail_tag: $ => prec.right(2, seq(
+      cf_mail_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('mail'),
         repeat($.cf_attribute),
@@ -426,7 +426,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_mailpart_tag: $ => prec.right(2, seq(
+      cf_mailpart_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('mailpart'),
         repeat($.cf_attribute),
@@ -437,7 +437,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_selfclose_tag: $ => prec.right(2, seq(
+      cf_selfclose_tag: $ => prec.right(4, seq(
         $._cf_open_tag,
         field('cf_tag_name', choice(
           keyword('setting'),
@@ -452,7 +452,6 @@ module.exports = function defineGrammar(dialect) {
           keyword('continue'),
           keyword('httpparam'),
           keyword('wddx'),
-          keyword('zip'),
           keyword('break'),
           keyword('zipparam'),
           /[a-zA-Z0-9_:]+/,
@@ -461,7 +460,7 @@ module.exports = function defineGrammar(dialect) {
         $.cf_selfclose_tag_end,
       )),
 
-      cf_query_tag: $ => prec.right(2, seq(
+      cf_query_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('query'),
         repeat($.cf_attribute),
@@ -483,7 +482,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_try_tag: $ => prec.right(2, seq(
+      cf_try_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('try'),
         repeat($.cf_attribute),
@@ -495,7 +494,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_switch_tag: $ => prec.right(2, seq(
+      cf_switch_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('switch'),
         repeat($.cf_attribute),
@@ -508,7 +507,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_case_tag: $ => prec.right(2, seq(
+      cf_case_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('case'),
         repeat($.cf_attribute),
@@ -519,7 +518,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_defaultcase_tag: $ => prec.right(2, seq(
+      cf_defaultcase_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('defaultcase'),
         repeat($.cf_attribute),
@@ -530,7 +529,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_catch_tag: $ => prec.right(2, seq(
+      cf_catch_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('catch'),
         repeat($.cf_attribute),
@@ -552,7 +551,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_zip_tag: $ => prec.right(2, seq(
+      cf_zip_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('zip'),
         repeat($.cf_attribute),
@@ -587,7 +586,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_return_tag: $ => prec.right(2, seq(
+      cf_return_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('return'),
         optional($.expression),
@@ -600,8 +599,7 @@ module.exports = function defineGrammar(dialect) {
         $._cf_tag_expression,
         alias($._close_tag_delim, '>'),
         repeat($._node),
-        optional(repeat($.cf_elseif_tag)),
-        optional($.cf_else_tag),
+        optional($._cf_if_alt),
         $._cf_close_tag,
         keyword('if'),
         alias($._close_tag_delim, '>'),
@@ -611,7 +609,7 @@ module.exports = function defineGrammar(dialect) {
         $.expression,
       ),
 
-      cf_set_tag: $ => prec.right(2, seq(
+      cf_set_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('set'),
         optional(alias('var', $.cf_var)),
@@ -619,19 +617,33 @@ module.exports = function defineGrammar(dialect) {
         $.cf_selfclose_tag_end,
       )),
 
-      cf_elseif_tag: $ => prec.right(seq(
-        $._cf_open_tag,
+      // cf_elseif_tag: $ => prec.right(2, seq(
+      //   $._cf_open_tag,
+      //   keyword('elseif'),
+      //   $._cf_tag_expression,
+      //   alias($._close_tag_delim, '>'),
+      //   repeat($._node),
+      // )),
+
+      cf_elseif_tag: $ => prec.right(3, seq(
         keyword('elseif'),
         $._cf_tag_expression,
         alias($._close_tag_delim, '>'),
-        repeat($._node),
       )),
 
-      cf_else_tag: $ => prec.right(2, seq(
-        $._cf_open_tag,
+      cf_else_tag: $ => prec.right(3, seq(
         keyword('else'),
         alias($._close_tag_delim, '>'),
+      )),
+
+      _cf_if_alt: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        choice(
+          $.cf_elseif_tag,
+          $.cf_else_tag,
+        ),
         optional(repeat($._node)),
+        optional($._cf_if_alt),
       )),
 
       style_attribute: $ => seq(
@@ -712,7 +724,7 @@ module.exports = function defineGrammar(dialect) {
       _cf_tag: $ => prec.right(3, choice(
         // $.cf_if_statement_tag,
         $.cf_if_tag,
-        $.cf_elseif_tag,
+        // $.cf_elseif_tag,
         // $.cf_else_tag,
         $.cf_thread_tag,
         $.cf_execute_tag,
@@ -1466,7 +1478,7 @@ module.exports = function defineGrammar(dialect) {
           ['%', 'binary_times'],
           [/[mM][oO][dD]/, 'binary_times'],
           ['**', 'binary_exp', 'right'],
-          // ['<', 'binary_relation'],
+          ['<', 'binary_relation'],
           [/[lL][tT]/, 'binary_relation'],
           ['<=', 'binary_relation'],
           [/[lL][tT][eE]/, 'binary_relation'],
@@ -1480,7 +1492,7 @@ module.exports = function defineGrammar(dialect) {
           [/[cC][oO][nN][tT][aA][iI][nN][sS]/, 'binary_equality'],
           ['>=', 'binary_relation'],
           [/[gG][tT][eE]/, 'binary_relation'],
-          // ['>', 'binary_relation'],
+          ['>', 'binary_relation'],
           [/[gG][tT]/, 'binary_relation'],
           ['??', 'ternary'],
           ['instanceof', 'binary_relation'],

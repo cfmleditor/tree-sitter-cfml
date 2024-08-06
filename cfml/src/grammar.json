@@ -629,7 +629,7 @@
     },
     "cf_component_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 1,
       "content": {
         "type": "SEQ",
         "members": [
@@ -791,7 +791,7 @@
     },
     "cf_silent_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -872,7 +872,7 @@
     },
     "cf_lock_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -953,7 +953,7 @@
     },
     "cf_thread_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -1034,7 +1034,7 @@
     },
     "cf_execute_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -1196,7 +1196,7 @@
     },
     "cf_xml_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -1277,7 +1277,7 @@
     },
     "cf_mail_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -1358,7 +1358,7 @@
     },
     "cf_mailpart_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -1439,7 +1439,7 @@
     },
     "cf_selfclose_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 4,
       "content": {
         "type": "SEQ",
         "members": [
@@ -1654,22 +1654,6 @@
                       "value": 1,
                       "content": {
                         "type": "PATTERN",
-                        "value": "[zZ][iI][pP]"
-                      }
-                    }
-                  },
-                  "named": false,
-                  "value": "zip"
-                },
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "TOKEN",
-                    "content": {
-                      "type": "PREC",
-                      "value": 1,
-                      "content": {
-                        "type": "PATTERN",
                         "value": "[bB][rR][eE][aA][kK]"
                       }
                     }
@@ -1724,7 +1708,7 @@
     },
     "cf_query_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -1883,7 +1867,7 @@
     },
     "cf_try_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -1971,7 +1955,7 @@
     },
     "cf_switch_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -2071,7 +2055,7 @@
     },
     "cf_case_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -2152,7 +2136,7 @@
     },
     "cf_defaultcase_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -2233,7 +2217,7 @@
     },
     "cf_catch_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -2395,7 +2379,7 @@
     },
     "cf_zip_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -2625,7 +2609,7 @@
     },
     "cf_return_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -2718,23 +2702,8 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "REPEAT",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "cf_elseif_tag"
-                }
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
                 "type": "SYMBOL",
-                "name": "cf_else_tag"
+                "name": "_cf_if_alt"
               },
               {
                 "type": "BLANK"
@@ -2784,7 +2753,7 @@
     },
     "cf_set_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
@@ -2838,14 +2807,10 @@
     },
     "cf_elseif_tag": {
       "type": "PREC_RIGHT",
-      "value": 0,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_cf_open_tag"
-          },
           {
             "type": "ALIAS",
             "content": {
@@ -2874,27 +2839,16 @@
             },
             "named": false,
             "value": ">"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_node"
-            }
           }
         ]
       }
     },
     "cf_else_tag": {
       "type": "PREC_RIGHT",
-      "value": 2,
+      "value": 3,
       "content": {
         "type": "SEQ",
         "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_cf_open_tag"
-          },
           {
             "type": "ALIAS",
             "content": {
@@ -2919,6 +2873,32 @@
             },
             "named": false,
             "value": ">"
+          }
+        ]
+      }
+    },
+    "_cf_if_alt": {
+      "type": "PREC_RIGHT",
+      "value": 3,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "cf_elseif_tag"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "cf_else_tag"
+              }
+            ]
           },
           {
             "type": "CHOICE",
@@ -2929,6 +2909,18 @@
                   "type": "SYMBOL",
                   "name": "_node"
                 }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_cf_if_alt"
               },
               {
                 "type": "BLANK"
@@ -3210,10 +3202,6 @@
           {
             "type": "SYMBOL",
             "name": "cf_if_tag"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "cf_elseif_tag"
           },
           {
             "type": "SYMBOL",
@@ -7613,6 +7601,39 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
+                  "type": "STRING",
+                  "value": "<"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": "binary_relation",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
                   "type": "PATTERN",
                   "value": "[lL][tT]"
                 }
@@ -8011,6 +8032,39 @@
                 "content": {
                   "type": "PATTERN",
                   "value": "[gG][tT][eE]"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": "binary_relation",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "STRING",
+                  "value": ">"
                 }
               },
               {
@@ -10304,7 +10358,6 @@
     "declaration",
     "expression",
     "primary_expression",
-    "pattern",
-    "_cf_tag"
+    "pattern"
   ]
 }

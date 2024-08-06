@@ -793,7 +793,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                 if ( !scan_script_comment(lexer) ) {
                     return false;
                 }
-            } else if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
+            } else if ( valid_symbols[CF_CLOSE_TAG] && ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) ) {
                 if ( valid_symbols[CF_CLOSE_TAG] ) {
                     advance(lexer);
                     return scan_close_cftag(scanner, lexer);

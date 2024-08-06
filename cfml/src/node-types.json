@@ -1,103 +1,5 @@
 [
   {
-    "type": "_cf_tag",
-    "named": true,
-    "subtypes": [
-      {
-        "type": "cf_component",
-        "named": true
-      },
-      {
-        "type": "cf_elseif_tag",
-        "named": true
-      },
-      {
-        "type": "cf_execute_tag",
-        "named": true
-      },
-      {
-        "type": "cf_function",
-        "named": true
-      },
-      {
-        "type": "cf_http_tag",
-        "named": true
-      },
-      {
-        "type": "cf_if_tag",
-        "named": true
-      },
-      {
-        "type": "cf_lock_tag",
-        "named": true
-      },
-      {
-        "type": "cf_loop",
-        "named": true
-      },
-      {
-        "type": "cf_mail_tag",
-        "named": true
-      },
-      {
-        "type": "cf_mailpart_tag",
-        "named": true
-      },
-      {
-        "type": "cf_output_tag",
-        "named": true
-      },
-      {
-        "type": "cf_query",
-        "named": true
-      },
-      {
-        "type": "cf_return",
-        "named": true
-      },
-      {
-        "type": "cf_savecontent_tag",
-        "named": true
-      },
-      {
-        "type": "cf_selfclose_tag",
-        "named": true
-      },
-      {
-        "type": "cf_set_tag",
-        "named": true
-      },
-      {
-        "type": "cf_silent_tag",
-        "named": true
-      },
-      {
-        "type": "cf_switch_tag",
-        "named": true
-      },
-      {
-        "type": "cf_thread_tag",
-        "named": true
-      },
-      {
-        "type": "cf_transaction_tag",
-        "named": true
-      },
-      {
-        "type": "cf_try_tag",
-        "named": true
-      },
-      {
-        "type": "cf_xml_tag",
-        "named": true
-      },
-      {
-        "type": "cf_zip_tag",
-        "named": true
-      }
-    ]
-  },
-  {
     "type": "declaration",
     "named": true,
     "subtypes": [
@@ -599,7 +501,91 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -795,6 +781,10 @@
             "named": false
           },
           {
+            "type": "<",
+            "named": false
+          },
+          {
             "type": "<<",
             "named": false
           },
@@ -808,6 +798,10 @@
           },
           {
             "type": "===",
+            "named": false
+          },
+          {
+            "type": ">",
             "named": false
           },
           {
@@ -1023,15 +1017,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -1090,15 +1168,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -1157,15 +1319,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -1224,15 +1470,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -1285,128 +1615,18 @@
   {
     "type": "cf_else_tag",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
+    "fields": {}
   },
   {
     "type": "cf_elseif_tag",
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
           "type": "expression",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
           "named": true
         }
       ]
@@ -1421,15 +1641,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -1488,15 +1792,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -1555,15 +1943,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -1622,7 +2094,7 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "cf_component",
           "named": true
         },
         {
@@ -1630,7 +2102,95 @@
           "named": true
         },
         {
+          "type": "cf_elseif_tag",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -1693,15 +2253,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -1760,15 +2404,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -1827,15 +2555,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -1894,15 +2706,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -1961,15 +2857,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -2148,10 +3128,6 @@
             "named": false
           },
           {
-            "type": "zip",
-            "named": false
-          },
-          {
             "type": "zipparam",
             "named": false
           }
@@ -2210,15 +3186,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -2277,10 +3337,6 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
@@ -2289,11 +3345,99 @@
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
           "type": "cf_defaultcase_tag",
           "named": true
         },
         {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -2352,15 +3496,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -2419,15 +3647,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -2486,10 +3798,6 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
@@ -2498,7 +3806,95 @@
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -2557,15 +3953,99 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -2624,11 +4104,59 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_attribute",
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
           "named": true
         },
         {
@@ -2636,7 +4164,43 @@
           "named": true
         },
         {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
           "type": "cf_selfclose_tag_end",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -2800,11 +4364,95 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
           "named": true
         },
         {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -3950,11 +5598,95 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
           "named": true
         },
         {
           "type": "cf_script",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -4017,11 +5749,95 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "attribute_value",
           "named": true
         },
         {
-          "type": "attribute_value",
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -4307,7 +6123,91 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
@@ -4496,11 +6396,95 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "attribute",
           "named": true
         },
         {
-          "type": "attribute",
+          "type": "cf_component",
+          "named": true
+        },
+        {
+          "type": "cf_execute_tag",
+          "named": true
+        },
+        {
+          "type": "cf_function",
+          "named": true
+        },
+        {
+          "type": "cf_http_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_lock_tag",
+          "named": true
+        },
+        {
+          "type": "cf_loop",
+          "named": true
+        },
+        {
+          "type": "cf_mail_tag",
+          "named": true
+        },
+        {
+          "type": "cf_mailpart_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query",
+          "named": true
+        },
+        {
+          "type": "cf_return",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_silent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_switch_tag",
+          "named": true
+        },
+        {
+          "type": "cf_thread_tag",
+          "named": true
+        },
+        {
+          "type": "cf_transaction_tag",
+          "named": true
+        },
+        {
+          "type": "cf_try_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "cf_zip_tag",
           "named": true
         },
         {
