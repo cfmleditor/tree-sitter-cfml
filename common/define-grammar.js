@@ -600,7 +600,7 @@ module.exports = function defineGrammar(dialect) {
         $._cf_tag_expression,
         alias($._close_tag_delim, '>'),
         repeat($._node),
-        optional($._cf_if_alt),
+        optional($.cf_if_alt),
         $._cf_close_tag,
         keyword('if'),
         alias($._close_tag_delim, '>'),
@@ -637,14 +637,14 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      _cf_if_alt: $ => prec.right(3, seq(
+      cf_if_alt: $ => prec.right(3, seq(
         $._cf_open_tag,
         choice(
           $.cf_elseif_tag,
           $.cf_else_tag,
         ),
         optional(repeat($._node)),
-        optional($._cf_if_alt),
+        optional($.cf_if_alt),
       )),
 
       style_attribute: $ => seq(

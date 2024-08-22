@@ -24,8 +24,9 @@ cfif with else
           (identifier)
           (identifier))
         (text)
-        (cf_else_tag)
-        (text)))
+        (cf_if_alt
+          (cf_else_tag)
+          (text))))
 
 ===================================
 cfif with elseif
@@ -39,11 +40,12 @@ cfif with elseif
           (identifier)
           (identifier))
         (text)
-        (cf_elseif_tag
-          (binary_expression
-            (identifier)
-            (identifier)))
-        (text)))
+        (cf_if_alt
+          (cf_elseif_tag
+            (binary_expression
+              (identifier)
+              (identifier)))
+          (text))))
 
 ===================================
 cfif with elseif and else
@@ -57,13 +59,15 @@ cfif with elseif and else
           (identifier)
           (identifier))
         (text)
-        (cf_elseif_tag
-          (binary_expression
-            (identifier)
-            (identifier)))
-        (text)
-        (cf_else_tag)
-        (text)))
+        (cf_if_alt
+          (cf_elseif_tag
+            (binary_expression
+              (identifier)
+              (identifier)))
+          (text)
+          (cf_if_alt
+            (cf_else_tag)
+            (text)))))
 
 ===================================
 cffunction
@@ -889,8 +893,9 @@ testing3
                   (property_identifier))
                 (true))
               (text)
-              (cf_else_tag)
-              (text)))
+              (cf_if_alt
+                (cf_else_tag)
+                (text))))
           (tag_attributes
             (attribute
               (attribute_name)
@@ -1126,17 +1131,18 @@ testing4
                       (implicit_end_tag))
                     (end_tag
                       (tag_name)))
-                  (cf_else_tag)
-                  (cf_output_tag
-                    (element
-                      (start_tag
-                        (tag_name))
+                  (cf_if_alt
+                    (cf_else_tag)
+                    (cf_output_tag
                       (element
-                        (self_closing_tag
-                          (tag_name)))
-                      (implicit_end_tag))
-                    (end_tag
-                      (tag_name))))
+                        (start_tag
+                          (tag_name))
+                        (element
+                          (self_closing_tag
+                            (tag_name)))
+                        (implicit_end_tag))
+                      (end_tag
+                        (tag_name)))))
                 (implicit_end_tag))
               (end_tag
                 (tag_name))
@@ -1368,18 +1374,20 @@ testing7
         (text)
         (cf_if_tag
           (true))
-        (cf_elseif_tag
-          (true))
-        (cf_if_tag
-          (true))
-        (cf_if_tag
-          (true))
-        (cf_elseif_tag
-          (true))
-        (cf_if_tag
-          (true))
-        (cf_if_tag
-          (true)))
+        (cf_if_alt
+          (cf_elseif_tag
+            (true))
+          (cf_if_tag
+            (true))
+          (cf_if_tag
+            (true))
+          (cf_if_alt
+            (cf_elseif_tag
+              (true))
+            (cf_if_tag
+              (true))
+            (cf_if_tag
+              (true)))))
       (cf_if_tag
         (binary_expression
           (call_expression
@@ -1423,34 +1431,36 @@ testing7
                       (string_fragment)))))
               (string
                 (string_fragment))))
-          (cf_elseif_tag
-            (binary_expression
-              (identifier)
-              (call_expression
-                (member_expression
+          (cf_if_alt
+            (cf_elseif_tag
+              (binary_expression
+                (identifier)
+                (call_expression
                   (member_expression
-                    (identifier)
+                    (member_expression
+                      (identifier)
+                      (property_identifier))
                     (property_identifier))
-                  (property_identifier))
-                (arguments
-                  (string
-                    (string_fragment))
-                  (string
-                    (string_fragment))))))
-          (cf_elseif_tag
-            (binary_expression
-              (identifier)
-              (call_expression
-                (member_expression
-                  (member_expression
-                    (identifier)
-                    (property_identifier))
-                  (property_identifier))
-                (arguments
-                  (string
-                    (string_fragment))
-                  (string
-                    (string_fragment))))))))
+                  (arguments
+                    (string
+                      (string_fragment))
+                    (string
+                      (string_fragment))))))
+            (cf_if_alt
+              (cf_elseif_tag
+                (binary_expression
+                  (identifier)
+                  (call_expression
+                    (member_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier))
+                      (property_identifier))
+                    (arguments
+                      (string
+                        (string_fragment))
+                      (string
+                        (string_fragment))))))))))
       (cf_zip_tag
         (cf_attribute
           (cf_attribute_name)
@@ -1598,64 +1608,65 @@ testing7
                           (string
                             (string_fragment)))))))
                 (cf_selfclose_tag_end))
-              (cf_elseif_tag
-                (binary_expression
-                  (call_expression
-                    (identifier)
-                    (arguments
-                      (member_expression
-                        (subscript_expression
-                          (member_expression
+              (cf_if_alt
+                (cf_elseif_tag
+                  (binary_expression
+                    (call_expression
+                      (identifier)
+                      (arguments
+                        (member_expression
+                          (subscript_expression
+                            (member_expression
+                              (identifier)
+                              (property_identifier))
+                            (identifier))
+                          (property_identifier))
+                        (string
+                          (string_fragment))))
+                    (number)))
+                (cf_selfclose_tag
+                  (cf_attribute
+                    (cf_attribute_name)
+                    (quoted_cf_attribute_value
+                      (hash_expression
+                        (identifier))))
+                  (cf_attribute
+                    (cf_attribute_name)
+                    (quoted_cf_attribute_value
+                      (hash_expression
+                        (member_expression
+                          (subscript_expression
                             (identifier)
-                            (property_identifier))
-                          (identifier))
-                        (property_identifier))
-                      (string
-                        (string_fragment))))
-                  (number)))
-              (cf_selfclose_tag
-                (cf_attribute
-                  (cf_attribute_name)
-                  (quoted_cf_attribute_value
-                    (hash_expression
-                      (identifier))))
-                (cf_attribute
-                  (cf_attribute_name)
-                  (quoted_cf_attribute_value
-                    (hash_expression
-                      (member_expression
-                        (subscript_expression
-                          (identifier)
-                          (identifier))
-                        (property_identifier)))
-                    (attribute_value)
-                    (hash_expression
-                      (member_expression
-                        (subscript_expression
-                          (identifier)
-                          (identifier))
-                        (property_identifier)))
-                    (attribute_value)
-                    (hash_expression
-                      (member_expression
-                        (subscript_expression
-                          (member_expression
+                            (identifier))
+                          (property_identifier)))
+                      (attribute_value)
+                      (hash_expression
+                        (member_expression
+                          (subscript_expression
                             (identifier)
-                            (property_identifier))
-                          (identifier))
-                        (property_identifier)))
-                    (attribute_value)
-                    (hash_expression
-                      (call_expression
-                        (identifier)
-                        (arguments
-                          (member_expression
-                            (subscript_expression
-                              (member_expression
-                                (identifier)
-                                (property_identifier))
-                              (identifier))
-                            (property_identifier))
-                          (string
-                            (string_fragment)))))))
-                (cf_selfclose_tag_end)))))))
+                            (identifier))
+                          (property_identifier)))
+                      (attribute_value)
+                      (hash_expression
+                        (member_expression
+                          (subscript_expression
+                            (member_expression
+                              (identifier)
+                              (property_identifier))
+                            (identifier))
+                          (property_identifier)))
+                      (attribute_value)
+                      (hash_expression
+                        (call_expression
+                          (identifier)
+                          (arguments
+                            (member_expression
+                              (subscript_expression
+                                (member_expression
+                                  (identifier)
+                                  (property_identifier))
+                                (identifier))
+                              (property_identifier))
+                            (string
+                              (string_fragment)))))))
+                  (cf_selfclose_tag_end))))))))

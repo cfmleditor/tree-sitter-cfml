@@ -2703,7 +2703,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "_cf_if_alt"
+                "name": "cf_if_alt"
               },
               {
                 "type": "BLANK"
@@ -2877,7 +2877,7 @@
         ]
       }
     },
-    "_cf_if_alt": {
+    "cf_if_alt": {
       "type": "PREC_RIGHT",
       "value": 3,
       "content": {
@@ -2920,7 +2920,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "_cf_if_alt"
+                "name": "cf_if_alt"
               },
               {
                 "type": "BLANK"

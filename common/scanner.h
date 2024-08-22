@@ -23,6 +23,7 @@ enum TokenType {
     CFSAVECONTENT_CONTENT,
     CLOSE_TAG_DELIM,
     CF_OUTPUT_TAG,
+    CF_SCRIPT_TAG,
     // HTML_HASH,
 };
 
