@@ -359,57 +359,8 @@ cfscript
 </cfscript>
 ---
 (program
-      (cf_script
-        (expression_statement
-          (assignment_expression
-            (identifier)
-            (call_expression
-              (identifier)
-              (arguments
-                (string
-                  (string_fragment))
-                (string
-                  (string_fragment))))))
-        (expression_statement
-          (assignment_expression
-            (identifier)
-            (call_expression
-              (identifier)
-              (arguments
-                (assignment_expression
-                  (identifier)
-                  (string
-                    (string_fragment)))
-                (assignment_expression
-                  (identifier)
-                  (string
-                    (string_fragment)))
-                (identifier)))))
-        (expression_statement
-          (assignment_expression
-            (identifier)
-            (call_expression
-              (subscript_expression
-                (identifier)
-                (string
-                  (string_fragment)))
-              (arguments
-                (assignment_expression
-                  (identifier)
-                  (string
-                    (string_fragment)))
-                (assignment_expression
-                  (identifier)
-                  (string
-                    (string_fragment)))))))
-        (expression_statement
-          (call_expression
-            (member_expression
-              (call_expression
-                (identifier)
-                (arguments))
-              (property_identifier))
-            (arguments)))))
+      (cfscript_element
+        (cfscript_content)))
 
 
 ===================================
@@ -504,24 +455,8 @@ cfscript comments
 ---
 
 (program
-      (cf_script
-        (comment)
-        (expression_statement
-          (call_expression
-            (identifier)
-            (arguments)))
-        (comment)
-        (if_statement
-          (parenthesized_expression
-            (binary_expression
-              (identifier)
-              (identifier)))
-          (statement_block
-            (expression_statement
-              (call_expression
-                (identifier)
-                (arguments)))))
-        (comment)))
+      (cfscript_element
+        (cfscript_content)))
 
 ===================================
 cfscript switch
@@ -543,27 +478,8 @@ cfscript switch
 ---
 
 (program
-      (cf_script
-        (comment)
-        (switch_statement
-          (parenthesized_expression
-            (identifier))
-          (switch_body
-            (switch_case
-              (string
-                (string_fragment))
-              (expression_statement
-                (call_expression
-                  (identifier)
-                  (arguments)))
-              (comment)
-              (break_statement))
-            (switch_default
-              (comment)
-              (expression_statement
-                (call_expression
-                  (identifier)
-                  (arguments)))))))
+      (cfscript_element
+        (cfscript_content))
       (cf_selfclose_tag
         (cf_selfclose_tag_end)))
 
@@ -641,13 +557,8 @@ testing
                       (identifier))
                     (property_identifier)))))))
         (cf_selfclose_tag_end))
-      (cf_script
-        (try_statement
-          (statement_block)
-          (catch_clause
-            (identifier)
-            (identifier)
-            (statement_block))))
+      (cfscript_element
+        (cfscript_content))
       (element
         (start_tag
           (tag_name))
@@ -839,18 +750,8 @@ testing3
             (true)
             (false)))
         (cf_selfclose_tag_end))
-      (cf_script
-        (throw_statement
-          (string
-            (string_fragment)
-            (hash_expression
-              (identifier))))
-        (throw_statement
-          (arguments
-            (string
-              (string_fragment)
-              (hash_expression
-                (identifier))))))
+      (cfscript_element
+        (cfscript_content))
       (element
         (start_tag
           (tag_name)
