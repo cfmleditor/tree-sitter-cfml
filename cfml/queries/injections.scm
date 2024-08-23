@@ -6,6 +6,4 @@
   (raw_text) @injection.content)
  (#set! injection.language "css"))
 
-((cfscript_element
-  (cfscript_content) @injection.content)
- (#set! injection.language "cfscript"))
+((cfscript_content) @injection.content (#set! injection.language "cfscript")) 

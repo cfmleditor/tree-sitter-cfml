@@ -51,17 +51,8 @@
     "tree-sitter-cli": "^0.22.6"
   },
   "scripts": {
-    "build": "npm run build-cfml && npm run build-cfhtml && npm run build-cfscript",
-    "build-test": "npm run build-cfml && npm run build-cfhtml && npm run build-cfscript && tree-sitter test",
-    "build-cfml": "cd cfml && npx tree-sitter generate --no-bindings",
-    "build-cfhtml": "cd cfhtml && npx tree-sitter generate  --no-bindings",
-    "build-cfscript": "cd cfscript && npx tree-sitter generate  --no-bindings",
-    "build-wasm": "tree-sitter build-wasm",
-    "lint": "eslint common/define-grammar.js",
-    "test": "tree-sitter test",
-    "test-parse": "tree-sitter parse examples/*.cfm --quiet --time",
-    "test-mxunit": "cd cfml && npx tree-sitter parse ../test/mxunit/framework/*.cfc --quiet --time",
-    "test-windows": "tree-sitter test",
+    "test": "node scripts/test.js",
+    "build": "node scripts/build.js",
     "install": "node-gyp-build",
     "prebuildify": "prebuildify --napi --strip"
   },
@@ -69,18 +60,18 @@
     {
       "scope": "source.cfml",
       "file-types": [
-        "cfm",
         "cfc"
       ],
       "path": "cfml",
       "injection-regex": "cfml",
       "highlights": [
-        "queries/highlights.scm"
+        "cfml/queries/highlights.scm"
       ],
       "injections": [
-        "queries/injections.scm"
+        "cfml/queries/injections.scm"
       ],
       "external-files": [
+        "common/define-grammar.js",
         "src/tag.h"
       ]
     },
@@ -92,30 +83,23 @@
       "path": "cfhtml",
       "injection-regex": "cfhtml",
       "highlights": [
-        "queries/highlights.scm"
       ],
       "injections": [
-        "queries/injections.scm"
       ],
       "external-files": [
+        "common/define-grammar.js",
         "src/tag.h"
       ]
     },
     {
       "scope": "source.cfscript",
-      "file-types": [
-        "cfm"
-      ],
       "path": "cfscript",
       "injection-regex": "cfscript",
       "highlights": [
-        "queries/highlights.scm"
       ],
       "injections": [
-        "queries/injections.scm"
       ],
       "external-files": [
-        "src/tag.h"
       ]
     }
   ]
