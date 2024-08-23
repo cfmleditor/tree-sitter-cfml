@@ -9,13 +9,20 @@
     "lexer"
   ],
   "files": [
-    "grammar.js",
     "binding.gyp",
     "prebuilds/**",
     "bindings/node/*",
-    "queries/*",
-    "src/**",
-    "common/**"
+    "cfhtml/grammar.js",
+    "cfhtml/queries/*",
+    "cfhtml/src/**",
+    "cfml/grammar.js",
+    "cfml/queries/*",
+    "cfml/src/**",
+    "cfscript/grammar.js",
+    "cfscript/queries/*",
+    "cfscript/src/**",
+    "common/**",
+    "common/define-grammar.js"
   ],
   "homepage": "https://github.com/cfmleditor/tree-sitter-cfml",
   "repository": {
@@ -51,16 +58,8 @@
     "tree-sitter-cli": "^0.22.6"
   },
   "scripts": {
-    "build": "npm run build-cfml && npm run build-cfhtml",
-    "build-test": "npm run build-cfml && npm run build-cfhtml && tree-sitter test",
-    "build-cfml": "cd cfml && npx tree-sitter generate --no-bindings",
-    "build-cfhtml": "cd cfhtml && npx tree-sitter generate  --no-bindings",
-    "build-wasm": "tree-sitter build-wasm",
-    "lint": "eslint common/define-grammar.js",
-    "test": "tree-sitter test",
-    "test-parse": "tree-sitter parse examples/*.cfm --quiet --time",
-    "test-mxunit": "cd cfml && npx tree-sitter parse ../test/mxunit/framework/*.cfc --quiet --time",
-    "test-windows": "tree-sitter test",
+    "test": "node scripts/test.js",
+    "build": "node scripts/build.js",
     "install": "node-gyp-build",
     "prebuildify": "prebuildify --napi --strip"
   },
@@ -68,18 +67,18 @@
     {
       "scope": "source.cfml",
       "file-types": [
-        "cfm",
         "cfc"
       ],
       "path": "cfml",
       "injection-regex": "cfml",
       "highlights": [
-        "queries/highlights.scm"
+        "cfml/queries/highlights.scm"
       ],
       "injections": [
-        "queries/injections.scm"
+        "cfml/queries/injections.scm"
       ],
       "external-files": [
+        "common/define-grammar.js",
         "src/tag.h"
       ]
     },
@@ -91,13 +90,25 @@
       "path": "cfhtml",
       "injection-regex": "cfhtml",
       "highlights": [
-        "queries/highlights.scm"
+        "cfhtml/queries/highlights.scm"
       ],
       "injections": [
-        "queries/injections.scm"
+        "cfhtml/queries/injections.scm"
       ],
       "external-files": [
+        "common/define-grammar.js",
         "src/tag.h"
+      ]
+    },
+    {
+      "scope": "source.cfscript",
+      "path": "cfscript",
+      "injection-regex": "cfscript",
+      "highlights": [
+      ],
+      "injections": [
+      ],
+      "external-files": [
       ]
     }
   ]

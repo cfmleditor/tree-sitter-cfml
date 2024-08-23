@@ -39,6 +39,8 @@ setup(
                 "cfml/src/scanner.c",
                 "cfhtml/src/parser.c",
                 "cfhtml/src/scanner.c",
+                "cfscript/src/parser.c",
+                "cfscript/src/scanner.c",
                 # NOTE: if your language uses an external scanner, add it here.
             ],
             extra_compile_args=[

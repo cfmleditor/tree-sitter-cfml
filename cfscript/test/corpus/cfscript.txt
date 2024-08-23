@@ -1,0 +1,129 @@
+===================================
+cfscript comments
+===================================
+    // test
+    test(); // test
+
+    if ( test EQ test ) {
+       test();
+    }
+    /* test */
+---
+
+(program
+      (comment)
+      (expression_statement
+        (call_expression
+          (identifier)
+          (arguments)))
+      (comment)
+      (if_statement
+        (parenthesized_expression
+          (binary_expression
+            (identifier)
+            (identifier)))
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments)))))
+      (comment))
+
+===================================
+cfscript
+===================================
+  cars = fn("abc,test","abc");
+
+  cars = fn(test="abc",abc="test",abc);
+
+  cars = fn["Test"](test="abc",abc="test");
+
+  test().test();
+---
+(program
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments
+              (string
+                (string_fragment))
+              (string
+                (string_fragment))))))
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments
+              (assignment_expression
+                (identifier)
+                (string
+                  (string_fragment)))
+              (assignment_expression
+                (identifier)
+                (string
+                  (string_fragment)))
+              (identifier)))))
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (subscript_expression
+              (identifier)
+              (string
+                (string_fragment)))
+            (arguments
+              (assignment_expression
+                (identifier)
+                (string
+                  (string_fragment)))
+              (assignment_expression
+                (identifier)
+                (string
+                  (string_fragment)))))))
+      (expression_statement
+        (call_expression
+          (member_expression
+            (call_expression
+              (identifier)
+              (arguments))
+            (property_identifier))
+          (arguments))))
+
+
+===================================
+cfscript switch
+===================================
+  // test
+  switch (test) {
+    case "1":
+      test();//test
+      
+      break;
+    default: //test
+      test();
+  }
+---
+(program
+      (comment)
+      (switch_statement
+        (parenthesized_expression
+          (identifier))
+        (switch_body
+          (switch_case
+            (string
+              (string_fragment))
+            (expression_statement
+              (call_expression
+                (identifier)
+                (arguments)))
+            (comment)
+            (break_statement))
+          (switch_default
+            (comment)
+            (expression_statement
+              (call_expression
+                (identifier)
+                (arguments)))))))

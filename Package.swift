@@ -36,6 +36,8 @@ let package = Package(
                     "cfml/src/scanner.c",
                     "cfhtml/src/parser.c",
                     "cfhtml/src/scanner.c",
+                    "cfscript/src/parser.c",
+                    "cfscript/src/scanner.c",
                 ],
                 resources: [
                     .copy("queries")
