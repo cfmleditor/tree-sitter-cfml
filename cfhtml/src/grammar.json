@@ -127,7 +127,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_cf_tag"
+          "name": "cf_tag"
         },
         {
           "type": "SYMBOL",
@@ -405,7 +405,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_cf_tag"
+          "name": "cf_tag"
         },
         {
           "type": "SYMBOL",
@@ -3110,7 +3110,7 @@
           "value": 1,
           "content": {
             "type": "SYMBOL",
-            "name": "_cf_tag"
+            "name": "cf_tag"
           }
         },
         {
@@ -3228,7 +3228,7 @@
         }
       ]
     },
-    "_cf_tag": {
+    "cf_tag": {
       "type": "PREC_RIGHT",
       "value": 3,
       "content": {
@@ -3421,7 +3421,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_cf_tag"
+                    "name": "cf_tag"
                   },
                   {
                     "type": "SYMBOL",
@@ -3459,7 +3459,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_cf_tag"
+                    "name": "cf_tag"
                   },
                   {
                     "type": "SYMBOL",
@@ -5187,7 +5187,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_cf_tag"
+          "name": "cf_tag"
         },
         {
           "type": "SYMBOL",
@@ -10103,10 +10103,6 @@
       "pair"
     ],
     [
-      "hash_expression",
-      "hash_empty"
-    ],
-    [
       "assignment_expression",
       "_property_name"
     ],
@@ -10380,6 +10376,7 @@
     "expression",
     "primary_expression",
     "pattern",
-    "_cf_super_tags"
+    "_cf_super_tags",
+    "cf_tag"
   ]
 }

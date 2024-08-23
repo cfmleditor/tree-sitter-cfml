@@ -22,6 +22,88 @@
     ]
   },
   {
+    "type": "cf_tag",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "_cf_super_tags",
+        "named": true
+      },
+      {
+        "type": "cf_execute_tag",
+        "named": true
+      },
+      {
+        "type": "cf_http_tag",
+        "named": true
+      },
+      {
+        "type": "cf_if_tag",
+        "named": true
+      },
+      {
+        "type": "cf_lock_tag",
+        "named": true
+      },
+      {
+        "type": "cf_loop",
+        "named": true
+      },
+      {
+        "type": "cf_mail_tag",
+        "named": true
+      },
+      {
+        "type": "cf_mailpart_tag",
+        "named": true
+      },
+      {
+        "type": "cf_return",
+        "named": true
+      },
+      {
+        "type": "cf_savecontent_tag",
+        "named": true
+      },
+      {
+        "type": "cf_selfclose_tag",
+        "named": true
+      },
+      {
+        "type": "cf_set_tag",
+        "named": true
+      },
+      {
+        "type": "cf_silent_tag",
+        "named": true
+      },
+      {
+        "type": "cf_switch_tag",
+        "named": true
+      },
+      {
+        "type": "cf_thread_tag",
+        "named": true
+      },
+      {
+        "type": "cf_transaction_tag",
+        "named": true
+      },
+      {
+        "type": "cf_try_tag",
+        "named": true
+      },
+      {
+        "type": "cf_xml_tag",
+        "named": true
+      },
+      {
+        "type": "cf_zip_tag",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "declaration",
     "named": true,
     "subtypes": [
@@ -523,79 +605,7 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -1027,83 +1037,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -1166,83 +1104,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -1305,83 +1171,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -1444,83 +1238,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -1603,83 +1325,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -1742,83 +1392,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -1881,83 +1459,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -2020,10 +1526,6 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_else_tag",
           "named": true
         },
@@ -2032,79 +1534,11 @@
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
           "type": "cf_if_alt",
           "named": true
         },
         {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -2167,83 +1601,11 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
           "type": "cf_if_alt",
           "named": true
         },
         {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -2310,83 +1672,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -2449,83 +1739,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -2588,83 +1806,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -2727,83 +1873,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -2866,83 +1940,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -3168,83 +2170,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -3307,10 +2237,6 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
@@ -3323,75 +2249,7 @@
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -3454,83 +2312,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -3593,83 +2379,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -3732,10 +2446,6 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
@@ -3744,75 +2454,7 @@
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -3875,83 +2517,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -4014,51 +2584,7 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
           "named": true
         },
         {
@@ -4066,35 +2592,7 @@
           "named": true
         },
         {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -4277,79 +2775,7 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -5499,79 +3925,7 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -5638,83 +3992,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "attribute_value",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -6000,79 +4282,7 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {
@@ -6261,83 +4471,11 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
           "type": "attribute",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
+          "type": "cf_tag",
           "named": true
         },
         {

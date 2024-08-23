@@ -4,4 +4,24 @@ testing4
 <div test="color: #<cfoutput>#scrollHeight#</cfoutput>"></div>
 <cfset result = "##" />
 ---
-(program)
+(program
+      (element
+        (start_tag
+          (tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value)
+                (hash_single)
+                (cf_output_tag
+                  (cfoutput_content))))))
+        (end_tag
+          (tag_name)))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (string
+            (hash_single)
+            (hash_single)))
+        (cf_selfclose_tag_end)))

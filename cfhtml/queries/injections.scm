@@ -8,4 +8,6 @@
 
 ((cfscript_content) @injection.content (#set! injection.language "cfscript")) 
 
-((cfouput_content) @injection.content (#set! injection.language "cfml"))
+((cfoutput_content) @injection.content (#set! injection.language "cfml")) 
+
+((cf_tag) @injection.content (#set! injection.language "cfml"))
