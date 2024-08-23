@@ -41,6 +41,7 @@ module.exports = function defineGrammar(dialect) {
       $._cfsavecontent_content,
       $._close_tag_delim,
       $._cf_output_tag_external,
+      $.cfscript_content,
       // $.html_hash,
     ],
 
@@ -220,22 +221,32 @@ module.exports = function defineGrammar(dialect) {
         $._hash,
         $.script_element,
         $.style_element,
-        $.cf_script,
+        $.cfscript_element,
         $.text,
         $.end_tag,
         $.erroneous_end_tag,
         $.xml_decl,
       ),
 
-      cf_script: $ => prec.right(2, seq(
+      cfscript_element: $ => prec.right(2, seq(
         $._cf_open_tag,
         keyword('script'),
         alias($._close_tag_delim, '>'),
-        repeat($.statement),
+        optional($.cfscript_content),
         $._cf_close_tag,
         keyword('script'),
         alias($._close_tag_delim, '>'),
       )),
+
+      // cf_script: $ => prec.right(2, seq(
+      //   $._cf_open_tag,
+      //   keyword('script'),
+      //   alias($._close_tag_delim, '>'),
+      //   repeat($.statement),
+      //   $._cf_close_tag,
+      //   keyword('script'),
+      //   alias($._close_tag_delim, '>'),
+      // )),
 
       _cf_open_tag: $ => prec.right(1, keyword('<cf')),
       _cf_close_tag: $ => prec.right(1, keyword('</cf')),

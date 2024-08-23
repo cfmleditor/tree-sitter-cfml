@@ -23,7 +23,7 @@ enum TokenType {
     CFSAVECONTENT_CONTENT,
     CLOSE_TAG_DELIM,
     CF_OUTPUT_TAG,
-    CF_SCRIPT_TAG,
+    CFSCRIPT_CONTENT,
     // HTML_HASH,
 };
 
@@ -329,6 +329,38 @@ static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer) {
 
     return true;
 }
+
+static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer) {
+
+    lexer->mark_end(lexer);
+
+    const char *end_delimiter = "</CFSCRIPT";
+
+    unsigned delimiter_index = 0;
+
+    while (lexer->lookahead) {
+        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
+            delimiter_index++;
+            if (delimiter_index == strlen(end_delimiter)) {
+                break;
+            }
+            advance(lexer);
+        } else {
+            delimiter_index = 0;
+            advance(lexer);
+            lexer->mark_end(lexer);
+        }
+    }
+
+    lexer->result_symbol = CFSCRIPT_CONTENT;
+
+    while (lexer->lookahead) {
+        advance(lexer);
+    }
+
+    return true;
+}
+
 
 static bool scan_raw_text(Scanner *scanner, TSLexer *lexer) {
     if (scanner->tags.size == 0) {
@@ -730,6 +762,10 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
     if (valid_symbols[CFSAVECONTENT_CONTENT]) {
         return scan_cfsavecontent_content(scanner, lexer);
+    }
+
+    if (valid_symbols[CFSCRIPT_CONTENT]) {
+        return scan_cfscript_content(scanner, lexer);
     }
 
     // if ( valid_symbols[HTML_HASH] ) {

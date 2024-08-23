@@ -1,30 +1,12 @@
 [
   {
-    "type": "_cf_super_tags",
-    "named": true,
-    "subtypes": [
-      {
-        "type": "cf_component",
-        "named": true
-      },
-      {
-        "type": "cf_function",
-        "named": true
-      },
-      {
-        "type": "cf_output_tag",
-        "named": true
-      },
-      {
-        "type": "cf_query",
-        "named": true
-      }
-    ]
-  },
-  {
     "type": "declaration",
     "named": true,
     "subtypes": [
+      {
+        "type": "class_declaration",
+        "named": true
+      },
       {
         "type": "function_declaration",
         "named": true
@@ -64,11 +46,19 @@
         "named": true
       },
       {
-        "type": "new_expression",
+        "type": "glimmer_template",
         "named": true
       },
       {
-        "type": "pair",
+        "type": "jsx_element",
+        "named": true
+      },
+      {
+        "type": "jsx_self_closing_element",
+        "named": true
+      },
+      {
+        "type": "new_expression",
         "named": true
       },
       {
@@ -118,11 +108,11 @@
         "named": true
       },
       {
-        "type": "string",
+        "type": "subscript_expression",
         "named": true
       },
       {
-        "type": "subscript_expression",
+        "type": "undefined",
         "named": true
       }
     ]
@@ -141,6 +131,10 @@
       },
       {
         "type": "call_expression",
+        "named": true
+      },
+      {
+        "type": "class",
         "named": true
       },
       {
@@ -200,11 +194,19 @@
         "named": true
       },
       {
+        "type": "template_string",
+        "named": true
+      },
+      {
         "type": "this",
         "named": true
       },
       {
         "type": "true",
+        "named": true
+      },
+      {
+        "type": "undefined",
         "named": true
       }
     ]
@@ -222,6 +224,10 @@
         "named": true
       },
       {
+        "type": "debugger_statement",
+        "named": true
+      },
+      {
         "type": "declaration",
         "named": true
       },
@@ -231,6 +237,10 @@
       },
       {
         "type": "empty_statement",
+        "named": true
+      },
+      {
+        "type": "export_statement",
         "named": true
       },
       {
@@ -247,6 +257,10 @@
       },
       {
         "type": "if_statement",
+        "named": true
+      },
+      {
+        "type": "import_statement",
         "named": true
       },
       {
@@ -293,14 +307,6 @@
       "types": [
         {
           "type": "expression",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
           "named": true
         },
         {
@@ -417,11 +423,11 @@
             "named": true
           },
           {
-            "type": "string",
+            "type": "subscript_expression",
             "named": true
           },
           {
-            "type": "subscript_expression",
+            "type": "undefined",
             "named": true
           }
         ]
@@ -432,14 +438,6 @@
         "types": [
           {
             "type": "expression",
-            "named": true
-          },
-          {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
             "named": true
           }
         ]
@@ -470,143 +468,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "attribute",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_name",
-          "named": true
-        },
-        {
-          "type": "attribute_value",
-          "named": true
-        },
-        {
-          "type": "quoted_attribute_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "attribute_name",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "attribute_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -891,6 +752,10 @@
           {
             "type": "arguments",
             "named": true
+          },
+          {
+            "type": "template_string",
+            "named": true
           }
         ]
       },
@@ -900,14 +765,6 @@
         "types": [
           {
             "type": "expression",
-            "named": true
-          },
-          {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
             "named": true
           },
           {
@@ -959,8 +816,34 @@
             "named": true
           }
         ]
+      }
+    }
+  },
+  {
+    "type": "class",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "class_body",
+            "named": true
+          }
+        ]
       },
-      "type": {
+      "decorator": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "decorator",
+            "named": true
+          }
+        ]
+      },
+      "name": {
         "multiple": false,
         "required": false,
         "types": [
@@ -970,2203 +853,106 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "cf_attribute",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute_name",
-          "named": true
-        },
-        {
-          "type": "cf_attribute_value",
-          "named": true
-        },
-        {
-          "type": "quoted_cf_attribute_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_attribute_value",
-    "named": true,
-    "fields": {},
+    },
     "children": {
       "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_value",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_case_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
+          "type": "class_heritage",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "cf_catch_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_component",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_defaultcase_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_else_tag",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "cf_elseif_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_execute_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_function",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_http_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_if_alt",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_else_tag",
-          "named": true
-        },
-        {
-          "type": "cf_elseif_tag",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_alt",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_if_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_alt",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "expression",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_lock_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_loop",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_mail_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_mailpart_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_output_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_query",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_return",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_selfclose_tag_end",
-          "named": true
-        },
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_savecontent_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag_end",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_script",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "statement",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_selfclose_tag",
+    "type": "class_body",
     "named": true,
     "fields": {
-      "cf_tag_name": {
+      "member": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "class_static_block",
+            "named": true
+          },
+          {
+            "type": "field_definition",
+            "named": true
+          },
+          {
+            "type": "method_definition",
+            "named": true
+          }
+        ]
+      },
+      "template": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "glimmer_template",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "class_declaration",
+    "named": true,
+    "fields": {
+      "body": {
         "multiple": false,
         "required": true,
         "types": [
           {
-            "type": "abort",
-            "named": false
-          },
+            "type": "class_body",
+            "named": true
+          }
+        ]
+      },
+      "decorator": {
+        "multiple": true,
+        "required": false,
+        "types": [
           {
-            "type": "argument",
-            "named": false
-          },
+            "type": "decorator",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
           {
-            "type": "break",
-            "named": false
-          },
-          {
-            "type": "continue",
-            "named": false
-          },
-          {
-            "type": "htmlhead",
-            "named": false
-          },
-          {
-            "type": "httpparam",
-            "named": false
-          },
-          {
-            "type": "img",
-            "named": false
-          },
-          {
-            "type": "import",
-            "named": false
-          },
-          {
-            "type": "param",
-            "named": false
-          },
-          {
-            "type": "queryparam",
-            "named": false
-          },
-          {
-            "type": "setting",
-            "named": false
-          },
-          {
-            "type": "transaction",
-            "named": false
-          },
-          {
-            "type": "wddx",
-            "named": false
-          },
-          {
-            "type": "zipparam",
-            "named": false
+            "type": "identifier",
+            "named": true
           }
         ]
       }
     },
     "children": {
-      "multiple": true,
-      "required": true,
+      "multiple": false,
+      "required": false,
       "types": [
         {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag_end",
+          "type": "class_heritage",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "cf_selfclose_tag_end",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "cf_set_tag",
+    "type": "class_heritage",
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
-        {
-          "type": "cf_selfclose_tag_end",
-          "named": true
-        },
-        {
-          "type": "cf_var",
-          "named": true
-        },
         {
           "type": "expression",
           "named": true
@@ -3175,1012 +961,19 @@
     }
   },
   {
-    "type": "cf_silent_tag",
+    "type": "class_static_block",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_switch_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_case_tag",
-          "named": true
-        },
-        {
-          "type": "cf_defaultcase_tag",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_thread_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_transaction_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_try_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_catch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_xml_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_zip_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag_end",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "comment",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "component",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "statement",
-          "named": true
-        }
-      ]
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "statement_block",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -4213,6 +1006,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "debugger_statement",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "decorator",
@@ -4264,158 +1062,6 @@
     }
   },
   {
-    "type": "doctype",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "element",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "implicit_end_tag",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "self_closing_tag",
-          "named": true
-        },
-        {
-          "type": "start_tag",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "else_clause",
     "named": true,
     "fields": {},
@@ -4436,30 +1082,15 @@
     "fields": {}
   },
   {
-    "type": "end_tag",
+    "type": "export_clause",
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
-      "required": true,
+      "multiple": true,
+      "required": false,
       "types": [
         {
-          "type": "tag_name",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "erroneous_end_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "erroneous_end_tag_name",
+          "type": "export_specifier",
           "named": true
         }
       ]
@@ -4500,6 +1131,66 @@
     }
   },
   {
+    "type": "export_statement",
+    "named": true,
+    "fields": {
+      "declaration": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "declaration",
+            "named": true
+          }
+        ]
+      },
+      "decorator": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "decorator",
+            "named": true
+          }
+        ]
+      },
+      "source": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "export_clause",
+          "named": true
+        },
+        {
+          "type": "namespace_export",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "expression_statement",
     "named": true,
     "fields": {},
@@ -4512,14 +1203,62 @@
           "named": true
         },
         {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
+          "type": "sequence_expression",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "field_definition",
+    "named": true,
+    "fields": {
+      "decorator": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "decorator",
+            "named": true
+          }
+        ]
+      },
+      "property": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "computed_property_name",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "private_property_identifier",
+            "named": true
+          },
+          {
+            "type": "property_identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -4595,11 +1334,11 @@
             "named": true
           },
           {
-            "type": "string",
+            "type": "subscript_expression",
             "named": true
           },
           {
-            "type": "subscript_expression",
+            "type": "undefined",
             "named": true
           }
         ]
@@ -4627,11 +1366,7 @@
             "named": true
           },
           {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
+            "type": "sequence_expression",
             "named": true
           }
         ]
@@ -4663,15 +1398,23 @@
         ]
       },
       "condition": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
+          {
+            "type": ";",
+            "named": false
+          },
           {
             "type": "empty_statement",
             "named": true
           },
           {
-            "type": "expression_statement",
+            "type": "expression",
+            "named": true
+          },
+          {
+            "type": "sequence_expression",
             "named": true
           }
         ]
@@ -4685,11 +1428,7 @@
             "named": true
           },
           {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
+            "type": "sequence_expression",
             "named": true
           }
         ]
@@ -4703,11 +1442,15 @@
             "named": true
           },
           {
-            "type": "expression_statement",
+            "type": "expression",
             "named": true
           },
           {
             "type": "lexical_declaration",
+            "named": true
+          },
+          {
+            "type": "sequence_expression",
             "named": true
           },
           {
@@ -4731,19 +1474,7 @@
           "named": true
         },
         {
-          "type": "pair_pattern",
-          "named": true
-        },
-        {
           "type": "pattern",
-          "named": true
-        },
-        {
-          "type": "required",
-          "named": true
-        },
-        {
-          "type": "type",
           "named": true
         }
       ]
@@ -4783,20 +1514,6 @@
           }
         ]
       }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "access_type",
-          "named": true
-        },
-        {
-          "type": "return_type",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -4908,23 +1625,29 @@
     }
   },
   {
-    "type": "hash_empty",
+    "type": "glimmer_template",
     "named": true,
-    "fields": {}
-  },
-  {
-    "type": "hash_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
+    "fields": {
+      "close_tag": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "glimmer_closing_tag",
+            "named": true
+          }
+        ]
+      },
+      "open_tag": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "glimmer_opening_tag",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -5030,6 +1753,261 @@
           },
           {
             "type": "string",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "import_statement",
+    "named": true,
+    "fields": {
+      "source": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "import_attribute",
+          "named": true
+        },
+        {
+          "type": "import_clause",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "jsx_attribute",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "jsx_element",
+          "named": true
+        },
+        {
+          "type": "jsx_expression",
+          "named": true
+        },
+        {
+          "type": "jsx_namespace_name",
+          "named": true
+        },
+        {
+          "type": "jsx_self_closing_element",
+          "named": true
+        },
+        {
+          "type": "property_identifier",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "jsx_closing_element",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "jsx_namespace_name",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "jsx_element",
+    "named": true,
+    "fields": {
+      "close_tag": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "jsx_closing_element",
+            "named": true
+          }
+        ]
+      },
+      "open_tag": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "jsx_opening_element",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "html_character_reference",
+          "named": true
+        },
+        {
+          "type": "jsx_element",
+          "named": true
+        },
+        {
+          "type": "jsx_expression",
+          "named": true
+        },
+        {
+          "type": "jsx_self_closing_element",
+          "named": true
+        },
+        {
+          "type": "jsx_text",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "jsx_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "sequence_expression",
+          "named": true
+        },
+        {
+          "type": "spread_element",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "jsx_namespace_name",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "jsx_opening_element",
+    "named": true,
+    "fields": {
+      "attribute": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "jsx_attribute",
+            "named": true
+          },
+          {
+            "type": "jsx_expression",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "jsx_namespace_name",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "jsx_self_closing_element",
+    "named": true,
+    "fields": {
+      "attribute": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "jsx_attribute",
+            "named": true
+          },
+          {
+            "type": "jsx_expression",
+            "named": true
+          }
+        ]
+      },
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "jsx_namespace_name",
+            "named": true
+          },
+          {
+            "type": "member_expression",
             "named": true
           }
         ]
@@ -5174,14 +2152,6 @@
             "named": true
           },
           {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
-            "named": true
-          },
-          {
             "type": "number",
             "named": true
           },
@@ -5221,6 +2191,25 @@
       "types": [
         {
           "type": "import_specifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "namespace_export",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "string",
           "named": true
         }
       ]
@@ -5279,10 +2268,6 @@
       "multiple": true,
       "required": false,
       "types": [
-        {
-          "type": "assignment_expression",
-          "named": true
-        },
         {
           "type": "method_definition",
           "named": true
@@ -5376,14 +2361,6 @@
             "named": true
           },
           {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
-            "named": true
-          },
-          {
             "type": "number",
             "named": true
           },
@@ -5426,14 +2403,6 @@
             "named": true
           },
           {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
-            "named": true
-          },
-          {
             "type": "number",
             "named": true
           },
@@ -5473,18 +2442,14 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "expression",
           "named": true
         },
         {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
+          "type": "sequence_expression",
           "named": true
         }
       ]
@@ -5499,253 +2464,11 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_super_tags",
+          "type": "hash_bang_line",
           "named": true
         },
         {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "component",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "quoted_attribute_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "attribute_value",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "quoted_cf_attribute_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "attribute_value",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
+          "type": "statement",
           "named": true
         }
       ]
@@ -5802,11 +2525,11 @@
           "named": true
         },
         {
-          "type": "string",
+          "type": "subscript_expression",
           "named": true
         },
         {
-          "type": "subscript_expression",
+          "type": "undefined",
           "named": true
         }
       ]
@@ -5825,18 +2548,14 @@
           "named": true
         },
         {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
+          "type": "sequence_expression",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "script_element",
+    "type": "sequence_expression",
     "named": true,
     "fields": {},
     "children": {
@@ -5844,34 +2563,7 @@
       "required": true,
       "types": [
         {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "raw_text",
-          "named": true
-        },
-        {
-          "type": "start_tag",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "self_closing_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "tag_attributes",
-          "named": true
-        },
-        {
-          "type": "tag_name",
+          "type": "expression",
           "named": true
         }
       ]
@@ -5887,25 +2579,6 @@
       "types": [
         {
           "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "start_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "tag_attributes",
-          "named": true
-        },
-        {
-          "type": "tag_name",
           "named": true
         }
       ]
@@ -5939,175 +2612,11 @@
           "named": true
         },
         {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
+          "type": "html_character_reference",
           "named": true
         },
         {
           "type": "string_fragment",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "style_attribute",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "style_item",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "style_element",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "raw_text",
-          "named": true
-        },
-        {
-          "type": "start_tag",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "style_item",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "_cf_super_tags",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "style_property",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "style_property",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "identifier",
           "named": true
         }
       ]
@@ -6126,11 +2635,7 @@
             "named": true
           },
           {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
+            "type": "sequence_expression",
             "named": true
           }
         ]
@@ -6199,11 +2704,7 @@
             "named": true
           },
           {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
+            "type": "sequence_expression",
             "named": true
           }
         ]
@@ -6253,7 +2754,30 @@
     }
   },
   {
-    "type": "tag_attributes",
+    "type": "template_string",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "string_fragment",
+          "named": true
+        },
+        {
+          "type": "template_substitution",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "template_substitution",
     "named": true,
     "fields": {},
     "children": {
@@ -6261,99 +2785,11 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_super_tags",
+          "type": "expression",
           "named": true
         },
         {
-          "type": "attribute",
-          "named": true
-        },
-        {
-          "type": "cf_execute_tag",
-          "named": true
-        },
-        {
-          "type": "cf_http_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_lock_tag",
-          "named": true
-        },
-        {
-          "type": "cf_loop",
-          "named": true
-        },
-        {
-          "type": "cf_mail_tag",
-          "named": true
-        },
-        {
-          "type": "cf_mailpart_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_silent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_switch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_thread_tag",
-          "named": true
-        },
-        {
-          "type": "cf_transaction_tag",
-          "named": true
-        },
-        {
-          "type": "cf_try_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "cf_zip_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "quoted_attribute_value",
-          "named": true
-        },
-        {
-          "type": "style_attribute",
+          "type": "sequence_expression",
           "named": true
         }
       ]
@@ -6404,11 +2840,11 @@
       "required": true,
       "types": [
         {
-          "type": "arguments",
+          "type": "expression",
           "named": true
         },
         {
-          "type": "string",
+          "type": "sequence_expression",
           "named": true
         }
       ]
@@ -6469,17 +2905,36 @@
         "required": true,
         "types": [
           {
-            "type": "unary_operator",
-            "named": true
+            "type": "!",
+            "named": false
+          },
+          {
+            "type": "+",
+            "named": false
+          },
+          {
+            "type": "-",
+            "named": false
+          },
+          {
+            "type": "delete",
+            "named": false
+          },
+          {
+            "type": "typeof",
+            "named": false
+          },
+          {
+            "type": "void",
+            "named": false
+          },
+          {
+            "type": "~",
+            "named": false
           }
         ]
       }
     }
-  },
-  {
-    "type": "unary_operator",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "update_expression",
@@ -6613,21 +3068,6 @@
     }
   },
   {
-    "type": "xml_decl",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "tag_attributes",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "yield_expression",
     "named": true,
     "fields": {},
@@ -6659,11 +3099,7 @@
     "named": false
   },
   {
-    "type": "\"\"",
-    "named": false
-  },
-  {
-    "type": "#",
+    "type": "${",
     "named": false
   },
   {
@@ -6692,10 +3128,6 @@
   },
   {
     "type": "'",
-    "named": false
-  },
-  {
-    "type": "''",
     "named": false
   },
   {
@@ -6783,15 +3215,7 @@
     "named": false
   },
   {
-    "type": "<!",
-    "named": false
-  },
-  {
     "type": "</",
-    "named": false
-  },
-  {
-    "type": "</cf",
     "named": false
   },
   {
@@ -6804,14 +3228,6 @@
   },
   {
     "type": "<=",
-    "named": false
-  },
-  {
-    "type": "<?",
-    "named": false
-  },
-  {
-    "type": "<cf",
     "named": false
   },
   {
@@ -6859,10 +3275,6 @@
     "named": false
   },
   {
-    "type": "?>",
-    "named": false
-  },
-  {
     "type": "??",
     "named": false
   },
@@ -6891,15 +3303,7 @@
     "named": false
   },
   {
-    "type": "abort",
-    "named": false
-  },
-  {
-    "type": "access_type",
-    "named": true
-  },
-  {
-    "type": "argument",
+    "type": "`",
     "named": false
   },
   {
@@ -6927,20 +3331,12 @@
     "named": false
   },
   {
-    "type": "cf_attribute_name",
-    "named": true
-  },
-  {
-    "type": "cf_comment",
-    "named": true
-  },
-  {
-    "type": "cf_var",
-    "named": true
-  },
-  {
-    "type": "component",
+    "type": "class",
     "named": false
+  },
+  {
+    "type": "comment",
+    "named": true
   },
   {
     "type": "const",
@@ -6959,7 +3355,7 @@
     "named": false
   },
   {
-    "type": "defaultcase",
+    "type": "delete",
     "named": false
   },
   {
@@ -6967,35 +3363,19 @@
     "named": false
   },
   {
-    "type": "doctype",
-    "named": false
-  },
-  {
     "type": "else",
     "named": false
-  },
-  {
-    "type": "elseif",
-    "named": false
-  },
-  {
-    "type": "entity",
-    "named": true
-  },
-  {
-    "type": "erroneous_end_tag_name",
-    "named": true
   },
   {
     "type": "escape_sequence",
     "named": true
   },
   {
-    "type": "execute",
+    "type": "export",
     "named": false
   },
   {
-    "type": "export",
+    "type": "extends",
     "named": false
   },
   {
@@ -7019,16 +3399,28 @@
     "named": false
   },
   {
-    "type": "htmlhead",
+    "type": "get",
     "named": false
   },
   {
-    "type": "http",
-    "named": false
+    "type": "glimmer_closing_tag",
+    "named": true
   },
   {
-    "type": "httpparam",
-    "named": false
+    "type": "glimmer_opening_tag",
+    "named": true
+  },
+  {
+    "type": "hash_bang_line",
+    "named": true
+  },
+  {
+    "type": "html_character_reference",
+    "named": true
+  },
+  {
+    "type": "html_comment",
+    "named": true
   },
   {
     "type": "identifier",
@@ -7037,14 +3429,6 @@
   {
     "type": "if",
     "named": false
-  },
-  {
-    "type": "img",
-    "named": false
-  },
-  {
-    "type": "implicit_end_tag",
-    "named": true
   },
   {
     "type": "import",
@@ -7059,31 +3443,19 @@
     "named": false
   },
   {
+    "type": "jsx_text",
+    "named": true
+  },
+  {
     "type": "let",
     "named": false
   },
   {
-    "type": "lock",
-    "named": false
-  },
-  {
-    "type": "loop",
-    "named": false
-  },
-  {
-    "type": "mail",
-    "named": false
-  },
-  {
-    "type": "mailpart",
+    "type": "meta",
     "named": false
   },
   {
     "type": "new",
-    "named": false
-  },
-  {
-    "type": "not",
     "named": false
   },
   {
@@ -7103,31 +3475,11 @@
     "named": true
   },
   {
-    "type": "output",
-    "named": false
-  },
-  {
-    "type": "param",
-    "named": false
-  },
-  {
     "type": "private_property_identifier",
     "named": true
   },
   {
     "type": "property_identifier",
-    "named": true
-  },
-  {
-    "type": "query",
-    "named": false
-  },
-  {
-    "type": "queryparam",
-    "named": false
-  },
-  {
-    "type": "raw_text",
     "named": true
   },
   {
@@ -7139,31 +3491,11 @@
     "named": true
   },
   {
-    "type": "required",
-    "named": true
-  },
-  {
     "type": "return",
     "named": false
   },
   {
-    "type": "return_type",
-    "named": true
-  },
-  {
-    "type": "savecontent",
-    "named": false
-  },
-  {
-    "type": "script",
-    "named": false
-  },
-  {
     "type": "set",
-    "named": false
-  },
-  {
-    "type": "setting",
     "named": false
   },
   {
@@ -7173,10 +3505,6 @@
   {
     "type": "shorthand_property_identifier_pattern",
     "named": true
-  },
-  {
-    "type": "silent",
-    "named": false
   },
   {
     "type": "statement_identifier",
@@ -7195,10 +3523,6 @@
     "named": true
   },
   {
-    "type": "style",
-    "named": false
-  },
-  {
     "type": "super",
     "named": true
   },
@@ -7207,31 +3531,15 @@
     "named": false
   },
   {
-    "type": "tag_name",
-    "named": true
-  },
-  {
     "type": "target",
     "named": false
-  },
-  {
-    "type": "text",
-    "named": true
   },
   {
     "type": "this",
     "named": true
   },
   {
-    "type": "thread",
-    "named": false
-  },
-  {
     "type": "throw",
-    "named": false
-  },
-  {
-    "type": "transaction",
     "named": false
   },
   {
@@ -7243,7 +3551,11 @@
     "named": false
   },
   {
-    "type": "type",
+    "type": "typeof",
+    "named": false
+  },
+  {
+    "type": "undefined",
     "named": true
   },
   {
@@ -7251,7 +3563,7 @@
     "named": false
   },
   {
-    "type": "wddx",
+    "type": "void",
     "named": false
   },
   {
@@ -7263,19 +3575,7 @@
     "named": false
   },
   {
-    "type": "xml",
-    "named": false
-  },
-  {
     "type": "yield",
-    "named": false
-  },
-  {
-    "type": "zip",
-    "named": false
-  },
-  {
-    "type": "zipparam",
     "named": false
   },
   {
