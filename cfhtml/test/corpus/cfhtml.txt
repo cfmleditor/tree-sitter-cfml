@@ -1,0 +1,7 @@
+===================================
+testing4
+===================================
+<div test="color: #<cfoutput>#scrollHeight#</cfoutput>"></div>
+<cfset result = "##" />
+---
+(program)

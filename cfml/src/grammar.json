@@ -10360,6 +10360,14 @@
     {
       "type": "SYMBOL",
       "name": "cfscript_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "cfoutput_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "cffunction_content"
     }
   ],
   "inline": [

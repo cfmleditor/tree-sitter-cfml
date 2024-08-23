@@ -24,6 +24,8 @@ enum TokenType {
     CLOSE_TAG_DELIM,
     CF_OUTPUT_TAG,
     CFSCRIPT_CONTENT,
+    CFOUTPUT_CONTENT,
+    CFFUNCTION_CONTENT,
     // HTML_HASH,
 };
 
@@ -361,6 +363,67 @@ static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer) {
     return true;
 }
 
+static bool scan_cfoutput_content(Scanner *scanner, TSLexer *lexer) {
+
+    lexer->mark_end(lexer);
+
+    const char *end_delimiter = "</CFOUTPUT";
+
+    unsigned delimiter_index = 0;
+
+    while (lexer->lookahead) {
+        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
+            delimiter_index++;
+            if (delimiter_index == strlen(end_delimiter)) {
+                break;
+            }
+            advance(lexer);
+        } else {
+            delimiter_index = 0;
+            advance(lexer);
+            lexer->mark_end(lexer);
+        }
+    }
+
+    lexer->result_symbol = CFOUTPUT_CONTENT;
+
+    while (lexer->lookahead) {
+        advance(lexer);
+    }
+
+    return true;
+}
+
+static bool scan_cffunction_content(Scanner *scanner, TSLexer *lexer) {
+
+    lexer->mark_end(lexer);
+
+    const char *end_delimiter = "</CFFUNCTION";
+
+    unsigned delimiter_index = 0;
+
+    while (lexer->lookahead) {
+        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
+            delimiter_index++;
+            if (delimiter_index == strlen(end_delimiter)) {
+                break;
+            }
+            advance(lexer);
+        } else {
+            delimiter_index = 0;
+            advance(lexer);
+            lexer->mark_end(lexer);
+        }
+    }
+
+    lexer->result_symbol = CFFUNCTION_CONTENT;
+
+    while (lexer->lookahead) {
+        advance(lexer);
+    }
+
+    return true;
+}
 
 static bool scan_raw_text(Scanner *scanner, TSLexer *lexer) {
     if (scanner->tags.size == 0) {
@@ -766,6 +829,14 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
     if (valid_symbols[CFSCRIPT_CONTENT]) {
         return scan_cfscript_content(scanner, lexer);
+    }
+
+    if (valid_symbols[CFOUTPUT_CONTENT]) {
+        return scan_cfoutput_content(scanner, lexer);
+    }
+
+    if (valid_symbols[CFFUNCTION_CONTENT]) {
+        return scan_cffunction_content(scanner, lexer);
     }
 
     // if ( valid_symbols[HTML_HASH] ) {

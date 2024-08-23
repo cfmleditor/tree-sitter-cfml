@@ -42,6 +42,8 @@ module.exports = function defineGrammar(dialect) {
       $._close_tag_delim,
       $._cf_output_tag_external,
       $.cfscript_content,
+      $.cfoutput_content,
+      $.cffunction_content,
       // $.html_hash,
     ],
 
@@ -353,7 +355,7 @@ module.exports = function defineGrammar(dialect) {
         keyword('function'),
         repeat($.cf_attribute),
         alias($._close_tag_delim, '>'),
-        repeat($._node),
+        ( dialect === 'cfml' ? repeat($._node) : $.cffunction_content ),
         $._cf_close_tag,
         keyword('function'),
         alias($._close_tag_delim, '>'),
@@ -592,11 +594,12 @@ module.exports = function defineGrammar(dialect) {
         keyword('output'),
         repeat($.cf_attribute),
         alias($._close_tag_delim, '>'),
-        repeat($._node),
+        ( dialect === 'cfml' ? repeat($._node) : $.cfoutput_content ),
         $._cf_close_tag,
         keyword('output'),
         alias($._close_tag_delim, '>'),
       )),
+
 
       cf_return_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
@@ -1830,12 +1833,16 @@ module.exports = function defineGrammar(dialect) {
         $._hash,
       ),
 
-      _hash: $ => choice(
-        $.hash_expression,
-        $.hash_empty,
-        // $.hash_single,
-      ),
-
+      _hash: ($, previous) => {
+        const choices = [];
+        if (dialect === 'cfml') {
+          choices.push($.hash_expression);
+          choices.push($.hash_empty);
+        } else {
+          choices.push(alias('#', $.hash_single));
+        }
+        return choice(...choices);
+      },
 
       hash_expression: $ => seq(
         '#',
