@@ -2,10 +2,10 @@ prefix=@PREFIX@
 libdir=@LIBDIR@
 includedir=@INCLUDEDIR@
 
-Name: tree-sitter-cfml
-Description: Cfml grammar for tree-sitter
+Name: tree-sitter-cfhtml
+Description: cfhtml grammar for tree-sitter
 URL: @URL@
 Version: @VERSION@
 Requires: @REQUIRES@
-Libs: -L${libdir} @ADDITIONAL_LIBS@ -ltree-sitter-cfml
+Libs: -L${libdir} @ADDITIONAL_LIBS@ -ltree-sitter-cfhtml
 Cflags: -I${includedir}

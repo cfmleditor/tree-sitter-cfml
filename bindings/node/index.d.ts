@@ -24,12 +24,7 @@ type Language = {
   nodeTypeInfo: NodeInfo[];
 };
 
-declare const _exports: Language & {
-  cfml: Language,
-  cfhtml: Language,
-  cfscript: Language
-};
-
-export = _exports
-
-
+declare const cfml: Language;
+declare const cfhtml: Language;
+declare const cfscript: Language;
+export = {cfml, cfhtml, cfscript}

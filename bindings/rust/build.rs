@@ -11,6 +11,9 @@ fn main() {
         .flag_if_supported("-std=c11")
         .flag_if_supported("-Wno-unused-parameter");
 
+    let mut config = cc::Build::new();
+    config.include(&block_dir);
+
     for path in &[
         cfml_dir.join("parser.c"),
         cfml_dir.join("scanner.c"),

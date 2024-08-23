@@ -1,13 +1,14 @@
 package tree_sitter_cfml
 
+// #cgo CPPFLAGS: -I../../cfml/src
 // #cgo CFLAGS: -std=c11 -fPIC
-// #include "../../src/parser.c"
-// // NOTE: if your language has an external scanner, add it here.
+// #include "../../cfml/src/parser.c"
+// #include "../../cfml/src/scanner.c"
 import "C"
 
 import "unsafe"
 
 // Get the tree-sitter Language for this grammar.
-func Language() unsafe.Pointer {
+func LanguageCfml() unsafe.Pointer {
 	return unsafe.Pointer(C.tree_sitter_cfml())
 }
