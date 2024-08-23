@@ -3,6 +3,8 @@
 typedef struct TSLanguage TSLanguage;
 
 extern "C" TSLanguage *tree_sitter_cfml();
+extern "C" TSLanguage *tree_sitter_cfhtml();
+extern "C" TSLanguage *tree_sitter_cfscript();
 
 // "tree-sitter", "language" hashed with BLAKE2
 const napi_type_tag LANGUAGE_TYPE_TAG = {
@@ -11,10 +13,24 @@ const napi_type_tag LANGUAGE_TYPE_TAG = {
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports["name"] = Napi::String::New(env, "cfml");
-    auto language = Napi::External<TSLanguage>::New(env, tree_sitter_cfml());
+    auto cfml_language = Napi::External<TSLanguage>::New(env, tree_sitter_cfml());
     language.TypeTag(&LANGUAGE_TYPE_TAG);
-    exports["language"] = language;
+    exports["language"] = cfml_language;
     return exports;
+
+    auto cfhtml = Napi::Object::New(env);
+    cfhtml["name"] = Napi::String::New(env, "cfhtml");
+    auto cfhtml_language = Napi::External<TSLanguage>::New(env, tree_sitter_cfhtml());
+    cfhtml_language.TypeTag(&LANGUAGE_TYPE_TAG);
+    cfhtml["language"] = cfhtml_language;
+    exports["cfhtml"] = cfhtml;
+
+    auto cfscript = Napi::Object::New(env);
+    cfscript["name"] = Napi::String::New(env, "cfscript");
+    auto cfscript_language = Napi::External<TSLanguage>::New(env, tree_sitter_cfscript());
+    cfscript_language.TypeTag(&LANGUAGE_TYPE_TAG);
+    cfscript["language"] = cfscript_language;
+    exports["cfscript"] = cfscript;
 }
 
 NODE_API_MODULE(tree_sitter_cfml_binding, Init)
