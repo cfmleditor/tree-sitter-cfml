@@ -378,7 +378,11 @@
           "named": true
         },
         {
-          "type": "hash_single",
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         },
         {
@@ -513,7 +517,11 @@
             "named": true
           },
           {
-            "type": "hash_single",
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
             "named": true
           }
         ]
@@ -897,7 +905,11 @@
             "named": true
           },
           {
-            "type": "hash_single",
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
             "named": true
           },
           {
@@ -2738,7 +2750,11 @@
           "named": true
         },
         {
-          "type": "hash_single",
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         }
       ]
@@ -2849,7 +2865,11 @@
             "named": true
           },
           {
-            "type": "hash_single",
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
             "named": true
           }
         ]
@@ -2903,7 +2923,11 @@
             "named": true
           },
           {
-            "type": "hash_single",
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
             "named": true
           }
         ]
@@ -3119,6 +3143,26 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "hash_empty",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "hash_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3662,7 +3706,11 @@
           "named": true
         },
         {
-          "type": "hash_single",
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         }
       ]
@@ -3767,7 +3815,11 @@
           "named": true
         },
         {
-          "type": "hash_single",
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         }
       ]
@@ -3847,7 +3899,11 @@
           "named": true
         },
         {
-          "type": "hash_single",
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         }
       ]
@@ -3957,7 +4013,11 @@
           "named": true
         },
         {
-          "type": "hash_single",
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         },
         {
@@ -4060,7 +4120,11 @@
             "named": true
           },
           {
-            "type": "hash_single",
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
             "named": true
           }
         ]
@@ -4129,7 +4193,11 @@
             "named": true
           },
           {
-            "type": "hash_single",
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
             "named": true
           }
         ]

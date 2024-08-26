@@ -34,7 +34,7 @@ cfscript
 ===================================
   cars = fn("abc,test","abc");
 
-  cars = fn(test="abc",abc="test",abc);
+  cars = fn(test="#abc#",abc="test",abc);
 
   cars = fn["Test"](test="abc",abc="test");
 
@@ -60,7 +60,8 @@ cfscript
               (assignment_expression
                 (identifier)
                 (string
-                  (string_fragment)))
+                  (hash_expression
+                    (identifier))))
               (assignment_expression
                 (identifier)
                 (string

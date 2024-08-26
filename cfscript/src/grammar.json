@@ -1709,6 +1709,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "hash_expression"
+        },
+        {
+          "type": "SYMBOL",
           "name": "sequence_expression"
         }
       ]
@@ -5347,25 +5351,38 @@
               "value": "\""
             },
             {
-              "type": "REPEAT",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "unescaped_double_string_fragment"
-                    },
-                    "named": true,
-                    "value": "string_fragment"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "escape_sequence"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "hash_expression"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "\"\""
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "escape_sequence"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "unescaped_double_string_fragment"
+                        },
+                        "named": true,
+                        "value": "string_fragment"
+                      }
+                    ]
                   }
-                ]
-              }
+                }
+              ]
             },
             {
               "type": "STRING",
@@ -5381,25 +5398,38 @@
               "value": "'"
             },
             {
-              "type": "REPEAT",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "unescaped_single_string_fragment"
-                    },
-                    "named": true,
-                    "value": "string_fragment"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "escape_sequence"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "unescaped_single_string_fragment"
+                        },
+                        "named": true,
+                        "value": "string_fragment"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "hash_expression"
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "''"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "escape_sequence"
+                      }
+                    ]
                   }
-                ]
-              }
+                }
+              ]
             },
             {
               "type": "STRING",
@@ -5416,7 +5446,7 @@
         "value": 1,
         "content": {
           "type": "PATTERN",
-          "value": "[^\"\\\\\\r\\n]+"
+          "value": "[^\"#\\\\\\r\\n]+"
         }
       }
     },
@@ -5427,7 +5457,7 @@
         "value": 1,
         "content": {
           "type": "PATTERN",
-          "value": "[^'\\\\\\r\\n]+"
+          "value": "[^'#\\\\\\r\\n]+"
         }
       }
     },
@@ -6966,6 +6996,31 @@
         {
           "type": "SYMBOL",
           "name": "computed_property_name"
+        }
+      ]
+    },
+    "hash_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "expression"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "#"
         }
       ]
     },

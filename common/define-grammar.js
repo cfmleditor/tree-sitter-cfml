@@ -101,22 +101,9 @@ module.exports = function defineGrammar(dialect) {
     ],
 
     conflicts: ($, previous) => previous.concat([
-
-      // Tag
-      // [$.cf_zip_tag, $.cf_selfclose_tag],
-      // [$.cf_transaction_tag, $.cf_transaction_tag_standalone],
-
-      // [$.cf_elseif_tag, $.binary_expression],
-      // [$.cf_elseif_tag, $.call_expression],
-      // [$.cf_elseif_tag, $.subscript_expression],
-      // [$.cf_elseif_tag, $.update_expression],
-
-      // Script
-      // [$.primary_expression, $.variable_declaration],
       [$.primary_expression, $.function_expression],
       [$.primary_expression, $._property_name],
       [$.primary_expression, $._property_name, $.arrow_function],
-      // [$.primary_expression, $.function_expression, $.generator_function],
       [$.primary_expression, $.arrow_function],
       [$.primary_expression, $.method_definition],
       [$.primary_expression, $.rest_pattern],
@@ -124,7 +111,6 @@ module.exports = function defineGrammar(dialect) {
       [$.primary_expression, $._for_header],
       [$.array, $.array_pattern],
       [$.object, $.object_pattern],
-      // [$.expression, $.object],
       [$.assignment_expression, $.pattern],
       [$.assignment_expression, $.object_assignment_pattern],
       [$.labeled_statement, $._property_name],
@@ -137,52 +123,18 @@ module.exports = function defineGrammar(dialect) {
       [$.update_expression, $.pair],
       [$.ternary_expression, $.pair],
       [$.member_expression, $.subscript_expression, $.pair],
-      // [$.attribute_name, $._node],
-      // [$._node, $.tag_attributes],
-      // [$._node, $.tag_attributes, $.attribute_name],
-
-      // [$.quoted_cf_attribute_value, $.cf_attribute_value],
-      // [$.quoted_attribute_value],
-      // [$._quoted_style, $.string],
-
-      // [$.hash_expression, $.hash_empty],
-      // [$.primary_expression, $.hash_single],
-      // [$.hash_expression, $.hash_single, $.hash_empty],
-      // [$.hash_expression, $.hash_single],
-
-      [$.assignment_expression, $._property_name],
-
-      [$.switch_case, $._property_name],
-      [$.call_expression, $._property_name],
-
-      // [$.hash_single],
-      // [$.hash_single, $.quoted_attribute_value, $.hash_expression],
-      // [$.style, $.string],
-      // [$.style_property, $.subscript_expression],
-      // [$.style_property],
-      // [$.hash_single, $.primary_expression, $.style_property],
-      // [$.component_body, $.object],
-      // [$.component_body, $.object_pattern],
-
-      // [$.object_assignment_pattern, $.assignment_expression, $._property_name],
-      // [$.primary_expression, $.field_definition, $.method_definition],
-      // [$.assignment_expression, $._property_name],
-
+      [$.hash_empty, $.hash_expression],
       [$.tag_attributes, $.attribute_name],
-
-      // [$.cf_if_statement_tag, $._cf_tag],
-      // [$.start_tag, $.self_closing_tag],
-
-      // [$.cf_if_tag],
-      // [$.cf_else_tag],
-      // [$.cf_elseif_tag],
-      // [$.style_property],
-
       [$.element, $._node],
     ]).concat(
       dialect === 'cfml' ? [
         [$.hash_expression, $.hash_empty],
+        [$.assignment_expression, $._property_name],
+        [$.switch_case, $._property_name],
+        [$.call_expression, $._property_name],
       ] : [
+        [$.hash_empty, $._hash],
+        [$.hash_expression, $._hash],
       ],
     ),
 
@@ -779,7 +731,7 @@ module.exports = function defineGrammar(dialect) {
         seq('\'',
           repeat(
             choice(
-              $._hash,
+              ( dialect === 'cfhtml' ? $._hash_expression : $._hash),
               alias(/[^'\s\n\r\t#]+/, $.attribute_value),
             ),
           ),
@@ -787,7 +739,7 @@ module.exports = function defineGrammar(dialect) {
         seq('"',
           repeat(
             choice(
-              $._hash,
+              ( dialect === 'cfhtml' ? $._hash_expression : $._hash),
               '""',
               alias(/[^"\s\n\r\t#]+/, $.attribute_value),
             ),
@@ -1147,7 +1099,7 @@ module.exports = function defineGrammar(dialect) {
       //
       _expressions: $ => choice(
         $.expression,
-        $._hash,
+        ( dialect === 'cfhtml' ? $._hash_expression : $._hash),
       ),
 
       expression: $ => choice(
@@ -1398,7 +1350,7 @@ module.exports = function defineGrammar(dialect) {
 
       call_expression: $ => choice(
         prec('call', seq(
-          field('function', choice($.expression, $._hash, $.import)),
+          field('function', choice($.expression, ( dialect === 'cfhtml' ? $._hash_expression : $._hash), $.import)),
           field('arguments', $.arguments),
         )),
         prec('member', seq(
@@ -1445,7 +1397,7 @@ module.exports = function defineGrammar(dialect) {
       assignment_expression: $ => prec.right('assign', seq(
         field('left', choice($.parenthesized_expression, $._lhs_expression)),
         '=',
-        field('right', choice($.expression, $._hash)),
+        field('right', choice($.expression, ( dialect === 'cfhtml' ? $._hash_expression : $._hash))),
       )),
 
       _augmented_assignment_lhs: $ => choice(
@@ -1571,7 +1523,7 @@ module.exports = function defineGrammar(dialect) {
           choice(
             // $.hash_single,
             repeat(choice(
-              $._hash,
+              ( dialect === 'cfhtml' ? $._hash_expression : $._hash),
               '""',
               $.escape_sequence,
               alias($.unescaped_double_string_fragment, $.string_fragment),
@@ -1586,7 +1538,7 @@ module.exports = function defineGrammar(dialect) {
             // $.hash_single,
             repeat(choice(
               alias($.unescaped_single_string_fragment, $.string_fragment),
-              $._hash,
+              ( dialect === 'cfhtml' ? $._hash_expression : $._hash),
               '\'\'',
               $.escape_sequence,
             )),
@@ -1736,7 +1688,7 @@ module.exports = function defineGrammar(dialect) {
 
       arguments: $ => seq(
         '(',
-        commaSep(optional(choice($.expression, $._hash, $.spread_element))),
+        commaSep(optional(choice($.expression, ( dialect === 'cfhtml' ? $._hash_expression : $._hash), $.spread_element))),
         ')',
       ),
 
@@ -1846,6 +1798,17 @@ module.exports = function defineGrammar(dialect) {
         } else {
           choices.push(alias('#', $.hash_single));
         }
+        return choice(...choices);
+      },
+
+      _hash_expression: ($, previous) => {
+        const choices = [];
+        // if (dialect === 'cfml') {
+        choices.push($.hash_expression);
+        choices.push($.hash_empty);
+        // } else {
+        //   choices.push(alias('#', $.hash_single));
+        // }
         return choice(...choices);
       },
 

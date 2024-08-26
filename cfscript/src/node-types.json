@@ -1203,6 +1203,10 @@
           "named": true
         },
         {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
           "type": "sequence_expression",
           "named": true
         }
@@ -1366,6 +1370,10 @@
             "named": true
           },
           {
+            "type": "hash_expression",
+            "named": true
+          },
+          {
             "type": "sequence_expression",
             "named": true
           }
@@ -1414,6 +1422,10 @@
             "named": true
           },
           {
+            "type": "hash_expression",
+            "named": true
+          },
+          {
             "type": "sequence_expression",
             "named": true
           }
@@ -1425,6 +1437,10 @@
         "types": [
           {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
             "named": true
           },
           {
@@ -1443,6 +1459,10 @@
           },
           {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
             "named": true
           },
           {
@@ -1648,6 +1668,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "hash_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2449,6 +2484,10 @@
           "named": true
         },
         {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
           "type": "sequence_expression",
           "named": true
         }
@@ -2548,6 +2587,10 @@
           "named": true
         },
         {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
           "type": "sequence_expression",
           "named": true
         }
@@ -2612,6 +2655,10 @@
           "named": true
         },
         {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
           "type": "html_character_reference",
           "named": true
         },
@@ -2632,6 +2679,10 @@
         "types": [
           {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
             "named": true
           },
           {
@@ -2701,6 +2752,10 @@
         "types": [
           {
             "type": "expression",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
             "named": true
           },
           {
@@ -2789,6 +2844,10 @@
           "named": true
         },
         {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
           "type": "sequence_expression",
           "named": true
         }
@@ -2841,6 +2900,10 @@
       "types": [
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         },
         {
@@ -3099,6 +3162,14 @@
     "named": false
   },
   {
+    "type": "\"\"",
+    "named": false
+  },
+  {
+    "type": "#",
+    "named": false
+  },
+  {
     "type": "${",
     "named": false
   },
@@ -3128,6 +3199,10 @@
   },
   {
     "type": "'",
+    "named": false
+  },
+  {
+    "type": "''",
     "named": false
   },
   {

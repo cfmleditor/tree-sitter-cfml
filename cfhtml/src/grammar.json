@@ -3344,7 +3344,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_hash"
+                    "name": "_hash_expression"
                   },
                   {
                     "type": "ALIAS",
@@ -3378,7 +3378,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_hash"
+                    "name": "_hash_expression"
                   },
                   {
                     "type": "STRING",
@@ -4992,7 +4992,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_hash"
+          "name": "_hash_expression"
         }
       ]
     },
@@ -6484,7 +6484,7 @@
                     },
                     {
                       "type": "SYMBOL",
-                      "name": "_hash"
+                      "name": "_hash_expression"
                     },
                     {
                       "type": "SYMBOL",
@@ -6806,7 +6806,7 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "_hash"
+                  "name": "_hash_expression"
                 }
               ]
             }
@@ -8409,7 +8409,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "_hash"
+                        "name": "_hash_expression"
                       },
                       {
                         "type": "STRING",
@@ -8465,7 +8465,7 @@
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "_hash"
+                        "name": "_hash_expression"
                       },
                       {
                         "type": "STRING",
@@ -9318,7 +9318,7 @@
                         },
                         {
                           "type": "SYMBOL",
-                          "name": "_hash"
+                          "name": "_hash_expression"
                         },
                         {
                           "type": "SYMBOL",
@@ -9352,7 +9352,7 @@
                               },
                               {
                                 "type": "SYMBOL",
-                                "name": "_hash"
+                                "name": "_hash_expression"
                               },
                               {
                                 "type": "SYMBOL",
@@ -9928,6 +9928,19 @@
         }
       ]
     },
+    "_hash_expression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "hash_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "hash_empty"
+        }
+      ]
+    },
     "hash_expression": {
       "type": "SEQ",
       "members": [
@@ -10103,16 +10116,8 @@
       "pair"
     ],
     [
-      "assignment_expression",
-      "_property_name"
-    ],
-    [
-      "switch_case",
-      "_property_name"
-    ],
-    [
-      "call_expression",
-      "_property_name"
+      "hash_empty",
+      "hash_expression"
     ],
     [
       "tag_attributes",
@@ -10121,6 +10126,14 @@
     [
       "element",
       "_node"
+    ],
+    [
+      "hash_empty",
+      "_hash"
+    ],
+    [
+      "hash_expression",
+      "_hash"
     ]
   ],
   "precedences": [

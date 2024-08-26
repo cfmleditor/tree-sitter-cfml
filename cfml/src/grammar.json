@@ -9933,6 +9933,19 @@
         }
       ]
     },
+    "_hash_expression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "hash_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "hash_empty"
+        }
+      ]
+    },
     "hash_expression": {
       "type": "SEQ",
       "members": [
@@ -10108,16 +10121,8 @@
       "pair"
     ],
     [
-      "assignment_expression",
-      "_property_name"
-    ],
-    [
-      "switch_case",
-      "_property_name"
-    ],
-    [
-      "call_expression",
-      "_property_name"
+      "hash_empty",
+      "hash_expression"
     ],
     [
       "tag_attributes",
@@ -10130,6 +10135,18 @@
     [
       "hash_expression",
       "hash_empty"
+    ],
+    [
+      "assignment_expression",
+      "_property_name"
+    ],
+    [
+      "switch_case",
+      "_property_name"
+    ],
+    [
+      "call_expression",
+      "_property_name"
     ]
   ],
   "precedences": [

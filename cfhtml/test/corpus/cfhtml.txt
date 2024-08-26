@@ -22,6 +22,5 @@ testing4
         (assignment_expression
           (identifier)
           (string
-            (hash_single)
-            (hash_single)))
+            (hash_empty)))
         (cf_selfclose_tag_end)))

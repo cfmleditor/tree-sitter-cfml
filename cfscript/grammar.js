@@ -475,6 +475,7 @@ module.exports = grammar({
     //
     _expressions: ($) => choice(
       $.expression,
+      $.hash_expression,
       $.sequence_expression,
     ),
 
@@ -959,18 +960,29 @@ module.exports = grammar({
     string: ($) => choice(
       seq(
         '"',
-        repeat(choice(
-          alias($.unescaped_double_string_fragment, $.string_fragment),
-          $.escape_sequence,
-        )),
+        choice(
+          // $.hash_single,
+          repeat(choice(
+            $.hash_expression,
+            '""',
+            $.escape_sequence,
+            alias($.unescaped_double_string_fragment, $.string_fragment),
+          )),
+        ),
         '"',
       ),
+
       seq(
         '\'',
-        repeat(choice(
-          alias($.unescaped_single_string_fragment, $.string_fragment),
-          $.escape_sequence,
-        )),
+        choice(
+          // $.hash_single,
+          repeat(choice(
+            alias($.unescaped_single_string_fragment, $.string_fragment),
+            $.hash_expression,
+            '\'\'',
+            $.escape_sequence,
+          )),
+        ),
         '\'',
       ),
     ),
@@ -979,10 +991,10 @@ module.exports = grammar({
     // We give names to the token() constructs containing a regexp
     // so as to obtain a node in the CST.
     //
-    unescaped_double_string_fragment: (_) => token.immediate(prec(1, /[^"\\\r\n]+/)),
+    unescaped_double_string_fragment: (_) => token.immediate(prec(1, /[^"#\\\r\n]+/)),
 
     // same here
-    unescaped_single_string_fragment: (_) => token.immediate(prec(1, /[^'\\\r\n]+/)),
+    unescaped_single_string_fragment: (_) => token.immediate(prec(1, /[^'#\\\r\n]+/)),
 
     escape_sequence: (_) => token.immediate(seq(
       '\\',
@@ -1239,6 +1251,12 @@ module.exports = grammar({
       $.string,
       $.number,
       $.computed_property_name,
+    ),
+
+    hash_expression: ($) => seq(
+      '#',
+      optional($.expression),
+      '#',
     ),
 
     computed_property_name: ($) => seq(
