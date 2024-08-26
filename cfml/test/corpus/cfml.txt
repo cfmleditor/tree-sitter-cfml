@@ -1010,20 +1010,33 @@ testing4
                 (element
                   (self_closing_tag
                     (tag_name)))
-                (cf_if_tag
+                (implicit_end_tag))
+              (cf_if_tag
+                (binary_expression
                   (binary_expression
-                    (binary_expression
-                      (member_expression
-                        (identifier)
-                        (property_identifier))
-                      (string
-                        (string_fragment)))
-                    (binary_expression
-                      (member_expression
-                        (identifier)
-                        (property_identifier))
-                      (string
-                        (string_fragment))))
+                    (member_expression
+                      (identifier)
+                      (property_identifier))
+                    (string
+                      (string_fragment)))
+                  (binary_expression
+                    (member_expression
+                      (identifier)
+                      (property_identifier))
+                    (string
+                      (string_fragment))))
+                (cf_output_tag
+                  (element
+                    (start_tag
+                      (tag_name))
+                    (element
+                      (self_closing_tag
+                        (tag_name)))
+                    (implicit_end_tag))
+                  (end_tag
+                    (tag_name)))
+                (cf_if_alt
+                  (cf_else_tag)
                   (cf_output_tag
                     (element
                       (start_tag
@@ -1033,20 +1046,7 @@ testing4
                           (tag_name)))
                       (implicit_end_tag))
                     (end_tag
-                      (tag_name)))
-                  (cf_if_alt
-                    (cf_else_tag)
-                    (cf_output_tag
-                      (element
-                        (start_tag
-                          (tag_name))
-                        (element
-                          (self_closing_tag
-                            (tag_name)))
-                        (implicit_end_tag))
-                      (end_tag
-                        (tag_name)))))
-                (implicit_end_tag))
+                      (tag_name)))))
               (end_tag
                 (tag_name))
               (end_tag

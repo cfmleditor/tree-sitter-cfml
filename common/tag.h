@@ -26,6 +26,7 @@ typedef enum {
     SOURCE,
     TRACK,
     WBR,
+    CUSTOM,
     END_OF_VOID_TAGS,
 
     A,
@@ -130,9 +131,6 @@ typedef enum {
     UL,
     VAR,
     VIDEO,
-
-    CUSTOM,
-
     END_,
 } TagType;
 
