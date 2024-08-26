@@ -106,7 +106,7 @@ module.exports = grammar({
     [$.binary_expression, $._initializer],
     [$.class_static_block, $._property_name],
     [$.hash_expression, $.hash_empty],
-    [$.call_expression, $._property_name],
+    // [$.call_expression, $._property_name],
 
     [$.expression, $._property_name],
   ],

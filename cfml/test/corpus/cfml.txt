@@ -421,7 +421,9 @@ nested cfif
         (start_tag
           (tag_name)
           (tag_attributes
-            (style_attribute)))
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value))))
         (end_tag
           (tag_name)))
       (cf_if_tag
@@ -1057,8 +1059,9 @@ testing4
         (start_tag
           (tag_name)
           (tag_attributes
-            (style_attribute
-              (style_item
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
                 (cf_output_tag
                   (hash_expression
                     (identifier)))))))
@@ -1087,11 +1090,12 @@ testing5
                 (hash_empty)
                 (attribute_value))))
           (tag_attributes
-            (style_attribute
-              (style_item
-                (style_property
-                  (identifier)
-                  (hash_empty))))))
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value)
+                (hash_empty)
+                (attribute_value)))))
         (end_tag
           (tag_name)))
       (element
@@ -1103,11 +1107,12 @@ testing5
               (quoted_attribute_value
                 (attribute_value))))
           (tag_attributes
-            (style_attribute
-              (style_item
-                (style_property
-                  (identifier)
-                  (hash_empty)))))
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value)
+                (hash_empty)
+                (attribute_value))))
           (tag_attributes
             (attribute
               (attribute_name)

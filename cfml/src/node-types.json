@@ -4236,21 +4236,6 @@
     }
   },
   {
-    "type": "style_attribute",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "style_item",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "style_element",
     "named": true,
     "fields": {},
@@ -4268,56 +4253,6 @@
         },
         {
           "type": "start_tag",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "style_item",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "style_property",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "style_property",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "identifier",
           "named": true
         }
       ]
@@ -4488,10 +4423,6 @@
         },
         {
           "type": "quoted_attribute_value",
-          "named": true
-        },
-        {
-          "type": "style_attribute",
           "named": true
         }
       ]
@@ -5335,10 +5266,6 @@
   {
     "type": "string_fragment",
     "named": true
-  },
-  {
-    "type": "style",
-    "named": false
   },
   {
     "type": "super",

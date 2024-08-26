@@ -233,7 +233,7 @@ module.exports = function defineGrammar(dialect) {
       )),
 
       tag_attributes: $ => choice(
-        $.style_attribute,
+        // $.style_attribute,
         $.attribute,
         $.quoted_attribute_value,
         $.cf_tag,
@@ -618,38 +618,38 @@ module.exports = function defineGrammar(dialect) {
         optional($.cf_if_alt),
       )),
 
-      style_attribute: $ => seq(
-        keyword('style'),
-        optional(
-          seq(
-            '=',
-            $._quoted_style,
-          ),
-        ),
-      ),
+      // style_attribute: $ => seq(
+      //   keyword('style'),
+      //   optional(
+      //     seq(
+      //       '=',
+      //       $._quoted_style,
+      //     ),
+      //   ),
+      // ),
 
-      _quoted_style: $ => choice(
-        seq(
-          '"',
-          repeat(
-            seq(
-              $.style_item,
-              optional(';'),
-            ),
-          ),
-          '"',
-        ),
-        seq(
-          '\'',
-          repeat(
-            seq(
-              $.style_item,
-              optional(';'),
-            ),
-          ),
-          '\'',
-        ),
-      ),
+      // _quoted_style: $ => choice(
+      //   seq(
+      //     '"',
+      //     repeat(
+      //       seq(
+      //         $.style_item,
+      //         optional(';'),
+      //       ),
+      //     ),
+      //     '"',
+      //   ),
+      //   seq(
+      //     '\'',
+      //     repeat(
+      //       seq(
+      //         $.style_item,
+      //         optional(';'),
+      //       ),
+      //     ),
+      //     '\'',
+      //   ),
+      // ),
 
       attribute: $ => seq(
         $.attribute_name,
@@ -1149,24 +1149,24 @@ module.exports = function defineGrammar(dialect) {
           optional($.expression),
         ))),
 
-      style_item: $ => choice(
-        $.style_property,
-        $.cf_tag,
-        $._hash,
-      ),
+      // style_item: $ => choice(
+      //   $.style_property,
+      //   $.cf_tag,
+      //   $._hash,
+      // ),
 
-      style_property: $ => prec.right(seq(
-        $.identifier,
-        ':',
-        repeat(
-          choice(
-            // $.expression,
-            // $.hash_single,
-            $._hash,
-            /[a-zA-Z\-_]+/,
-          ),
-        ),
-      )),
+      // style_property: $ => prec.right(seq(
+      //   $.identifier,
+      //   ':',
+      //   repeat(
+      //     choice(
+      //       // $.expression,
+      //       // $.hash_single,
+      //       $._hash,
+      //       /[a-zA-Z\-_]+/,
+      //     ),
+      //   ),
+      // )),
 
       object: $ => prec('object', seq(
         '{',

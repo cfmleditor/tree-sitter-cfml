@@ -7127,10 +7127,6 @@
       "hash_empty"
     ],
     [
-      "call_expression",
-      "_property_name"
-    ],
-    [
       "expression",
       "_property_name"
     ]
