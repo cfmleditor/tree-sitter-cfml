@@ -37,19 +37,19 @@ let tree;
   const parser = new TreeSitter();
   const codeEditor = CodeMirror.fromTextArea(codeInput, {
     lineNumbers: true,
-    showCursorWhenSelecting: true
+    showCursorWhenSelecting: true,
   });
 
   const queryEditor = CodeMirror.fromTextArea(queryInput, {
     lineNumbers: true,
-    showCursorWhenSelecting: true
+    showCursorWhenSelecting: true,
   });
 
   const cluster = new Clusterize({
     rows: [],
     noDataText: null,
     contentElem: outputContainer,
-    scrollElem: outputContainerScroll
+    scrollElem: outputContainerScroll,
   });
   const renderTreeOnCodeChange = debounce(renderTree, 50);
   const saveStateOnChange = debounce(saveState, 2000);
@@ -73,21 +73,22 @@ let tree;
   outputContainer.addEventListener('click', handleTreeClick);
 
   handleQueryEnableChange();
-  await handleLanguageChange()
+  await handleLanguageChange();
 
   playgroundContainer.style.visibility = 'visible';
 
+  // eslint-disable-next-line require-jsdoc
   async function handleLanguageChange() {
     const newLanguageName = languageSelect.value;
     if (!languagesByName[newLanguageName]) {
-      const url = `tree-sitter-${newLanguageName}.wasm`
+      const url = `tree-sitter-${newLanguageName}.wasm`;
       languageSelect.disabled = true;
       try {
         languagesByName[newLanguageName] = await TreeSitter.Language.load(url);
       } catch (e) {
         console.error(e);
         languageSelect.value = languageName;
-        return
+        return;
       } finally {
         languageSelect.disabled = false;
       }
@@ -100,6 +101,7 @@ let tree;
     handleQueryChange();
   }
 
+  // eslint-disable-next-line require-jsdoc
   async function handleCodeChange(_editor, changes) {
     const newText = `${codeEditor.getValue()}\n`;
     const edits = tree && changes && changes.map(treeEditForEditorChange);
@@ -122,6 +124,7 @@ let tree;
     saveStateOnChange();
   }
 
+  // eslint-disable-next-line require-jsdoc
   async function renderTree() {
     isRendering++;
     const cursor = tree.walk();
@@ -133,9 +136,9 @@ let tree;
     let visitedChildren = false;
     let indentLevel = 0;
 
-    for (let i = 0;; i++) {
+    for (let i = 0; ; i++) {
       if (i > 0 && i % 10000 === 0) {
-        await new Promise(r => setTimeout(r, 0));
+        await new Promise((r) => setTimeout(r, 0));
         if (parseCount !== currentRenderCount) {
           cursor.delete();
           isRendering--;
@@ -145,7 +148,7 @@ let tree;
 
       let displayName;
       if (cursor.nodeIsMissing) {
-        displayName = `MISSING ${cursor.nodeType}`
+        displayName = `MISSING ${cursor.nodeType}`;
       } else if (cursor.nodeIsNamed) {
         displayName = cursor.nodeType;
       }
@@ -203,6 +206,7 @@ let tree;
     handleCursorMovement();
   }
 
+  // eslint-disable-next-line require-jsdoc
   function runTreeQuery(_, startRow, endRow) {
     if (endRow == null) {
       const viewport = codeEditor.getViewport();
@@ -212,7 +216,7 @@ let tree;
 
     codeEditor.operation(() => {
       const marks = codeEditor.getAllMarks();
-      marks.forEach(m => m.clear());
+      marks.forEach((m) => m.clear());
 
       if (tree && query) {
         const captures = query.captures(
@@ -231,14 +235,15 @@ let tree;
             {
               inclusiveLeft: true,
               inclusiveRight: true,
-              css: `color: ${colorForCaptureName(name)}`
-            }
+              css: `color: ${colorForCaptureName(name)}`,
+            },
           );
         }
       }
     });
   }
 
+  // eslint-disable-next-line require-jsdoc
   function handleQueryChange() {
     if (query) {
       query.delete();
@@ -247,7 +252,7 @@ let tree;
     }
 
     queryEditor.operation(() => {
-      queryEditor.getAllMarks().forEach(m => m.clear());
+      queryEditor.getAllMarks().forEach((m) => m.clear());
       if (!queryCheckbox.checked) return;
 
       const queryText = queryEditor.getValue();
@@ -265,8 +270,8 @@ let tree;
               {
                 inclusiveLeft: true,
                 inclusiveRight: true,
-                css: `color: ${colorForCaptureName(match[1])}`
-              }
+                css: `color: ${colorForCaptureName(match[1])}`,
+              },
             );
           }
           row++;
@@ -275,7 +280,7 @@ let tree;
         const startPosition = queryEditor.posFromIndex(error.index);
         const endPosition = {
           line: startPosition.line,
-          ch: startPosition.ch + (error.length || Infinity)
+          ch: startPosition.ch + (error.length || Infinity),
         };
 
         if (error.index === queryText.length) {
@@ -294,8 +299,8 @@ let tree;
             className: 'query-error',
             inclusiveLeft: true,
             inclusiveRight: true,
-            attributes: {title: error.message}
-          }
+            attributes: {title: error.message},
+          },
         );
       }
     });
@@ -304,6 +309,7 @@ let tree;
     saveQueryState();
   }
 
+  // eslint-disable-next-line require-jsdoc
   function handleCursorMovement() {
     if (isRendering) return;
 
@@ -327,7 +333,7 @@ let tree;
         const row = treeRows[treeRowHighlightedIndex];
         if (row) treeRows[treeRowHighlightedIndex] = row.replace('highlighted', 'plain');
       }
-      treeRowHighlightedIndex = treeRows.findIndex(row => row.includes(`data-id=${node.id}`));
+      treeRowHighlightedIndex = treeRows.findIndex((row) => row.includes(`data-id=${node.id}`));
       if (treeRowHighlightedIndex !== -1) {
         const row = treeRows[treeRowHighlightedIndex];
         if (row) treeRows[treeRowHighlightedIndex] = row.replace('plain', 'highlighted');
@@ -345,6 +351,7 @@ let tree;
     }
   }
 
+  // eslint-disable-next-line require-jsdoc
   function handleTreeClick(event) {
     if (event.target.tagName === 'A') {
       event.preventDefault();
@@ -353,22 +360,23 @@ let tree;
         .dataset
         .range
         .split(',')
-        .map(n => parseInt(n));
+        .map((n) => parseInt(n));
       codeEditor.focus();
       codeEditor.setSelection(
         {line: startRow, ch: startColumn},
-        {line: endRow, ch: endColumn}
+        {line: endRow, ch: endColumn},
       );
     }
   }
 
+  // eslint-disable-next-line require-jsdoc
   function handleLoggingChange() {
     if (loggingCheckbox.checked) {
       parser.setLogger((message, lexing) => {
         if (lexing) {
-          console.log("  ", message)
+          console.log('  ', message);
         } else {
-          console.log(message)
+          console.log(message);
         }
       });
     } else {
@@ -376,6 +384,7 @@ let tree;
     }
   }
 
+  // eslint-disable-next-line require-jsdoc
   function handleQueryEnableChange() {
     if (queryCheckbox.checked) {
       queryContainer.style.visibility = '';
@@ -387,6 +396,7 @@ let tree;
     handleQueryChange();
   }
 
+  // eslint-disable-next-line require-jsdoc
   function treeEditForEditorChange(change) {
     const oldLineCount = change.removed.length;
     const newLineCount = change.text.length;
@@ -396,9 +406,9 @@ let tree;
     const oldEndPosition = {row: change.to.line, column: change.to.ch};
     const newEndPosition = {
       row: startPosition.row + newLineCount - 1,
-      column: newLineCount === 1
-        ? startPosition.column + lastLineLength
-        : lastLineLength
+      column: newLineCount === 1 ?
+        startPosition.column + lastLineLength :
+        lastLineLength,
     };
 
     const startIndex = codeEditor.indexFromPos(change.from);
@@ -409,20 +419,22 @@ let tree;
 
     return {
       startIndex, oldEndIndex, newEndIndex,
-      startPosition, oldEndPosition, newEndPosition
+      startPosition, oldEndPosition, newEndPosition,
     };
   }
 
+  // eslint-disable-next-line require-jsdoc
   function colorForCaptureName(capture) {
     const id = query.captureNames.indexOf(capture);
     return COLORS_BY_INDEX[id % COLORS_BY_INDEX.length];
   }
 
+  // eslint-disable-next-line require-jsdoc
   function loadState() {
-    const language = localStorage.getItem("language");
-    const sourceCode = localStorage.getItem("sourceCode");
-    const query = localStorage.getItem("query");
-    const queryEnabled = localStorage.getItem("queryEnabled");
+    const language = localStorage.getItem('language');
+    const sourceCode = localStorage.getItem('sourceCode');
+    const query = localStorage.getItem('query');
+    const queryEnabled = localStorage.getItem('queryEnabled');
     if (language != null && sourceCode != null && query != null) {
       queryInput.value = query;
       codeInput.value = sourceCode;
@@ -431,21 +443,25 @@ let tree;
     }
   }
 
+  // eslint-disable-next-line require-jsdoc
   function saveState() {
-    localStorage.setItem("language", languageSelect.value);
-    localStorage.setItem("sourceCode", codeEditor.getValue());
+    localStorage.setItem('language', languageSelect.value);
+    localStorage.setItem('sourceCode', codeEditor.getValue());
     saveQueryState();
   }
 
+  // eslint-disable-next-line require-jsdoc
   function saveQueryState() {
-    localStorage.setItem("queryEnabled", queryCheckbox.checked);
-    localStorage.setItem("query", queryEditor.getValue());
+    localStorage.setItem('queryEnabled', queryCheckbox.checked);
+    localStorage.setItem('query', queryEditor.getValue());
   }
 
+  // eslint-disable-next-line require-jsdoc
   function debounce(func, wait, immediate) {
     let timeout;
     return function() {
-      const context = this, args = arguments;
+      // eslint-disable-next-line prefer-rest-params, no-invalid-this
+      const context = this; const args = arguments;
       const later = function() {
         timeout = null;
         if (!immediate) func.apply(context, args);
