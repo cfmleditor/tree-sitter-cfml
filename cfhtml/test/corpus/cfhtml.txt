@@ -3,6 +3,13 @@ testing4
 ===================================
 <div test="color: #<cfoutput>#scrollHeight#</cfoutput>"></div>
 <cfset result = "##" />
+
+<cfset a = 1 />
+<cfset b = "#a#" />
+<cfset c = #a# />
+
+<cfdump var="#[a, b, c]#">
+
 ---
 (program
       (element
@@ -23,4 +30,32 @@ testing4
           (identifier)
           (string
             (hash_empty)))
+            (cf_selfclose_tag_end))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (number))
+        (cf_selfclose_tag_end))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (string
+            (hash_expression
+              (identifier))))
+        (cf_selfclose_tag_end))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (hash_expression
+            (identifier)))
+        (cf_selfclose_tag_end))
+      (cf_selfclose_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (hash_expression
+              (array
+                (identifier)
+                (identifier)
+                (identifier)))))
         (cf_selfclose_tag_end)))

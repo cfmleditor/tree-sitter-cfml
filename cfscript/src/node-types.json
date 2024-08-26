@@ -50,6 +50,14 @@
         "named": true
       },
       {
+        "type": "hash_empty",
+        "named": true
+      },
+      {
+        "type": "hash_expression",
+        "named": true
+      },
+      {
         "type": "jsx_element",
         "named": true
       },
@@ -599,10 +607,6 @@
         "types": [
           {
             "type": "expression",
-            "named": true
-          },
-          {
-            "type": "private_property_identifier",
             "named": true
           }
         ]
@@ -1203,10 +1207,6 @@
           "named": true
         },
         {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
           "type": "sequence_expression",
           "named": true
         }
@@ -1236,11 +1236,15 @@
             "named": true
           },
           {
-            "type": "number",
+            "type": "hash_empty",
             "named": true
           },
           {
-            "type": "private_property_identifier",
+            "type": "hash_expression",
+            "named": true
+          },
+          {
+            "type": "number",
             "named": true
           },
           {
@@ -1370,10 +1374,6 @@
             "named": true
           },
           {
-            "type": "hash_expression",
-            "named": true
-          },
-          {
             "type": "sequence_expression",
             "named": true
           }
@@ -1422,10 +1422,6 @@
             "named": true
           },
           {
-            "type": "hash_expression",
-            "named": true
-          },
-          {
             "type": "sequence_expression",
             "named": true
           }
@@ -1437,10 +1433,6 @@
         "types": [
           {
             "type": "expression",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
             "named": true
           },
           {
@@ -1459,10 +1451,6 @@
           },
           {
             "type": "expression",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
             "named": true
           },
           {
@@ -1669,6 +1657,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "hash_empty",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "hash_expression",
@@ -1913,10 +1906,6 @@
       "required": false,
       "types": [
         {
-          "type": "html_character_reference",
-          "named": true
-        },
-        {
           "type": "jsx_element",
           "named": true
         },
@@ -2138,10 +2127,6 @@
         "required": true,
         "types": [
           {
-            "type": "private_property_identifier",
-            "named": true
-          },
-          {
             "type": "property_identifier",
             "named": true
           }
@@ -2187,11 +2172,15 @@
             "named": true
           },
           {
-            "type": "number",
+            "type": "hash_empty",
             "named": true
           },
           {
-            "type": "private_property_identifier",
+            "type": "hash_expression",
+            "named": true
+          },
+          {
+            "type": "number",
             "named": true
           },
           {
@@ -2396,11 +2385,15 @@
             "named": true
           },
           {
-            "type": "number",
+            "type": "hash_empty",
             "named": true
           },
           {
-            "type": "private_property_identifier",
+            "type": "hash_expression",
+            "named": true
+          },
+          {
+            "type": "number",
             "named": true
           },
           {
@@ -2438,11 +2431,15 @@
             "named": true
           },
           {
-            "type": "number",
+            "type": "hash_empty",
             "named": true
           },
           {
-            "type": "private_property_identifier",
+            "type": "hash_expression",
+            "named": true
+          },
+          {
+            "type": "number",
             "named": true
           },
           {
@@ -2484,10 +2481,6 @@
           "named": true
         },
         {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
           "type": "sequence_expression",
           "named": true
         }
@@ -2502,10 +2495,6 @@
       "multiple": true,
       "required": false,
       "types": [
-        {
-          "type": "hash_bang_line",
-          "named": true
-        },
         {
           "type": "statement",
           "named": true
@@ -2587,10 +2576,6 @@
           "named": true
         },
         {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
           "type": "sequence_expression",
           "named": true
         }
@@ -2655,11 +2640,11 @@
           "named": true
         },
         {
-          "type": "hash_expression",
+          "type": "hash_empty",
           "named": true
         },
         {
-          "type": "html_character_reference",
+          "type": "hash_expression",
           "named": true
         },
         {
@@ -2679,10 +2664,6 @@
         "types": [
           {
             "type": "expression",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
             "named": true
           },
           {
@@ -2752,10 +2733,6 @@
         "types": [
           {
             "type": "expression",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
             "named": true
           },
           {
@@ -2844,10 +2821,6 @@
           "named": true
         },
         {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
           "type": "sequence_expression",
           "named": true
         }
@@ -2900,10 +2873,6 @@
       "types": [
         {
           "type": "expression",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
           "named": true
         },
         {
@@ -3486,14 +3455,6 @@
     "named": true
   },
   {
-    "type": "hash_bang_line",
-    "named": true
-  },
-  {
-    "type": "html_character_reference",
-    "named": true
-  },
-  {
     "type": "html_comment",
     "named": true
   },
@@ -3547,10 +3508,6 @@
   },
   {
     "type": "optional_chain",
-    "named": true
-  },
-  {
-    "type": "private_property_identifier",
     "named": true
   },
   {

@@ -105,17 +105,21 @@ module.exports = grammar({
     [$.computed_property_name, $.array],
     [$.binary_expression, $._initializer],
     [$.class_static_block, $._property_name],
+    [$.hash_expression, $.hash_empty],
+    [$.call_expression, $._property_name],
+
+    [$.expression, $._property_name],
   ],
 
   word: ($) => $.identifier,
 
   rules: {
     program: ($) => seq(
-      optional($.hash_bang_line),
+      // optional($.hash_bang_line),
       repeat($.statement),
     ),
 
-    hash_bang_line: (_) => /#!.*/,
+    // hash_bang_line: (_) => /#!.*/,
 
     //
     // Export declarations
@@ -475,7 +479,6 @@ module.exports = grammar({
     //
     _expressions: ($) => choice(
       $.expression,
-      $.hash_expression,
       $.sequence_expression,
     ),
 
@@ -492,6 +495,7 @@ module.exports = grammar({
       $.update_expression,
       $.new_expression,
       $.yield_expression,
+      $._hash,
     ),
 
     primary_expression: ($) => choice(
@@ -616,7 +620,7 @@ module.exports = grammar({
     // An entity can be named, numeric (decimal), or numeric (hexadecimal). The
     // longest entity name is 29 characters long, and the HTML spec says that
     // no more will ever be added.
-    html_character_reference: (_) => /&(#([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
+    // html_character_reference: (_) => /&(#([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
 
     jsx_expression: ($) => seq(
       '{',
@@ -630,7 +634,7 @@ module.exports = grammar({
 
     _jsx_child: ($) => choice(
       $.jsx_text,
-      $.html_character_reference,
+      // $.html_character_reference,
       $._jsx_element,
       $.jsx_expression,
     ),
@@ -695,7 +699,7 @@ module.exports = grammar({
         '"',
         repeat(choice(
           alias($.unescaped_double_jsx_string_fragment, $.string_fragment),
-          $.html_character_reference,
+          // $.html_character_reference,
         )),
         '"',
       ),
@@ -703,7 +707,7 @@ module.exports = grammar({
         '\'',
         repeat(choice(
           alias($.unescaped_single_jsx_string_fragment, $.string_fragment),
-          $.html_character_reference,
+          // $.html_character_reference,
         )),
         '\'',
       ),
@@ -713,10 +717,10 @@ module.exports = grammar({
     // We give names to the token() constructs containing a regexp
     // so as to obtain a node in the CST.
     //
-    unescaped_double_jsx_string_fragment: (_) => token.immediate(prec(1, /([^"&]|&[^#A-Za-z])+/)),
+    unescaped_double_jsx_string_fragment: (_) => token.immediate(prec(1, /([^"&#]|&[^#A-Za-z])+/)),
 
     // same here
-    unescaped_single_jsx_string_fragment: (_) => token.immediate(prec(1, /([^'&]|&[^#A-Za-z])+/)),
+    unescaped_single_jsx_string_fragment: (_) => token.immediate(prec(1, /([^'&#]|&[^#A-Za-z])+/)),
 
     _jsx_attribute_value: ($) => choice(
       alias($._jsx_string, $.string),
@@ -828,7 +832,7 @@ module.exports = grammar({
       field('object', choice($.expression, $.primary_expression, $.import)),
       choice('.', field('optional_chain', $.optional_chain)),
       field('property', choice(
-        $.private_property_identifier,
+        // $.private_property_identifier,
         alias($.identifier, $.property_identifier))),
     )),
 
@@ -928,7 +932,7 @@ module.exports = grammar({
       ].map(([operator, precedence, associativity]) =>
         // @ts-ignore
         (associativity === 'right' ? prec.right : prec.left)(precedence, seq(
-          field('left', operator === 'in' ? choice($.expression, $.private_property_identifier) : $.expression),
+          field('left', $.expression),
           field('operator', operator),
           field('right', $.expression),
         )),
@@ -963,7 +967,7 @@ module.exports = grammar({
         choice(
           // $.hash_single,
           repeat(choice(
-            $.hash_expression,
+            $._hash,
             '""',
             $.escape_sequence,
             alias($.unescaped_double_string_fragment, $.string_fragment),
@@ -978,7 +982,7 @@ module.exports = grammar({
           // $.hash_single,
           repeat(choice(
             alias($.unescaped_single_string_fragment, $.string_fragment),
-            $.hash_expression,
+            $._hash,
             '\'\'',
             $.escape_sequence,
           )),
@@ -1108,22 +1112,22 @@ module.exports = grammar({
     identifier: (_) => {
       // eslint-disable-next-line max-len
       // @ts-ignore
-      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       // eslint-disable-next-line max-len
       // @ts-ignore
-      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+#\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       return token(seq(alpha, repeat(alphanumeric)));
     },
 
-    private_property_identifier: (_) => {
-      // eslint-disable-next-line max-len
-      // @ts-ignore
-      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
-      // eslint-disable-next-line max-len
-      // @ts-ignore
-      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
-      return token(seq('#', alpha, repeat(alphanumeric)));
-    },
+    // private_property_identifier: (_) => {
+    //   // eslint-disable-next-line max-len
+    //   // @ts-ignore
+    //   const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@b.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+    //   // eslint-disable-next-line max-len
+    //   // @ts-ignore
+    //   const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+    //   return token(seq('#', alpha, repeat(alphanumeric)));
+    // },
 
     meta_property: (_) => choice(seq('new', '.', 'target'), seq('import', '.', 'meta')),
 
@@ -1247,17 +1251,27 @@ module.exports = grammar({
         choice($.identifier, $._reserved_identifier),
         $.property_identifier,
       ),
-      $.private_property_identifier,
+      // $.private_property_identifier,
       $.string,
       $.number,
       $.computed_property_name,
+      $._hash,
     ),
+
+    _hash: ($, previous) => {
+      const choices = [];
+      choices.push($.hash_expression);
+      choices.push($.hash_empty);
+      return choice(...choices);
+    },
 
     hash_expression: ($) => seq(
       '#',
       optional($.expression),
       '#',
     ),
+
+    hash_empty: ($) => seq('#', '#'),
 
     computed_property_name: ($) => seq(
       '[',
