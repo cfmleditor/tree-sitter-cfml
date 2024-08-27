@@ -2,7 +2,7 @@
   "name": "tree-sitter-cfml",
   "version": "0.20.0",
   "description": "CFML grammar for tree-sitter",
-  "main": "bindings/node/index.js",
+  "main": "bindings/node",
   "types": "bindings/node",
   "keywords": [
     "parser",
@@ -21,7 +21,6 @@
     "cfscript/grammar.js",
     "cfscript/queries/*",
     "cfscript/src/**",
-    "common/**",
     "common/define-grammar.js"
   ],
   "homepage": "https://github.com/cfmleditor/tree-sitter-cfml",
@@ -40,7 +39,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "node-addon-api": "^7.1.1",
+    "node-addon-api": "^8.0.0",
     "node-gyp-build": "^4.8.1"
   },
   "peerDependencies": {
@@ -63,6 +62,9 @@
     "install": "node-gyp-build",
     "prebuildify": "prebuildify --napi --strip"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "tree-sitter": [
     {
       "scope": "source.cfml",
@@ -70,7 +72,6 @@
         "cfc"
       ],
       "path": "cfml",
-      "injection-regex": "cfml",
       "highlights": [
         "cfml/queries/highlights.scm"
       ],
@@ -78,8 +79,7 @@
         "cfml/queries/injections.scm"
       ],
       "external-files": [
-        "common/define-grammar.js",
-        "src/tag.h"
+        "common/define-grammar.js"
       ]
     },
     {
@@ -88,7 +88,6 @@
         "cfm"
       ],
       "path": "cfhtml",
-      "injection-regex": "cfhtml",
       "highlights": [
         "cfhtml/queries/highlights.scm"
       ],
@@ -96,17 +95,20 @@
         "cfhtml/queries/injections.scm"
       ],
       "external-files": [
-        "common/define-grammar.js",
-        "src/tag.h"
+        "common/define-grammar.js"
       ]
     },
     {
       "scope": "source.cfscript",
+      "file-types": [
+        "cfs"
+      ],
       "path": "cfscript",
-      "injection-regex": "cfscript",
       "highlights": [
+        "cfscript/queries/highlights.scm"
       ],
       "injections": [
+        "cfscript/queries/injections.scm"
       ],
       "external-files": [
       ]
