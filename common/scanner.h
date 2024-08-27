@@ -21,6 +21,7 @@ enum TokenType {
     // CF_OPEN_TAG,
     // CF_CLOSE_TAG,
     CFSAVECONTENT_CONTENT,
+    CFXML_CONTENT,
     CLOSE_TAG_DELIM,
     // CF_OUTPUT_TAG,
     CFSCRIPT_CONTENT,
@@ -324,6 +325,37 @@ static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer) {
     }
 
     lexer->result_symbol = CFSAVECONTENT_CONTENT;
+
+    while (lexer->lookahead) {
+        advance(lexer);
+    }
+
+    return true;
+}
+
+static bool scan_cfxml_content(Scanner *scanner, TSLexer *lexer) {
+
+    lexer->mark_end(lexer);
+
+    const char *end_delimiter = "</CFXML";
+
+    unsigned delimiter_index = 0;
+
+    while (lexer->lookahead) {
+        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
+            delimiter_index++;
+            if (delimiter_index == strlen(end_delimiter)) {
+                break;
+            }
+            advance(lexer);
+        } else {
+            delimiter_index = 0;
+            advance(lexer);
+            lexer->mark_end(lexer);
+        }
+    }
+
+    lexer->result_symbol = CFXML_CONTENT;
 
     while (lexer->lookahead) {
         advance(lexer);
@@ -826,6 +858,10 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
     if (valid_symbols[CFSAVECONTENT_CONTENT]) {
         return scan_cfsavecontent_content(scanner, lexer);
+    }
+
+    if (valid_symbols[CFXML_CONTENT]) {
+        return scan_cfxml_content(scanner, lexer);
     }
 
     if (valid_symbols[CFSCRIPT_CONTENT]) {

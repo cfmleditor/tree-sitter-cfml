@@ -1577,3 +1577,22 @@ testing7
                             (string
                               (string_fragment)))))))
                   (cf_selfclose_tag_end))))))))
+
+===================================
+cfxml
+===================================
+<cfxml variable="theXml">
+			<cfoutput>
+			<entity>
+				<field><![CDATA[#result.field#]]></field>
+			</entity>
+			</cfoutput>
+		</cfxml>
+---
+(program
+      (cf_xml_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cfxml_content)))

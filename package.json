@@ -59,6 +59,7 @@
   "scripts": {
     "test": "node scripts/test.js",
     "build": "node scripts/build.js",
+    "docswasm": "node scripts/docswasm.js",
     "install": "node-gyp-build",
     "prebuildify": "prebuildify --napi --strip"
   },
