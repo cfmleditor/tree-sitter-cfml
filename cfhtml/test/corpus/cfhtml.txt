@@ -10,6 +10,8 @@ testing4
 
 <cfdump var="#[a, b, c]#">
 
+<cfoutput>test<cfoutput>test</cfoutput>test</cfoutput>
+
 ---
 (program
       (element
@@ -22,7 +24,8 @@ testing4
                 (attribute_value)
                 (hash_single)
                 (cf_output_tag
-                  (cfoutput_content))))))
+                  (hash_expression
+                    (identifier)))))))
         (end_tag
           (tag_name)))
       (cf_set_tag
@@ -58,4 +61,9 @@ testing4
                 (identifier)
                 (identifier)
                 (identifier)))))
-        (cf_selfclose_tag_end)))
+        (cf_selfclose_tag_end))
+      (cf_output_tag
+        (text)
+        (cf_output_tag
+          (text))
+        (text)))
