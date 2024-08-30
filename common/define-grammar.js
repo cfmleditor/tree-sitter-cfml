@@ -398,6 +398,17 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
+      cf_storedproc_tag: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        keyword('storedproc'),
+        repeat($.cf_attribute),
+        alias($._close_tag_delim, '>'),
+        repeat($._node),
+        $._cf_close_tag,
+        keyword('storedproc'),
+        alias($._close_tag_delim, '>'),
+      )),
+
       cf_http_tag: $ => prec.right(2, seq(
         $._cf_open_tag,
         keyword('http'),
@@ -783,13 +794,11 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       cf_tag: $ => prec.right(3, choice(
-        // $.cf_if_statement_tag,
         $._cf_super_tags,
         $.cf_if_tag,
-        // $.cf_elseif_tag,
-        // $.cf_else_tag,
         $.cf_thread_tag,
         $.cf_execute_tag,
+        $.cf_storedproc_tag,
         $.cf_silent_tag,
         $.cf_lock_tag,
         $.cf_http_tag,
@@ -808,28 +817,12 @@ module.exports = function defineGrammar(dialect) {
       )),
 
       cf_tag_query: $ => prec.right(3, choice(
-        // $.cf_if_statement_tag,
         $._cf_super_tags,
         $.cf_if_tag_query,
-        // $.cf_elseif_tag,
-        // $.cf_else_tag,
-        // $.cf_thread_tag,
-        // $.cf_execute_tag,
-        // $.cf_silent_tag,
-        // $.cf_lock_tag,
-        // $.cf_http_tag,
-        // $.cf_xml_tag,
-        // $.cf_try_tag,
         $.cf_switch_tag_cfquery,
-        // $.cf_mail_tag,
-        // $.cf_mailpart_tag,
-        // $.cf_transaction_tag,
         $.cf_set_tag,
         $.cf_selfclose_tag,
-        // $.cf_savecontent_tag,
-        // $.cf_zip_tag,
         alias($.cf_loop_tag_cfquery, $.cf_loop),
-        // alias($.cf_return_tag, $.cf_return),
       )),
 
       entity: _ => /&(([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,

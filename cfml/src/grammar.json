@@ -1261,6 +1261,87 @@
         ]
       }
     },
+    "cf_storedproc_tag": {
+      "type": "PREC_RIGHT",
+      "value": 3,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[sS][tT][oO][rR][eE][dD][pP][rR][oO][cC]"
+                }
+              }
+            },
+            "named": false,
+            "value": "storedproc"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_attribute"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_node"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_close_tag"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[sS][tT][oO][rR][eE][dD][pP][rR][oO][cC]"
+                }
+              }
+            },
+            "named": false,
+            "value": "storedproc"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          }
+        ]
+      }
+    },
     "cf_http_tag": {
       "type": "PREC_RIGHT",
       "value": 2,
@@ -3601,6 +3682,10 @@
           {
             "type": "SYMBOL",
             "name": "cf_execute_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_storedproc_tag"
           },
           {
             "type": "SYMBOL",

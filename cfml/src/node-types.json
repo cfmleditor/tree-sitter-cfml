@@ -78,6 +78,10 @@
         "named": true
       },
       {
+        "type": "cf_storedproc_tag",
+        "named": true
+      },
+      {
         "type": "cf_switch_tag",
         "named": true
       },
@@ -2315,6 +2319,73 @@
   },
   {
     "type": "cf_silent_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cfscript_element",
+          "named": true
+        },
+        {
+          "type": "doctype",
+          "named": true
+        },
+        {
+          "type": "element",
+          "named": true
+        },
+        {
+          "type": "end_tag",
+          "named": true
+        },
+        {
+          "type": "entity",
+          "named": true
+        },
+        {
+          "type": "erroneous_end_tag",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "script_element",
+          "named": true
+        },
+        {
+          "type": "style_element",
+          "named": true
+        },
+        {
+          "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_storedproc_tag",
     "named": true,
     "fields": {},
     "children": {
@@ -5472,6 +5543,10 @@
   },
   {
     "type": "static get",
+    "named": false
+  },
+  {
+    "type": "storedproc",
     "named": false
   },
   {
