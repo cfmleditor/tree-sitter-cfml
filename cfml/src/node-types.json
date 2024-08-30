@@ -104,6 +104,32 @@
     ]
   },
   {
+    "type": "cf_tag_query",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "_cf_super_tags",
+        "named": true
+      },
+      {
+        "type": "cf_if_tag_query",
+        "named": true
+      },
+      {
+        "type": "cf_loop",
+        "named": true
+      },
+      {
+        "type": "cf_selfclose_tag",
+        "named": true
+      },
+      {
+        "type": "cf_set_tag",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "declaration",
     "named": true,
     "subtypes": [
@@ -1593,6 +1619,53 @@
     }
   },
   {
+    "type": "cf_if_alt_cfquery",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_else_tag",
+          "named": true
+        },
+        {
+          "type": "cf_elseif_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_alt_cfquery",
+          "named": true
+        },
+        {
+          "type": "cf_tag_query",
+          "named": true
+        },
+        {
+          "type": "cfscript_element",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "query_operator",
+          "named": true
+        },
+        {
+          "type": "text",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_if_tag",
     "named": true,
     "fields": {},
@@ -1658,6 +1731,49 @@
         },
         {
           "type": "xml_decl",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_if_tag_query",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_if_alt_cfquery",
+          "named": true
+        },
+        {
+          "type": "cf_tag_query",
+          "named": true
+        },
+        {
+          "type": "cfscript_element",
+          "named": true
+        },
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "query_operator",
+          "named": true
+        },
+        {
+          "type": "text",
           "named": true
         }
       ]
@@ -2008,6 +2124,30 @@
       "types": [
         {
           "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_tag_query",
+          "named": true
+        },
+        {
+          "type": "cfscript_element",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "query_operator",
+          "named": true
+        },
+        {
+          "type": "text",
           "named": true
         }
       ]
@@ -3936,6 +4076,50 @@
     }
   },
   {
+    "type": "query_operator",
+    "named": true,
+    "fields": {
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "<",
+            "named": false
+          },
+          {
+            "type": "<=",
+            "named": false
+          },
+          {
+            "type": "=",
+            "named": false
+          },
+          {
+            "type": ">",
+            "named": false
+          },
+          {
+            "type": ">=",
+            "named": false
+          },
+          {
+            "type": "BETWEEN",
+            "named": false
+          },
+          {
+            "type": "EXISTS",
+            "named": false
+          },
+          {
+            "type": "IN",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "quoted_attribute_value",
     "named": true,
     "fields": {},
@@ -4893,6 +5077,18 @@
   },
   {
     "type": "@",
+    "named": false
+  },
+  {
+    "type": "BETWEEN",
+    "named": false
+  },
+  {
+    "type": "EXISTS",
+    "named": false
+  },
+  {
+    "type": "IN",
     "named": false
   },
   {

@@ -529,7 +529,21 @@ testing
         (cf_attribute
           (cf_attribute_name)
           (quoted_cf_attribute_value
-            (attribute_value))))
+            (attribute_value)))
+        (text)
+        (cf_selfclose_tag
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (hash_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier)))))
+          (cf_selfclose_tag_end)))
       (cf_comment)
       (script_element
         (start_tag
@@ -1596,3 +1610,71 @@ cfxml
           (quoted_cf_attribute_value
             (attribute_value)))
         (cfxml_content)))
+
+
+===================================
+cfquery
+===================================
+<cfquery name="qry">
+  SELECT * FROM test = <cfqueryparam name="cf_sql_char" value="abc" />
+  WHERE ( ( 1 <= 0 ) OR ( 1 >= 1) )
+  <cfif test>
+      AND test >= 1
+  </cfif>
+</cfquery>
+
+<cfquery name="qry" datasource="#VARIABLES._dsnInfo.dsnName#">
+  DELETE
+  FROM lockstore
+  <cfif test>
+    WHERE dtexpires < abc()
+  </cfif>
+</cfquery>
+---
+(program
+      (cf_query
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (text)
+        (cf_selfclose_tag
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_selfclose_tag_end))
+        (text)
+        (query_operator)
+        (text)
+        (query_operator)
+        (text)
+        (cf_if_tag_query
+          (identifier)
+          (text)
+          (query_operator)
+          (text)))
+      (cf_query
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (hash_expression
+              (member_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (property_identifier)))))
+        (text)
+        (cf_if_tag_query
+          (identifier)
+          (text)
+          (query_operator)
+          (text))))

@@ -163,6 +163,100 @@
         }
       ]
     },
+    "_node_cfquery": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "query_operator"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag_query"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_hash"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfscript_element"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "text"
+        }
+      ]
+    },
+    "query_operator": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "STRING",
+            "value": ">="
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "STRING",
+            "value": ">"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "STRING",
+            "value": "<="
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "STRING",
+            "value": "<"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "STRING",
+            "value": "IN"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "STRING",
+            "value": "="
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "STRING",
+            "value": "BETWEEN"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "STRING",
+            "value": "EXISTS"
+          }
+        }
+      ]
+    },
     "_cfoutput_node": {
       "type": "CHOICE",
       "members": [
@@ -1800,8 +1894,11 @@
             "value": ">"
           },
           {
-            "type": "SYMBOL",
-            "name": "_cfquery_content"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_node_cfquery"
+            }
           },
           {
             "type": "SYMBOL",
@@ -2793,6 +2890,96 @@
         ]
       }
     },
+    "cf_if_tag_query": {
+      "type": "PREC_RIGHT",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[iI][fF]"
+                }
+              }
+            },
+            "named": false,
+            "value": "if"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_tag_expression"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_node_cfquery"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "cf_if_alt_cfquery"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_close_tag"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[iI][fF]"
+                }
+              }
+            },
+            "named": false,
+            "value": "if"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          }
+        ]
+      }
+    },
     "_cf_tag_expression": {
       "type": "CHOICE",
       "members": [
@@ -2972,6 +3159,59 @@
               {
                 "type": "SYMBOL",
                 "name": "cf_if_alt"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "cf_if_alt_cfquery": {
+      "type": "PREC_RIGHT",
+      "value": 3,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "cf_elseif_tag"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "cf_else_tag"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_node_cfquery"
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "cf_if_alt_cfquery"
               },
               {
                 "type": "BLANK"
@@ -3250,6 +3490,40 @@
             },
             "named": true,
             "value": "cf_return"
+          }
+        ]
+      }
+    },
+    "cf_tag_query": {
+      "type": "PREC_RIGHT",
+      "value": 3,
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_super_tags"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_if_tag_query"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_set_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_selfclose_tag"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_loop_tag"
+            },
+            "named": true,
+            "value": "cf_loop"
           }
         ]
       }
@@ -10262,6 +10536,7 @@
     "primary_expression",
     "pattern",
     "_cf_super_tags",
-    "cf_tag"
+    "cf_tag",
+    "cf_tag_query"
   ]
 }

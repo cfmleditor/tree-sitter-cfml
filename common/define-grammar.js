@@ -56,6 +56,7 @@ module.exports = function defineGrammar(dialect) {
       $.pattern,
       $._cf_super_tags,
       $.cf_tag,
+      $.cf_tag_query,
     ],
 
     inline: $ => [
@@ -186,6 +187,25 @@ module.exports = function defineGrammar(dialect) {
         $.end_tag,
         $.erroneous_end_tag,
         $.xml_decl,
+      ),
+
+      _node_cfquery: $ => choice(
+        $.query_operator,
+        $.cf_tag_query,
+        $._hash,
+        $.cfscript_element,
+        $.text,
+      ),
+
+      query_operator: $ => choice(
+        field('operator', '>='),
+        field('operator', '>'),
+        field('operator', '<='),
+        field('operator', '<'),
+        field('operator', 'IN'),
+        field('operator', '='),
+        field('operator', 'BETWEEN'),
+        field('operator', 'EXISTS'),
       ),
 
       _cfoutput_node: $ => choice(
@@ -452,7 +472,7 @@ module.exports = function defineGrammar(dialect) {
         keyword('query'),
         repeat($.cf_attribute),
         alias($._close_tag_delim, '>'),
-        $._cfquery_content,
+        repeat($._node_cfquery),
         $._cf_close_tag,
         keyword('query'),
         alias($._close_tag_delim, '>'),
@@ -593,6 +613,18 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
+      cf_if_tag_query: $ => prec.right(1, seq(
+        $._cf_open_tag,
+        keyword('if'),
+        $._cf_tag_expression,
+        alias($._close_tag_delim, '>'),
+        repeat($._node_cfquery),
+        optional($.cf_if_alt_cfquery),
+        $._cf_close_tag,
+        keyword('if'),
+        alias($._close_tag_delim, '>'),
+      )),
+
       _cf_tag_expression: $ => choice(
         $.expression,
       ),
@@ -632,6 +664,16 @@ module.exports = function defineGrammar(dialect) {
         ),
         optional(repeat($._node)),
         optional($.cf_if_alt),
+      )),
+
+      cf_if_alt_cfquery: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        choice(
+          $.cf_elseif_tag,
+          $.cf_else_tag,
+        ),
+        optional(repeat($._node_cfquery)),
+        optional($.cf_if_alt_cfquery),
       )),
 
       // style_attribute: $ => seq(
@@ -739,6 +781,31 @@ module.exports = function defineGrammar(dialect) {
         $.cf_zip_tag,
         alias($.cf_loop_tag, $.cf_loop),
         alias($.cf_return_tag, $.cf_return),
+      )),
+
+      cf_tag_query: $ => prec.right(3, choice(
+        // $.cf_if_statement_tag,
+        $._cf_super_tags,
+        $.cf_if_tag_query,
+        // $.cf_elseif_tag,
+        // $.cf_else_tag,
+        // $.cf_thread_tag,
+        // $.cf_execute_tag,
+        // $.cf_silent_tag,
+        // $.cf_lock_tag,
+        // $.cf_http_tag,
+        // $.cf_xml_tag,
+        // $.cf_try_tag,
+        // $.cf_switch_tag,
+        // $.cf_mail_tag,
+        // $.cf_mailpart_tag,
+        // $.cf_transaction_tag,
+        $.cf_set_tag,
+        $.cf_selfclose_tag,
+        // $.cf_savecontent_tag,
+        // $.cf_zip_tag,
+        alias($.cf_loop_tag, $.cf_loop),
+        // alias($.cf_return_tag, $.cf_return),
       )),
 
       entity: _ => /&(([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
