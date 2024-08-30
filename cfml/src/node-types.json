@@ -126,6 +126,10 @@
       {
         "type": "cf_set_tag",
         "named": true
+      },
+      {
+        "type": "cf_switch_tag_cfquery",
+        "named": true
       }
     ]
   },
@@ -1863,6 +1867,10 @@
           "named": true
         },
         {
+          "type": "cf_tag_query",
+          "named": true
+        },
+        {
           "type": "cfscript_element",
           "named": true
         },
@@ -1892,6 +1900,10 @@
         },
         {
           "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "query_operator",
           "named": true
         },
         {
@@ -2438,6 +2450,53 @@
         },
         {
           "type": "xml_decl",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_switch_tag_cfquery",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_case_tag",
+          "named": true
+        },
+        {
+          "type": "cf_defaultcase_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag_query",
+          "named": true
+        },
+        {
+          "type": "cfscript_element",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "query_operator",
+          "named": true
+        },
+        {
+          "type": "text",
           "named": true
         }
       ]

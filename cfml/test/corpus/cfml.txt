@@ -1627,7 +1627,9 @@ cfquery
   DELETE
   FROM lockstore
   <cfif test>
-    WHERE dtexpires < abc()
+    <cfloop>
+      WHERE dtexpires < abc()
+    </cfloop>
   </cfif>
 </cfquery>
 ---
@@ -1675,6 +1677,7 @@ cfquery
         (text)
         (cf_if_tag_query
           (identifier)
-          (text)
-          (query_operator)
-          (text))))
+          (cf_loop
+            (text)
+            (query_operator)
+            (text)))))

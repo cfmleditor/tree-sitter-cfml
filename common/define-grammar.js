@@ -514,6 +514,19 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
+      cf_switch_tag_cfquery: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        keyword('switch'),
+        repeat($.cf_attribute),
+        alias($._close_tag_delim, '>'),
+        repeat($._node_cfquery),
+        repeat($.cf_case_tag),
+        optional($.cf_defaultcase_tag),
+        $._cf_close_tag,
+        keyword('switch'),
+        alias($._close_tag_delim, '>'),
+      )),
+
       cf_case_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('case'),
@@ -553,6 +566,17 @@ module.exports = function defineGrammar(dialect) {
         repeat($.cf_attribute),
         alias($._close_tag_delim, '>'),
         repeat($._node),
+        $._cf_close_tag,
+        keyword('loop'),
+        alias($._close_tag_delim, '>'),
+      )),
+
+      cf_loop_tag_cfquery: $ => prec.right(2, seq(
+        $._cf_open_tag,
+        keyword('loop'),
+        repeat($.cf_attribute),
+        alias($._close_tag_delim, '>'),
+        repeat($._node_cfquery),
         $._cf_close_tag,
         keyword('loop'),
         alias($._close_tag_delim, '>'),
@@ -796,7 +820,7 @@ module.exports = function defineGrammar(dialect) {
         // $.cf_http_tag,
         // $.cf_xml_tag,
         // $.cf_try_tag,
-        // $.cf_switch_tag,
+        $.cf_switch_tag_cfquery,
         // $.cf_mail_tag,
         // $.cf_mailpart_tag,
         // $.cf_transaction_tag,
@@ -804,7 +828,7 @@ module.exports = function defineGrammar(dialect) {
         $.cf_selfclose_tag,
         // $.cf_savecontent_tag,
         // $.cf_zip_tag,
-        alias($.cf_loop_tag, $.cf_loop),
+        alias($.cf_loop_tag_cfquery, $.cf_loop),
         // alias($.cf_return_tag, $.cf_return),
       )),
 

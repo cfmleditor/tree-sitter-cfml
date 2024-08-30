@@ -2201,6 +2201,106 @@
         ]
       }
     },
+    "cf_switch_tag_cfquery": {
+      "type": "PREC_RIGHT",
+      "value": 3,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[sS][wW][iI][tT][cC][hH]"
+                }
+              }
+            },
+            "named": false,
+            "value": "switch"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_attribute"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_node_cfquery"
+            }
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_case_tag"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "cf_defaultcase_tag"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_close_tag"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[sS][wW][iI][tT][cC][hH]"
+                }
+              }
+            },
+            "named": false,
+            "value": "switch"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          }
+        ]
+      }
+    },
     "cf_case_tag": {
       "type": "PREC_RIGHT",
       "value": 3,
@@ -2491,6 +2591,87 @@
             "content": {
               "type": "SYMBOL",
               "name": "_node"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_close_tag"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[lL][oO][oO][pP]"
+                }
+              }
+            },
+            "named": false,
+            "value": "loop"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          }
+        ]
+      }
+    },
+    "cf_loop_tag_cfquery": {
+      "type": "PREC_RIGHT",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[lL][oO][oO][pP]"
+                }
+              }
+            },
+            "named": false,
+            "value": "loop"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_attribute"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_node_cfquery"
             }
           },
           {
@@ -3510,6 +3691,10 @@
           },
           {
             "type": "SYMBOL",
+            "name": "cf_switch_tag_cfquery"
+          },
+          {
+            "type": "SYMBOL",
             "name": "cf_set_tag"
           },
           {
@@ -3520,7 +3705,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "cf_loop_tag"
+              "name": "cf_loop_tag_cfquery"
             },
             "named": true,
             "value": "cf_loop"
