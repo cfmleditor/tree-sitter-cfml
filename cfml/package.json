@@ -1,3 +1,20 @@
 {
-  "main": "../bindings/node/cfml"
+  "main": "../bindings/node/cfml.js",
+  "tree-sitter": [
+    {
+      "scope": "source.cfml",
+      "file-types": [
+        "cfc"
+      ],
+      "highlights": [
+        "queries/highlights.scm"
+      ],
+      "injections": [
+        "queries/injections.scm"
+      ],
+      "external-files": [
+        "../common/define-grammar.js"
+      ]
+    }
+  ]
 }

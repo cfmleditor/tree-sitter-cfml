@@ -1,3 +1,20 @@
 {
-    "main": "../bindings/node/cfhtml"
-  }
+    "main": "../bindings/node/cfhtml.js",
+    "tree-sitter": [
+    {
+      "scope": "source.cfhtml",
+      "file-types": [
+        "cfm"
+      ],
+      "highlights": [
+        "queries/highlights.scm"
+      ],
+      "injections": [
+        "queries/injections.scm"
+      ],
+      "external-files": [
+        "../common/define-grammar.js"
+      ]
+    }
+  ]
+}
