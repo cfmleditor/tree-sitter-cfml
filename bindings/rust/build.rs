@@ -12,7 +12,7 @@ fn main() {
         .flag_if_supported("-Wno-unused-parameter");
 
     let mut config = cc::Build::new();
-    config.include(&block_dir);
+    config.include(&cfml_dir);
 
     for path in &[
         cfml_dir.join("parser.c"),

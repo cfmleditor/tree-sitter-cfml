@@ -50,7 +50,7 @@ pub fn language_cfhtml() -> Language {
 ///
 /// [Language]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Language.html
 pub fn language_cfscript() -> Language {
-    unsafe { language_cfscript() }
+    unsafe { tree_sitter_cfscript() }
 }
 
 /// The content of the [`node-types.json`][] file for Cfml.
@@ -69,13 +69,13 @@ pub const CFHTML_NODE_TYPES: &str = include_str!("../../cfhtml/src/node-types.js
 pub const CFSCRIPT_NODE_TYPES: &str = include_str!("../../cfscript/src/node-types.json");
 
 /// The syntax highlighting query for Cfml.
-pub const HIGHLIGHTS_QUERY: &str = include_str!("../../queries/highlights.scm");
+pub const HIGHLIGHTS_QUERY: &str = include_str!("../../cfml/queries/highlights.scm");
 
 /// The local-variable syntax highlighting query for Cfml.
-pub const LOCALS_QUERY: &str = include_str!("../../queries/locals.scm");
+// pub const LOCALS_QUERY: &str = include_str!("../../cfml/queries/locals.scm");
 
 /// The symbol tagging query for Cfml.
-pub const TAGS_QUERY: &str = include_str!("../../queries/tags.scm");
+pub const TAGS_QUERY: &str = include_str!("../../cfml/queries/tags.scm");
 
 #[cfg(test)]
 mod tests {
