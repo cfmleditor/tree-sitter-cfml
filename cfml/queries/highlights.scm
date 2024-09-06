@@ -3,6 +3,12 @@
 (doctype) @constant
 (attribute_name) @attribute
 (attribute_value) @string
+(raw_text) @embedded
+(start_tag) @tag
+(end_tag) @tag
+(self_closing_tag) @tag
+(cf_selfclose_tag) @tag
+(cf_output_tag) @tag
 
 ; Variables
 ;----------
@@ -19,66 +25,142 @@
 
 (function_expression
   name: (identifier) @function)
+
 (function_declaration
   name: (identifier) @function)
+
+(generator_function
+  name: (identifier) @function)
+
+(generator_function_declaration
+  name: (identifier) @function)
+
 (method_definition
-  name: (property_identifier) @function.method)
+  name: [
+    (property_identifier)
+    (private_property_identifier)
+  ] @function.method)
+
+(method_definition
+  name: (property_identifier) @constructor
+  (#eq? @constructor "constructor"))
 
 (pair
   key: (property_identifier) @function.method
-  value: [(function_expression) (arrow_function)])
+  value: (function_expression))
+
+(pair
+  key: (property_identifier) @function.method
+  value: (arrow_function))
+
+(array) @expression
+
+(cf_set_tag) @tag
 
 (assignment_expression
   left: (member_expression
     property: (property_identifier) @function.method)
-  right: [(function_expression) (arrow_function)])
+  right: (arrow_function))
+
+(assignment_expression
+  left: (member_expression
+    property: (property_identifier) @function.method)
+  right: (function_expression))
 
 (variable_declarator
   name: (identifier) @function
-  value: [(function_expression) (arrow_function)])
+  value: (arrow_function))
+
+(variable_declarator
+  name: (identifier) @function
+  value: (function_expression))
 
 (assignment_expression
   left: (identifier) @function
-  right: [(function_expression) (arrow_function)])
+  right: (arrow_function))
+
+(assignment_expression
+  left: (identifier) @function
+  right: (function_expression))
 
 ; Function and method calls
 ;--------------------------
 
 (call_expression
-  function: (identifier) @function)
+  function: (identifier) @function.call)
 
 (call_expression
   function: (member_expression
-    property: (property_identifier) @function.method))
+    property: [
+      (property_identifier)
+      (private_property_identifier)
+    ] @function.method.call))
 
 ; Literals
 ;---------
+[
+  (this)
+  (super)
+] @variable.builtin
 
-(this) @variable.builtin
-(super) @variable.builtin
+((identifier) @variable.builtin
+  (#eq? @variable.builtin "self"))
 
 [
   (true)
   (false)
+] @boolean
+
+[
   (null)
 ] @constant.builtin
 
-(comment) @comment
-(cf_comment) @comment
-
 [
-  (string)
-] @string
+  (comment)
+  (cf_comment)
+] @comment @spell
 
-; Tokens
-;-------
+((comment) @comment.documentation
+  (#lua-match? @comment.documentation "^/[*][*][^*].*[*]/$"))
 
+((string_fragment) @keyword.directive
+  (#eq? @keyword.directive "use strict"))
+
+(string) @string
+(text) @string
+
+(escape_sequence) @string.escape
+
+(regex_pattern) @string.regexp
+(regex_flags) @character.special
+
+(regex
+  "/" @punctuation.bracket) ; Regex delimiters
+
+(number) @number
+
+(hash_expression) @function
+
+((identifier) @number
+  (#any-of? @number "NaN" "Infinity"))
+
+; Punctuation
+;------------
 [
   ";"
-  (optional_chain)
   "."
   ","
+  ":"
 ] @punctuation.delimiter
+
+(binary_expression
+  "/" @operator)
+
+(ternary_expression
+  [
+    "?"
+    ":"
+  ] @keyword.conditional.ternary)
 
 [
   "-"
