@@ -126,6 +126,7 @@
 ((string_fragment) @keyword.directive
   (#eq? @keyword.directive "use strict"))
 
+(hash_single) @keyword
 (string) @string
 (text) @string
 
