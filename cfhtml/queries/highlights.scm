@@ -110,9 +110,6 @@
 [
   (this)
   (super)
-  (args)
-  (request)
-  (server)
 ] @variable.builtin
 
 ((identifier) @variable.builtin
