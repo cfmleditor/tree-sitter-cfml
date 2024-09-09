@@ -26,6 +26,15 @@
 (function_expression
   name: (identifier) @function)
 
+(cf_function 
+	(cf_attribute
+    	(cf_attribute_name) @temp (#eq? @temp "name")
+        (quoted_cf_attribute_value 
+        	(attribute_value) @function
+        )
+	)
+)
+
 (function_declaration
   name: (identifier) @function)
 
