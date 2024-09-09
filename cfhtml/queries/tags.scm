@@ -1,2 +1,2 @@
 (function_expression
-  name: (identifier) @name) @definition.function
+  name: (identifier) @function) @definition.function

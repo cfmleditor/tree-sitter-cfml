@@ -24,16 +24,16 @@
 ;--------------------------------
 
 (function_expression
-  name: (identifier) @function)
+  name: (identifier) @function) @definition.function
 
 (cf_function 
 	(cf_attribute
-    	(cf_attribute_name) @temp (#eq? @temp "name")
+    	(cf_attribute_name) @attribute (#eq? @attribute "name")
         (quoted_cf_attribute_value 
         	(attribute_value) @function
         )
 	)
-)
+) @definition.function
 
 (function_declaration
   name: (identifier) @function)
