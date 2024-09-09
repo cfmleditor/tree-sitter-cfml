@@ -248,14 +248,6 @@
     "named": true,
     "subtypes": [
       {
-        "type": "application",
-        "named": true
-      },
-      {
-        "type": "args",
-        "named": true
-      },
-      {
         "type": "array",
         "named": true
       },
@@ -268,19 +260,7 @@
         "named": true
       },
       {
-        "type": "cgi",
-        "named": true
-      },
-      {
-        "type": "client",
-        "named": true
-      },
-      {
         "type": "false",
-        "named": true
-      },
-      {
-        "type": "form",
         "named": true
       },
       {
@@ -324,18 +304,6 @@
         "named": true
       },
       {
-        "type": "request",
-        "named": true
-      },
-      {
-        "type": "server",
-        "named": true
-      },
-      {
-        "type": "session",
-        "named": true
-      },
-      {
         "type": "string",
         "named": true
       },
@@ -344,23 +312,7 @@
         "named": true
       },
       {
-        "type": "super",
-        "named": true
-      },
-      {
-        "type": "this",
-        "named": true
-      },
-      {
         "type": "true",
-        "named": true
-      },
-      {
-        "type": "url",
-        "named": true
-      },
-      {
-        "type": "variables",
         "named": true
       }
     ]
@@ -438,16 +390,6 @@
         "named": true
       }
     ]
-  },
-  {
-    "type": "application",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "args",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "arguments",
@@ -2830,16 +2772,6 @@
     }
   },
   {
-    "type": "cgi",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "client",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "comment",
     "named": true,
     "fields": {}
@@ -3123,11 +3055,6 @@
     }
   },
   {
-    "type": "false",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "finally_clause",
     "named": true,
     "fields": {
@@ -3322,11 +3249,6 @@
         ]
       }
     }
-  },
-  {
-    "type": "form",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "formal_parameters",
@@ -3878,11 +3800,6 @@
     }
   },
   {
-    "type": "null",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "object",
     "named": true,
     "fields": {},
@@ -4273,11 +4190,6 @@
     }
   },
   {
-    "type": "request",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "rest_pattern",
     "named": true,
     "fields": {},
@@ -4376,16 +4288,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "server",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "session",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "spread_element",
@@ -4529,11 +4431,6 @@
         ]
       }
     }
-  },
-  {
-    "type": "super",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "switch_body",
@@ -4694,11 +4591,6 @@
     }
   },
   {
-    "type": "this",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "throw_statement",
     "named": true,
     "fields": {},
@@ -4716,11 +4608,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "true",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "try_statement",
@@ -4820,11 +4707,6 @@
     }
   },
   {
-    "type": "url",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "variable_declaration",
     "named": true,
     "fields": {},
@@ -4872,11 +4754,6 @@
         ]
       }
     }
-  },
-  {
-    "type": "variables",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "while_statement",
@@ -5229,15 +5106,7 @@
     "named": true
   },
   {
-    "type": "application",
-    "named": false
-  },
-  {
     "type": "argument",
-    "named": false
-  },
-  {
-    "type": "arguments",
     "named": false
   },
   {
@@ -5283,14 +5152,6 @@
   {
     "type": "cfxml_content",
     "named": true
-  },
-  {
-    "type": "cgi",
-    "named": false
-  },
-  {
-    "type": "client",
-    "named": false
   },
   {
     "type": "component",
@@ -5354,7 +5215,7 @@
   },
   {
     "type": "false",
-    "named": false
+    "named": true
   },
   {
     "type": "finally",
@@ -5362,10 +5223,6 @@
   },
   {
     "type": "for",
-    "named": false
-  },
-  {
-    "type": "form",
     "named": false
   },
   {
@@ -5450,7 +5307,7 @@
   },
   {
     "type": "null",
-    "named": false
+    "named": true
   },
   {
     "type": "number",
@@ -5501,10 +5358,6 @@
     "named": true
   },
   {
-    "type": "request",
-    "named": false
-  },
-  {
     "type": "required",
     "named": true
   },
@@ -5522,14 +5375,6 @@
   },
   {
     "type": "script",
-    "named": false
-  },
-  {
-    "type": "server",
-    "named": false
-  },
-  {
-    "type": "session",
     "named": false
   },
   {
@@ -5573,10 +5418,6 @@
     "named": true
   },
   {
-    "type": "super",
-    "named": false
-  },
-  {
     "type": "switch",
     "named": false
   },
@@ -5593,10 +5434,6 @@
     "named": true
   },
   {
-    "type": "this",
-    "named": false
-  },
-  {
     "type": "thread",
     "named": false
   },
@@ -5610,7 +5447,7 @@
   },
   {
     "type": "true",
-    "named": false
+    "named": true
   },
   {
     "type": "try",
@@ -5621,15 +5458,7 @@
     "named": true
   },
   {
-    "type": "url",
-    "named": false
-  },
-  {
     "type": "var",
-    "named": false
-  },
-  {
-    "type": "variables",
     "named": false
   },
   {

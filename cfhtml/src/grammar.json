@@ -5550,54 +5550,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "this"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "args"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "request"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "variables"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "form"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "url"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "server"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "session"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "application"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "client"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cgi"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "super"
-        },
-        {
-          "type": "SYMBOL",
           "name": "number"
         },
         {
@@ -9799,244 +9751,39 @@
       ]
     },
     "this": {
-      "type": "ALIAS",
+      "type": "TOKEN",
       "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[tT][hH][iI][sS]"
-          }
-        }
-      },
-      "named": false,
-      "value": "this"
+        "type": "STRING",
+        "value": "this"
+      }
     },
     "super": {
-      "type": "ALIAS",
+      "type": "TOKEN",
       "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[sS][uU][pP][eE][rR]"
-          }
-        }
-      },
-      "named": false,
-      "value": "super"
-    },
-    "args": {
-      "type": "ALIAS",
-      "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[aA][rR][gG][uU][mM][eE][nN][tT][sS]"
-          }
-        }
-      },
-      "named": false,
-      "value": "arguments"
-    },
-    "request": {
-      "type": "ALIAS",
-      "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[rR][eE][qQ][uU][eE][sS][tT]"
-          }
-        }
-      },
-      "named": false,
-      "value": "request"
-    },
-    "variables": {
-      "type": "ALIAS",
-      "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[vV][aA][rR][iI][aA][bB][lL][eE][sS]"
-          }
-        }
-      },
-      "named": false,
-      "value": "variables"
-    },
-    "form": {
-      "type": "ALIAS",
-      "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[fF][oO][rR][mM]"
-          }
-        }
-      },
-      "named": false,
-      "value": "form"
-    },
-    "url": {
-      "type": "ALIAS",
-      "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[uU][rR][lL]"
-          }
-        }
-      },
-      "named": false,
-      "value": "url"
-    },
-    "server": {
-      "type": "ALIAS",
-      "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[sS][eE][rR][vV][eE][rR]"
-          }
-        }
-      },
-      "named": false,
-      "value": "server"
-    },
-    "session": {
-      "type": "ALIAS",
-      "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[sS][eE][sS][sS][iI][oO][nN]"
-          }
-        }
-      },
-      "named": false,
-      "value": "session"
-    },
-    "application": {
-      "type": "ALIAS",
-      "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[aA][pP][pP][lL][iI][cC][aA][tT][iI][oO][nN]"
-          }
-        }
-      },
-      "named": false,
-      "value": "application"
-    },
-    "client": {
-      "type": "ALIAS",
-      "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[cC][lL][iI][eE][nN][tT]"
-          }
-        }
-      },
-      "named": false,
-      "value": "client"
-    },
-    "cgi": {
-      "type": "ALIAS",
-      "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[cC][gG][iI]"
-          }
-        }
-      },
-      "named": false,
-      "value": "cgi"
+        "type": "STRING",
+        "value": "super"
+      }
     },
     "true": {
-      "type": "ALIAS",
+      "type": "TOKEN",
       "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[tT][rR][uU][eE]"
-          }
-        }
-      },
-      "named": false,
-      "value": "true"
+        "type": "STRING",
+        "value": "true"
+      }
     },
     "false": {
-      "type": "ALIAS",
+      "type": "TOKEN",
       "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[fF][aA][lL][sS][eE]"
-          }
-        }
-      },
-      "named": false,
-      "value": "false"
+        "type": "STRING",
+        "value": "false"
+      }
     },
     "null": {
-      "type": "ALIAS",
+      "type": "TOKEN",
       "content": {
-        "type": "TOKEN",
-        "content": {
-          "type": "PREC",
-          "value": 1,
-          "content": {
-            "type": "PATTERN",
-            "value": "[nN][uU][lL][lL]"
-          }
-        }
-      },
-      "named": false,
-      "value": "null"
+        "type": "STRING",
+        "value": "null"
+      }
     },
     "arguments": {
       "type": "SEQ",

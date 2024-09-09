@@ -250,14 +250,14 @@ get results
             (call_expression
               (member_expression
                 (member_expression
-                  (variables)
+                  (identifier)
                   (property_identifier))
                 (property_identifier))
               (arguments
                 (assignment_expression
                   (identifier)
                   (member_expression
-                    (args)
+                    (identifier)
                     (property_identifier))))))
           (cf_selfclose_tag_end))
         (cf_set_tag
@@ -541,7 +541,7 @@ testing
             (quoted_cf_attribute_value
               (hash_expression
                 (member_expression
-                  (args)
+                  (identifier)
                   (property_identifier)))))
           (cf_selfclose_tag_end)))
       (cf_comment)
@@ -584,7 +584,7 @@ testing
             (arguments
               (member_expression
                 (member_expression
-                  (args)
+                  (identifier)
                   (property_identifier))
                 (property_identifier))
               (string
@@ -618,7 +618,7 @@ testing
                   (arguments
                     (member_expression
                       (member_expression
-                        (args)
+                        (identifier)
                         (property_identifier))
                       (property_identifier)))))))
           (cf_attribute
@@ -632,7 +632,7 @@ testing
                 (subscript_expression
                   (member_expression
                     (member_expression
-                      (args)
+                      (identifier)
                       (property_identifier))
                     (property_identifier))
                   (identifier))
@@ -645,7 +645,7 @@ testing
                 (subscript_expression
                   (member_expression
                     (member_expression
-                      (args)
+                      (identifier)
                       (property_identifier))
                     (property_identifier))
                   (identifier))
@@ -665,7 +665,7 @@ testing
                       (subscript_expression
                         (member_expression
                           (member_expression
-                            (args)
+                            (identifier)
                             (property_identifier))
                           (property_identifier))
                         (identifier))
@@ -679,7 +679,7 @@ testing
                     (subscript_expression
                       (member_expression
                         (member_expression
-                          (args)
+                          (identifier)
                           (property_identifier))
                         (property_identifier))
                       (identifier))
@@ -792,7 +792,7 @@ testing3
       (cf_set_tag
         (assignment_expression
           (identifier)
-          (true))
+          (identifier))
         (cf_selfclose_tag_end))
       (element
         (start_tag
@@ -860,17 +860,17 @@ testing3
                   (attribute_value)
                   (hash_expression
                     (member_expression
-                      (url)
+                      (identifier)
                       (property_identifier)))
                   (attribute_value)
                   (hash_expression
                     (member_expression
-                      (url)
+                      (identifier)
                       (property_identifier)))
                   (attribute_value)
                   (hash_expression
                     (member_expression
-                      (url)
+                      (identifier)
                       (property_identifier)))
                   (attribute_value)
                   (attribute_value)
@@ -1029,13 +1029,13 @@ testing4
                 (binary_expression
                   (binary_expression
                     (member_expression
-                      (url)
+                      (identifier)
                       (property_identifier))
                     (string
                       (string_fragment)))
                   (binary_expression
                     (member_expression
-                      (url)
+                      (identifier)
                       (property_identifier))
                     (string
                       (string_fragment))))
@@ -1190,7 +1190,7 @@ testing5
         (call_expression
           (member_expression
             (member_expression
-              (args)
+              (identifier)
               (property_identifier))
             (property_identifier))
           (arguments
@@ -1314,7 +1314,7 @@ testing7
           (call_expression
             (member_expression
               (member_expression
-                (args)
+                (identifier)
                 (property_identifier))
               (property_identifier))
             (arguments
@@ -1326,7 +1326,7 @@ testing7
             (call_expression
               (member_expression
                 (member_expression
-                  (args)
+                  (identifier)
                   (property_identifier))
                 (property_identifier))
               (arguments
@@ -1342,7 +1342,7 @@ testing7
               (call_expression
                 (member_expression
                   (member_expression
-                    (args)
+                    (identifier)
                     (property_identifier))
                   (property_identifier))
                 (arguments
@@ -1359,7 +1359,7 @@ testing7
                 (call_expression
                   (member_expression
                     (member_expression
-                      (args)
+                      (identifier)
                       (property_identifier))
                     (property_identifier))
                   (arguments
@@ -1374,7 +1374,7 @@ testing7
                   (call_expression
                     (member_expression
                       (member_expression
-                        (args)
+                        (identifier)
                         (property_identifier))
                       (property_identifier))
                     (arguments
@@ -1671,7 +1671,7 @@ cfquery
             (hash_expression
               (member_expression
                 (member_expression
-                  (variables)
+                  (identifier)
                   (property_identifier))
                 (property_identifier)))))
         (text)
