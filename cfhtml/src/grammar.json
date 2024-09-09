@@ -5554,6 +5554,38 @@
         },
         {
           "type": "SYMBOL",
+          "name": "args"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "request"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "variables"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "form"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "url"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "server"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "session"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "application"
+        },
+        {
+          "type": "SYMBOL",
           "name": "super"
         },
         {
@@ -9765,6 +9797,62 @@
     "super": {
       "type": "STRING",
       "value": "super"
+    },
+    "args": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "arguments"
+      }
+    },
+    "request": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "request"
+      }
+    },
+    "variables": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "variables"
+      }
+    },
+    "form": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "form"
+      }
+    },
+    "url": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "url"
+      }
+    },
+    "server": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "server"
+      }
+    },
+    "session": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "session"
+      }
+    },
+    "application": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "application"
+      }
     },
     "true": {
       "type": "TOKEN",

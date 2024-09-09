@@ -1,6 +1,6 @@
 {
-    "main": "../bindings/node/cfhtml.js",
-    "tree-sitter": [
+  "main": "../bindings/node/cfhtml.js",
+  "tree-sitter": [
     {
       "scope": "source.cfhtml",
       "file-types": [

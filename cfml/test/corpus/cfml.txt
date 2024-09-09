@@ -584,7 +584,7 @@ testing
             (arguments
               (member_expression
                 (member_expression
-                  (identifier)
+                  (args)
                   (property_identifier))
                 (property_identifier))
               (string
@@ -618,7 +618,7 @@ testing
                   (arguments
                     (member_expression
                       (member_expression
-                        (identifier)
+                        (args)
                         (property_identifier))
                       (property_identifier)))))))
           (cf_attribute
@@ -632,7 +632,7 @@ testing
                 (subscript_expression
                   (member_expression
                     (member_expression
-                      (identifier)
+                      (args)
                       (property_identifier))
                     (property_identifier))
                   (identifier))
@@ -645,7 +645,7 @@ testing
                 (subscript_expression
                   (member_expression
                     (member_expression
-                      (identifier)
+                      (args)
                       (property_identifier))
                     (property_identifier))
                   (identifier))
@@ -665,7 +665,7 @@ testing
                       (subscript_expression
                         (member_expression
                           (member_expression
-                            (identifier)
+                            (args)
                             (property_identifier))
                           (property_identifier))
                         (identifier))
@@ -679,7 +679,7 @@ testing
                     (subscript_expression
                       (member_expression
                         (member_expression
-                          (identifier)
+                          (args)
                           (property_identifier))
                         (property_identifier))
                       (identifier))

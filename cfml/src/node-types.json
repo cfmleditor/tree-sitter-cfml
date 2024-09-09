@@ -248,6 +248,14 @@
     "named": true,
     "subtypes": [
       {
+        "type": "application",
+        "named": true
+      },
+      {
+        "type": "args",
+        "named": true
+      },
+      {
         "type": "array",
         "named": true
       },
@@ -261,6 +269,10 @@
       },
       {
         "type": "false",
+        "named": true
+      },
+      {
+        "type": "form",
         "named": true
       },
       {
@@ -304,6 +316,18 @@
         "named": true
       },
       {
+        "type": "request",
+        "named": true
+      },
+      {
+        "type": "server",
+        "named": true
+      },
+      {
+        "type": "session",
+        "named": true
+      },
+      {
         "type": "string",
         "named": true
       },
@@ -321,6 +345,14 @@
       },
       {
         "type": "true",
+        "named": true
+      },
+      {
+        "type": "url",
+        "named": true
+      },
+      {
+        "type": "variables",
         "named": true
       }
     ]
@@ -5246,6 +5278,14 @@
     "named": true
   },
   {
+    "type": "application",
+    "named": true
+  },
+  {
+    "type": "args",
+    "named": true
+  },
+  {
     "type": "argument",
     "named": false
   },
@@ -5364,6 +5404,10 @@
   {
     "type": "for",
     "named": false
+  },
+  {
+    "type": "form",
+    "named": true
   },
   {
     "type": "from",
@@ -5494,6 +5538,10 @@
     "named": true
   },
   {
+    "type": "request",
+    "named": true
+  },
+  {
     "type": "required",
     "named": true
   },
@@ -5512,6 +5560,14 @@
   {
     "type": "script",
     "named": false
+  },
+  {
+    "type": "server",
+    "named": true
+  },
+  {
+    "type": "session",
+    "named": true
   },
   {
     "type": "set",
@@ -5602,8 +5658,16 @@
     "named": true
   },
   {
+    "type": "url",
+    "named": true
+  },
+  {
     "type": "var",
     "named": false
+  },
+  {
+    "type": "variables",
+    "named": true
   },
   {
     "type": "wddx",
