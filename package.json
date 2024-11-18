@@ -21,7 +21,8 @@
     "cfscript/grammar.js",
     "cfscript/queries/*",
     "cfscript/src/**",
-    "common/define-grammar.js"
+    "common/define-grammar.js",
+    "*.wasm"
   ],
   "homepage": "https://github.com/cfmleditor/tree-sitter-cfml",
   "repository": {

@@ -178,7 +178,7 @@ get results
     <cfset var result = VARIABLES.service.getResults(id=ARGUMENTS.id)>
 
     <cfset result = "#children[k]#">
-    
+
     <cfset result = "#result.children[k].children[i].childid#">
 
     <cfset user.setChild(child={"childId":childId})>
@@ -342,7 +342,7 @@ get results
         (cf_return
           (identifier)
           (cf_selfclose_tag_end))))
-     
+
 ===================================
 cfscript
 ===================================
@@ -368,14 +368,14 @@ nested cfif
 ===================================
 
 <cfif (true)>
-  
+
   test
-  
+
   <cfif (true AND true)>
       test
   </cfif>
-  
-  #test# 
+
+  #test#
 
   ##
 
@@ -409,7 +409,7 @@ nested cfif
 
 <cfset temp = 1 / 1 />
 
-<!--- 
+<!---
 
   <!--- --->
 
@@ -469,7 +469,7 @@ cfscript switch
   switch (test) {
     case "1":
       test();//test
-      
+
       break;
     default: //test
       test();
@@ -505,7 +505,7 @@ testing
   try {
 
   } catch (any e) {
-    
+
   }
 </cfscript>
 
@@ -584,7 +584,8 @@ testing
             (arguments
               (member_expression
                 (member_expression
-                  (identifier)
+                  (scope
+                    (args))
                   (property_identifier))
                 (property_identifier))
               (string
@@ -618,7 +619,8 @@ testing
                   (arguments
                     (member_expression
                       (member_expression
-                        (identifier)
+                        (scope
+                          (args))
                         (property_identifier))
                       (property_identifier)))))))
           (cf_attribute
@@ -632,7 +634,8 @@ testing
                 (subscript_expression
                   (member_expression
                     (member_expression
-                      (identifier)
+                      (scope
+                        (args))
                       (property_identifier))
                     (property_identifier))
                   (identifier))
@@ -645,7 +648,8 @@ testing
                 (subscript_expression
                   (member_expression
                     (member_expression
-                      (identifier)
+                      (scope
+                        (args))
                       (property_identifier))
                     (property_identifier))
                   (identifier))
@@ -665,7 +669,8 @@ testing
                       (subscript_expression
                         (member_expression
                           (member_expression
-                            (identifier)
+                            (scope
+                              (args))
                             (property_identifier))
                           (property_identifier))
                         (identifier))
@@ -679,7 +684,8 @@ testing
                     (subscript_expression
                       (member_expression
                         (member_expression
-                          (identifier)
+                          (scope
+                            (args))
                           (property_identifier))
                         (property_identifier))
                       (identifier))
@@ -938,7 +944,7 @@ testing4
 			<cfloop from="1" to="#maxLabelLoop#" index="ii">
 				<tr>
 					<td align="middle" width="10">
-						<control:textinput />							
+						<control:textinput />
 						<cfif URL.action IS "new" OR URL.action IS "delete">
 							<cfoutput><a><img /></a></cfoutput>
 						<cfelse>
@@ -946,7 +952,7 @@ testing4
 						</cfif>
 					</td>
 				</tr>
-			</cfloop>                                                                                                                                                                                                                         
+			</cfloop>
 		</tbody>
 	</table>
   <div style="<cfoutput>#scrollHeight#</cfoutput>"></div>
@@ -1250,11 +1256,11 @@ testing7
     <cfif ARGUMENTS.context.isTarget(id="add-line")
 			AND ARGUMENTS.context.getValue("total_amt","0") GT 0.00>
 				<cfif StructKeyExists(ARGUMENTS.context.getStatus(type="invalid"),"distlines")>
-					
+
 				<cfelseif distAmtTotal EQ ARGUMENTS.context.getValue("total_amt","0")>
-					
+
 				<cfelseif distAmtTotal GT ARGUMENTS.context.getValue("total_amt","0")>
-					
+
 				</cfif>
 			</cfif>
 <cfzip action="zip"
@@ -1264,7 +1270,7 @@ testing7
 					<cfloop index="i" from="1" to="#arrayLen(fileInfo)#">
 
 						<cfloop from="1" to="#ArrayLen(files.data)#" index="j">
-							
+
 							<!--- @CFLintIgnore AVOID_USING_CFFILE_TAG --->
 							<cffile action="readBinary"	file="#files.data[j].physicalpath##files.data[j].filename#" variable="filebin" />
 
@@ -1285,7 +1291,7 @@ testing7
 					</cfloop>
 
 				</cfzip>
-        
+
 ---
 (program
       (cf_if_tag

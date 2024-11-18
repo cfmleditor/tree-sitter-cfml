@@ -71,6 +71,9 @@ pub const CFSCRIPT_NODE_TYPES: &str = include_str!("../../cfscript/src/node-type
 /// The syntax highlighting query for Cfml.
 pub const HIGHLIGHTS_QUERY: &str = include_str!("../../cfml/queries/highlights.scm");
 
+/// The injection query for this language.
+pub const INJECTIONS_QUERY: &str = include_str!("../../cfml/queries/injections.scm");
+
 /// The local-variable syntax highlighting query for Cfml.
 // pub const LOCALS_QUERY: &str = include_str!("../../cfml/queries/locals.scm");
 

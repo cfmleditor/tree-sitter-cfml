@@ -5558,6 +5558,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "scope"
+        },
+        {
+          "type": "SYMBOL",
           "name": "regex"
         },
         {
@@ -9747,6 +9751,110 @@
         {
           "type": "STRING",
           "value": "target"
+        }
+      ]
+    },
+    "args": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "arguments"
+      }
+    },
+    "form": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "form"
+      }
+    },
+    "url": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "url"
+      }
+    },
+    "request": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "request"
+      }
+    },
+    "variables": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "variables"
+      }
+    },
+    "application": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "application"
+      }
+    },
+    "client": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "client"
+      }
+    },
+    "cgi": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "cgi"
+      }
+    },
+    "session": {
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "session"
+      }
+    },
+    "scope": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "this"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "args"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "form"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "url"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "request"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "session"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "application"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "client"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cgi"
         }
       ]
     },

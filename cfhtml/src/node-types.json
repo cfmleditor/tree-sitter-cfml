@@ -304,6 +304,10 @@
         "named": true
       },
       {
+        "type": "scope",
+        "named": true
+      },
+      {
         "type": "string",
         "named": true
       },
@@ -4248,6 +4252,53 @@
     }
   },
   {
+    "type": "scope",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "application",
+          "named": true
+        },
+        {
+          "type": "args",
+          "named": true
+        },
+        {
+          "type": "cgi",
+          "named": true
+        },
+        {
+          "type": "client",
+          "named": true
+        },
+        {
+          "type": "form",
+          "named": true
+        },
+        {
+          "type": "request",
+          "named": true
+        },
+        {
+          "type": "session",
+          "named": true
+        },
+        {
+          "type": "this",
+          "named": true
+        },
+        {
+          "type": "url",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "script_element",
     "named": true,
     "fields": {},
@@ -5106,6 +5157,14 @@
     "named": true
   },
   {
+    "type": "application",
+    "named": true
+  },
+  {
+    "type": "args",
+    "named": true
+  },
+  {
     "type": "argument",
     "named": false
   },
@@ -5151,6 +5210,14 @@
   },
   {
     "type": "cfxml_content",
+    "named": true
+  },
+  {
+    "type": "cgi",
+    "named": true
+  },
+  {
+    "type": "client",
     "named": true
   },
   {
@@ -5224,6 +5291,10 @@
   {
     "type": "for",
     "named": false
+  },
+  {
+    "type": "form",
+    "named": true
   },
   {
     "type": "from",
@@ -5358,6 +5429,10 @@
     "named": true
   },
   {
+    "type": "request",
+    "named": true
+  },
+  {
     "type": "required",
     "named": true
   },
@@ -5376,6 +5451,10 @@
   {
     "type": "script",
     "named": false
+  },
+  {
+    "type": "session",
+    "named": true
   },
   {
     "type": "set",
@@ -5434,6 +5513,10 @@
     "named": true
   },
   {
+    "type": "this",
+    "named": true
+  },
+  {
     "type": "thread",
     "named": false
   },
@@ -5455,6 +5538,10 @@
   },
   {
     "type": "type",
+    "named": true
+  },
+  {
+    "type": "url",
     "named": true
   },
   {

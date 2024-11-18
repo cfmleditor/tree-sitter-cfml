@@ -1225,6 +1225,7 @@ module.exports = function defineGrammar(dialect) {
         $.number,
         $.string,
         // $.template_string,
+        $.scope,
         $.regex,
         $.true,
         $.false,
@@ -1775,11 +1776,34 @@ module.exports = function defineGrammar(dialect) {
 
       meta_property: _ => seq('new', '.', 'target'),
 
+      args: (_) => token('arguments'),
+      form: (_) => token('form'),
+      url: (_) => token('url'),
+      request: (_) => token('request'),
+      variables: (_) => token('variables'),
+      application: (_) => token('application'),
+      client: (_) => token('client'),
+      cgi: (_) => token('cgi'),
+      session: (_) => token('session'),
+
+      scope: ($) => choice(
+        $.this,
+        $.args,
+        $.form,
+        $.url,
+        $.request,
+        $.session,
+        $.application,
+        $.client,
+        $.cgi,
+      ),
+
       this: _ => token('this'),
       super: _ => token('super'),
       true: _ => token('true'),
       false: _ => token('false'),
       null: _ => token('null'),
+
       // undefined: _ => 'undefined',
 
       //
