@@ -1,12 +1,14 @@
 {
   "name": "tree-sitter-cfml",
-  "version": "0.20.0",
+  "version": "0.23.11",
   "description": "CFML grammar for tree-sitter",
   "main": "bindings/node",
   "types": "bindings/node",
   "keywords": [
-    "parser",
-    "lexer"
+    "incremental",
+    "parsing",
+    "tree-sitter",
+    "cfml"
   ],
   "files": [
     "binding.gyp",
@@ -21,7 +23,7 @@
     "cfscript/grammar.js",
     "cfscript/queries/*",
     "cfscript/src/**",
-    "common/define-grammar.js",
+    "common/**",
     "*.wasm"
   ],
   "homepage": "https://github.com/cfmleditor/tree-sitter-cfml",
@@ -40,8 +42,14 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "node-addon-api": "^8.0.0",
-    "node-gyp-build": "^4.8.1"
+    "node-addon-api": "^8.2.2",
+    "node-gyp-build": "^4.8.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.14.0",
+    "eslint-config-treesitter": "^1.0.2",
+    "prebuildify": "^6.0.1",
+    "tree-sitter-cli": "^0.24.4"
   },
   "peerDependencies": {
     "tree-sitter": "^0.21.1"
@@ -51,69 +59,9 @@
       "optional": true
     }
   },
-  "devDependencies": {
-    "eslint": "^8.57.0",
-    "eslint-config-google": "^0.14.0",
-    "prebuildify": "^6.0.1",
-    "tree-sitter-cli": "^0.22.6"
-  },
   "scripts": {
-    "test": "node scripts/test.js",
-    "build": "node scripts/build.js",
-    "docswasm": "node scripts/docswasm.js",
     "install": "node-gyp-build",
-    "prebuildify": "prebuildify --napi --strip"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "tree-sitter": [
-    {
-      "scope": "source.cfml",
-      "file-types": [
-        "cfc"
-      ],
-      "path": "cfml",
-      "highlights": [
-        "cfml/queries/highlights.scm"
-      ],
-      "injections": [
-        "cfml/queries/injections.scm"
-      ],
-      "external-files": [
-        "common/define-grammar.js"
-      ]
-    },
-    {
-      "scope": "source.cfhtml",
-      "file-types": [
-        "cfm"
-      ],
-      "path": "cfhtml",
-      "highlights": [
-        "cfhtml/queries/highlights.scm"
-      ],
-      "injections": [
-        "cfhtml/queries/injections.scm"
-      ],
-      "external-files": [
-        "common/define-grammar.js"
-      ]
-    },
-    {
-      "scope": "source.cfscript",
-      "file-types": [
-        "cfs"
-      ],
-      "path": "cfscript",
-      "highlights": [
-        "cfscript/queries/highlights.scm"
-      ],
-      "injections": [
-        "cfscript/queries/injections.scm"
-      ],
-      "external-files": [
-      ]
-    }
-  ]
+    "lint": "eslint common/define-grammar.js",
+    "test": "node --test bindings/node/*_test.js"
+  }
 }

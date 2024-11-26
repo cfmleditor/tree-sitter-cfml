@@ -17,9 +17,18 @@
         "cfscript/src/scanner.c",
         "bindings/node/binding.cc",
       ],
-      "cflags_c": [
-        "-std=c11"
-      ]
+      "conditions": [
+        ["OS!='win'", {
+          "cflags_c": [
+            "-std=c11",
+          ],
+        }, { # OS == "win"
+          "cflags_c": [
+            "/std:c11",
+            "/utf-8",
+          ],
+        }],
+      ],
     }
   ]
 }

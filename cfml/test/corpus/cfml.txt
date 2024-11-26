@@ -1027,18 +1027,18 @@ testing4
                 (implicit_end_tag))
               (cf_if_tag
                 (binary_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier))
                   (binary_expression
-                    (member_expression
-                      (identifier)
-                      (property_identifier))
                     (string
-                      (string_fragment)))
-                  (binary_expression
-                    (member_expression
-                      (identifier)
-                      (property_identifier))
-                    (string
-                      (string_fragment))))
+                      (string_fragment))
+                    (binary_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier))
+                      (string
+                        (string_fragment)))))
                 (cf_output_tag
                   (element
                     (start_tag
@@ -1312,29 +1312,29 @@ testing7
       (cf_if_tag
         (binary_expression
           (call_expression
-            (member_expression
-              (member_expression
-                (identifier)
-                (property_identifier))
-              (property_identifier))
-            (arguments
-              (assignment_expression
-                (identifier)
-                (string
-                  (string_fragment)))))
-          (binary_expression
-            (call_expression
+            (binary_expression
+              (call_expression
+                (member_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier))
+                  (property_identifier))
+                (arguments
+                  (assignment_expression
+                    (identifier)
+                    (string
+                      (string_fragment)))))
               (member_expression
                 (member_expression
                   (identifier)
                   (property_identifier))
-                (property_identifier))
-              (arguments
-                (string
-                  (string_fragment))
-                (string
-                  (string_fragment))))
-            (number)))
+                (property_identifier)))
+            (arguments
+              (string
+                (string_fragment))
+              (string
+                (string_fragment))))
+          (number))
         (cf_if_tag
           (call_expression
             (identifier)
@@ -1354,34 +1354,34 @@ testing7
                 (string_fragment))))
           (cf_if_alt
             (cf_elseif_tag
-              (binary_expression
-                (identifier)
-                (call_expression
+              (call_expression
+                (binary_expression
+                  (identifier)
                   (member_expression
                     (member_expression
                       (identifier)
                       (property_identifier))
-                    (property_identifier))
-                  (arguments
-                    (string
-                      (string_fragment))
-                    (string
-                      (string_fragment))))))
+                    (property_identifier)))
+                (arguments
+                  (string
+                    (string_fragment))
+                  (string
+                    (string_fragment)))))
             (cf_if_alt
               (cf_elseif_tag
-                (binary_expression
-                  (identifier)
-                  (call_expression
+                (call_expression
+                  (binary_expression
+                    (identifier)
                     (member_expression
                       (member_expression
                         (identifier)
                         (property_identifier))
-                      (property_identifier))
-                    (arguments
-                      (string
-                        (string_fragment))
-                      (string
-                        (string_fragment))))))))))
+                      (property_identifier)))
+                  (arguments
+                    (string
+                      (string_fragment))
+                    (string
+                      (string_fragment)))))))))
       (cf_zip_tag
         (cf_attribute
           (cf_attribute_name)

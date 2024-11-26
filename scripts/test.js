@@ -12,6 +12,7 @@ for (const dir of parsers) {
       stdio: 'inherit',
       cwd: join(__dirname, '..', dir),
     });
+  // eslint-disable-next-line no-unused-vars
   } catch (error) {
     process.exitCode |= parsers.indexOf(dir) + 1;
   }

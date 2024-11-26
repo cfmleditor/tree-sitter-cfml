@@ -1,0 +1,71 @@
+{
+    "grammars": [
+      {
+        "name": "cfml",
+        "camelcase": "CFML",
+        "scope": "source.cfml",
+        "path": "cfm",
+        "external-files": [
+            "common/scanner.h"
+        ],
+        "file-types": [
+          "php"
+        ],
+        "highlights": "queries/highlights.scm",
+        "injections": [
+          "queries/injections.scm"
+        ],
+        "tags": "queries/tags.scm"
+      },
+      {
+        "name": "cfhtml",
+        "camelcase": "CFHTML",
+        "scope": "source.cfhtml",
+        "path": "cfhtml",
+        "external-files": [
+            "common/scanner.h"
+        ],
+        "highlights": "queries/highlights.scm",
+        "injections": [
+          "queries/injections.scm"
+        ],
+        "tags": "queries/tags.scm"
+      },
+      {
+        "name": "cfscript",
+        "camelcase": "CFSCRIPT",
+        "scope": "source.cfscript",
+        "path": "cfscript",
+        "external-files": [
+            "common/scanner.h"
+        ],
+        "highlights": "queries/highlights.scm",
+        "injections": [
+          "queries/injections.scm"
+        ],
+        "tags": "queries/tags.scm"
+      }
+    ],
+    "metadata": {
+      "version": "0.23.11",
+      "license": "MIT",
+      "description": "CFML grammar for tree-sitter",
+      "authors": [
+        {
+          "name": "Gareth Edwards",
+          "email": "ghedwards@gmail.com"
+        }
+      ],
+      "links": {
+        "repository": "https://github.com/cfmleditor/tree-sitter-cfml"
+      }
+    },
+    "bindings": {
+      "c": true,
+      "go": true,
+      "node": true,
+      "python": true,
+      "rust": true,
+      "swift": true
+    }
+  }
