@@ -107,10 +107,6 @@
 
 ; Literals
 ;---------
-[
-  (this)
-  (super)
-] @variable.builtin
 
 ((identifier) @variable.builtin
   (#eq? @variable.builtin "self"))
