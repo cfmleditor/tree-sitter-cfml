@@ -155,6 +155,7 @@ module.exports = function defineGrammar(dialect) {
       ] : [
         [$.hash_empty, $._hash],
         [$.hash_expression, $._hash],
+        [$.hash_empty, $.hash_expression],
       ],
     ),
 
