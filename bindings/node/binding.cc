@@ -30,7 +30,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     cfscript_language.TypeTag(&LANGUAGE_TYPE_TAG);
     cfscript["language"] = cfscript_language;
 
-    exports["language"] = cfml;
+    exports["cfml"] = cfml;
     exports["cfhtml"] = cfhtml;
     exports["cfscript"] = cfscript;
 

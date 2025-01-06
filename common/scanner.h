@@ -842,7 +842,7 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer) {
 
 static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
-    bool scanned_cfoutput = false;
+    // bool scanned_cfoutput = false;
 
     if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] && !valid_symbols[END_TAG_NAME]) {
         return scan_raw_text(scanner, lexer);

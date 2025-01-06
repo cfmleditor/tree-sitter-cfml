@@ -5,44 +5,48 @@ import PackageDescription
 let package = Package(
     name: "TreeSitterCfml",
     products: [
-        .library(name: "TreeSitterCfml", targets: ["TreeSitterCfml"]),
+        .library(name: "TreeSitterCfml", targets: ["TreeSitterCfml", "TreeSitterCfhtml", "TreeSitterCfscript"]),
     ],
     dependencies: [],
     targets: [
         .target(name: "TreeSitterCfml",
-                path: ".",
+                path: "cfml",
                 exclude: [
-                    "Cargo.toml",
-                    "Makefile",
-                    "binding.gyp",
-                    "bindings/go",
-                    "bindings/node",
-                    "bindings/python",
-                    "bindings/rust",
-                    "common/common.mak",
-                    "common/define-grammar.js",
-                    "package.json",
-                    "package-lock.json",
-                    "pyproject.toml",
-                    "setup.py",
-                    "test",
-                    ".editorconfig",
-                    ".github",
-                    ".gitignore",
-                    ".gitattributes",
                 ],
                 sources: [
-                    "cfml/src/parser.c",
-                    "cfml/src/scanner.c",
-                    "cfhtml/src/parser.c",
-                    "cfhtml/src/scanner.c",
-                    "cfscript/src/parser.c",
-                    "cfscript/src/scanner.c",
+                    "src/parser.c",
+                    "src/scanner.c"
                 ],
                 resources: [
                     .copy("queries")
                 ],
                 publicHeadersPath: "bindings/swift",
-                cSettings: [.headerSearchPath("cfml/src")])
+                cSettings: [.headerSearchPath("src")])
+        .target(name: "TreeSitterCfhtml",
+                path: "cfhtml",
+                exclude: [
+                ],
+                sources: [
+                    "src/parser.c",
+                    "src/scanner.c"
+                ],
+                resources: [
+                    .copy("queries")
+                ],
+                publicHeadersPath: "bindings/swift",
+                cSettings: [.headerSearchPath("src")])
+        .target(name: "TreeSitterCfscript",
+                path: "cfscript",
+                exclude: [
+                ],
+                sources: [
+                    "src/parser.c",
+                    "src/scanner.c"
+                ],
+                resources: [
+                    .copy("queries")
+                ],
+                publicHeadersPath: "bindings/swift",
+                cSettings: [.headerSearchPath("src")])
     ]
 )

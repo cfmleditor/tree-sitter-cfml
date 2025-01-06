@@ -7,22 +7,22 @@ import (
 	tree_sitter_cfml "github.com/tree-sitter/tree-sitter-cfml/bindings/go"
 )
 
-func TestCanLoadCFMLGrammar(t *testing.T) {
-	language := tree_sitter.NewLanguage(tree_sitter_cfml.LanguageCFML())
+func TestCanLoadCfmlGrammar(t *testing.T) {
+	language := tree_sitter.NewLanguage(tree_sitter_cfml.LanguageCfml())
 	if language == nil {
 		t.Errorf("Error loading CFML grammar")
 	}
 }
 
-func TestCanLoadCFHTMLGrammar(t *testing.T) {
-	language := tree_sitter.NewLanguage(tree_sitter_cfml.LanguageCFHTML())
+func TestCanLoadCfhtmlGrammar(t *testing.T) {
+	language := tree_sitter.NewLanguage(tree_sitter_cfml.LanguageCfhtml())
 	if language == nil {
 		t.Errorf("Error loading CFHTML grammar")
 	}
 }
 
 func TestCanLoadCfscriptGrammar(t *testing.T) {
-	language := tree_sitter.NewLanguage(tree_sitter_cfml.LanguageCFSCRIPT())
+	language := tree_sitter.NewLanguage(tree_sitter_cfml.LanguageCfscript())
 	if language == nil {
 		t.Errorf("Error loading CFSCRIPT grammar")
 	}

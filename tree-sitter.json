@@ -2,7 +2,6 @@
     "grammars": [
       {
         "name": "cfml",
-        "camelcase": "CFML",
         "scope": "source.cfml",
         "path": "cfm",
         "external-files": [
@@ -11,39 +10,37 @@
         "file-types": [
           "cfm"
         ],
-        "highlights": "queries/highlights.scm",
+        "highlights": "cfml/queries/highlights.scm",
         "injections": [
-          "queries/injections.scm"
+          "cfml/queries/injections.scm"
         ],
-        "tags": "queries/tags.scm"
+        "tags": "cfml/queries/tags.scm"
       },
       {
         "name": "cfhtml",
-        "camelcase": "CFHTML",
         "scope": "source.cfhtml",
         "path": "cfhtml",
         "external-files": [
             "common/scanner.h"
         ],
-        "highlights": "queries/highlights.scm",
+        "highlights": "cfhtml/queries/highlights.scm",
         "injections": [
-          "queries/injections.scm"
+          "cfhtml/queries/injections.scm"
         ],
-        "tags": "queries/tags.scm"
+        "tags": "cfhtml/queries/tags.scm"
       },
       {
         "name": "cfscript",
-        "camelcase": "CFSCRIPT",
         "scope": "source.cfscript",
         "path": "cfscript",
         "external-files": [
             "common/scanner.h"
         ],
-        "highlights": "queries/highlights.scm",
+        "highlights": "cfscript/queries/highlights.scm",
         "injections": [
-          "queries/injections.scm"
+          "cfscript/queries/injections.scm"
         ],
-        "tags": "queries/tags.scm"
+        "tags": "cfscript/queries/tags.scm"
       }
     ],
     "metadata": {
