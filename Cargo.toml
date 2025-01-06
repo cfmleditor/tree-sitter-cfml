@@ -8,7 +8,7 @@ authors = [
 ]
 license = "MIT"
 readme = "README.md"
-keywords = ["incremental", "parsing", "cfmleditor", "tree-sitter", "cfml"]
+keywords = ["incremental", "parsing", "cfmleditor", "tree-sitter", "cfml", "cfc", "cfs"]
 categories = ["parsing", "text-editors"]
 repository = "https://github.com/cfmleditor/tree-sitter-cfml"
 edition = "2021"

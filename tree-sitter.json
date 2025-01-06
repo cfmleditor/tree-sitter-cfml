@@ -8,7 +8,7 @@
             "common/scanner.h"
         ],
         "file-types": [
-          "cfm"
+          "cfc"
         ],
         "highlights": "cfml/queries/highlights.scm",
         "injections": [
@@ -23,6 +23,9 @@
         "external-files": [
             "common/scanner.h"
         ],
+        "file-types": [
+          "cfm"
+        ],
         "highlights": "cfhtml/queries/highlights.scm",
         "injections": [
           "cfhtml/queries/injections.scm"
@@ -35,6 +38,9 @@
         "path": "cfscript",
         "external-files": [
             "common/scanner.h"
+        ],
+        "file-types": [
+          "cfs"
         ],
         "highlights": "cfscript/queries/highlights.scm",
         "injections": [
