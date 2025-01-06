@@ -9,7 +9,7 @@
             "common/scanner.h"
         ],
         "file-types": [
-          "php"
+          "cfm"
         ],
         "highlights": "queries/highlights.scm",
         "injections": [

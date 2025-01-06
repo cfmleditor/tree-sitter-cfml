@@ -9,6 +9,6 @@ import "C"
 import "unsafe"
 
 // Get the tree-sitter Language for this grammar.
-func LanguageCfml() unsafe.Pointer {
+func LanguageCFML() unsafe.Pointer {
 	return unsafe.Pointer(C.tree_sitter_cfml())
 }
