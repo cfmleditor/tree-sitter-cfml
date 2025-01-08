@@ -172,10 +172,6 @@
         "named": true
       },
       {
-        "type": "await_expression",
-        "named": true
-      },
-      {
         "type": "binary_expression",
         "named": true
       },
@@ -739,21 +735,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "await_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -2998,40 +2979,6 @@
     }
   },
   {
-    "type": "export_specifier",
-    "named": true,
-    "fields": {
-      "alias": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "expression_statement",
     "named": true,
     "fields": {},
@@ -3496,79 +3443,6 @@
     }
   },
   {
-    "type": "import",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "import_attribute",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "object",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "import_clause",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "named_imports",
-          "named": true
-        },
-        {
-          "type": "namespace_import",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "import_specifier",
-    "named": true,
-    "fields": {
-      "alias": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          }
-        ]
-      },
-      "name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "string",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "labeled_statement",
     "named": true,
     "fields": {
@@ -3737,36 +3611,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "named_imports",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "import_specifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "namespace_import",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -4013,6 +3857,7 @@
   {
     "type": "program",
     "named": true,
+    "root": true,
     "fields": {},
     "children": {
       "multiple": true,
@@ -5110,10 +4955,6 @@
     "named": false
   },
   {
-    "type": "as",
-    "named": false
-  },
-  {
     "type": "async",
     "named": false
   },
@@ -5163,10 +5004,6 @@
   },
   {
     "type": "continue",
-    "named": false
-  },
-  {
-    "type": "debugger",
     "named": false
   },
   {
@@ -5226,10 +5063,6 @@
     "named": false
   },
   {
-    "type": "from",
-    "named": false
-  },
-  {
     "type": "function",
     "named": false
   },
@@ -5263,6 +5096,10 @@
   },
   {
     "type": "implicit_end_tag",
+    "named": true
+  },
+  {
+    "type": "import",
     "named": true
   },
   {

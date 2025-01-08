@@ -1,47 +1,43 @@
 {
-  "name": "tree-sitter-cfml",
-  "version": "0.20.0",
+  "name": "@cfmleditor/tree-sitter-cfml",
+  "version": "0.4.0",
   "description": "CFML grammar for tree-sitter",
+  "repository": "github:cfmleditor/tree-sitter-cfml",
+  "license": "MIT",
   "main": "bindings/node",
   "types": "bindings/node",
+  "author": {
+    "name": "garetheddies"
+  },
   "keywords": [
-    "parser",
-    "lexer"
+    "incremental",
+    "parsing",
+    "tree-sitter",
+    "cfml"
   ],
   "files": [
     "binding.gyp",
     "prebuilds/**",
     "bindings/node/*",
-    "cfhtml/grammar.js",
-    "cfhtml/queries/*",
-    "cfhtml/src/**",
     "cfml/grammar.js",
     "cfml/queries/*",
     "cfml/src/**",
+    "cfhtml/grammar.js",
+    "cfhtml/queries/*",
+    "cfhtml/src/**",
     "cfscript/grammar.js",
     "cfscript/queries/*",
     "cfscript/src/**",
-    "common/define-grammar.js",
-    "*.wasm"
+    "common/common.js",
+    "common/html_entities.json"
   ],
-  "homepage": "https://github.com/cfmleditor/tree-sitter-cfml",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cfmleditor/tree-sitter-cfml.git"
-  },
-  "bugs": {
-    "url": "https://github.com/cfmleditor/tree-sitter-cfml/issues"
-  },
-  "authors": [
-    "Gareth Edwards <ghedwards@gmail.com>",
-    "Max Brunsfeld <maxbrunsfeld@gmail.com>",
-    "Ashi Krishnan <queerviolet@github.com>",
-    "Amaan Qureshi <amaanq12@gmail.com>"
-  ],
-  "license": "MIT",
   "dependencies": {
-    "node-addon-api": "^8.0.0",
-    "node-gyp-build": "^4.8.1"
+    "node-addon-api": "^8.2.2",
+    "node-gyp-build": "^4.8.2"
+  },
+  "devDependencies": {
+    "prebuildify": "^6.0.1",
+    "tree-sitter-cli": "^0.24.4"
   },
   "peerDependencies": {
     "tree-sitter": "^0.21.1"
@@ -51,69 +47,16 @@
       "optional": true
     }
   },
-  "devDependencies": {
-    "eslint": "^8.57.0",
-    "eslint-config-google": "^0.14.0",
-    "prebuildify": "^6.0.1",
-    "tree-sitter-cli": "^0.22.6"
-  },
   "scripts": {
-    "test": "node scripts/test.js",
     "build": "node scripts/build.js",
+    "test": "node scripts/test.js",
     "docswasm": "node scripts/docswasm.js",
     "install": "node-gyp-build",
-    "prebuildify": "prebuildify --napi --strip"
+    "prestart": "tree-sitter build --wasm",
+    "start": "tree-sitter playground",
+    "testbindings": "node --test bindings/node/*_test.js"
   },
   "publishConfig": {
     "access": "public"
-  },
-  "tree-sitter": [
-    {
-      "scope": "source.cfml",
-      "file-types": [
-        "cfc"
-      ],
-      "path": "cfml",
-      "highlights": [
-        "cfml/queries/highlights.scm"
-      ],
-      "injections": [
-        "cfml/queries/injections.scm"
-      ],
-      "external-files": [
-        "common/define-grammar.js"
-      ]
-    },
-    {
-      "scope": "source.cfhtml",
-      "file-types": [
-        "cfm"
-      ],
-      "path": "cfhtml",
-      "highlights": [
-        "cfhtml/queries/highlights.scm"
-      ],
-      "injections": [
-        "cfhtml/queries/injections.scm"
-      ],
-      "external-files": [
-        "common/define-grammar.js"
-      ]
-    },
-    {
-      "scope": "source.cfscript",
-      "file-types": [
-        "cfs"
-      ],
-      "path": "cfscript",
-      "highlights": [
-        "cfscript/queries/highlights.scm"
-      ],
-      "injections": [
-        "cfscript/queries/injections.scm"
-      ],
-      "external-files": [
-      ]
-    }
-  ]
+  }
 }

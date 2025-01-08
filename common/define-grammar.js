@@ -4,9 +4,6 @@
  * @license MIT
  */
 
-/* eslint-disable arrow-parens */
-/* eslint-disable camelcase */
-/* eslint-disable-next-line spaced-comment */
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
@@ -62,18 +59,17 @@ module.exports = function defineGrammar(dialect) {
     inline: $ => [
       $._call_signature,
       $._formal_parameter,
-      // $.statement,
       $._expressions,
       $._semicolon,
       $._identifier,
       $._reserved_identifier,
       $._lhs_expression,
-      // $.cf_tag,
     ],
 
     precedences: $ => [
       [
         'member',
+        'template_call',
         'call',
         $.update_expression,
         'unary_void',
@@ -93,17 +89,29 @@ module.exports = function defineGrammar(dialect) {
         $.sequence_expression,
         $.arrow_function,
       ],
+      ['ternary', $.ternary_expression],
+      [$.binary_expression, 'logical_and'],
+      [$.binary_expression, 'binary_shift'],
+      [$.binary_expression, 'bitwise_and'],
+      [$.binary_expression, 'bitwise_xor'],
+      [$.binary_expression, 'bitwise_or'],
+      [$.binary_expression, 'logical_or'],
+      [$.binary_expression, 'binary_plus'],
+      [$.binary_expression, 'binary_times'],
+      [$.binary_expression, 'binary_exp'],
+      [$.binary_expression, 'binary_relation'],
+      [$.binary_expression, 'binary_equality'],
+      ['unary_void', $.unary_expression],
       ['assign', $.primary_expression],
-      ['member', 'new', 'call', $.expression],
+      ['member', 'template_call', 'new', 'call', $.expression],
       ['declaration', 'literal'],
       [$.primary_expression, $.statement_block, 'object'],
+      [$.meta_property, $.import],
       [$.import_statement, $.import],
-      // [$.export_statement, $.primary_expression],
       [$.lexical_declaration, $.primary_expression],
     ],
 
     conflicts: ($, previous) => previous.concat([
-      [$.primary_expression, $.function_expression],
       [$.primary_expression, $._property_name],
       [$.primary_expression, $._property_name, $.arrow_function],
       [$.primary_expression, $.arrow_function],
@@ -111,6 +119,7 @@ module.exports = function defineGrammar(dialect) {
       [$.primary_expression, $.rest_pattern],
       [$.primary_expression, $.pattern],
       [$.primary_expression, $._for_header],
+      // [$.variable_declarator, $._for_header],
       [$.array, $.array_pattern],
       [$.object, $.object_pattern],
       [$.assignment_expression, $.pattern],
@@ -118,16 +127,25 @@ module.exports = function defineGrammar(dialect) {
       [$.labeled_statement, $._property_name],
       [$.computed_property_name, $.array],
       [$.binary_expression, $._initializer],
-      [$.binary_expression, $.pair],
+      [$.tag_attributes, $.attribute_name],
+      [$.element, $._node],
+      [$.arrow_function, $.binary_expression],
+      [$.arrow_function, $.call_expression],
+      [$.arrow_function, $.subscript_expression],
+      [$.arrow_function, $.member_expression],
+      [$.arrow_function, $.member_expression, $.subscript_expression],
+      [$.arrow_function, $.update_expression],
+      [$.arrow_function, $.ternary_expression],
+      [$.function_expression, $.primary_expression],
+      [$.pair, $.binary_expression],
       [$.call_expression, $.pair],
       [$.subscript_expression, $.pair],
+      [$.member_expression, $.subscript_expression, $.pair],
       [$.member_expression, $.pair],
       [$.update_expression, $.pair],
       [$.ternary_expression, $.pair],
-      [$.member_expression, $.subscript_expression, $.pair],
-      [$.hash_empty, $.hash_expression],
-      [$.tag_attributes, $.attribute_name],
-      [$.element, $._node],
+      // [$.class_static_block, $._property_name],
+
     ]).concat(
       dialect === 'cfml' ? [
         [$.hash_expression, $.hash_empty],
@@ -137,6 +155,7 @@ module.exports = function defineGrammar(dialect) {
       ] : [
         [$.hash_empty, $._hash],
         [$.hash_expression, $._hash],
+        [$.hash_empty, $.hash_expression],
       ],
     ),
 
@@ -1206,7 +1225,7 @@ module.exports = function defineGrammar(dialect) {
         $.primary_expression,
         $.assignment_expression,
         $.augmented_assignment_expression,
-        $.await_expression,
+        // $.await_expression,
         $.unary_expression,
         $.binary_expression,
         $.ternary_expression,
@@ -1754,7 +1773,6 @@ module.exports = function defineGrammar(dialect) {
 
       identifier: _ => {
         // @ts-ignore
-        // eslint-disable-next-line max-len
         const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#&?.,\[\]|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
         // @ts-ignore
         // eslint-disable-next-line max-len
@@ -1763,7 +1781,6 @@ module.exports = function defineGrammar(dialect) {
       },
 
       private_property_identifier: _ => {
-        // eslint-disable-next-line max-len
         // @ts-ignore
         const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#&?.,\[\]|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
 
@@ -1936,28 +1953,24 @@ module.exports = function defineGrammar(dialect) {
     },
   });
 
-
-  // eslint-disable-next-line valid-jsdoc
   /**
-     * @param {string} word
-     */
+   * @param {string} word
+   */
   function keyword(word) {
     // return word // when debuging
     return alias(reserved(caseInsensitive(word)), word);
   }
 
-  // eslint-disable-next-line valid-jsdoc
   /**
-     * @param {string | RegExp} regex
-     */
+   * @param {string | RegExp} regex
+   */
   function reserved(regex) {
     return token(prec(1, new RegExp(regex)));
   }
 
-  // eslint-disable-next-line valid-jsdoc
   /**
-     * @param {string} word
-     */
+   * @param {string} word
+   */
   function caseInsensitive(word) {
     return word.split('')
       .map(letter => `[${letter}${letter.toUpperCase()}]`)
@@ -1966,25 +1979,23 @@ module.exports = function defineGrammar(dialect) {
 
 
   /**
-     * Creates a rule to match one or more of the rules separated by a comma
-     *
-     * @param {Rule} rule
-     *
-     * @return {SeqRule}
-     *
-     */
+   * Creates a rule to match one or more of the rules separated by a comma
+   *
+   * @param {Rule} rule
+   *
+   * @returns {SeqRule}
+   */
   function commaSep1(rule) {
     return seq(rule, repeat(seq(',', rule)));
   }
 
   /**
-     * Creates a rule to optionally match one or more of the rules separated by a comma
-     *
-     * @param {Rule} rule
-     *
-     * @return {ChoiceRule}
-     *
-     */
+   * Creates a rule to optionally match one or more of the rules separated by a comma
+   *
+   * @param {Rule} rule
+   *
+   * @returns {ChoiceRule}
+   */
   function commaSep(rule) {
     return optional(commaSep1(rule));
   }

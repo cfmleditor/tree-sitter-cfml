@@ -9,7 +9,9 @@ fn main() {
     config.include(&cfml_dir);
     config
         .flag_if_supported("-std=c11")
-        .flag_if_supported("-Wno-unused-parameter");
+        .flag_if_supported("-Wno-unused-parameter")
+        .flag_if_supported("-Wno-unused-value")
+        .flag_if_supported("-Wno-implicit-fallthrough");
 
     let mut config = cc::Build::new();
     config.include(&cfml_dir);

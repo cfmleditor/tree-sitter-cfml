@@ -1,15 +1,14 @@
 [package]
 name = "tree-sitter-cfml"
-description = "CFML grammar for tree-sitter"
-version = "0.20.0"
+description = "cfml grammar for tree-sitter"
+version = "0.23.11"
 authors = [
-	"Max Brunsfeld <maxbrunsfeld@gmail.com>",
-	"Amaan Qureshi <amaanq12@gmail.com>",
-	"Gareth Edwards <ghedwards@gmail.com>",
+  "Max Brunsfeld <maxbrunsfeld@gmail.com>",
+  "Amaan Qureshi <amaanq12@gmail.com>",
 ]
 license = "MIT"
-readme = "bindings/rust/README.md"
-keywords = ["incremental", "parsing", "cfml", "cfhtml", "cfscript"]
+readme = "README.md"
+keywords = ["incremental", "parsing", "cfmleditor", "tree-sitter", "cfml", "cfc", "cfs"]
 categories = ["parsing", "text-editors"]
 repository = "https://github.com/cfmleditor/tree-sitter-cfml"
 edition = "2021"
@@ -26,13 +25,17 @@ include = [
   "cfscript/grammar.js",
   "cfscript/src",
   "queries",
+  "tree-sitter.json"
 ]
 
 [lib]
 path = "bindings/rust/lib.rs"
 
 [dependencies]
-tree-sitter = "~0.20.10"
+tree-sitter-language = "0.1"
 
 [build-dependencies]
-cc = "~1.0.90"
+cc = "1.1"
+
+[dev-dependencies]
+tree-sitter = "0.24"

@@ -1,20 +1,10 @@
 {
   "main": "../bindings/node/cfhtml.js",
-  "tree-sitter": [
-    {
-      "scope": "source.cfhtml",
-      "file-types": [
-        "cfm"
-      ],
-      "highlights": [
-        "queries/highlights.scm"
-      ],
-      "injections": [
-        "queries/injections.scm"
-      ],
-      "external-files": [
-        "../common/define-grammar.js"
-      ]
-    }
-  ]
+  "private": true,
+  "scripts": {
+    "build": "tree-sitter generate",
+    "test": "tree-sitter test",
+    "prestart": "tree-sitter build --wasm",
+    "start": "tree-sitter playground"
+  }
 }
