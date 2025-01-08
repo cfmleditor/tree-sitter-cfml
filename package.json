@@ -54,6 +54,7 @@
     "install": "node-gyp-build",
     "prestart": "tree-sitter build --wasm",
     "start": "tree-sitter playground",
+    "playground": "node scripts/playground.js",
     "testbindings": "node --test bindings/node/*_test.js"
   },
   "publishConfig": {
