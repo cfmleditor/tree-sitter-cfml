@@ -1,9 +1,14 @@
 {
-  "name": "tree-sitter-cfml",
-  "version": "0.23.11",
+  "name": "@cfmleditor/tree-sitter-cfml",
+  "version": "0.4.0",
   "description": "CFML grammar for tree-sitter",
+  "repository": "github:cfmleditor/tree-sitter-cfml",
+  "license": "MIT",
   "main": "bindings/node",
   "types": "bindings/node",
+  "author": {
+    "name": "garetheddies"
+  },
   "keywords": [
     "incremental",
     "parsing",
@@ -14,43 +19,23 @@
     "binding.gyp",
     "prebuilds/**",
     "bindings/node/*",
-    "cfhtml/grammar.js",
-    "cfhtml/package.json",
-    "cfhtml/queries/*",
-    "cfhtml/src/**",
     "cfml/grammar.js",
-    "cfml/package.json",
     "cfml/queries/*",
     "cfml/src/**",
+    "cfhtml/grammar.js",
+    "cfhtml/queries/*",
+    "cfhtml/src/**",
     "cfscript/grammar.js",
-    "cfscript/package.json",
     "cfscript/queries/*",
     "cfscript/src/**",
-    "common/**",
-    "*.wasm"
+    "common/common.js",
+    "common/html_entities.json"
   ],
-  "homepage": "https://github.com/cfmleditor/tree-sitter-cfml",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cfmleditor/tree-sitter-cfml.git"
-  },
-  "bugs": {
-    "url": "https://github.com/cfmleditor/tree-sitter-cfml/issues"
-  },
-  "authors": [
-    "Gareth Edwards <ghedwards@gmail.com>",
-    "Max Brunsfeld <maxbrunsfeld@gmail.com>",
-    "Ashi Krishnan <queerviolet@github.com>",
-    "Amaan Qureshi <amaanq12@gmail.com>"
-  ],
-  "license": "MIT",
   "dependencies": {
     "node-addon-api": "^8.2.2",
     "node-gyp-build": "^4.8.2"
   },
   "devDependencies": {
-    "eslint": "^9.14.0",
-    "eslint-config-treesitter": "^1.0.2",
     "prebuildify": "^6.0.1",
     "tree-sitter-cli": "^0.24.4"
   },
@@ -63,8 +48,15 @@
     }
   },
   "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node scripts/test.js",
+    "docswasm": "node scripts/docswasm.js",
     "install": "node-gyp-build",
-    "lint": "eslint common/define-grammar.js",
-    "test": "node --test bindings/node/*_test.js"
+    "prestart": "tree-sitter build --wasm",
+    "start": "tree-sitter playground",
+    "testbindings": "node --test bindings/node/*_test.js"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

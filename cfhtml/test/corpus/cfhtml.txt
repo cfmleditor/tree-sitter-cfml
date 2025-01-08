@@ -67,3 +67,97 @@ testing4
         (cf_output_tag
           (text))
         (text)))
+
+
+===================================
+testing4
+===================================
+<table class="dataEntry" cellSpacing="2" cellPadding="2" width="710">
+	<tr>
+		<td>1</td>
+		<td>2</td>
+		<td>3</td>
+		<td>4</td>
+		<td>5</td>
+    <td>6</td>
+    <td>7</td>
+    <!--- Remove this comment and this test fails 
+    <td>8</td>
+    --->
+	</tr>
+</table>
+---
+(program
+      (element
+        (start_tag
+          (tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value)))))
+        (element
+          (start_tag
+            (tag_name))
+          (element
+            (start_tag
+              (tag_name))
+            (text)
+            (end_tag
+              (tag_name)))
+          (element
+            (start_tag
+              (tag_name))
+            (text)
+            (end_tag
+              (tag_name)))
+          (element
+            (start_tag
+              (tag_name))
+            (text)
+            (end_tag
+              (tag_name)))
+          (element
+            (start_tag
+              (tag_name))
+            (text)
+            (end_tag
+              (tag_name)))
+          (element
+            (start_tag
+              (tag_name))
+            (text)
+            (end_tag
+              (tag_name)))
+          (element
+            (start_tag
+              (tag_name))
+            (text)
+            (end_tag
+              (tag_name)))
+          (element
+            (start_tag
+              (tag_name))
+            (text)
+            (end_tag
+              (tag_name)))
+          (cf_comment)
+          (end_tag
+            (tag_name)))
+        (end_tag
+          (tag_name))))

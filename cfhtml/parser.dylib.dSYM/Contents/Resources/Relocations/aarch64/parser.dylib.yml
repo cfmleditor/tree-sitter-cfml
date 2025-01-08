@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/garethedwards/development/github/tree-sitter-cfml/cfhtml/parser.dylib'
+relocations:     []
+...
