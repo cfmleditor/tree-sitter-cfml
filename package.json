@@ -49,6 +49,7 @@
   },
   "scripts": {
     "build": "node scripts/build.js",
+    "parse": "node scripts/parse.js",
     "test": "node scripts/test.js",
     "docswasm": "node scripts/docswasm.js",
     "install": "node-gyp-build",

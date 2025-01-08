@@ -164,6 +164,55 @@
         }
       ]
     },
+    "_element_node": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "doctype"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "entity"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "element"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_hash"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "script_element"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "style_element"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfscript_element"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "text"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "erroneous_end_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "xml_decl"
+        }
+      ]
+    },
     "_node_cfquery": {
       "type": "CHOICE",
       "members": [
@@ -444,7 +493,7 @@
               "type": "REPEAT",
               "content": {
                 "type": "SYMBOL",
-                "name": "_node"
+                "name": "_element_node"
               }
             },
             {

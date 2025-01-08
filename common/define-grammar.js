@@ -208,6 +208,20 @@ module.exports = function defineGrammar(dialect) {
         $.xml_decl,
       ),
 
+      _element_node: $ => choice(
+        $.doctype,
+        $.entity,
+        $.element,
+        $.cf_tag,
+        $._hash,
+        $.script_element,
+        $.style_element,
+        $.cfscript_element,
+        $.text,
+        $.erroneous_end_tag,
+        $.xml_decl,
+      ),
+
       _node_cfquery: $ => choice(
         $.query_operator,
         $.cf_tag_query,
@@ -268,7 +282,7 @@ module.exports = function defineGrammar(dialect) {
       element: $ => choice(
         seq(
           $.start_tag,
-          repeat($._node),
+          repeat($._element_node),
           choice($.end_tag, $.implicit_end_tag),
         ),
         $.self_closing_tag,

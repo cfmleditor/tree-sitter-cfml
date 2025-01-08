@@ -689,8 +689,7 @@ testing
             (end_tag
               (tag_name))))
         (end_tag
-          (tag_name))
-        (implicit_end_tag)))
+          (tag_name))))
 
 ===================================
 testing2
@@ -1062,9 +1061,9 @@ testing4
                     (end_tag
                       (tag_name)))))
               (end_tag
-                (tag_name))
-              (end_tag
-                (tag_name))))
+                (tag_name)))
+            (end_tag
+              (tag_name)))
           (end_tag
             (tag_name)))
         (end_tag
