@@ -128,7 +128,7 @@ module.exports = function defineGrammar(dialect) {
       [$.computed_property_name, $.array],
       [$.binary_expression, $._initializer],
       [$.tag_attributes, $.attribute_name],
-      [$.element, $._node],
+      // [$.element, $._node],
       [$.arrow_function, $.binary_expression],
       [$.arrow_function, $.call_expression],
       [$.arrow_function, $.subscript_expression],
