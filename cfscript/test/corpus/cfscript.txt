@@ -158,3 +158,70 @@ cfscript switch
               (call_expression
                 (identifier)
                 (arguments)))))))
+
+
+===================================
+cfscript function 1
+===================================
+public string function doThing() 
+{
+
+}
+---
+(program
+      (function_declaration
+        (function_access)
+        (return_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block)))
+
+===================================
+cfscript function 2
+===================================
+public string function doThing(string firstName = "blah",required string firstName,string firstName)
+{
+
+}
+---
+(program
+  (function_declaration
+    (function_access)
+    (return_type)
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (assignment_pattern
+        (identifier)
+        (string
+          (string_fragment)))
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier))
+    (statement_block)))
+
+===================================
+cfscript function 3
+===================================
+public function function doThing(string firstName = "blah",required function firstName,string firstName)
+{
+
+}
+---
+(program
+      (function_declaration
+        (function_access)
+        (return_type)
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (assignment_pattern
+            (identifier)
+            (string
+              (string_fragment)))
+          (parameter_type)
+          (identifier)
+          (parameter_type)
+          (identifier))
+        (statement_block)))

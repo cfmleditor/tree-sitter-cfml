@@ -90,8 +90,8 @@ module.exports = grammar({
 
   conflicts: ($) => [
     [$.primary_expression, $._property_name],
-    [$.primary_expression, $._property_name, $.arrow_function],
-    [$.primary_expression, $.arrow_function],
+    // [$.primary_expression, $._property_name, $.arrow_function],
+    // [$.primary_expression, $.arrow_function],
     [$.primary_expression, $.method_definition],
     [$.primary_expression, $.rest_pattern],
     [$.primary_expression, $.pattern],
@@ -106,6 +106,8 @@ module.exports = grammar({
     [$.binary_expression, $._initializer],
     [$.class_static_block, $._property_name],
     [$.hash_expression, $.hash_empty],
+    [$.function_expression, $.parameter_type],
+    [$.primary_expression, $.parameter_type],
     // [$.call_expression, $._property_name],
 
     [$.expression, $._property_name],
@@ -181,7 +183,7 @@ module.exports = grammar({
 
     declaration: ($) => choice(
       $.function_declaration,
-      $.generator_function_declaration,
+      // $.generator_function_declaration,
       $.class_declaration,
       $.lexical_declaration,
       $.variable_declaration,
@@ -336,7 +338,7 @@ module.exports = grammar({
 
     for_in_statement: ($) => seq(
       'for',
-      optional('await'),
+      // optional('await'),
       $._for_header,
       field('body', $.statement),
     ),
@@ -488,8 +490,8 @@ module.exports = grammar({
       $._jsx_element,
       $.assignment_expression,
       $.augmented_assignment_expression,
-      $.await_expression,
-      $.unary_expression,
+      // $.await_expression,
+      // $.unary_expression,
       $.binary_expression,
       $.ternary_expression,
       $.update_expression,
@@ -517,7 +519,7 @@ module.exports = grammar({
       $.array,
       $.function_expression,
       $.arrow_function,
-      $.generator_function,
+      // $.generator_function,
       $.class,
       $.meta_property,
       $.call_expression,
@@ -748,15 +750,59 @@ module.exports = grammar({
     class_heritage: ($) => seq('extends', $.expression),
 
     function_expression: ($) => prec('literal', seq(
-      optional('async'),
+      // optional('async'),
       'function',
       field('name', optional($.identifier)),
       $._call_signature,
       field('body', $.statement_block),
     )),
+
+    function_access: ($) => choice(
+      'public',
+      'private',
+      'package',
+    ),
+
+    return_type: ($) => choice(
+      'any',
+      'string',
+      'numeric',
+      'xml',
+      'query',
+      'struct',
+      'array',
+      'binary',
+      'boolean',
+      'component',
+      'date',
+      'function',
+      'guid',
+      'void',
+      $.identifier,
+    ),
+
+    parameter_type: ($) => choice(
+      'any',
+      'string',
+      'numeric',
+      'xml',
+      'query',
+      'struct',
+      'array',
+      'binary',
+      'boolean',
+      'component',
+      'date',
+      'function',
+      'guid',
+      'void',
+      $.identifier,
+    ),
 
     function_declaration: ($) => prec.right('declaration', seq(
-      optional('async'),
+      // optional('async'),
+      optional($.function_access),
+      optional($.return_type),
       'function',
       field('name', $.identifier),
       $._call_signature,
@@ -764,27 +810,27 @@ module.exports = grammar({
       optional($._automatic_semicolon),
     )),
 
-    generator_function: ($) => prec('literal', seq(
-      optional('async'),
-      'function',
-      '*',
-      field('name', optional($.identifier)),
-      $._call_signature,
-      field('body', $.statement_block),
-    )),
+    // generator_function: ($) => prec('literal', seq(
+    //   optional('async'),
+    //   'function',
+    //   '*',
+    //   field('name', optional($.identifier)),
+    //   $._call_signature,
+    //   field('body', $.statement_block),
+    // )),
 
-    generator_function_declaration: ($) => prec.right('declaration', seq(
-      optional('async'),
-      'function',
-      '*',
-      field('name', $.identifier),
-      $._call_signature,
-      field('body', $.statement_block),
-      optional($._automatic_semicolon),
-    )),
+    // generator_function_declaration: ($) => prec.right('declaration', seq(
+    //   optional('async'),
+    //   'function',
+    //   '*',
+    //   field('name', $.identifier),
+    //   $._call_signature,
+    //   field('body', $.statement_block),
+    //   optional($._automatic_semicolon),
+    // )),
 
     arrow_function: ($) => seq(
-      optional('async'),
+      // optional('async'),
       choice(
         field('parameter', choice(
           alias($._reserved_identifier, $.identifier),
@@ -800,8 +846,21 @@ module.exports = grammar({
     ),
 
     // Override
+
+    // _call_signature: $ => seq(
+    //   field('type_parameters', optional($.type_parameters)),
+    //   field('parameters', $.formal_parameters),
+    //   field('return_type', optional(
+    //     choice($.type_annotation, $.asserts_annotation, $.type_predicate_annotation),
+    //   )),
+    // ),
+
     _call_signature: ($) => field('parameters', $.formal_parameters),
-    _formal_parameter: ($) => choice($.pattern, $.assignment_pattern),
+    _formal_parameter: ($) => seq(
+      optional('required'),
+      optional($.parameter_type),
+      choice($.pattern, $.assignment_pattern)
+    ),
 
     optional_chain: (_) => '?.',
 
@@ -823,10 +882,10 @@ module.exports = grammar({
       field('arguments', optional(prec.dynamic(1, $.arguments))),
     )),
 
-    await_expression: ($) => prec('unary_void', seq(
-      'await',
-      $.expression,
-    )),
+    // await_expression: ($) => prec('unary_void', seq(
+    //   'await',
+    //   $.expression,
+    // )),
 
     member_expression: ($) => prec('member', seq(
       field('object', choice($.expression, $.primary_expression, $.import)),
@@ -939,10 +998,10 @@ module.exports = grammar({
       ),
     ),
 
-    unary_expression: ($) => prec.left('unary_void', seq(
-      field('operator', choice('!', '~', '-', '+', 'typeof', 'void', 'delete')),
-      field('argument', $.expression),
-    )),
+    // unary_expression: ($) => prec.left('unary_void', seq(
+    //   field('operator', choice('!', '~', '-', '+', 'typeof', 'void', 'delete')),
+    //   field('argument', $.expression),
+    // )),
 
     update_expression: ($) => prec.left(choice(
       seq(
@@ -1227,7 +1286,7 @@ module.exports = grammar({
         'static',
         alias(token(seq('static', /\s+/, 'get', /\s*\n/)), 'static get'),
       )),
-      optional('async'),
+      // optional('async'),
       optional(choice('get', 'set', '*')),
       field('name', $._property_name),
       field('parameters', $.formal_parameters),
@@ -1282,7 +1341,7 @@ module.exports = grammar({
     _reserved_identifier: (_) => choice(
       'get',
       'set',
-      'async',
+      // 'async',
       'static',
       'export',
       'let',
