@@ -32,12 +32,12 @@
     "common/html_entities.json"
   ],
   "dependencies": {
-    "node-addon-api": "^8.2.2",
-    "node-gyp-build": "^4.8.2"
+    "node-addon-api": "^8.3.0",
+    "node-gyp-build": "^4.8.4"
   },
   "devDependencies": {
     "prebuildify": "^6.0.1",
-    "tree-sitter-cli": "^0.24.4"
+    "tree-sitter-cli": "^0.24.7"
   },
   "peerDependencies": {
     "tree-sitter": "^0.21.1"
