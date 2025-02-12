@@ -31,13 +31,13 @@ pub const CFHTML_NODE_TYPES: &str = include_str!("../../cfhtml/src/node-types.js
 pub const CFSCRIPT_NODE_TYPES: &str = include_str!("../../cfscript/src/node-types.json");
 
 /// The syntax highlighting query for CFML.
-pub const HIGHLIGHTS_QUERY: &str = include_str!("../../queries/highlights.scm");
+pub const HIGHLIGHTS_QUERY: &str = include_str!("../../cfml/queries/highlights.scm");
 
 /// The injection query for CFML.
-pub const INJECTIONS_QUERY: &str = include_str!("../../queries/injections.scm");
+pub const INJECTIONS_QUERY: &str = include_str!("../../cfml/queries/injections.scm");
 
 /// The symbol tagging query for CFML.
-pub const TAGS_QUERY: &str = include_str!("../../queries/tags.scm");
+pub const TAGS_QUERY: &str = include_str!("../../cfml/queries/tags.scm");
 
 #[cfg(test)]
 mod tests {
