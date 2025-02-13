@@ -41,7 +41,7 @@
         tree-sitter-cfml = pkgs.callPackage (nixpkgs + "/pkgs/development/tools/parsing/tree-sitter/grammar.nix") { }
           {
             language = "cfml";
-            src = ./cfml/;
+            src = ./cfml;
             inherit version;
           };
 
