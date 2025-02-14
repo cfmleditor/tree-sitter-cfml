@@ -365,26 +365,42 @@ module.exports = function defineGrammar(dialect) {
       // @ts-ignore
       hash_value: $ => /[a-zA-Z0-9_-]+/,
 
-      cf_component_tag: $ => prec.right(1, seq(
+      _cf_component_open: $ => seq(
         $._cf_open_tag,
         keyword('component'),
         repeat($.cf_attribute),
         alias($._close_tag_delim, '>'),
-        repeat($._node),
+      ),
+
+      _cf_component_close: $ => seq(
         $._cf_close_tag,
         keyword('component'),
         alias($._close_tag_delim, '>'),
+      ),
+
+      cf_component_tag: $ => prec.right(1, seq(
+        alias($._cf_component_open, $.cf_tag_open),
+        repeat($._node),
+        alias($._cf_component_close, $.cf_tag_close),
       )),
 
-      cf_function_tag: $ => prec.right(2, seq(
+      _cf_function_open: $ => seq(
         $._cf_open_tag,
         keyword('function'),
         repeat($.cf_attribute),
         alias($._close_tag_delim, '>'),
-        ( dialect === 'cfml' ? repeat($._node) : repeat($._cfoutput_node) ),
+      ),
+
+      _cf_function_close: $ => seq(
         $._cf_close_tag,
         keyword('function'),
         alias($._close_tag_delim, '>'),
+      ),
+        
+      cf_function_tag: $ => prec.right(2, seq(
+        alias($._cf_function_open, $.cf_tag_open),
+        ( dialect === 'cfml' ? repeat($._node) : repeat($._cfoutput_node) ),
+        alias($._cf_function_close, $.cf_tag_close),
       )),
 
       cf_silent_tag: $ => prec.right(3, seq(
@@ -700,7 +716,7 @@ module.exports = function defineGrammar(dialect) {
       cf_set_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('set'),
-        optional(alias('var', $.cf_var)),
+        optional(alias(keyword('var'), $.cf_var)),
         $._cf_tag_expression,
         $.cf_selfclose_tag_end,
       )),
@@ -1783,6 +1799,7 @@ module.exports = function defineGrammar(dialect) {
       _identifier: $ => choice(
         // $.undefined,
         $.identifier,
+        alias($._reserved_identifier, $.identifier),
       ),
 
       identifier: _ => {
@@ -1961,6 +1978,20 @@ module.exports = function defineGrammar(dialect) {
         'static',
         'export',
         'let',
+        keyword('this'),
+        keyword('arguments'),
+        keyword('form'),
+        keyword('url'),
+        keyword('variables'),
+        keyword('cgi'),
+        keyword('cookies'),
+        keyword('server'),
+        keyword('application'),
+        keyword('request'),
+        keyword('session'),
+        keyword('super'),
+        keyword('local'),
+        keyword('client'),
       ),
 
       _semicolon: $ => choice($._automatic_semicolon, ';'),
@@ -2013,4 +2044,15 @@ module.exports = function defineGrammar(dialect) {
   function commaSep(rule) {
     return optional(commaSep1(rule));
   }
+
+
+  function cfTagOpen(name, open, attr, close) {
+    return seq(
+      open, 
+      keyword(name),
+      attr,
+      close
+    )
+  }
+
 };

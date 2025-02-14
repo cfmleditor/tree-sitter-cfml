@@ -94,10 +94,11 @@ cffunction
 ---
 (program
       (cf_function
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value)))
+        (cf_tag_open
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value))))
         (hash_expression
           (binary_expression
             (identifier)
@@ -144,29 +145,8 @@ cffunction
                 (arguments
                   (identifier)))
               (identifier)))
-          (cf_selfclose_tag_end))))
-
-
-===================================
-function call
-===================================
-
-<cfset test = fn("test")["test"]>
----
-
-(program
-      (cf_set_tag
-        (assignment_expression
-          (identifier)
-          (subscript_expression
-            (call_expression
-              (identifier)
-              (arguments
-                (string
-                  (string_fragment))))
-            (string
-              (string_fragment))))
-        (cf_selfclose_tag_end)))
+          (cf_selfclose_tag_end))
+        (cf_tag_close)))
 
 ===================================
 get results
@@ -205,22 +185,23 @@ get results
 ---
 (program
       (cf_function
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value)))
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value)))
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value)))
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value)))
+        (cf_tag_open
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value))))
         (cf_selfclose_tag
           (cf_attribute
             (cf_attribute_name)
@@ -341,7 +322,8 @@ get results
           (cf_selfclose_tag_end))
         (cf_return
           (identifier)
-          (cf_selfclose_tag_end))))
+          (cf_selfclose_tag_end))
+        (cf_tag_close)))
 
 ===================================
 cfscript

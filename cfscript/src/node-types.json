@@ -3252,6 +3252,14 @@
     "named": false
   },
   {
+    "type": "application",
+    "named": false
+  },
+  {
+    "type": "arguments",
+    "named": false
+  },
+  {
     "type": "array",
     "named": false
   },
@@ -3280,7 +3288,15 @@
     "named": false
   },
   {
+    "type": "cgi",
+    "named": false
+  },
+  {
     "type": "class",
+    "named": false
+  },
+  {
+    "type": "client",
     "named": false
   },
   {
@@ -3297,6 +3313,10 @@
   },
   {
     "type": "continue",
+    "named": false
+  },
+  {
+    "type": "cookies",
     "named": false
   },
   {
@@ -3341,6 +3361,10 @@
   },
   {
     "type": "for",
+    "named": false
+  },
+  {
+    "type": "form",
     "named": false
   },
   {
@@ -3400,6 +3424,10 @@
     "named": false
   },
   {
+    "type": "local",
+    "named": false
+  },
+  {
     "type": "meta",
     "named": false
   },
@@ -3456,11 +3484,23 @@
     "named": true
   },
   {
+    "type": "request",
+    "named": false
+  },
+  {
     "type": "required",
     "named": false
   },
   {
     "type": "return",
+    "named": false
+  },
+  {
+    "type": "server",
+    "named": false
+  },
+  {
+    "type": "session",
     "named": false
   },
   {
@@ -3532,7 +3572,15 @@
     "named": true
   },
   {
+    "type": "url",
+    "named": false
+  },
+  {
     "type": "var",
+    "named": false
+  },
+  {
+    "type": "variables",
     "named": false
   },
   {
