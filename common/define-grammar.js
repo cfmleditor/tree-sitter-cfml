@@ -378,9 +378,12 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       ),
 
+
+      cf_tag_body: $ => ( dialect === 'cfml' ? repeat1($._node) : repeat1($._cfoutput_node) ),
+
       cf_component_tag: $ => prec.right(1, seq(
         alias($._cf_component_open, $.cf_tag_open),
-        repeat($._node),
+        field('body', optional($.cf_tag_body)),
         alias($._cf_component_close, $.cf_tag_close),
       )),
 
@@ -399,7 +402,7 @@ module.exports = function defineGrammar(dialect) {
         
       cf_function_tag: $ => prec.right(2, seq(
         alias($._cf_function_open, $.cf_tag_open),
-        ( dialect === 'cfml' ? repeat($._node) : repeat($._cfoutput_node) ),
+        field('body', optional($.cf_tag_body)),
         alias($._cf_function_close, $.cf_tag_close),
       )),
 
