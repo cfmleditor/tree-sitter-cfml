@@ -4964,15 +4964,7 @@
     "named": true
   },
   {
-    "type": "application",
-    "named": false
-  },
-  {
     "type": "argument",
-    "named": false
-  },
-  {
-    "type": "arguments",
     "named": false
   },
   {
@@ -5016,14 +5008,6 @@
     "named": true
   },
   {
-    "type": "cgi",
-    "named": false
-  },
-  {
-    "type": "client",
-    "named": false
-  },
-  {
     "type": "component",
     "named": false
   },
@@ -5033,10 +5017,6 @@
   },
   {
     "type": "continue",
-    "named": false
-  },
-  {
-    "type": "cookies",
     "named": false
   },
   {
@@ -5096,10 +5076,6 @@
     "named": false
   },
   {
-    "type": "form",
-    "named": false
-  },
-  {
     "type": "function",
     "named": false
   },
@@ -5137,11 +5113,11 @@
   },
   {
     "type": "import",
-    "named": false
+    "named": true
   },
   {
     "type": "import",
-    "named": true
+    "named": false
   },
   {
     "type": "in",
@@ -5153,10 +5129,6 @@
   },
   {
     "type": "let",
-    "named": false
-  },
-  {
-    "type": "local",
     "named": false
   },
   {
@@ -5236,10 +5208,6 @@
     "named": true
   },
   {
-    "type": "request",
-    "named": false
-  },
-  {
     "type": "required",
     "named": true
   },
@@ -5257,14 +5225,6 @@
   },
   {
     "type": "script",
-    "named": false
-  },
-  {
-    "type": "server",
-    "named": false
-  },
-  {
-    "type": "session",
     "named": false
   },
   {
@@ -5308,10 +5268,6 @@
     "named": true
   },
   {
-    "type": "super",
-    "named": false
-  },
-  {
     "type": "switch",
     "named": false
   },
@@ -5326,10 +5282,6 @@
   {
     "type": "text",
     "named": true
-  },
-  {
-    "type": "this",
-    "named": false
   },
   {
     "type": "thread",
@@ -5356,15 +5308,7 @@
     "named": true
   },
   {
-    "type": "url",
-    "named": false
-  },
-  {
     "type": "var",
-    "named": false
-  },
-  {
-    "type": "variables",
     "named": false
   },
   {
