@@ -43,6 +43,7 @@ module.exports = function defineGrammar(dialect) {
       // $.cfoutput_content,
       // $.cffunction_content,
       // $.html_hash,
+      $.html_text,
     ],
 
     supertypes: $ => [
@@ -220,6 +221,7 @@ module.exports = function defineGrammar(dialect) {
         $.text,
         $.erroneous_end_tag,
         $.xml_decl,
+        $.html_text,
       ),
 
       _node_cfquery: $ => choice(

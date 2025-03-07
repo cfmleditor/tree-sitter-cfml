@@ -28,6 +28,7 @@ enum TokenType {
     // CFOUTPUT_CONTENT,
     // CFFUNCTION_CONTENT,
     // HTML_HASH,
+    HTML_TEXT
 };
 
 typedef struct {
@@ -239,6 +240,49 @@ static WhitespaceResult scan_whitespace_and_comments(TSLexer *lexer, bool *scann
         }
     }
 }
+
+
+static bool scan_html_text(TSLexer *lexer) {
+    // saw_text will be true if we see any non-whitespace content, or any whitespace content that is not a newline and
+    // does not immediately follow a newline.
+    bool saw_text = false;
+    // at_newline will be true if we are currently at a newline, or if we are at whitespace that is not a newline but
+    // immediately follows a newline.
+    bool at_newline = false;
+
+    while (lexer->lookahead != 0 && lexer->lookahead != '<' && lexer->lookahead != '>' && lexer->lookahead != '{' &&
+           lexer->lookahead != '}' && lexer->lookahead != '&') {
+        bool is_wspace = iswspace(lexer->lookahead);
+        if (lexer->lookahead == '\n') {
+            at_newline = true;
+        } else {
+            // If at_newline is already true, and we see some whitespace, then it must stay true.
+            // Otherwise, it should be false.
+            //
+            // See the table below to determine the logic for computing `saw_text`.
+            //
+            // |------------------------------------|
+            // | at_newline | is_wspace | saw_text  |
+            // |------------|-----------|-----------|
+            // | false (0)  | false (0) | true  (1) |
+            // | false (0)  | true  (1) | true  (1) |
+            // | true  (1)  | false (0) | true  (1) |
+            // | true  (1)  | true  (1) | false (0) |
+            // |------------------------------------|
+
+            at_newline &= is_wspace;
+            if (!at_newline) {
+                saw_text = true;
+            }
+        }
+
+        advance(lexer);
+    }
+
+    lexer->result_symbol = HTML_TEXT;
+    return saw_text;
+}
+
 
 static bool scan_script_comment(TSLexer *lexer) {
 
@@ -848,8 +892,10 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
         return scan_raw_text(scanner, lexer);
     }
 
-    while (iswspace(lexer->lookahead)) {
-        skip(lexer);
+    if (!valid_symbols[HTML_TEXT]) {
+        while (iswspace(lexer->lookahead)) {
+            skip(lexer);
+        }
     }
 
     if (valid_symbols[CFQUERY_CONTENT]) {
@@ -866,6 +912,10 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
     if (valid_symbols[CFSCRIPT_CONTENT]) {
         return scan_cfscript_content(scanner, lexer);
+    }
+
+    if (valid_symbols[HTML_TEXT] && scan_html_text(lexer)) {
+        return true;
     }
 
     // if (valid_symbols[CFOUTPUT_CONTENT]) {

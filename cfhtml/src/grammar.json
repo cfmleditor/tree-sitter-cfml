@@ -210,6 +210,10 @@
         {
           "type": "SYMBOL",
           "name": "xml_decl"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "html_text"
         }
       ]
     },
@@ -11155,6 +11159,10 @@
     {
       "type": "SYMBOL",
       "name": "cfscript_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "html_text"
     }
   ],
   "inline": [

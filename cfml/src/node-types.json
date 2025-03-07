@@ -3015,6 +3015,10 @@
           "named": true
         },
         {
+          "type": "html_text",
+          "named": true
+        },
+        {
           "type": "implicit_end_tag",
           "named": true
         },
@@ -5208,6 +5212,10 @@
     "named": false
   },
   {
+    "type": "html_text",
+    "named": true
+  },
+  {
     "type": "htmlhead",
     "named": false
   },
@@ -5237,11 +5245,11 @@
   },
   {
     "type": "import",
-    "named": false
+    "named": true
   },
   {
     "type": "import",
-    "named": true
+    "named": false
   },
   {
     "type": "in",

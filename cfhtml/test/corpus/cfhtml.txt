@@ -117,43 +117,43 @@ testing4
           (element
             (start_tag
               (tag_name))
-            (text)
+            (html_text)
             (end_tag
               (tag_name)))
           (element
             (start_tag
               (tag_name))
-            (text)
+            (html_text)
             (end_tag
               (tag_name)))
           (element
             (start_tag
               (tag_name))
-            (text)
+            (html_text)
             (end_tag
               (tag_name)))
           (element
             (start_tag
               (tag_name))
-            (text)
+            (html_text)
             (end_tag
               (tag_name)))
           (element
             (start_tag
               (tag_name))
-            (text)
+            (html_text)
             (end_tag
               (tag_name)))
           (element
             (start_tag
               (tag_name))
-            (text)
+            (html_text)
             (end_tag
               (tag_name)))
           (element
             (start_tag
               (tag_name))
-            (text)
+            (html_text)
             (end_tag
               (tag_name)))
           (cf_comment)
