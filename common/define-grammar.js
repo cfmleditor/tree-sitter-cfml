@@ -721,7 +721,7 @@ module.exports = function defineGrammar(dialect) {
       cf_set_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('set'),
-        optional(alias(keyword('var'), $.cf_var)),
+        optional(alias(/[vV][aA][rR]/, $.cf_var)),
         $._cf_tag_expression,
         $.cf_selfclose_tag_end,
       )),

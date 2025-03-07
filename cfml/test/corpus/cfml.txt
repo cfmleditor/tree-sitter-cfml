@@ -1713,3 +1713,37 @@ cftransaction
             (identifier)
             (string))
           (cf_selfclose_tag_end))))
+
+===================================
+var vs VARIABLES
+===================================
+<cfset VARIABLES.test = StructNew()>
+<cfset var test = StructNew()>
+<cfset VAR test = StructNew()>
+---
+(program
+      (cf_set_tag
+        (assignment_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (call_expression
+            (identifier)
+            (arguments)))
+        (cf_selfclose_tag_end))
+      (cf_set_tag
+        (cf_var)
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments)))
+        (cf_selfclose_tag_end))
+      (cf_set_tag
+        (cf_var)
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments)))
+        (cf_selfclose_tag_end)))
