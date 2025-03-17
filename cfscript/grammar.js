@@ -108,6 +108,9 @@ module.exports = grammar({
     [$.hash_expression, $.hash_empty],
     [$.function_expression, $.parameter_type],
     [$.primary_expression, $.parameter_type],
+    [$.primary_expression, $.tag_expression],
+    [$.primary_expression, $.tag_expression, $._property_name],
+    [$.primary_expression, $.tag_expression, $.parameter_type],
     // [$.call_expression, $._property_name],
 
     [$.expression, $._property_name],
@@ -523,6 +526,7 @@ module.exports = grammar({
       $.class,
       $.meta_property,
       $.call_expression,
+      $.tag_expression,
     ),
 
     yield_expression: ($) => prec.right(seq(
@@ -863,6 +867,7 @@ module.exports = grammar({
     ),
 
     optional_chain: (_) => '?.',
+    static_chain: (_) => '::',
 
     call_expression: ($) => choice(
       prec('call', seq(
@@ -874,6 +879,14 @@ module.exports = grammar({
         field('optional_chain', $.optional_chain),
         field('arguments', $.arguments),
       )),
+    ),
+
+    tag_expression: $ => choice(
+      seq(
+        field('tag', $.identifier),
+        field('arguments', $.arguments),
+        field('body', $.statement_block),
+      )
     ),
 
     new_expression: ($) => prec.right('new', seq(
@@ -889,7 +902,7 @@ module.exports = grammar({
 
     member_expression: ($) => prec('member', seq(
       field('object', choice($.expression, $.primary_expression, $.import)),
-      choice('.', field('optional_chain', $.optional_chain)),
+      choice('.', field('optional_chain', $.optional_chain), field('static_chain', $.static_chain)),
       field('property', choice(
         // $.private_property_identifier,
         alias($.identifier, $.property_identifier))),
