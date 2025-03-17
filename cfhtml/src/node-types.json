@@ -3556,6 +3556,16 @@
             "named": true
           }
         ]
+      },
+      "static_chain": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "static_chain",
+            "named": true
+          }
+        ]
       }
     }
   },
@@ -5267,6 +5277,10 @@
   {
     "type": "static get",
     "named": false
+  },
+  {
+    "type": "static_chain",
+    "named": true
   },
   {
     "type": "storedproc",

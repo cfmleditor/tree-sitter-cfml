@@ -1747,3 +1747,27 @@ var vs VARIABLES
             (identifier)
             (arguments)))
         (cf_selfclose_tag_end)))
+
+
+===================================
+static accessor
+===================================
+<cfset TestObject::TEST_KEY />
+<cfset TestObject::testFn( 1 )>
+---
+(program
+  (cf_set_tag
+    (member_expression
+      (identifier)
+      (static_chain)
+      (property_identifier))
+    (cf_selfclose_tag_end))
+  (cf_set_tag
+    (call_expression
+      (member_expression
+        (identifier)
+        (static_chain)
+        (property_identifier))
+      (arguments
+        (number)))
+    (cf_selfclose_tag_end)))

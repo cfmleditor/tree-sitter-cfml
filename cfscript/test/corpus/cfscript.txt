@@ -225,3 +225,20 @@ public function function doThing(string firstName = "blah",required function fir
           (parameter_type)
           (identifier))
         (statement_block)))
+
+===================================
+script tag
+===================================
+cfmail(test=test){
+
+};
+---
+(program
+  (expression_statement
+    (tag_expression
+      (identifier)
+      (arguments
+        (assignment_expression
+          (identifier)
+          (identifier)))
+      (statement_block))))

@@ -186,6 +186,10 @@
         "named": true
       },
       {
+        "type": "tag_expression",
+        "named": true
+      },
+      {
         "type": "template_string",
         "named": true
       },
@@ -2051,6 +2055,16 @@
             "named": true
           }
         ]
+      },
+      "static_chain": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "static_chain",
+            "named": true
+          }
+        ]
       }
     }
   },
@@ -2730,6 +2744,42 @@
         "types": [
           {
             "type": "parenthesized_expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "tag_expression",
+    "named": true,
+    "fields": {
+      "arguments": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "arguments",
+            "named": true
+          }
+        ]
+      },
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "statement_block",
+            "named": true
+          }
+        ]
+      },
+      "tag": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
             "named": true
           }
         ]
@@ -3528,6 +3578,10 @@
   {
     "type": "static get",
     "named": false
+  },
+  {
+    "type": "static_chain",
+    "named": true
   },
   {
     "type": "string",

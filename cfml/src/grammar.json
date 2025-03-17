@@ -7011,6 +7011,10 @@
       "type": "STRING",
       "value": "?."
     },
+    "static_chain": {
+      "type": "STRING",
+      "value": "::"
+    },
     "call_expression": {
       "type": "CHOICE",
       "members": [
@@ -7194,6 +7198,14 @@
                 "content": {
                   "type": "SYMBOL",
                   "name": "optional_chain"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "static_chain",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "static_chain"
                 }
               }
             ]

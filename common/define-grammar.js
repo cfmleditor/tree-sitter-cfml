@@ -1499,6 +1499,7 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       optional_chain: _ => '?.',
+      static_chain: _ => '::',
 
       call_expression: $ => choice(
         prec('call', seq(
@@ -1525,7 +1526,7 @@ module.exports = function defineGrammar(dialect) {
 
       member_expression: $ => prec('member', seq(
         field('object', choice($.expression, $.primary_expression, $.import)),
-        choice('.', field('optional_chain', $.optional_chain)),
+        choice('.', field('optional_chain', $.optional_chain), field('static_chain', $.static_chain)),
         field('property', choice(
           $.private_property_identifier,
           alias($.identifier, $.property_identifier))),

@@ -1822,6 +1822,10 @@
         {
           "type": "SYMBOL",
           "name": "call_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "tag_expression"
         }
       ]
     },
@@ -3417,6 +3421,10 @@
       "type": "STRING",
       "value": "?."
     },
+    "static_chain": {
+      "type": "STRING",
+      "value": "::"
+    },
     "call_expression": {
       "type": "CHOICE",
       "members": [
@@ -3495,6 +3503,40 @@
               }
             ]
           }
+        }
+      ]
+    },
+    "tag_expression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "tag",
+              "content": {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "arguments",
+              "content": {
+                "type": "SYMBOL",
+                "name": "arguments"
+              }
+            },
+            {
+              "type": "FIELD",
+              "name": "body",
+              "content": {
+                "type": "SYMBOL",
+                "name": "statement_block"
+              }
+            }
+          ]
         }
       ]
     },
@@ -3588,6 +3630,14 @@
                 "content": {
                   "type": "SYMBOL",
                   "name": "optional_chain"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "static_chain",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "static_chain"
                 }
               }
             ]
@@ -7103,6 +7153,20 @@
     ],
     [
       "primary_expression",
+      "parameter_type"
+    ],
+    [
+      "primary_expression",
+      "tag_expression"
+    ],
+    [
+      "primary_expression",
+      "tag_expression",
+      "_property_name"
+    ],
+    [
+      "primary_expression",
+      "tag_expression",
       "parameter_type"
     ],
     [
