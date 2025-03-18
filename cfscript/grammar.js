@@ -1,11 +1,10 @@
 /**
- * @file JavaScript grammar for tree-sitter
- * @author Max Brunsfeld <maxbrunsfeld@gmail.com>
- * @author Amaan Qureshi <amaanq12@gmail.com>
+ * @file CFSCRIPT grammar for tree-sitter
+ * @author Gareth Edwards
  * @license MIT
  */
 
-// / <reference types="tree-sitter-cli/dsl" />
+/// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 
 module.exports = grammar({
