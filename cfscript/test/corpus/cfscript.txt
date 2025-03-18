@@ -242,3 +242,37 @@ cfmail(test=test){
           (identifier)
           (identifier)))
       (statement_block))))
+
+===================================
+component
+===================================
+component test:displayLabel="${test} ${test}" singleton {
+    public function printTest() {
+        static['key'] = 'newValue';
+    }
+}
+---
+(program
+      (expression_statement
+        (component
+          (assignment_expression
+            (member_expression
+              (identifier)
+              (property_identifier))
+            (string
+              (string_fragment)))
+          (identifier)
+          (component_body
+            (function_declaration
+              (function_access)
+              (identifier)
+              (formal_parameters)
+              (statement_block
+                (expression_statement
+                  (assignment_expression
+                    (subscript_expression
+                      (identifier)
+                      (string
+                        (string_fragment)))
+                    (string
+                      (string_fragment))))))))))

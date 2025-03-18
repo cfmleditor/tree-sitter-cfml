@@ -104,14 +104,21 @@ module.exports = grammar({
     [$.labeled_statement, $._property_name],
     [$.computed_property_name, $.array],
     [$.binary_expression, $._initializer],
-    [$.class_static_block, $._property_name],
+    // [$.class_static_block, $._property_name],
     [$.hash_expression, $.hash_empty],
     [$.function_expression, $.parameter_type],
     [$.primary_expression, $.parameter_type],
     [$.primary_expression, $.tag_expression],
     [$.primary_expression, $.tag_expression, $._property_name],
     [$.primary_expression, $.tag_expression, $.parameter_type],
-    // [$.call_expression, $._property_name],
+    [$.component, $.parameter_type],
+    [$.component, $.return_type],
+    [$.component, $.primary_expression],
+    [$.component, $.call_expression],
+    [$.component, $.subscript_expression],
+    [$.component, $.update_expression],
+    [$.component, $.binary_expression],
+    [$.component_body, $.object],
 
     [$.expression, $._property_name],
   ],
@@ -187,7 +194,7 @@ module.exports = grammar({
     declaration: ($) => choice(
       $.function_declaration,
       // $.generator_function_declaration,
-      $.class_declaration,
+      // $.class_declaration,
       $.lexical_declaration,
       $.variable_declaration,
     ),
@@ -523,7 +530,8 @@ module.exports = grammar({
       $.function_expression,
       $.arrow_function,
       // $.generator_function,
-      $.class,
+      // $.class,
+      $.component,
       $.meta_property,
       $.call_expression,
       $.tag_expression,
@@ -663,7 +671,7 @@ module.exports = grammar({
 
     nested_identifier: ($) => prec('member', seq(
       field('object', choice($.identifier, alias($.nested_identifier, $.member_expression))),
-      '.',
+      /[.:]/,
       field('property', alias($.identifier, $.property_identifier)),
     )),
 
@@ -734,24 +742,31 @@ module.exports = grammar({
       $._jsx_element,
     ),
 
-    class: ($) => prec('literal', seq(
-      repeat(field('decorator', $.decorator)),
-      'class',
-      field('name', optional($.identifier)),
-      optional($.class_heritage),
-      field('body', $.class_body),
+    // class: ($) => prec('literal', seq(
+    //   repeat(field('decorator', $.decorator)),
+    //   'class',
+    //   field('name', optional($.identifier)),
+    //   optional($.class_heritage),
+    //   field('body', $.class_body),
+    // )),
+
+    component: ($) => prec('literal', seq(
+      optional('static'),
+      'component',
+      repeat($.expression),
+      field('body', $.component_body),
     )),
 
-    class_declaration: ($) => prec('declaration', seq(
-      repeat(field('decorator', $.decorator)),
-      'class',
-      field('name', $.identifier),
-      optional($.class_heritage),
-      field('body', $.class_body),
-      optional($._automatic_semicolon),
-    )),
+    // class_declaration: ($) => prec('declaration', seq(
+    //   repeat(field('decorator', $.decorator)),
+    //   'class',
+    //   field('name', $.identifier),
+    //   optional($.class_heritage),
+    //   field('body', $.class_body),
+    //   optional($._automatic_semicolon),
+    // )),
 
-    class_heritage: ($) => seq('extends', $.expression),
+    // class_heritage: ($) => seq('extends', $.expression),
 
     function_expression: ($) => prec('literal', seq(
       // optional('async'),
@@ -902,7 +917,7 @@ module.exports = grammar({
 
     member_expression: ($) => prec('member', seq(
       field('object', choice($.expression, $.primary_expression, $.import)),
-      choice('.', field('optional_chain', $.optional_chain), field('static_chain', $.static_chain)),
+      choice(/[.:]/, field('optional_chain', $.optional_chain), field('static_chain', $.static_chain)),
       field('property', choice(
         // $.private_property_identifier,
         alias($.identifier, $.property_identifier))),
@@ -1234,7 +1249,7 @@ module.exports = grammar({
         $.identifier,
         alias($.decorator_member_expression, $.member_expression),
       )),
-      '.',
+      /[.:]/,
       field('property', alias($.identifier, $.property_identifier)),
     )),
 
@@ -1246,14 +1261,14 @@ module.exports = grammar({
       field('arguments', $.arguments),
     )),
 
-    class_body: ($) => seq(
+    component_body: ($) => seq(
       '{',
       repeat(choice(
-        seq(field('member', $.method_definition), optional(';')),
-        seq(field('member', $.field_definition), $._semicolon),
-        field('member', $.class_static_block),
-        field('template', $.glimmer_template),
-        ';',
+        seq(field('member', $.function_declaration), optional(';')),
+        // seq(field('member', $.field_definition), $._semicolon),
+        // field('member', $.class_static_block),
+        // field('template', $.glimmer_template),
+        // ';',
       )),
       '}',
     ),
@@ -1274,11 +1289,11 @@ module.exports = grammar({
       ')',
     ),
 
-    class_static_block: ($) => seq(
-      'static',
-      optional($._automatic_semicolon),
-      field('body', $.statement_block),
-    ),
+    // class_static_block: ($) => seq(
+    //   'static',
+    //   optional($._automatic_semicolon),
+    //   field('body', $.statement_block),
+    // ),
 
     // This negative dynamic precedence ensures that during error recovery,
     // unfinished constructs are generally treated as literal expressions,
