@@ -522,7 +522,7 @@ module.exports = grammar({
       $.assignment_expression,
       $.augmented_assignment_expression,
       // $.await_expression,
-      // $.unary_expression,
+      $.unary_expression,
       $.binary_expression,
       $.ternary_expression,
       $.update_expression,
@@ -958,6 +958,7 @@ module.exports = grammar({
 
     _lhs_expression: ($) => choice(
       $.member_expression,
+      $.null,
       $.subscript_expression,
       $._identifier,
       alias($._reserved_identifier, $.identifier),
@@ -967,6 +968,12 @@ module.exports = grammar({
     assignment_expression: ($) => prec.right('assign', seq(
       field('left', choice($.parenthesized_expression, $._lhs_expression)),
       '=',
+      field('right', $.expression),
+    )),
+
+    assignment_expression2: ($) => prec.right('assign', seq(
+      field('left', choice($.parenthesized_expression, $._lhs_expression)),
+      ':',
       field('right', $.expression),
     )),
 
@@ -1053,10 +1060,10 @@ module.exports = grammar({
       ),
     ),
 
-    // unary_expression: ($) => prec.left('unary_void', seq(
-    //   field('operator', choice('!', '~', '-', '+', 'typeof', 'void', 'delete')),
-    //   field('argument', $.expression),
-    // )),
+    unary_expression: ($) => prec.left('unary_void', seq(
+      field('operator', choice('!', '~', '-', '+')),
+      field('argument', $.expression),
+    )),
 
     update_expression: ($) => prec.left(choice(
       seq(
@@ -1258,7 +1265,7 @@ module.exports = grammar({
 
     arguments: ($) => seq(
       '(',
-      commaSep(optional(choice($.expression, $.spread_element))),
+      commaSep(optional(choice($.expression, alias($.assignment_expression2, $.assignment_expression), $.spread_element))),
       ')',
     ),
 

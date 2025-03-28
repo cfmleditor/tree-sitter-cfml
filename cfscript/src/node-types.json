@@ -70,6 +70,10 @@
         "named": true
       },
       {
+        "type": "unary_expression",
+        "named": true
+      },
+      {
         "type": "update_expression",
         "named": true
       },
@@ -93,6 +97,10 @@
       },
       {
         "type": "member_expression",
+        "named": true
+      },
+      {
+        "type": "null",
         "named": true
       },
       {
@@ -408,6 +416,10 @@
           },
           {
             "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "null",
             "named": true
           },
           {
@@ -1133,6 +1145,10 @@
           },
           {
             "type": "member_expression",
+            "named": true
+          },
+          {
+            "type": "null",
             "named": true
           },
           {
@@ -2370,6 +2386,10 @@
           "named": true
         },
         {
+          "type": "null",
+          "named": true
+        },
+        {
           "type": "object_pattern",
           "named": true
         },
@@ -2795,6 +2815,44 @@
     }
   },
   {
+    "type": "unary_expression",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "!",
+            "named": false
+          },
+          {
+            "type": "+",
+            "named": false
+          },
+          {
+            "type": "-",
+            "named": false
+          },
+          {
+            "type": "~",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "update_expression",
     "named": true,
     "fields": {
@@ -2939,6 +2997,10 @@
         }
       ]
     }
+  },
+  {
+    "type": "!",
+    "named": false
   },
   {
     "type": "!=",
@@ -3508,6 +3570,10 @@
   },
   {
     "type": "}",
+    "named": false
+  },
+  {
+    "type": "~",
     "named": false
   }
 ]
