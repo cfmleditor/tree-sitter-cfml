@@ -809,6 +809,16 @@
             "named": true
           }
         ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "catch_type",
+            "named": true
+          }
+        ]
       }
     }
   },
@@ -3343,6 +3353,10 @@
   {
     "type": "catch",
     "named": false
+  },
+  {
+    "type": "catch_type",
+    "named": true
   },
   {
     "type": "comment",

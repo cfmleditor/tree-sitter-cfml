@@ -538,3 +538,48 @@ http
       (identifier)
       (string
         (string_fragment)))))
+
+===================================
+try / catch
+===================================
+try{
+  // This fails, if prev statement updates the password for server admin.
+  admin.updatePassword(oldPassword="#request.ServerAdminPassword#", newPassword="server" );
+}catch( any e ){
+  assertEquals( e.message, 'No access, password is invalid' );
+}
+---
+(program
+      (try_statement
+        (statement_block
+          (comment)
+          (expression_statement
+            (call_expression
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (arguments
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (hash_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier)))))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))))))
+        (catch_clause
+          (catch_type)
+          (identifier)
+          (statement_block
+            (expression_statement
+              (call_expression
+                (identifier)
+                (arguments
+                  (member_expression
+                    (identifier)
+                    (property_identifier))
+                  (string
+                    (string_fragment)))))))))

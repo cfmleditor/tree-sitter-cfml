@@ -505,7 +505,14 @@ module.exports = grammar({
 
     catch_clause: ($) => seq(
       'catch',
-      optional(seq('(', field('parameter', choice($.identifier, $._destructuring_pattern)), ')')),
+      optional(
+        seq(
+          '(',
+          optional(field('type', alias($.identifier, $.catch_type))),
+          field('parameter', choice($.identifier, $._destructuring_pattern)),
+          ')'
+        )
+      ),
       field('body', $.statement_block),
     ),
 
