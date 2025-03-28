@@ -234,14 +234,13 @@ cfmail(test=test){
 };
 ---
 (program
-  (expression_statement
-    (tag_expression
-      (identifier)
-      (arguments
-        (assignment_expression
-          (identifier)
-          (identifier)))
-      (statement_block))))
+  (tag_statement
+    (identifier)
+    (arguments
+      (assignment_expression
+        (identifier)
+        (identifier)))
+    (statement_block)))
 
 ===================================
 component
@@ -285,22 +284,32 @@ import SETTINGS;
 component {
 	boolean function hasTest(required com.someCompany.SomeObject myObj) {
     	var tests = queryExecute(
-        	"
+        	  "
                 SELECT testId
                 FROM Tests
                 WHERE userId = :userId AND testDate IS NOT NULL;
             ",
             { userId: { cfsqltype: "integer", value: myObject.getUserId() } }
-    	);
-        
+    	  );
+
         return tests.recordCount;
     }
 }
+
+try {
+			assertTrue(isNull(null));
+		
+			var x=null;
+			assertTrue(isNull(x));
+		}
+		finally {
+			application action="update" NULLSupport=ns;
+		}
+    
 ---
 (program
       (import_statement
-        (path
-          (identifier)))
+        (identifier))
       (expression_statement
         (component
           (component_body
@@ -338,4 +347,37 @@ component {
                 (return_statement
                   (member_expression
                     (identifier)
-                    (property_identifier)))))))))
+                    (property_identifier))))))))
+      (try_statement
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (null))))))
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (null)))
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (identifier)))))))
+        (finally_clause
+          (statement_block
+            (tag_statement
+              (identifier)
+              (assignment_expression
+                (identifier)
+                (string
+                  (string_fragment)))
+              (assignment_expression
+                (identifier)
+                (identifier)))))))

@@ -186,10 +186,6 @@
         "named": true
       },
       {
-        "type": "tag_expression",
-        "named": true
-      },
-      {
         "type": "template_string",
         "named": true
       },
@@ -273,6 +269,10 @@
       },
       {
         "type": "switch_statement",
+        "named": true
+      },
+      {
+        "type": "tag_statement",
         "named": true
       },
       {
@@ -1549,6 +1549,10 @@
         "required": true,
         "types": [
           {
+            "type": "identifier",
+            "named": true
+          },
+          {
             "type": "path",
             "named": true
           },
@@ -2618,22 +2622,26 @@
     }
   },
   {
-    "type": "tag_expression",
+    "type": "tag_statement",
     "named": true,
     "fields": {
       "arguments": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
             "type": "arguments",
+            "named": true
+          },
+          {
+            "type": "assignment_expression",
             "named": true
           }
         ]
       },
       "body": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "statement_block",
@@ -3169,14 +3177,6 @@
     "named": false
   },
   {
-    "type": "application",
-    "named": false
-  },
-  {
-    "type": "arguments",
-    "named": false
-  },
-  {
     "type": "array",
     "named": false
   },
@@ -3205,14 +3205,6 @@
     "named": false
   },
   {
-    "type": "cgi",
-    "named": false
-  },
-  {
-    "type": "client",
-    "named": false
-  },
-  {
     "type": "comment",
     "named": true,
     "extra": true
@@ -3227,10 +3219,6 @@
   },
   {
     "type": "continue",
-    "named": false
-  },
-  {
-    "type": "cookies",
     "named": false
   },
   {
@@ -3271,10 +3259,6 @@
   },
   {
     "type": "for",
-    "named": false
-  },
-  {
-    "type": "form",
     "named": false
   },
   {
@@ -3332,10 +3316,6 @@
   },
   {
     "type": "let",
-    "named": false
-  },
-  {
-    "type": "local",
     "named": false
   },
   {
@@ -3403,23 +3383,11 @@
     "named": true
   },
   {
-    "type": "request",
-    "named": false
-  },
-  {
     "type": "required",
     "named": false
   },
   {
     "type": "return",
-    "named": false
-  },
-  {
-    "type": "server",
-    "named": false
-  },
-  {
-    "type": "session",
     "named": false
   },
   {
@@ -3495,15 +3463,7 @@
     "named": true
   },
   {
-    "type": "url",
-    "named": false
-  },
-  {
     "type": "var",
-    "named": false
-  },
-  {
-    "type": "variables",
     "named": false
   },
   {

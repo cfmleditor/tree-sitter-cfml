@@ -108,8 +108,8 @@ module.exports = grammar({
     [$.hash_expression, $.hash_empty],
     [$.function_expression, $.parameter_type],
     // [$.primary_expression, $.parameter_type],
-    [$.primary_expression, $.tag_expression],
-    [$.primary_expression, $.tag_expression, $._property_name],
+    [$.primary_expression, $.tag_statement],
+    [$.primary_expression, $.tag_statement, $._property_name],
     // [$.primary_expression, $.tag_expression, $.parameter_type],
     [$.component, $.parameter_type],
     [$.component, $.return_type],
@@ -120,11 +120,11 @@ module.exports = grammar({
     [$.component, $.binary_expression],
     [$.component_body, $.object],
 
-    [$.path],
-    [$.path, $.primary_expression],
-    [$.path, $.primary_expression, $.tag_expression],
-
     [$.expression, $._property_name],
+
+    [$.return_type, $.tag_statement],
+    [$.tag_statement, $.expression],
+    [$.sequence_expression, $.arguments],
   ],
 
   word: ($) => $.identifier,
@@ -214,13 +214,14 @@ module.exports = grammar({
       choice(
         seq($.import_clause, $._from_clause),
         field('source', $.string),
+        field('source', $.identifier),
         field('source', $.path),
       ),
       optional($.import_attribute),
       $._semicolon,
     ),
 
-    path: ($) => repeat1(seq($.identifier, optional('.'))),
+    path: ($) => seq($.identifier, repeat1(seq('.', $.identifier))),
 
     import_clause: ($) => choice(
       $.namespace_import,
@@ -290,6 +291,8 @@ module.exports = grammar({
       $.throw_statement,
       $.empty_statement,
       $.labeled_statement,
+
+      $.tag_statement,
     ),
 
     expression_statement: ($) => seq(
@@ -552,7 +555,6 @@ module.exports = grammar({
       $.component,
       $.meta_property,
       $.call_expression,
-      $.tag_expression,
     ),
 
     yield_expression: ($) => prec.right(seq(
@@ -914,12 +916,19 @@ module.exports = grammar({
       )),
     ),
 
-    tag_expression: $ => choice(
+    tag_statement: $ => choice(
       seq(
         field('tag', $.identifier),
         field('arguments', $.arguments),
         field('body', $.statement_block),
-      )
+        $._semicolon,
+      ),
+      seq(
+        field('tag', $.identifier),
+        field('arguments', repeat1($.assignment_expression)),
+        optional(field('body', $.statement_block)),
+        $._semicolon,
+      ),
     ),
 
     new_expression: ($) => prec.right('new', seq(
@@ -1391,19 +1400,22 @@ module.exports = grammar({
       'static',
       'export',
       'let',
-      'arguments',
-      'form',
-      'url',
-      'variables',
-      'cgi',
-      'cookies',
-      'server',
-      'application',
-      'request',
-      'session',
-      'local',
-      'client',
     ),
+
+    // _reserved_scope: ($) => choice(
+    //   'arguments',
+    //   'form',
+    //   'url',
+    //   'variables',
+    //   'cgi',
+    //   'cookies',
+    //   'server',
+    //   'application',
+    //   'request',
+    //   'session',
+    //   'local',
+    //   'client',
+    // ),
 
     _semicolon: ($) => choice($._automatic_semicolon, ';'),
   },
