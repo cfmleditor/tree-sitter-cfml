@@ -268,6 +268,10 @@
         "named": true
       },
       {
+        "type": "query_tag",
+        "named": true
+      },
+      {
         "type": "return_statement",
         "named": true
       },
@@ -2370,6 +2374,32 @@
     }
   },
   {
+    "type": "query_tag",
+    "named": true,
+    "fields": {
+      "arguments": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "assignment_expression",
+            "named": true
+          }
+        ]
+      },
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "statement_block",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "regex",
     "named": true,
     "fields": {
@@ -2686,6 +2716,10 @@
           {
             "type": "assignment_expression",
             "named": true
+          },
+          {
+            "type": "tag_linefeed",
+            "named": true
           }
         ]
       },
@@ -2709,6 +2743,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "tag_linefeed",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3533,6 +3577,10 @@
   {
     "type": "switch",
     "named": false
+  },
+  {
+    "type": "tag_linefeed",
+    "named": true
   },
   {
     "type": "target",

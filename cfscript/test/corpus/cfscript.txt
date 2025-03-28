@@ -499,3 +499,42 @@ component {
                         (assignment_expression
                           (identifier)
                           (identifier))))))))))))
+
+===================================
+query test / multiline tags
+===================================
+query name="local.qDebugEntriesFiltered" dbtype="query" {
+    echo("SELECT * FROM qDebugEntries WHERE label = 'testDebug'")
+}
+
+http
+  test="test"
+  test2="Test";
+---
+(program
+  (query_tag
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (statement_block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (arguments
+            (string
+              (string_fragment)))))))
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))))

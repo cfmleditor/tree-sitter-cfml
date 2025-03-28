@@ -13,6 +13,7 @@ enum TokenType {
     REGEX_PATTERN,
     JSX_TEXT,
     QUERY_TEXT,
+    TAG_LINEFEED
 };
 
 void *tree_sitter_cfscript_external_scanner_create() { return NULL; }
@@ -63,7 +64,7 @@ static WhitespaceResult scan_whitespace_and_comments(TSLexer *lexer, bool *scann
     bool saw_block_newline = false;
 
     for (;;) {
-        while (iswspace(lexer->lookahead)) {
+        while (iswspace(lexer->lookahead) ) {
             skip(lexer);
         }
 
@@ -369,7 +370,7 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
         return true;
     }
 
-    if (valid_symbols[AUTOMATIC_SEMICOLON]) {
+    if (valid_symbols[AUTOMATIC_SEMICOLON] && !valid_symbols[TAG_LINEFEED]) {
         bool scanned_comment = false;
         bool ret = scan_automatic_semicolon(lexer, !valid_symbols[LOGICAL_OR], &scanned_comment);
         if (!ret && !scanned_comment && valid_symbols[TERNARY_QMARK] && lexer->lookahead == '?') {

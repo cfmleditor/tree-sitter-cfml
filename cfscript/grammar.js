@@ -22,6 +22,7 @@ module.exports = grammar({
     $.regex_pattern,
     $.jsx_text,
     $.query_text,
+    $.tag_linefeed,
   ],
 
   extras: ($) => [
@@ -115,6 +116,9 @@ module.exports = grammar({
     [$.component, $.parameter_type],
     // [$.component, $.return_type],
     [$.component, $.primary_expression],
+    [$.query_tag, $.return_type],
+    [$.query_tag, $.expression],
+
     // [$.component, $.call_expression],
     // [$.component, $.subscript_expression],
     // [$.component, $.update_expression],
@@ -296,6 +300,7 @@ module.exports = grammar({
       $.labeled_statement,
 
       $.tag_statement,
+      $.query_tag,
     ),
 
     expression_statement: ($) => seq(
@@ -367,6 +372,12 @@ module.exports = grammar({
       '"',
       repeat(seq(',', $.expression)),
       ')'
+    ),
+
+    query_tag: ($) => seq(
+      'query',
+      field('arguments', repeat($.assignment_expression)),
+      field('body', $.statement_block),
     ),
 
     for_in_statement: ($) => seq(
@@ -942,13 +953,14 @@ module.exports = grammar({
     tag_statement: $ => choice(
       seq(
         field('tag', $.identifier),
+        optional($.tag_linefeed),
         field('arguments', $.arguments),
         field('body', $.statement_block),
         $._semicolon,
       ),
       seq(
         field('tag', $.identifier),
-        field('arguments', repeat1($.assignment_expression)),
+        field('arguments', repeat1(seq(optional($.tag_linefeed), $.assignment_expression))),
         optional(field('body', $.statement_block)),
         $._semicolon,
       ),

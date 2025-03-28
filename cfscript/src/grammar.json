@@ -676,6 +676,10 @@
         {
           "type": "SYMBOL",
           "name": "tag_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "query_tag"
         }
       ]
     },
@@ -1090,6 +1094,34 @@
         {
           "type": "STRING",
           "value": ")"
+        }
+      ]
+    },
+    "query_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "query"
+        },
+        {
+          "type": "FIELD",
+          "name": "arguments",
+          "content": {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "assignment_expression"
+            }
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "statement_block"
+          }
         }
       ]
     },
@@ -3587,6 +3619,18 @@
               }
             },
             {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "tag_linefeed"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
               "type": "FIELD",
               "name": "arguments",
               "content": {
@@ -3625,8 +3669,25 @@
               "content": {
                 "type": "REPEAT1",
                 "content": {
-                  "type": "SYMBOL",
-                  "name": "assignment_expression"
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "tag_linefeed"
+                        },
+                        {
+                          "type": "BLANK"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "assignment_expression"
+                    }
+                  ]
                 }
               }
             },
@@ -7240,6 +7301,14 @@
       "primary_expression"
     ],
     [
+      "query_tag",
+      "return_type"
+    ],
+    [
+      "query_tag",
+      "expression"
+    ],
+    [
       "expression",
       "_property_name"
     ],
@@ -7468,6 +7537,10 @@
     {
       "type": "SYMBOL",
       "name": "query_text"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "tag_linefeed"
     }
   ],
   "inline": [
