@@ -333,6 +333,14 @@
                 "type": "SYMBOL",
                 "name": "string"
               }
+            },
+            {
+              "type": "FIELD",
+              "name": "source",
+              "content": {
+                "type": "SYMBOL",
+                "name": "path"
+              }
             }
           ]
         },
@@ -353,6 +361,30 @@
           "name": "_semicolon"
         }
       ]
+    },
+    "path": {
+      "type": "REPEAT1",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "."
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
     },
     "import_clause": {
       "type": "CHOICE",
@@ -1000,6 +1032,51 @@
             "type": "SYMBOL",
             "name": "statement"
           }
+        }
+      ]
+    },
+    "query_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "queryExecute"
+        },
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "STRING",
+          "value": "\""
+        },
+        {
+          "type": "SYMBOL",
+          "name": "query_text"
+        },
+        {
+          "type": "STRING",
+          "value": "\""
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ")"
         }
       ]
     },
@@ -1692,6 +1769,10 @@
         {
           "type": "SYMBOL",
           "name": "_jsx_element"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "query_expression"
         },
         {
           "type": "SYMBOL",
@@ -3136,7 +3217,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "identifier"
+          "name": "path"
         }
       ]
     },
@@ -6982,21 +7063,12 @@
     ],
     [
       "primary_expression",
-      "parameter_type"
-    ],
-    [
-      "primary_expression",
       "tag_expression"
     ],
     [
       "primary_expression",
       "tag_expression",
       "_property_name"
-    ],
-    [
-      "primary_expression",
-      "tag_expression",
-      "parameter_type"
     ],
     [
       "component",
@@ -7029,6 +7101,18 @@
     [
       "component_body",
       "object"
+    ],
+    [
+      "path"
+    ],
+    [
+      "path",
+      "primary_expression"
+    ],
+    [
+      "path",
+      "primary_expression",
+      "tag_expression"
     ],
     [
       "expression",
@@ -7239,6 +7323,10 @@
     {
       "type": "SYMBOL",
       "name": "jsx_text"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "query_text"
     }
   ],
   "inline": [

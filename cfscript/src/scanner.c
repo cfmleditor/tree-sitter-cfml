@@ -12,6 +12,7 @@ enum TokenType {
     ESCAPE_SEQUENCE,
     REGEX_PATTERN,
     JSX_TEXT,
+    QUERY_TEXT,
 };
 
 void *tree_sitter_cfscript_external_scanner_create() { return NULL; }
@@ -330,6 +331,28 @@ static bool scan_jsx_text(TSLexer *lexer) {
     return saw_text;
 }
 
+static bool scan_query_text(TSLexer *lexer) {
+    
+    bool saw_text = false;
+    bool at_newline = false;
+
+    while (lexer->lookahead != '"') {
+        bool is_wspace = iswspace(lexer->lookahead);
+        if (lexer->lookahead == '\n') {
+            at_newline = true;
+        } else {
+            at_newline &= is_wspace;
+            if (!at_newline) {
+                saw_text = true;
+            }
+        }
+        advance(lexer);
+    }
+
+    lexer->result_symbol = QUERY_TEXT;
+    return saw_text;
+}
+
 bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
     if (valid_symbols[TEMPLATE_CHARS]) {
         if (valid_symbols[AUTOMATIC_SEMICOLON]) {
@@ -339,6 +362,10 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
     }
 
     if (valid_symbols[JSX_TEXT] && scan_jsx_text(lexer)) {
+        return true;
+    }
+
+    if (valid_symbols[QUERY_TEXT] && scan_query_text(lexer)) {
         return true;
     }
 

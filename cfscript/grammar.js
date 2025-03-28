@@ -21,6 +21,7 @@ module.exports = grammar({
     $.escape_sequence,
     $.regex_pattern,
     $.jsx_text,
+    $.query_text,
   ],
 
   extras: ($) => [
@@ -106,10 +107,10 @@ module.exports = grammar({
     // [$.class_static_block, $._property_name],
     [$.hash_expression, $.hash_empty],
     [$.function_expression, $.parameter_type],
-    [$.primary_expression, $.parameter_type],
+    // [$.primary_expression, $.parameter_type],
     [$.primary_expression, $.tag_expression],
     [$.primary_expression, $.tag_expression, $._property_name],
-    [$.primary_expression, $.tag_expression, $.parameter_type],
+    // [$.primary_expression, $.tag_expression, $.parameter_type],
     [$.component, $.parameter_type],
     [$.component, $.return_type],
     [$.component, $.primary_expression],
@@ -118,6 +119,10 @@ module.exports = grammar({
     [$.component, $.update_expression],
     [$.component, $.binary_expression],
     [$.component_body, $.object],
+
+    [$.path],
+    [$.path, $.primary_expression],
+    [$.path, $.primary_expression, $.tag_expression],
 
     [$.expression, $._property_name],
   ],
@@ -209,10 +214,13 @@ module.exports = grammar({
       choice(
         seq($.import_clause, $._from_clause),
         field('source', $.string),
+        field('source', $.path),
       ),
       optional($.import_attribute),
       $._semicolon,
     ),
+
+    path: ($) => repeat1(seq($.identifier, optional('.'))),
 
     import_clause: ($) => choice(
       $.namespace_import,
@@ -343,6 +351,16 @@ module.exports = grammar({
       field('increment', optional($._expressions)),
       ')',
       field('body', $.statement),
+    ),
+
+    query_expression: ($) => seq(
+      'queryExecute',
+      '(',
+      '"',
+      $.query_text,
+      '"',
+      repeat(seq(',', $.expression)),
+      ')'
     ),
 
     for_in_statement: ($) => seq(
@@ -497,6 +515,7 @@ module.exports = grammar({
       $.primary_expression,
       $.glimmer_template,
       $._jsx_element,
+      $.query_expression,
       $.assignment_expression,
       $.augmented_assignment_expression,
       // $.await_expression,
@@ -814,7 +833,7 @@ module.exports = grammar({
       'function',
       'guid',
       'void',
-      $.identifier,
+      $.path,
     ),
 
     function_declaration: ($) => prec.right('declaration', seq(

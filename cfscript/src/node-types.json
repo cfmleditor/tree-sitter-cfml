@@ -62,6 +62,10 @@
         "named": true
       },
       {
+        "type": "query_expression",
+        "named": true
+      },
+      {
         "type": "ternary_expression",
         "named": true
       },
@@ -1545,6 +1549,10 @@
         "required": true,
         "types": [
           {
+            "type": "path",
+            "named": true
+          },
+          {
             "type": "string",
             "named": true
           }
@@ -2236,7 +2244,7 @@
       "required": false,
       "types": [
         {
-          "type": "identifier",
+          "type": "path",
           "named": true
         }
       ]
@@ -2262,6 +2270,21 @@
     }
   },
   {
+    "type": "path",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "program",
     "named": true,
     "root": true,
@@ -2272,6 +2295,25 @@
       "types": [
         {
           "type": "statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "query_expression",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "query_text",
           "named": true
         }
       ]
@@ -3343,6 +3385,14 @@
   {
     "type": "query",
     "named": false
+  },
+  {
+    "type": "queryExecute",
+    "named": false
+  },
+  {
+    "type": "query_text",
+    "named": true
   },
   {
     "type": "regex_flags",

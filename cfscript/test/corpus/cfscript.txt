@@ -276,3 +276,66 @@ component test:displayLabel="${test} ${test}" singleton {
                         (string_fragment)))
                     (string
                       (string_fragment))))))))))
+
+===================================
+component test
+===================================
+import SETTINGS;
+
+component {
+	boolean function hasTest(required com.someCompany.SomeObject myObj) {
+    	var tests = queryExecute(
+        	"
+                SELECT testId
+                FROM Tests
+                WHERE userId = :userId AND testDate IS NOT NULL;
+            ",
+            { userId: { cfsqltype: "integer", value: myObject.getUserId() } }
+    	);
+        
+        return tests.recordCount;
+    }
+}
+---
+(program
+      (import_statement
+        (path
+          (identifier)))
+      (expression_statement
+        (component
+          (component_body
+            (function_declaration
+              (return_type)
+              (identifier)
+              (formal_parameters
+                (parameter_type
+                  (path
+                    (identifier)
+                    (identifier)
+                    (identifier)))
+                (identifier))
+              (statement_block
+                (variable_declaration
+                  (variable_declarator
+                    (identifier)
+                    (query_expression
+                      (query_text)
+                      (object
+                        (pair
+                          (property_identifier)
+                          (object
+                            (pair
+                              (property_identifier)
+                              (string
+                                (string_fragment)))
+                            (pair
+                              (property_identifier)
+                              (call_expression
+                                (member_expression
+                                  (identifier)
+                                  (property_identifier))
+                                (arguments)))))))))
+                (return_statement
+                  (member_expression
+                    (identifier)
+                    (property_identifier)))))))))
