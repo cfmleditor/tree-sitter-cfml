@@ -109,22 +109,25 @@ module.exports = grammar({
     [$.function_expression, $.parameter_type],
     // [$.primary_expression, $.parameter_type],
     [$.primary_expression, $.tag_statement],
+    [$.primary_expression, $.path],
     [$.primary_expression, $.tag_statement, $._property_name],
     // [$.primary_expression, $.tag_expression, $.parameter_type],
     [$.component, $.parameter_type],
-    [$.component, $.return_type],
+    // [$.component, $.return_type],
     [$.component, $.primary_expression],
-    [$.component, $.call_expression],
-    [$.component, $.subscript_expression],
-    [$.component, $.update_expression],
-    [$.component, $.binary_expression],
-    [$.component_body, $.object],
+    // [$.component, $.call_expression],
+    // [$.component, $.subscript_expression],
+    // [$.component, $.update_expression],
+    // [$.component, $.binary_expression],
+    // [$.component_body, $.object],
 
     [$.expression, $._property_name],
 
     [$.return_type, $.tag_statement],
     [$.tag_statement, $.expression],
     [$.sequence_expression, $.arguments],
+
+    [$.expression, $._function_options],
   ],
 
   word: ($) => $.identifier,
@@ -773,9 +776,23 @@ module.exports = grammar({
     component: ($) => prec('literal', seq(
       optional('static'),
       'component',
-      repeat($.expression),
+      repeat($.component_attribute),
       field('body', $.component_body),
     )),
+
+    component_attribute: ($) => choice(
+      seq(
+        alias($.identifier, $.attribute_label),
+        ':',
+        $.component_attribute
+      ),
+      seq(
+        $.identifier,
+        '=',
+        $.expression,
+      ),
+      $.identifier,
+    ),
 
     // class_declaration: ($) => prec('declaration', seq(
     //   repeat(field('decorator', $.decorator)),
@@ -845,9 +862,15 @@ module.exports = grammar({
       'function',
       field('name', $.identifier),
       $._call_signature,
+      repeat($._function_options),
       field('body', $.statement_block),
       optional($._automatic_semicolon),
     )),
+
+    _function_options: ($) => choice(  
+      $.assignment_expression,
+      alias($.assignment_expression2, $.assignment_expression),
+    ),
 
     // generator_function: ($) => prec('literal', seq(
     //   optional('async'),
@@ -944,10 +967,8 @@ module.exports = grammar({
 
     member_expression: ($) => prec('member', seq(
       field('object', choice($.expression, $.primary_expression, $.import)),
-      choice(/[.:]/, field('optional_chain', $.optional_chain), field('static_chain', $.static_chain)),
-      field('property', choice(
-        // $.private_property_identifier,
-        alias($.identifier, $.property_identifier))),
+      choice('.', field('optional_chain', $.optional_chain), field('static_chain', $.static_chain)),
+      field('property', alias($.identifier, $.property_identifier)),
     )),
 
     subscript_expression: ($) => prec.right('member', seq(
@@ -1297,13 +1318,7 @@ module.exports = grammar({
 
     component_body: ($) => seq(
       '{',
-      repeat(choice(
-        seq(field('member', $.function_declaration), optional(';')),
-        // seq(field('member', $.field_definition), $._semicolon),
-        // field('member', $.class_static_block),
-        // field('template', $.glimmer_template),
-        // ';',
-      )),
+      repeat($.statement),
       '}',
     ),
 

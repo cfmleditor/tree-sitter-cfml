@@ -254,13 +254,14 @@ component test:displayLabel="${test} ${test}" singleton {
 (program
       (expression_statement
         (component
-          (assignment_expression
-            (member_expression
+          (component_attribute
+            (attribute_label)
+            (component_attribute
               (identifier)
-              (property_identifier))
-            (string
-              (string_fragment)))
-          (identifier)
+              (string
+                (string_fragment))))
+          (component_attribute
+            (identifier))
           (component_body
             (function_declaration
               (function_access)
@@ -298,7 +299,9 @@ component {
 
 try {
 			assertTrue(isNull(null));
-		
+  
+      assertEquals(structKeyExists(outputSetting, "cfmlWriter") && (outputsetting.cfmlwriter EQ "white-space"), true);
+        
 			var x=null;
 			assertTrue(isNull(x));
 		}
@@ -358,6 +361,25 @@ try {
                   (identifier)
                   (arguments
                     (null))))))
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (binary_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)
+                      (string
+                        (string_fragment))))
+                  (parenthesized_expression
+                    (binary_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier))
+                      (string
+                        (string_fragment)))))
+                (true))))
           (variable_declaration
             (variable_declarator
               (identifier)
@@ -386,7 +408,11 @@ try {
 ===================================
 testNamedArgNull
 ===================================
-public void function testNamedArgNull() {
+component {
+	
+	setting(requesttimeout=1800);
+
+  public void function testNamedArgNull() {
 		var ns=getApplicationSettings().nullSupport;
 		application action="update" NULLSupport=true;
 		try {
@@ -397,61 +423,34 @@ public void function testNamedArgNull() {
 			application action="update" NULLSupport=ns;
 		}
 	}
+
+}
 ---
 (program
-      (function_declaration
-        (function_access)
-        (return_type)
-        (identifier)
-        (formal_parameters)
-        (statement_block
-          (variable_declaration
-            (variable_declarator
+      (expression_statement
+        (component
+          (component_body
+            (expression_statement
+              (call_expression
+                (identifier)
+                (arguments
+                  (assignment_expression
+                    (identifier)
+                    (number)))))
+            (function_declaration
+              (function_access)
+              (return_type)
               (identifier)
-              (member_expression
-                (call_expression
-                  (identifier)
-                  (arguments))
-                (property_identifier))))
-          (tag_statement
-            (identifier)
-            (assignment_expression
-              (identifier)
-              (string
-                (string_fragment)))
-            (assignment_expression
-              (identifier)
-              (true)))
-          (try_statement
-            (statement_block
-              (expression_statement
-                (call_expression
-                  (identifier)
-                  (arguments
-                    (string
-                      (string_fragment))
-                    (call_expression
-                      (identifier)
-                      (arguments
-                        (assignment_expression
-                          (null)
-                          (string
-                            (string_fragment))))))))
-              (expression_statement
-                (call_expression
-                  (identifier)
-                  (arguments
-                    (string
-                      (string_fragment))
-                    (call_expression
-                      (identifier)
-                      (arguments
-                        (assignment_expression
-                          (null)
-                          (string
-                            (string_fragment)))))))))
-            (finally_clause
+              (formal_parameters)
               (statement_block
+                (variable_declaration
+                  (variable_declarator
+                    (identifier)
+                    (member_expression
+                      (call_expression
+                        (identifier)
+                        (arguments))
+                      (property_identifier))))
                 (tag_statement
                   (identifier)
                   (assignment_expression
@@ -460,4 +459,43 @@ public void function testNamedArgNull() {
                       (string_fragment)))
                   (assignment_expression
                     (identifier)
-                    (identifier)))))))))
+                    (true)))
+                (try_statement
+                  (statement_block
+                    (expression_statement
+                      (call_expression
+                        (identifier)
+                        (arguments
+                          (string
+                            (string_fragment))
+                          (call_expression
+                            (identifier)
+                            (arguments
+                              (assignment_expression
+                                (null)
+                                (string
+                                  (string_fragment))))))))
+                    (expression_statement
+                      (call_expression
+                        (identifier)
+                        (arguments
+                          (string
+                            (string_fragment))
+                          (call_expression
+                            (identifier)
+                            (arguments
+                              (assignment_expression
+                                (null)
+                                (string
+                                  (string_fragment)))))))))
+                  (finally_clause
+                    (statement_block
+                      (tag_statement
+                        (identifier)
+                        (assignment_expression
+                          (identifier)
+                          (string
+                            (string_fragment)))
+                        (assignment_expression
+                          (identifier)
+                          (identifier))))))))))))

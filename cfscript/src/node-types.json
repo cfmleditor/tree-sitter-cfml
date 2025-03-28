@@ -828,7 +828,34 @@
       "required": false,
       "types": [
         {
+          "type": "component_attribute",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "component_attribute",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute_label",
+          "named": true
+        },
+        {
+          "type": "component_attribute",
+          "named": true
+        },
+        {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "identifier",
           "named": true
         }
       ]
@@ -837,17 +864,16 @@
   {
     "type": "component_body",
     "named": true,
-    "fields": {
-      "member": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "function_declaration",
-            "named": true
-          }
-        ]
-      }
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "statement",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1354,6 +1380,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "assignment_expression",
+          "named": true
+        },
         {
           "type": "function_access",
           "named": true
@@ -3245,6 +3275,10 @@
   {
     "type": "as",
     "named": false
+  },
+  {
+    "type": "attribute_label",
+    "named": true
   },
   {
     "type": "binary",
