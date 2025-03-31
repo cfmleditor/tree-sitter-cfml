@@ -553,6 +553,7 @@ module.exports = grammar({
       $.new_expression,
       $.yield_expression,
       $._hash,
+      $.object_pattern,
     ),
 
     primary_expression: ($) => choice(
@@ -1041,7 +1042,6 @@ module.exports = grammar({
     ),
 
     _destructuring_pattern: ($) => choice(
-      $.object_pattern,
       $.array_pattern,
     ),
 

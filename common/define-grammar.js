@@ -1274,6 +1274,7 @@ module.exports = function defineGrammar(dialect) {
         $.new_expression,
         $.yield_expression,
         $.pair,
+        $.object_pattern,
       ),
 
       primary_expression: $ => choice(
@@ -1580,7 +1581,6 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       _destructuring_pattern: $ => choice(
-        $.object_pattern,
         $.array_pattern,
       ),
 

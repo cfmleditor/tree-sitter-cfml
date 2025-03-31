@@ -184,6 +184,10 @@
         "named": true
       },
       {
+        "type": "object_pattern",
+        "named": true
+      },
+      {
         "type": "pair",
         "named": true
       },
@@ -223,10 +227,6 @@
       },
       {
         "type": "member_expression",
-        "named": true
-      },
-      {
-        "type": "object_pattern",
         "named": true
       },
       {
@@ -514,10 +514,6 @@
           },
           {
             "type": "member_expression",
-            "named": true
-          },
-          {
-            "type": "object_pattern",
             "named": true
           },
           {
@@ -965,10 +961,6 @@
           },
           {
             "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "object_pattern",
             "named": true
           }
         ]
@@ -3113,10 +3105,6 @@
             "named": true
           },
           {
-            "type": "object_pattern",
-            "named": true
-          },
-          {
             "type": "parenthesized_expression",
             "named": true
           },
@@ -3744,10 +3732,6 @@
             "named": true
           },
           {
-            "type": "object_pattern",
-            "named": true
-          },
-          {
             "type": "shorthand_property_identifier_pattern",
             "named": true
           }
@@ -4109,10 +4093,6 @@
         },
         {
           "type": "member_expression",
-          "named": true
-        },
-        {
-          "type": "object_pattern",
           "named": true
         },
         {
@@ -4633,10 +4613,6 @@
           },
           {
             "type": "identifier",
-            "named": true
-          },
-          {
-            "type": "object_pattern",
             "named": true
           }
         ]

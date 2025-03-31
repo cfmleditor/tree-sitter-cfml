@@ -5652,6 +5652,10 @@
         {
           "type": "SYMBOL",
           "name": "pair"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "object_pattern"
         }
       ]
     },
@@ -7522,10 +7526,6 @@
     "_destructuring_pattern": {
       "type": "CHOICE",
       "members": [
-        {
-          "type": "SYMBOL",
-          "name": "object_pattern"
-        },
         {
           "type": "SYMBOL",
           "name": "array_pattern"

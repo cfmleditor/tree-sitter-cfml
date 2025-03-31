@@ -635,6 +635,7 @@ ternary / elvis operator
 ===================================
 test ?: "Test";
 test ? "test" : "Test";
+test = {type="perl"};
 ---
 (program
   (expression_statement
@@ -648,4 +649,12 @@ test ? "test" : "Test";
       (string
         (string_fragment))
       (string
-        (string_fragment)))))
+        (string_fragment))))
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (object_pattern
+            (object_assignment_pattern
+              (shorthand_property_identifier_pattern)
+              (string
+                (string_fragment)))))))
