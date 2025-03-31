@@ -594,3 +594,22 @@ try{
                     (property_identifier))
                   (string
                     (string_fragment)))))))))
+
+===================================
+javascript escape sequences that don't work in CF
+===================================
+var mapping = ListChangeDelims( arguments.testMapping, "", "/\" );
+---
+(program
+      (variable_declaration
+        (variable_declarator
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (string)
+              (string
+                (string_fragment)))))))

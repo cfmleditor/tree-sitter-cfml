@@ -2562,10 +2562,6 @@
       "required": false,
       "types": [
         {
-          "type": "escape_sequence",
-          "named": true
-        },
-        {
           "type": "hash_empty",
           "named": true
         },
@@ -2773,10 +2769,6 @@
       "multiple": true,
       "required": false,
       "types": [
-        {
-          "type": "escape_sequence",
-          "named": true
-        },
         {
           "type": "string_fragment",
           "named": true
@@ -3394,10 +3386,6 @@
   {
     "type": "else",
     "named": false
-  },
-  {
-    "type": "escape_sequence",
-    "named": true
   },
   {
     "type": "export",

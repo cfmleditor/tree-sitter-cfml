@@ -18,7 +18,7 @@ module.exports = grammar({
     '||',
     // We use escape sequence and regex pattern to tell the scanner if we're currently inside a string or template string, in which case
     // it should NOT parse html comments.
-    $.escape_sequence,
+    // $.escape_sequence,
     $.regex_pattern,
     $.jsx_text,
     $.query_text,
@@ -1130,7 +1130,7 @@ module.exports = grammar({
           repeat(choice(
             $._hash,
             '""',
-            $.escape_sequence,
+            // $.escape_sequence,
             alias($.unescaped_double_string_fragment, $.string_fragment),
           )),
         ),
@@ -1145,7 +1145,7 @@ module.exports = grammar({
             alias($.unescaped_single_string_fragment, $.string_fragment),
             $._hash,
             '\'\'',
-            $.escape_sequence,
+            // $.escape_sequence,
           )),
         ),
         '\'',
@@ -1156,22 +1156,22 @@ module.exports = grammar({
     // We give names to the token() constructs containing a regexp
     // so as to obtain a node in the CST.
     //
-    unescaped_double_string_fragment: (_) => token.immediate(prec(1, /[^"#\\\r\n]+/)),
+    unescaped_double_string_fragment: (_) => token.immediate(prec(1, /[^"#\r\n]+/)),
 
     // same here
-    unescaped_single_string_fragment: (_) => token.immediate(prec(1, /[^'#\\\r\n]+/)),
+    unescaped_single_string_fragment: (_) => token.immediate(prec(1, /[^'#\r\n]+/)),
 
-    escape_sequence: (_) => token.immediate(seq(
-      '\\',
-      choice(
-        /[^xu0-7]/,
-        /[0-7]{1,3}/,
-        /x[0-9a-fA-F]{2}/,
-        /u[0-9a-fA-F]{4}/,
-        /u\{[0-9a-fA-F]+\}/,
-        /[\r?][\n\u2028\u2029]/,
-      ),
-    )),
+    // escape_sequence: (_) => token.immediate(seq(
+    //   '\\',
+    //   choice(
+    //     /[^xu0-7]/,
+    //     /[0-7]{1,3}/,
+    //     /x[0-9a-fA-F]{2}/,
+    //     /u[0-9a-fA-F]{4}/,
+    //     /u\{[0-9a-fA-F]+\}/,
+    //     /[\r?][\n\u2028\u2029]/,
+    //   ),
+    // )),
 
     // http://stackoverflow.com/questions/13014947/regex-to-match-a-c-style-multiline-comment/36328890#36328890
     comment: (_) => token(choice(
@@ -1187,7 +1187,7 @@ module.exports = grammar({
       '`',
       repeat(choice(
         alias($._template_chars, $.string_fragment),
-        $.escape_sequence,
+        // $.escape_sequence,
         $.template_substitution,
       )),
       '`',

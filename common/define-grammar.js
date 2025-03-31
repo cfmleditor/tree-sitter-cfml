@@ -1680,7 +1680,7 @@ module.exports = function defineGrammar(dialect) {
             repeat(choice(
               ( dialect === 'cfhtml' ? $._hash_expression : $._hash),
               '""',
-              $.escape_sequence,
+              // $.escape_sequence,
               alias($.unescaped_double_string_fragment, $.string_fragment),
             )),
           ),
@@ -1695,7 +1695,7 @@ module.exports = function defineGrammar(dialect) {
               alias($.unescaped_single_string_fragment, $.string_fragment),
               ( dialect === 'cfhtml' ? $._hash_expression : $._hash),
               '\'\'',
-              $.escape_sequence,
+              // $.escape_sequence,
             )),
           ),
           '\'',
@@ -1711,17 +1711,17 @@ module.exports = function defineGrammar(dialect) {
       // same here
       unescaped_single_string_fragment: _ => token.immediate(prec(1, /[^'#]+/)),
 
-      escape_sequence: _ => token.immediate(seq(
-        '\\',
-        choice(
-          /[^xu0-7]/,
-          /[0-7]{1,3}/,
-          /x[0-9a-fA-F]{2}/,
-          /u[0-9a-fA-F]{4}/,
-          /u\{[0-9a-fA-F]+\}/,
-          /[\r?][\n\u2028\u2029]/,
-        ),
-      )),
+      // escape_sequence: _ => token.immediate(seq(
+      //   '\\',
+      //   choice(
+      //     /[^xu0-7]/,
+      //     /[0-7]{1,3}/,
+      //     /x[0-9a-fA-F]{2}/,
+      //     /u[0-9a-fA-F]{4}/,
+      //     /u\{[0-9a-fA-F]+\}/,
+      //     /[\r?][\n\u2028\u2029]/,
+      //   ),
+      // )),
 
       // http://stackoverflow.com/questions/13014947/regex-to-match-a-c-style-multiline-comment/36328890#36328890
       // @ts-ignore

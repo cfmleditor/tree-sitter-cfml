@@ -9,7 +9,6 @@ enum TokenType {
     TERNARY_QMARK,
     HTML_COMMENT,
     LOGICAL_OR,
-    ESCAPE_SEQUENCE,
     REGEX_PATTERN,
     JSX_TEXT,
     QUERY_TEXT,
@@ -383,7 +382,7 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
         return scan_ternary_qmark(lexer);
     }
 
-    if (valid_symbols[HTML_COMMENT] && !valid_symbols[LOGICAL_OR] && !valid_symbols[ESCAPE_SEQUENCE] &&
+    if (valid_symbols[HTML_COMMENT] && !valid_symbols[LOGICAL_OR] &&
         !valid_symbols[REGEX_PATTERN]) {
         return scan_html_comment(lexer);
     }
