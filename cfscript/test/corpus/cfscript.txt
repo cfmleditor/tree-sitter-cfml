@@ -629,3 +629,23 @@ silent {
             (call_expression
               (identifier)
               (arguments))))))
+
+===================================
+ternary / elvis operator
+===================================
+test ?: "Test";
+test ? "test" : "Test";
+---
+(program
+  (expression_statement
+    (elvis_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (expression_statement
+    (ternary_expression
+      (identifier)
+      (string
+        (string_fragment))
+      (string
+        (string_fragment)))))

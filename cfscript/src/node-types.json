@@ -34,6 +34,10 @@
         "named": true
       },
       {
+        "type": "elvis_expression",
+        "named": true
+      },
+      {
         "type": "glimmer_template",
         "named": true
       },
@@ -988,6 +992,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "elvis_expression",
+    "named": true,
+    "fields": {
+      "alternative": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3276,6 +3306,10 @@
   },
   {
     "type": "?",
+    "named": false
+  },
+  {
+    "type": "?:",
     "named": false
   },
   {

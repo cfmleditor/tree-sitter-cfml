@@ -22,6 +22,7 @@ module.exports = function defineGrammar(dialect) {
     externals: $ => [
       $._automatic_semicolon,
       $._ternary_qmark,
+      $._elvis_operator,
       '||',
       $._start_tag_name,
       $._script_start_tag_name,
@@ -87,10 +88,12 @@ module.exports = function defineGrammar(dialect) {
         'logical_and',
         'logical_or',
         'ternary',
+        'elvis',
         $.sequence_expression,
         $.arrow_function,
       ],
       ['ternary', $.ternary_expression],
+      ['elvis', $.elvis_expression],
       [$.binary_expression, 'logical_and'],
       [$.binary_expression, 'binary_shift'],
       [$.binary_expression, 'bitwise_and'],
@@ -137,6 +140,7 @@ module.exports = function defineGrammar(dialect) {
       [$.arrow_function, $.member_expression, $.subscript_expression],
       [$.arrow_function, $.update_expression],
       [$.arrow_function, $.ternary_expression],
+      [$.arrow_function, $.elvis_expression],
       [$.function_expression, $.primary_expression],
       [$.pair, $.binary_expression],
       [$.call_expression, $.pair],
@@ -145,6 +149,7 @@ module.exports = function defineGrammar(dialect) {
       [$.member_expression, $.pair],
       [$.update_expression, $.pair],
       [$.ternary_expression, $.pair],
+      [$.elvis_expression, $.pair],
       // [$.class_static_block, $._property_name],
 
     ]).concat(
@@ -1264,6 +1269,7 @@ module.exports = function defineGrammar(dialect) {
         $.unary_expression,
         $.binary_expression,
         $.ternary_expression,
+        $.elvis_expression,
         $.update_expression,
         $.new_expression,
         $.yield_expression,
@@ -1585,6 +1591,12 @@ module.exports = function defineGrammar(dialect) {
         alias($._ternary_qmark, '?'),
         field('consequence', $.expression),
         ':',
+        field('alternative', $.expression),
+      )),
+
+      elvis_expression: ($) => prec.right('ternary', seq(
+        field('condition', $.expression),
+        alias($._elvis_operator, '?:'),
         field('alternative', $.expression),
       )),
 

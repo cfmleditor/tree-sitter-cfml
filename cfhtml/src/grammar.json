@@ -5635,6 +5635,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "elvis_expression"
+        },
+        {
+          "type": "SYMBOL",
           "name": "update_expression"
         },
         {
@@ -7575,6 +7579,40 @@
           {
             "type": "STRING",
             "value": ":"
+          },
+          {
+            "type": "FIELD",
+            "name": "alternative",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          }
+        ]
+      }
+    },
+    "elvis_expression": {
+      "type": "PREC_RIGHT",
+      "value": "ternary",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "condition",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_elvis_operator"
+            },
+            "named": false,
+            "value": "?:"
           },
           {
             "type": "FIELD",
@@ -10697,6 +10735,10 @@
       "ternary_expression"
     ],
     [
+      "arrow_function",
+      "elvis_expression"
+    ],
+    [
       "function_expression",
       "primary_expression"
     ],
@@ -10727,6 +10769,10 @@
     ],
     [
       "ternary_expression",
+      "pair"
+    ],
+    [
+      "elvis_expression",
       "pair"
     ],
     [
@@ -10817,6 +10863,10 @@
         "value": "ternary"
       },
       {
+        "type": "STRING",
+        "value": "elvis"
+      },
+      {
         "type": "SYMBOL",
         "name": "sequence_expression"
       },
@@ -10833,6 +10883,16 @@
       {
         "type": "SYMBOL",
         "name": "ternary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "elvis"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "elvis_expression"
       }
     ],
     [
@@ -11050,6 +11110,10 @@
     {
       "type": "SYMBOL",
       "name": "_ternary_qmark"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_elvis_operator"
     },
     {
       "type": "STRING",

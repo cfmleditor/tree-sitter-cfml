@@ -7,6 +7,7 @@
 enum TokenType {
     AUTOMATIC_SEMICOLON,
     TERNARY_QMARK,
+    ELVIS_OPERATOR,
     LOGICAL_OR,
     START_TAG_NAME,
     SCRIPT_START_TAG_NAME,
@@ -778,7 +779,15 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
     if (lexer->lookahead == '?') {
         advance(lexer);
 
-        if (lexer->lookahead == '?') {
+        if (lexer->lookahead == ':') {
+
+            advance(lexer);
+            lexer->mark_end(lexer);
+            lexer->result_symbol = ELVIS_OPERATOR;
+
+            return true;
+        
+        } else if (lexer->lookahead == '?') {
             return false;
         }
 
@@ -1026,7 +1035,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
         return ret;
     }
 
-    if (valid_symbols[TERNARY_QMARK]) {
+    if (valid_symbols[TERNARY_QMARK] || valid_symbols[ELVIS_OPERATOR]) {
         return scan_ternary_qmark(lexer);
     }
 

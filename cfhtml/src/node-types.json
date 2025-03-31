@@ -176,6 +176,10 @@
         "named": true
       },
       {
+        "type": "elvis_expression",
+        "named": true
+      },
+      {
         "type": "new_expression",
         "named": true
       },
@@ -2961,6 +2965,32 @@
     }
   },
   {
+    "type": "elvis_expression",
+    "named": true,
+    "fields": {
+      "alternative": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "condition": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "empty_statement",
     "named": true,
     "fields": {}
@@ -4922,6 +4952,10 @@
     "named": false
   },
   {
+    "type": "?:",
+    "named": false
+  },
+  {
     "type": "?>",
     "named": false
   },
@@ -5124,11 +5158,11 @@
   },
   {
     "type": "import",
-    "named": true
+    "named": false
   },
   {
     "type": "import",
-    "named": false
+    "named": true
   },
   {
     "type": "in",

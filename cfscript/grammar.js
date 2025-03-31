@@ -14,6 +14,7 @@ module.exports = grammar({
     $._automatic_semicolon,
     $._template_chars,
     $._ternary_qmark,
+    $._elvis_operator,
     $.html_comment,
     '||',
     // We use escape sequence and regex pattern to tell the scanner if we're currently inside a string or template string, in which case
@@ -76,6 +77,7 @@ module.exports = grammar({
       'logical_and',
       'logical_or',
       'ternary',
+      'elvis',
       $.sequence_expression,
       $.arrow_function,
     ],
@@ -546,6 +548,7 @@ module.exports = grammar({
       $.unary_expression,
       $.binary_expression,
       $.ternary_expression,
+      $.elvis_expression,
       $.update_expression,
       $.new_expression,
       $.yield_expression,
@@ -1049,6 +1052,12 @@ module.exports = grammar({
       alias($._ternary_qmark, '?'),
       field('consequence', $.expression),
       ':',
+      field('alternative', $.expression),
+    )),
+
+    elvis_expression: ($) => prec.right('elvis', seq(
+      field('condition', $.expression),
+      alias($._elvis_operator, '?:'),
       field('alternative', $.expression),
     )),
 

@@ -135,8 +135,6 @@
 (string) @string
 (text) @string
 
-(escape_sequence) @string.escape
-
 (regex_pattern) @string.regexp
 (regex_flags) @character.special
 

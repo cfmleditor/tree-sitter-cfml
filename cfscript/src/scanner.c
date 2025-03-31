@@ -7,6 +7,7 @@ enum TokenType {
     AUTOMATIC_SEMICOLON,
     TEMPLATE_CHARS,
     TERNARY_QMARK,
+    ELVIS_OPERATOR,
     HTML_COMMENT,
     LOGICAL_OR,
     REGEX_PATTERN,
@@ -234,7 +235,15 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
     if (lexer->lookahead == '?') {
         advance(lexer);
 
-        if (lexer->lookahead == '?') {
+        if (lexer->lookahead == ':') {
+
+            advance(lexer);
+            lexer->mark_end(lexer);
+            lexer->result_symbol = ELVIS_OPERATOR;
+
+            return true;
+        
+        } else if (lexer->lookahead == '?') {
             return false;
         }
 
@@ -378,7 +387,7 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
         return ret;
     }
 
-    if (valid_symbols[TERNARY_QMARK]) {
+    if (valid_symbols[TERNARY_QMARK] || valid_symbols[ELVIS_OPERATOR]) {
         return scan_ternary_qmark(lexer);
     }
 
