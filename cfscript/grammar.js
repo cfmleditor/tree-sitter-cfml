@@ -829,6 +829,7 @@ module.exports = grammar({
       'function',
       field('name', optional($.identifier)),
       $._call_signature,
+      repeat($._function_options),
       field('body', $.statement_block),
     )),
 
@@ -968,7 +969,7 @@ module.exports = grammar({
       ),
       seq(
         field('tag', $.identifier),
-        field('arguments', repeat1(seq(optional($.tag_linefeed), $.assignment_expression))),
+        field('arguments', repeat1(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
         optional(field('body', $.statement_block)),
         $._semicolon,
       ),

@@ -627,11 +627,15 @@ var mapping = ListChangeDelims( arguments.testMapping, "", "/\" );
                 (string_fragment)))))))
 
 ===================================
-tag without attributes
+tag statements
 ===================================
 silent {
 		test();
 }
+
+imap
+    action = "close",
+    connection="testImap";
 ---
 (program
       (tag_statement
@@ -640,7 +644,17 @@ silent {
           (expression_statement
             (call_expression
               (identifier)
-              (arguments))))))
+               (arguments)))))
+      (tag_statement
+        (identifier)
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))))
 
 ===================================
 ternary / elvis operator / cfml comments / regex
@@ -700,3 +714,25 @@ src = reReplace(src, "\/{2}.*|\/\*[\s\S]*?\*\/", "", "all"); // regex
               (string
                 (string_fragment))))))
       (comment))
+
+===================================
+failing expressions
+===================================
+// because of localmode=true
+services.each( function( service ) localmode=true { });
+---
+(program
+  (comment)
+  (expression_statement
+    (call_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (arguments
+        (function_expression
+          (formal_parameters
+            (identifier))
+          (assignment_expression
+            (identifier)
+            (true))
+          (statement_block))))))

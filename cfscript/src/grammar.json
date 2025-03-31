@@ -2671,6 +2671,13 @@
             "name": "_call_signature"
           },
           {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_function_options"
+            }
+          },
+          {
             "type": "FIELD",
             "name": "body",
             "content": {
@@ -3208,6 +3215,18 @@
                     {
                       "type": "SYMBOL",
                       "name": "assignment_expression"
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": ","
+                        },
+                        {
+                          "type": "BLANK"
+                        }
+                      ]
                     }
                   ]
                 }
