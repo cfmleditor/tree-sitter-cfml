@@ -422,6 +422,10 @@ component {
 		finally {
 			application action="update" NULLSupport=ns;
 		}
+
+    if ( "Test" does not contain "test" ) {
+  
+    }
 	}
 
 }
@@ -498,7 +502,15 @@ component {
                             (string_fragment)))
                         (assignment_expression
                           (identifier)
-                          (identifier))))))))))))
+                          (identifier))))))
+                (if_statement
+                  (parenthesized_expression
+                    (binary_expression
+                      (string
+                        (string_fragment))
+                      (string
+                        (string_fragment))))
+                  (statement_block))))))))
 
 ===================================
 query test / multiline tags
@@ -631,11 +643,15 @@ silent {
               (arguments))))))
 
 ===================================
-ternary / elvis operator
+ternary / elvis operator / cfml comments / regex
 ===================================
 test ?: "Test";
 test ? "test" : "Test";
 test = {type="perl"};
+
+src = reReplace(src, "<!---.*?--->", "", "all"); // cfml comments
+src = reReplace(src, "\/{2}.*|\/\*[\s\S]*?\*\/", "", "all"); // regex
+  
 ---
 (program
   (expression_statement
@@ -657,4 +673,30 @@ test = {type="perl"};
             (object_assignment_pattern
               (shorthand_property_identifier_pattern)
               (string
-                (string_fragment)))))))
+                (string_fragment))))))
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments
+              (identifier)
+              (string
+                (string_fragment))
+              (string)
+              (string
+                (string_fragment))))))
+      (comment)
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments
+              (identifier)
+              (string
+                (string_fragment))
+              (string)
+              (string
+                (string_fragment))))))
+      (comment))

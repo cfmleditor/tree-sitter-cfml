@@ -1632,6 +1632,7 @@ module.exports = function defineGrammar(dialect) {
           ['!==', 'binary_equality'],
           [/[nN][eE][qQ]/, 'binary_equality'],
           [/[cC][oO][nN][tT][aA][iI][nN][sS]/, 'binary_equality'],
+          [/[dD][oO][eE][sS]\s[nN][oO][tT]\s[cC][oO][nN][tT][aA][iI][nN]/, 'binary_equality'],
           ['>=', 'binary_relation'],
           [/[gG][tT][eE]/, 'binary_relation'],
           ['>', 'binary_relation'],

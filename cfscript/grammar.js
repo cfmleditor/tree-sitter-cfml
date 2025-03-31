@@ -15,20 +15,17 @@ module.exports = grammar({
     $._template_chars,
     $._ternary_qmark,
     $._elvis_operator,
-    $.html_comment,
     '||',
     // We use escape sequence and regex pattern to tell the scanner if we're currently inside a string or template string, in which case
     // it should NOT parse html comments.
     // $.escape_sequence,
     $.regex_pattern,
-    $.jsx_text,
     $.query_text,
     $.tag_linefeed,
   ],
 
   extras: ($) => [
     $.comment,
-    $.html_comment,
     // @ts-ignore
     /[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]/,
   ],
@@ -48,13 +45,13 @@ module.exports = grammar({
     $._semicolon,
     $._identifier,
     $._reserved_identifier,
-    $._jsx_attribute,
-    $._jsx_element_name,
-    $._jsx_child,
-    $._jsx_element,
-    $._jsx_attribute_name,
-    $._jsx_attribute_value,
-    $._jsx_identifier,
+    // $._jsx_attribute,
+    // $._jsx_element_name,
+    // $._jsx_child,
+    // $._jsx_element,
+    // $._jsx_attribute_name,
+    // $._jsx_attribute_value,
+    // $._jsx_identifier,
     $._lhs_expression,
   ],
 
@@ -539,8 +536,8 @@ module.exports = grammar({
 
     expression: ($) => choice(
       $.primary_expression,
-      $.glimmer_template,
-      $._jsx_element,
+      // $.glimmer_template,
+      // $._jsx_element,
       $.query_expression,
       $.assignment_expression,
       $.augmented_assignment_expression,
@@ -650,69 +647,69 @@ module.exports = grammar({
       ']',
     ),
 
-    glimmer_template: ($) => choice(
-      seq(
-        field('open_tag', $.glimmer_opening_tag),
-        field('content', repeat($._glimmer_template_content)),
-        field('close_tag', $.glimmer_closing_tag),
-      ),
-      // empty template has no content
-      // <template></template>
-      seq(
-        field('open_tag', $.glimmer_opening_tag),
-        field('close_tag', $.glimmer_closing_tag),
-      ),
-    ),
+    // glimmer_template: ($) => choice(
+    //   seq(
+    //     field('open_tag', $.glimmer_opening_tag),
+    //     field('content', repeat($._glimmer_template_content)),
+    //     field('close_tag', $.glimmer_closing_tag),
+    //   ),
+    //   // empty template has no content
+    //   // <template></template>
+    //   seq(
+    //     field('open_tag', $.glimmer_opening_tag),
+    //     field('close_tag', $.glimmer_closing_tag),
+    //   ),
+    // ),
 
-    _glimmer_template_content: (_) => /.{1,}/,
-    glimmer_opening_tag: (_) => '<template>',
-    glimmer_closing_tag: (_) => '</template>',
+    // _glimmer_template_content: (_) => /.{1,}/,
+    // glimmer_opening_tag: (_) => '<template>',
+    // glimmer_closing_tag: (_) => '</template>',
 
-    _jsx_element: ($) => choice($.jsx_element, $.jsx_self_closing_element),
+    // _jsx_element: ($) => choice($.jsx_element, $.jsx_self_closing_element),
 
-    jsx_element: ($) => seq(
-      field('open_tag', $.jsx_opening_element),
-      repeat($._jsx_child),
-      field('close_tag', $.jsx_closing_element),
-    ),
+    // jsx_element: ($) => seq(
+    //   field('open_tag', $.jsx_opening_element),
+    //   repeat($._jsx_child),
+    //   field('close_tag', $.jsx_closing_element),
+    // ),
 
     // An entity can be named, numeric (decimal), or numeric (hexadecimal). The
     // longest entity name is 29 characters long, and the HTML spec says that
     // no more will ever be added.
     // html_character_reference: (_) => /&(#([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
 
-    jsx_expression: ($) => seq(
-      '{',
-      optional(choice(
-        $.expression,
-        $.sequence_expression,
-        $.spread_element,
-      )),
-      '}',
-    ),
+    // jsx_expression: ($) => seq(
+    //   '{',
+    //   optional(choice(
+    //     $.expression,
+    //     $.sequence_expression,
+    //     $.spread_element,
+    //   )),
+    //   '}',
+    // ),
 
-    _jsx_child: ($) => choice(
-      $.jsx_text,
-      // $.html_character_reference,
-      $._jsx_element,
-      $.jsx_expression,
-    ),
+    // _jsx_child: ($) => choice(
+    //   $.jsx_text,
+    //   // $.html_character_reference,
+    //   $._jsx_element,
+    //   $.jsx_expression,
+    // ),
 
-    jsx_opening_element: ($) => prec.dynamic(-1, seq(
-      '<',
-      optional(seq(
-        field('name', $._jsx_element_name),
-        repeat(field('attribute', $._jsx_attribute)),
-      )),
-      '>',
-    )),
+    // jsx_opening_element: ($) => prec.dynamic(-1, seq(
+    //   '<',
+    //   optional(seq(
+    //     field('name', $._jsx_element_name),
+    //     repeat(field('attribute', $._jsx_attribute)),
+    //   )),
+    //   '>',
+    // )),
 
-    jsx_identifier: (_) => /[a-zA-Z_$][a-zA-Z\d_$]*-[a-zA-Z\d_$\-]*/,
+    // jsx_identifier: (_) => /[a-zA-Z_$][a-zA-Z\d_$]*-[a-zA-Z\d_$\-]*/,
 
-    _jsx_identifier: ($) => choice(
-      alias($.jsx_identifier, $.identifier),
-      $.identifier,
-    ),
+    // _jsx_identifier: ($) => choice(
+    //   alias($.jsx_identifier, $.identifier),
+    //   $.identifier,
+    // ),
 
     nested_identifier: ($) => prec('member', seq(
       field('object', choice($.identifier, alias($.nested_identifier, $.member_expression))),
@@ -720,72 +717,72 @@ module.exports = grammar({
       field('property', alias($.identifier, $.property_identifier)),
     )),
 
-    jsx_namespace_name: ($) => seq($._jsx_identifier, ':', $._jsx_identifier),
+    // jsx_namespace_name: ($) => seq($._jsx_identifier, ':', $._jsx_identifier),
 
-    _jsx_element_name: ($) => choice(
-      $._jsx_identifier,
-      alias($.nested_identifier, $.member_expression),
-      $.jsx_namespace_name,
-    ),
+    // _jsx_element_name: ($) => choice(
+    //   $._jsx_identifier,
+    //   alias($.nested_identifier, $.member_expression),
+    //   $.jsx_namespace_name,
+    // ),
 
-    jsx_closing_element: ($) => seq(
-      '</',
-      optional(field('name', $._jsx_element_name)),
-      '>',
-    ),
+    // jsx_closing_element: ($) => seq(
+    //   '</',
+    //   optional(field('name', $._jsx_element_name)),
+    //   '>',
+    // ),
 
-    jsx_self_closing_element: ($) => seq(
-      '<',
-      field('name', $._jsx_element_name),
-      repeat(field('attribute', $._jsx_attribute)),
-      '/>',
-    ),
+    // jsx_self_closing_element: ($) => seq(
+    //   '<',
+    //   field('name', $._jsx_element_name),
+    //   repeat(field('attribute', $._jsx_attribute)),
+    //   '/>',
+    // ),
 
-    _jsx_attribute: ($) => choice($.jsx_attribute, $.jsx_expression),
+    // _jsx_attribute: ($) => choice($.jsx_attribute, $.jsx_expression),
 
-    _jsx_attribute_name: ($) => choice(alias($._jsx_identifier, $.property_identifier), $.jsx_namespace_name),
+    // _jsx_attribute_name: ($) => choice(alias($._jsx_identifier, $.property_identifier), $.jsx_namespace_name),
 
-    jsx_attribute: ($) => seq(
-      $._jsx_attribute_name,
-      optional(seq(
-        '=',
-        $._jsx_attribute_value,
-      )),
-    ),
+    // jsx_attribute: ($) => seq(
+    //   $._jsx_attribute_name,
+    //   optional(seq(
+    //     '=',
+    //     $._jsx_attribute_value,
+    //   )),
+    // ),
 
-    _jsx_string: ($) => choice(
-      seq(
-        '"',
-        repeat(choice(
-          alias($.unescaped_double_jsx_string_fragment, $.string_fragment),
-          // $.html_character_reference,
-        )),
-        '"',
-      ),
-      seq(
-        '\'',
-        repeat(choice(
-          alias($.unescaped_single_jsx_string_fragment, $.string_fragment),
-          // $.html_character_reference,
-        )),
-        '\'',
-      ),
-    ),
+    // _jsx_string: ($) => choice(
+    //   seq(
+    //     '"',
+    //     repeat(choice(
+    //       alias($.unescaped_double_jsx_string_fragment, $.string_fragment),
+    //       // $.html_character_reference,
+    //     )),
+    //     '"',
+    //   ),
+    //   seq(
+    //     '\'',
+    //     repeat(choice(
+    //       alias($.unescaped_single_jsx_string_fragment, $.string_fragment),
+    //       // $.html_character_reference,
+    //     )),
+    //     '\'',
+    //   ),
+    // ),
 
     // Workaround to https://github.com/tree-sitter/tree-sitter/issues/1156
     // We give names to the token() constructs containing a regexp
     // so as to obtain a node in the CST.
     //
-    unescaped_double_jsx_string_fragment: (_) => token.immediate(prec(1, /([^"&#]|&[^#A-Za-z])+/)),
+    // unescaped_double_jsx_string_fragment: (_) => token.immediate(prec(1, /([^"&#]|&[^#A-Za-z])+/)),
 
     // same here
-    unescaped_single_jsx_string_fragment: (_) => token.immediate(prec(1, /([^'&#]|&[^#A-Za-z])+/)),
+    // unescaped_single_jsx_string_fragment: (_) => token.immediate(prec(1, /([^'&#]|&[^#A-Za-z])+/)),
 
-    _jsx_attribute_value: ($) => choice(
-      alias($._jsx_string, $.string),
-      $.jsx_expression,
-      $._jsx_element,
-    ),
+    // _jsx_attribute_value: ($) => choice(
+    //   alias($._jsx_string, $.string),
+    //   $.jsx_expression,
+    //   $._jsx_element,
+    // ),
 
     // class: ($) => prec('literal', seq(
     //   repeat(field('decorator', $.decorator)),
@@ -1092,6 +1089,7 @@ module.exports = grammar({
         ['!==', 'binary_equality'],
         [/[nN][eE][qQ]/, 'binary_equality'],
         [/[cC][oO][nN][tT][aA][iI][nN][sS]/, 'binary_equality'],
+        [/[dD][oO][eE][sS]\s[nN][oO][tT]\s[cC][oO][nN][tT][aA][iI][nN]/, 'binary_equality'],
         ['>=', 'binary_relation'],
         [/[gG][tT][eE]/, 'binary_relation'],
         ['>', 'binary_relation'],

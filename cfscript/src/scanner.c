@@ -8,10 +8,8 @@ enum TokenType {
     TEMPLATE_CHARS,
     TERNARY_QMARK,
     ELVIS_OPERATOR,
-    HTML_COMMENT,
     LOGICAL_OR,
     REGEX_PATTERN,
-    JSX_TEXT,
     QUERY_TEXT,
     TAG_LINEFEED
 };
@@ -262,6 +260,7 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
     return false;
 }
 
+/*
 static bool scan_html_comment(TSLexer *lexer) {
     while (iswspace(lexer->lookahead) || lexer->lookahead == 0x2028 || lexer->lookahead == 0x2029) {
         skip(lexer);
@@ -298,7 +297,9 @@ static bool scan_html_comment(TSLexer *lexer) {
 
     return true;
 }
+    */
 
+    /*
 static bool scan_jsx_text(TSLexer *lexer) {
     // saw_text will be true if we see any non-whitespace content, or any whitespace content that is not a newline and
     // does not immediately follow a newline.
@@ -339,6 +340,7 @@ static bool scan_jsx_text(TSLexer *lexer) {
     lexer->result_symbol = JSX_TEXT;
     return saw_text;
 }
+*/
 
 static bool scan_query_text(TSLexer *lexer) {
     
@@ -370,9 +372,9 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
         return scan_template_chars(lexer);
     }
 
-    if (valid_symbols[JSX_TEXT] && scan_jsx_text(lexer)) {
-        return true;
-    }
+    // if (valid_symbols[JSX_TEXT] && scan_jsx_text(lexer)) {
+    //     return true;
+    // }
 
     if (valid_symbols[QUERY_TEXT] && scan_query_text(lexer)) {
         return true;
@@ -391,10 +393,10 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
         return scan_ternary_qmark(lexer);
     }
 
-    if (valid_symbols[HTML_COMMENT] && !valid_symbols[LOGICAL_OR] &&
+    /*if (valid_symbols[HTML_COMMENT] && !valid_symbols[LOGICAL_OR] &&
         !valid_symbols[REGEX_PATTERN]) {
         return scan_html_comment(lexer);
-    }
+    }*/
 
     return false;
 }
