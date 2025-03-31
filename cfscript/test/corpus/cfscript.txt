@@ -546,6 +546,7 @@ try{
   // This fails, if prev statement updates the password for server admin.
   admin.updatePassword(oldPassword="#request.ServerAdminPassword#", newPassword="server" );
 }catch( any e ){
+  errorTemplate.template404 = errorGet.templates.404;
   assertEquals( e.message, 'No access, password is invalid' );
 }
 ---
@@ -574,6 +575,16 @@ try{
           (catch_type)
           (identifier)
           (statement_block
+            (expression_statement
+            (assignment_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (member_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier))
+                  (property_identifier))))
             (expression_statement
               (call_expression
                 (identifier)
