@@ -961,7 +961,7 @@ module.exports = grammar({
       seq(
         field('tag', $.identifier),
         optional($.tag_linefeed),
-        field('arguments', $.arguments),
+        optional(field('arguments', $.arguments)),
         field('body', $.statement_block),
         $._semicolon,
       ),

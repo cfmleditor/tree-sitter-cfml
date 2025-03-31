@@ -613,3 +613,19 @@ var mapping = ListChangeDelims( arguments.testMapping, "", "/\" );
               (string)
               (string
                 (string_fragment)))))))
+
+===================================
+tag without attributes
+===================================
+silent {
+		test();
+}
+---
+(program
+      (tag_statement
+        (identifier)
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments))))))
