@@ -45,6 +45,7 @@ module.exports = function defineGrammar(dialect) {
       // $.cffunction_content,
       // $.html_hash,
       $.html_text,
+      $.error_sentinel,
     ],
 
     supertypes: $ => [

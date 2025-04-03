@@ -11793,6 +11793,10 @@
     {
       "type": "SYMBOL",
       "name": "html_text"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "error_sentinel"
     }
   ],
   "inline": [
