@@ -1086,6 +1086,7 @@ module.exports = grammar({
         ['===', 'binary_equality'],
         [/[eE][qQ]/, 'binary_equality'],
         [/[iI][sS]/, 'binary_equality'],
+        ['<>', 'binary_equality'],
         ['!=', 'binary_equality'],
         ['!==', 'binary_equality'],
         [/[nN][eE][qQ]/, 'binary_equality'],
