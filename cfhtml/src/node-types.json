@@ -1095,6 +1095,41 @@
     }
   },
   {
+    "type": "cf_case_tag_query",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_tag_query",
+          "named": true
+        },
+        {
+          "type": "cfscript_element",
+          "named": true
+        },
+        {
+          "type": "hash_single",
+          "named": true
+        },
+        {
+          "type": "query_operator",
+          "named": true
+        },
+        {
+          "type": "text",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_catch_tag",
     "named": true,
     "fields": {},
@@ -1245,6 +1280,41 @@
         },
         {
           "type": "xml_decl",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_defaultcase_tag_query",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_tag_query",
+          "named": true
+        },
+        {
+          "type": "cfscript_element",
+          "named": true
+        },
+        {
+          "type": "hash_single",
+          "named": true
+        },
+        {
+          "type": "query_operator",
+          "named": true
+        },
+        {
+          "type": "text",
           "named": true
         }
       ]
@@ -2366,11 +2436,11 @@
           "named": true
         },
         {
-          "type": "cf_case_tag",
+          "type": "cf_case_tag_query",
           "named": true
         },
         {
-          "type": "cf_defaultcase_tag",
+          "type": "cf_defaultcase_tag_query",
           "named": true
         },
         {
@@ -3981,6 +4051,10 @@
           },
           {
             "type": "<=",
+            "named": false
+          },
+          {
+            "type": "<>",
             "named": false
           },
           {

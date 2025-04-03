@@ -244,6 +244,7 @@ module.exports = function defineGrammar(dialect) {
         field('operator', '>'),
         field('operator', '<='),
         field('operator', '<'),
+        field('operator', '<>'),
         field('operator', 'IN'),
         field('operator', '='),
         field('operator', 'BETWEEN'),
@@ -592,8 +593,8 @@ module.exports = function defineGrammar(dialect) {
         repeat($.cf_attribute),
         alias($._close_tag_delim, '>'),
         repeat($._node_cfquery),
-        repeat($.cf_case_tag),
-        optional($.cf_defaultcase_tag),
+        repeat($.cf_case_tag_query),
+        optional($.cf_defaultcase_tag_query),
         $._cf_close_tag,
         keyword('switch'),
         alias($._close_tag_delim, '>'),
@@ -620,6 +621,29 @@ module.exports = function defineGrammar(dialect) {
         keyword('defaultcase'),
         alias($._close_tag_delim, '>'),
       )),
+
+      cf_case_tag_query: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        keyword('case'),
+        repeat($.cf_attribute),
+        alias($._close_tag_delim, '>'),
+        repeat($._node_cfquery),
+        $._cf_close_tag,
+        keyword('case'),
+        alias($._close_tag_delim, '>'),
+      )),
+
+      cf_defaultcase_tag_query: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        keyword('defaultcase'),
+        repeat($.cf_attribute),
+        alias($._close_tag_delim, '>'),
+        repeat($._node_cfquery),
+        $._cf_close_tag,
+        keyword('defaultcase'),
+        alias($._close_tag_delim, '>'),
+      )),
+
 
       cf_catch_tag: $ => prec.right(3, seq(
         $._cf_open_tag,

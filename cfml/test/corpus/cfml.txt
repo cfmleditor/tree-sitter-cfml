@@ -1874,6 +1874,14 @@ cfzip
 failing expression
 ===================================
 <cfset downloadUrl = "https:"&#ARGUMENTS.download_url# />
+
+<cfquery name="Test">
+  <cfswitch expression="#tmp_budget_no#">
+    <cfcase value="1">
+        AND	ac.budg1_amt <> 0
+    </cfcase>
+  </cfswitch>
+</cfquery>
 ---
 (program
       (cf_set_tag
@@ -1886,4 +1894,23 @@ failing expression
               (member_expression
                 (identifier)
                 (property_identifier)))))
-        (cf_selfclose_tag_end)))
+        (cf_selfclose_tag_end))
+      (cf_query
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_switch_tag_cfquery
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (hash_expression
+                (identifier))))
+          (cf_case_tag_query
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (attribute_value)))
+            (text)
+            (query_operator)
+            (text)))))
