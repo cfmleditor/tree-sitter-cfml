@@ -868,6 +868,14 @@
           {
             "type": "expression",
             "named": true
+          },
+          {
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
+            "named": true
           }
         ]
       }
@@ -2685,14 +2693,10 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag_end",
           "named": true
         },
         {

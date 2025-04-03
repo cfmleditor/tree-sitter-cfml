@@ -1384,7 +1384,6 @@ testing7
           (cf_attribute_name)
           (quoted_cf_attribute_value
             (attribute_value)))
-        (cf_selfclose_tag_end)
         (cf_loop
           (cf_attribute
             (cf_attribute_name)
@@ -1771,3 +1770,120 @@ static accessor
       (arguments
         (number)))
     (cf_selfclose_tag_end)))
+
+===================================
+cfzip
+===================================
+<cffunction name="validateAndUnzipFile" access="public" output="false" returntype="any">
+		<cfargument name="context" type="struct" required="true" />
+
+		<cfif result.bZipError IS true>
+
+			<!--- Don't return any files --->
+			<cfset arrFiles = arrayNew(1)>
+
+		<cfelse>
+
+			<cfzip action="unzip" destination="#getTempDirectory()#" file="#ARGUMENTS.zipFilePath#" overwrite="true" />
+
+    </cfif>
+		
+		<cfreturn result>
+	</cffunction>
+---
+(program
+      (cf_function
+        (cf_tag_open
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value))))
+        (cf_tag_body
+          (cf_selfclose_tag
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (attribute_value)))
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (attribute_value)))
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (attribute_value)))
+            (cf_selfclose_tag_end))
+          (cf_if_tag
+            (binary_expression
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (true))
+            (cf_comment)
+            (cf_set_tag
+              (assignment_expression
+                (identifier)
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (number))))
+              (cf_selfclose_tag_end))
+            (cf_if_alt
+              (cf_else_tag)
+              (cf_zip_tag
+                (cf_attribute
+                  (cf_attribute_name)
+                  (quoted_cf_attribute_value
+                    (attribute_value)))
+                (cf_attribute
+                  (cf_attribute_name)
+                  (quoted_cf_attribute_value
+                    (hash_expression
+                      (call_expression
+                        (identifier)
+                        (arguments)))))
+                (cf_attribute
+                  (cf_attribute_name)
+                  (quoted_cf_attribute_value
+                    (hash_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier)))))
+                (cf_attribute
+                  (cf_attribute_name)
+                  (quoted_cf_attribute_value
+                    (attribute_value))))))
+          (cf_return
+            (identifier)
+            (cf_selfclose_tag_end)))
+        (cf_tag_close)))
+
+===================================
+failing expression
+===================================
+<cfset downloadUrl = "https:"&#ARGUMENTS.download_url# />
+---
+(program
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (binary_expression
+            (string
+              (string_fragment))
+            (hash_expression
+              (member_expression
+                (identifier)
+                (property_identifier)))))
+        (cf_selfclose_tag_end)))

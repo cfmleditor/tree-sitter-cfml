@@ -720,6 +720,16 @@ failing expressions
 ===================================
 // because of localmode=true
 services.each( function( service ) localmode=true { });
+
+private function verifyPacket(required struct samlPacket){
+    arguments.samlPacket["verified"] = {
+        "NotBefore"     : DateCompare(arguments.samlPacket.conditions.now, arguments.samlPacket.conditions.NotBefore,"s") == 1 ? true : false,
+        "NotOnOrAfter"  : DateCompare(arguments.samlPacket.conditions.now, arguments.samlPacket.conditions.NotOnOrAfter,"s") >= 0 ? false : true
+    };
+
+    return arguments.samlPacket;
+}
+
 ---
 (program
   (comment)
@@ -735,4 +745,78 @@ services.each( function( service ) localmode=true { });
           (assignment_expression
             (identifier)
             (true))
-          (statement_block))))))
+          (statement_block)))))
+      (function_declaration
+        (function_access)
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier))
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (subscript_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (string
+                  (string_fragment)))
+              (object
+                (pair
+                  (string
+                    (string_fragment))
+                  (ternary_expression
+                    (binary_expression
+                      (call_expression
+                        (identifier)
+                        (arguments
+                          (member_expression
+                            (member_expression
+                              (member_expression
+                                (identifier)
+                                (property_identifier))
+                              (property_identifier))
+                            (property_identifier))
+                          (member_expression
+                            (member_expression
+                              (member_expression
+                                (identifier)
+                                (property_identifier))
+                              (property_identifier))
+                            (property_identifier))
+                          (string
+                            (string_fragment))))
+                      (number))
+                    (true)
+                    (false)))
+                (pair
+                  (string
+                    (string_fragment))
+                  (ternary_expression
+                    (binary_expression
+                      (call_expression
+                        (identifier)
+                        (arguments
+                          (member_expression
+                            (member_expression
+                              (member_expression
+                                (identifier)
+                                (property_identifier))
+                              (property_identifier))
+                            (property_identifier))
+                          (member_expression
+                            (member_expression
+                              (member_expression
+                                (identifier)
+                                (property_identifier))
+                              (property_identifier))
+                            (property_identifier))
+                          (string
+                            (string_fragment))))
+                      (number))
+                    (false)
+                    (true))))))
+          (return_statement
+            (member_expression
+              (identifier)
+              (property_identifier))))))

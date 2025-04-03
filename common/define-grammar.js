@@ -150,6 +150,7 @@ module.exports = function defineGrammar(dialect) {
       [$.update_expression, $.pair],
       [$.ternary_expression, $.pair],
       [$.elvis_expression, $.pair],
+
       // [$.class_static_block, $._property_name],
 
     ]).concat(
@@ -158,6 +159,7 @@ module.exports = function defineGrammar(dialect) {
         [$.assignment_expression, $._property_name],
         [$.switch_case, $._property_name],
         [$.call_expression, $._property_name],
+        [$.binary_expression, $._property_name],
       ] : [
         [$.hash_empty, $._hash],
         [$.hash_expression, $._hash],
@@ -656,11 +658,13 @@ module.exports = function defineGrammar(dialect) {
         $._cf_open_tag,
         keyword('zip'),
         repeat($.cf_attribute),
-        $.cf_selfclose_tag_end,
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('zip'),
-        alias($._close_tag_delim, '>'),
+        choice('/>', seq(
+          alias($._close_tag_delim, '>'),
+          repeat($._node),
+          $._cf_close_tag,
+          keyword('zip'),
+          alias($._close_tag_delim, '>'),
+        )),
       )),
 
       cf_savecontent_tag: $ => prec.right(2, seq(
@@ -1646,7 +1650,7 @@ module.exports = function defineGrammar(dialect) {
           (associativity === 'right' ? prec.right : prec.left)(precedence, seq(
             field('left', operator === 'in' ? choice($.expression, $.private_property_identifier) : $.expression),
             field('operator', operator),
-            field('right', $.expression),
+            field('right', choice($.expression, ( dialect === 'cfhtml' ? $._hash_expression : $._hash))),
           )),
         ),
       ),
