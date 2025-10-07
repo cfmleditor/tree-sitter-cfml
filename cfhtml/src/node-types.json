@@ -800,43 +800,11 @@
             "named": false
           },
           {
-            "type": "<",
-            "named": false
-          },
-          {
-            "type": "<<",
-            "named": false
-          },
-          {
-            "type": "<=",
-            "named": false
-          },
-          {
-            "type": "<>",
-            "named": false
-          },
-          {
             "type": "==",
             "named": false
           },
           {
             "type": "===",
-            "named": false
-          },
-          {
-            "type": ">",
-            "named": false
-          },
-          {
-            "type": ">=",
-            "named": false
-          },
-          {
-            "type": ">>",
-            "named": false
-          },
-          {
-            "type": ">>>",
             "named": false
           },
           {
@@ -2842,6 +2810,7 @@
   {
     "type": "comment",
     "named": true,
+    "extra": true,
     "fields": {}
   },
   {
@@ -4946,10 +4915,6 @@
     "named": false
   },
   {
-    "type": "<<",
-    "named": false
-  },
-  {
     "type": "<<=",
     "named": false
   },
@@ -4994,15 +4959,7 @@
     "named": false
   },
   {
-    "type": ">>",
-    "named": false
-  },
-  {
     "type": ">>=",
-    "named": false
-  },
-  {
-    "type": ">>>",
     "named": false
   },
   {
@@ -5220,11 +5177,11 @@
   },
   {
     "type": "import",
-    "named": false
+    "named": true
   },
   {
     "type": "import",
-    "named": true
+    "named": false
   },
   {
     "type": "in",
