@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(tree-sitter-cfml
-        VERSION "0.24.0"
+        VERSION "0.25.0"
         DESCRIPTION "CFML grammar for tree-sitter"
         HOMEPAGE_URL "https://github.com/cfmleditor/tree-sitter-cfml"
         LANGUAGES C)
