@@ -1707,9 +1707,9 @@ async function Module2(moduleArg = {}) {
   var wasmBinaryFile;
   function findWasmBinary() {
     if (Module["locateFile"]) {
-      return locateFile("web-tree-sitter.wasm");
+      return locateFile("tree-sitter.wasm");
     }
-    return new URL("web-tree-sitter.wasm", import.meta.url).href;
+    return new URL("tree-sitter.wasm", import.meta.url).href;
   }
   __name(findWasmBinary, "findWasmBinary");
   function getBinarySync(file) {
