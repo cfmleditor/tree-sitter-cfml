@@ -130,7 +130,16 @@ module.exports = grammar({
     [$.tag_statement, $.expression],
     [$.sequence_expression, $.arguments],
 
-    [$.expression, $._function_options],
+    // [$.expression, $._function_options],
+    [$.expression, $.object],
+    [$.binary_expression, $.pair],
+    [$.member_expression, $.pair],
+    [$.call_expression, $.pair],
+    [$.subscript_expression, $.pair],
+    [$.member_expression, $.subscript_expression, $.pair],
+    [$.update_expression, $.pair],
+    [$.ternary_expression, $.pair],
+    [$.elvis_expression, $.pair],
   ],
 
   word: ($) => $.identifier,
@@ -550,6 +559,7 @@ module.exports = grammar({
       $.new_expression,
       $.yield_expression,
       $._hash,
+      $.pair,
       $.object_pattern,
     ),
 
@@ -829,7 +839,7 @@ module.exports = grammar({
       'function',
       field('name', optional($.identifier)),
       $._call_signature,
-      repeat($._function_options),
+      repeat($.assignment_expression),
       field('body', $.statement_block),
     )),
 
@@ -882,15 +892,15 @@ module.exports = grammar({
       'function',
       field('name', $.identifier),
       $._call_signature,
-      repeat($._function_options),
+      repeat($.assignment_expression),
       field('body', $.statement_block),
       optional($._automatic_semicolon),
     )),
 
-    _function_options: ($) => choice(  
-      $.assignment_expression,
-      alias($.assignment_expression2, $.assignment_expression),
-    ),
+    // _function_options: ($) => choice(  
+    //   $.assignment_expression,
+    //   alias($.assignment_expression2, $.assignment_expression),
+    // ),
 
     // generator_function: ($) => prec('literal', seq(
     //   optional('async'),
@@ -1013,11 +1023,11 @@ module.exports = grammar({
       field('right', $.expression),
     )),
 
-    assignment_expression2: ($) => prec.right('assign', seq(
-      field('left', choice($.parenthesized_expression, $._lhs_expression)),
-      ':',
-      field('right', $.expression),
-    )),
+    // assignment_expression2: ($) => prec.right('assign', seq(
+    //   field('left', choice($.parenthesized_expression, $._lhs_expression)),
+    //   ':',
+    //   field('right', $.expression),
+    // )),
 
     _augmented_assignment_lhs: ($) => choice(
       $.member_expression,
@@ -1314,7 +1324,7 @@ module.exports = grammar({
 
     arguments: ($) => seq(
       '(',
-      commaSep(optional(choice($.expression, alias($.assignment_expression2, $.assignment_expression), $.spread_element))),
+      commaSep(optional(choice($.expression, $.spread_element))),
       ')',
     ),
 
@@ -1416,6 +1426,7 @@ module.exports = grammar({
         $.property_identifier,
       ),
       // $.private_property_identifier,
+      $.null,
       $.string,
       $.number,
       $.computed_property_name,

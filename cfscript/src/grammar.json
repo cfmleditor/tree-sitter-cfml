@@ -1874,6 +1874,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "pair"
+        },
+        {
+          "type": "SYMBOL",
           "name": "object_pattern"
         }
       ]
@@ -2674,7 +2678,7 @@
             "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
-              "name": "_function_options"
+              "name": "assignment_expression"
             }
           },
           {
@@ -2885,7 +2889,7 @@
             "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
-              "name": "_function_options"
+              "name": "assignment_expression"
             }
           },
           {
@@ -2910,24 +2914,6 @@
           }
         ]
       }
-    },
-    "_function_options": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "assignment_expression"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "assignment_expression2"
-          },
-          "named": true,
-          "value": "assignment_expression"
-        }
-      ]
     },
     "arrow_function": {
       "type": "SEQ",
@@ -3492,44 +3478,6 @@
           {
             "type": "STRING",
             "value": "="
-          },
-          {
-            "type": "FIELD",
-            "name": "right",
-            "content": {
-              "type": "SYMBOL",
-              "name": "expression"
-            }
-          }
-        ]
-      }
-    },
-    "assignment_expression2": {
-      "type": "PREC_RIGHT",
-      "value": "assign",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "FIELD",
-            "name": "left",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "parenthesized_expression"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_lhs_expression"
-                }
-              ]
-            }
-          },
-          {
-            "type": "STRING",
-            "value": ":"
           },
           {
             "type": "FIELD",
@@ -6110,15 +6058,6 @@
                           "name": "expression"
                         },
                         {
-                          "type": "ALIAS",
-                          "content": {
-                            "type": "SYMBOL",
-                            "name": "assignment_expression2"
-                          },
-                          "named": true,
-                          "value": "assignment_expression"
-                        },
-                        {
                           "type": "SYMBOL",
                           "name": "spread_element"
                         }
@@ -6147,15 +6086,6 @@
                               {
                                 "type": "SYMBOL",
                                 "name": "expression"
-                              },
-                              {
-                                "type": "ALIAS",
-                                "content": {
-                                  "type": "SYMBOL",
-                                  "name": "assignment_expression2"
-                                },
-                                "named": true,
-                                "value": "assignment_expression"
                               },
                               {
                                 "type": "SYMBOL",
@@ -6665,6 +6595,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "null"
+        },
+        {
+          "type": "SYMBOL",
           "name": "string"
         },
         {
@@ -6906,7 +6840,40 @@
     ],
     [
       "expression",
-      "_function_options"
+      "object"
+    ],
+    [
+      "binary_expression",
+      "pair"
+    ],
+    [
+      "member_expression",
+      "pair"
+    ],
+    [
+      "call_expression",
+      "pair"
+    ],
+    [
+      "subscript_expression",
+      "pair"
+    ],
+    [
+      "member_expression",
+      "subscript_expression",
+      "pair"
+    ],
+    [
+      "update_expression",
+      "pair"
+    ],
+    [
+      "ternary_expression",
+      "pair"
+    ],
+    [
+      "elvis_expression",
+      "pair"
     ]
   ],
   "precedences": [

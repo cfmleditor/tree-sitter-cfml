@@ -54,6 +54,10 @@
         "named": true
       },
       {
+        "type": "pair",
+        "named": true
+      },
+      {
         "type": "primary_expression",
         "named": true
       },
@@ -1784,6 +1788,10 @@
             "named": true
           },
           {
+            "type": "null",
+            "named": true
+          },
+          {
             "type": "number",
             "named": true
           },
@@ -1993,6 +2001,10 @@
             "named": true
           },
           {
+            "type": "null",
+            "named": true
+          },
+          {
             "type": "number",
             "named": true
           },
@@ -2036,6 +2048,10 @@
           },
           {
             "type": "hash_expression",
+            "named": true
+          },
+          {
+            "type": "null",
             "named": true
           },
           {

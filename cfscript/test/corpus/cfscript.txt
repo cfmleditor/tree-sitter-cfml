@@ -475,7 +475,7 @@ component {
                           (call_expression
                             (identifier)
                             (arguments
-                              (assignment_expression
+                              (pair
                                 (null)
                                 (string
                                   (string_fragment))))))))
@@ -727,6 +727,9 @@ private function verifyPacket(required struct samlPacket){
         "NotOnOrAfter"  : DateCompare(arguments.samlPacket.conditions.now, arguments.samlPacket.conditions.NotOnOrAfter,"s") >= 0 ? false : true
     };
 
+    test(testabc:"saml", message:"Error: No value for: #ARGUMENTS.xpath#");
+    throw(testabc:"saml", message:"Error: No value for: #ARGUMENTS.xpath#");
+
     return arguments.samlPacket;
 }
 
@@ -816,6 +819,37 @@ private function verifyPacket(required struct samlPacket){
                       (number))
                     (false)
                     (true))))))
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (pair
+                  (property_identifier)
+                  (string
+                    (string_fragment)))
+                (pair
+                  (property_identifier)
+                  (string
+                    (string_fragment)
+                    (hash_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier))))))))
+          (throw_statement
+            (parenthesized_expression
+              (sequence_expression
+                (pair
+                  (property_identifier)
+                  (string
+                    (string_fragment)))
+                (pair
+                  (property_identifier)
+                  (string
+                    (string_fragment)
+                    (hash_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier))))))))
           (return_statement
             (member_expression
               (identifier)
