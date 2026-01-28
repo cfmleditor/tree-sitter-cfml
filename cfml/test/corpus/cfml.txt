@@ -1924,8 +1924,12 @@ failing expression
   test
 </CFTEST>
 
-<cfzip test="" />
-<cfzip test="" />
+<cfzip test="">
+<cfset test = "">
+</cfzip>
+<cfset test = "">
+<cfzip test="">
+<cfset test = "">
 ---
 (program
       (cf_generic_tag
@@ -1936,9 +1940,54 @@ failing expression
         (cf_attribute
           (cf_attribute_name)
           (quoted_cf_attribute_value))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (string))
+          (cf_selfclose_tag_end)))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (string))
         (cf_selfclose_tag_end))
       (cf_zip_tag
         (cf_attribute
           (cf_attribute_name)
           (quoted_cf_attribute_value))
-        (cf_selfclose_tag_end)))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (string))
+          (cf_selfclose_tag_end))))
+
+===================================
+cftransaction
+===================================
+<cftransaction isolation="read_committed">
+			<cftransaction action="commit" />
+      <cfset test = "">
+      <cfset test = "">
+</cftransaction>
+---
+(program
+      (cf_transaction_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_selfclose_tag
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_selfclose_tag_end))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (string))
+          (cf_selfclose_tag_end))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (string))
+          (cf_selfclose_tag_end))))

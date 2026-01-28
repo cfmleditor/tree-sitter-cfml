@@ -454,11 +454,18 @@ module.exports = function defineGrammar(dialect) {
         $._cf_open_tag,
         keyword('execute'),
         repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('execute'),
-        alias($._close_tag_delim, '>'),
+        choice(
+          $.cf_selfclose_tag_end,
+          seq(
+            alias($._close_tag_delim, '>'),
+            optional(repeat($._node)),
+            optional(seq(
+              $._cf_close_tag,
+              keyword('execute'),
+              alias($._close_tag_delim, '>'),
+            )),
+          ),
+        ),
       )),
 
       cf_storedproc_tag: $ => prec.right(3, seq(
@@ -528,7 +535,6 @@ module.exports = function defineGrammar(dialect) {
           keyword('param'),
           keyword('import'),
           keyword('abort'),
-          keyword('transaction'),
           keyword('argument'),
           keyword('continue'),
           keyword('httpparam'),
@@ -539,6 +545,9 @@ module.exports = function defineGrammar(dialect) {
           keyword('file'),
           keyword('setting'),
           keyword('dump'),
+          keyword('header'),
+          keyword('include'),
+          keyword('transaction'),
         )),
         optional(repeat($.cf_attribute)),
         $.cf_selfclose_tag_end,
@@ -690,10 +699,12 @@ module.exports = function defineGrammar(dialect) {
           $.cf_selfclose_tag_end,
           seq(
             alias($._close_tag_delim, '>'),
-            repeat($._node),
-            $._cf_close_tag,
-            keyword('zip'),
-            alias($._close_tag_delim, '>'),
+            optional(repeat($._node)),
+            optional(seq(
+              $._cf_close_tag,
+              keyword('zip'),
+              alias($._close_tag_delim, '>'),
+            )),
           ),
         ),
       )),

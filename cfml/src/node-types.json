@@ -1357,6 +1357,10 @@
           "named": true
         },
         {
+          "type": "cf_selfclose_tag_end",
+          "named": true
+        },
+        {
           "type": "cf_tag",
           "named": true
         },
@@ -2283,6 +2287,10 @@
             "named": false
           },
           {
+            "type": "header",
+            "named": false
+          },
+          {
             "type": "htmlhead",
             "named": false
           },
@@ -2296,6 +2304,10 @@
           },
           {
             "type": "import",
+            "named": false
+          },
+          {
+            "type": "include",
             "named": false
           },
           {
@@ -5394,6 +5406,10 @@
     "named": false
   },
   {
+    "type": "header",
+    "named": false
+  },
+  {
     "type": "html_text",
     "named": true
   },
@@ -5435,6 +5451,10 @@
   },
   {
     "type": "in",
+    "named": false
+  },
+  {
+    "type": "include",
     "named": false
   },
   {

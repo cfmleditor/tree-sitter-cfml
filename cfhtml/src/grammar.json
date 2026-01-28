@@ -1357,49 +1357,84 @@
             }
           },
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_tag_delim"
-            },
-            "named": false,
-            "value": ">"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_node"
-            }
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_cf_close_tag"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[eE][xX][eE][cC][uU][tT][eE]"
-                }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "cf_selfclose_tag_end"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_close_tag_delim"
+                    },
+                    "named": false,
+                    "value": ">"
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "REPEAT",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_node"
+                        }
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_cf_close_tag"
+                          },
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "TOKEN",
+                              "content": {
+                                "type": "PREC",
+                                "value": 1,
+                                "content": {
+                                  "type": "PATTERN",
+                                  "value": "[eE][xX][eE][cC][uU][tT][eE]"
+                                }
+                              }
+                            },
+                            "named": false,
+                            "value": "execute"
+                          },
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "SYMBOL",
+                              "name": "_close_tag_delim"
+                            },
+                            "named": false,
+                            "value": ">"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
+                  }
+                ]
               }
-            },
-            "named": false,
-            "value": "execute"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_tag_delim"
-            },
-            "named": false,
-            "value": ">"
+            ]
           }
         ]
       }
@@ -1943,22 +1978,6 @@
                       "value": 1,
                       "content": {
                         "type": "PATTERN",
-                        "value": "[tT][rR][aA][nN][sS][aA][cC][tT][iI][oO][nN]"
-                      }
-                    }
-                  },
-                  "named": false,
-                  "value": "transaction"
-                },
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "TOKEN",
-                    "content": {
-                      "type": "PREC",
-                      "value": 1,
-                      "content": {
-                        "type": "PATTERN",
                         "value": "[aA][rR][gG][uU][mM][eE][nN][tT]"
                       }
                     }
@@ -2109,6 +2128,54 @@
                   },
                   "named": false,
                   "value": "dump"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "TOKEN",
+                    "content": {
+                      "type": "PREC",
+                      "value": 1,
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[hH][eE][aA][dD][eE][rR]"
+                      }
+                    }
+                  },
+                  "named": false,
+                  "value": "header"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "TOKEN",
+                    "content": {
+                      "type": "PREC",
+                      "value": 1,
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[iI][nN][cC][lL][uU][dD][eE]"
+                      }
+                    }
+                  },
+                  "named": false,
+                  "value": "include"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "TOKEN",
+                    "content": {
+                      "type": "PREC",
+                      "value": 1,
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[tT][rR][aA][nN][sS][aA][cC][tT][iI][oO][nN]"
+                      }
+                    }
+                  },
+                  "named": false,
+                  "value": "transaction"
                 }
               ]
             }
@@ -3205,40 +3272,61 @@
                     "value": ">"
                   },
                   {
-                    "type": "REPEAT",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_node"
-                    }
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "_cf_close_tag"
-                  },
-                  {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "TOKEN",
-                      "content": {
-                        "type": "PREC",
-                        "value": 1,
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "REPEAT",
                         "content": {
-                          "type": "PATTERN",
-                          "value": "[zZ][iI][pP]"
+                          "type": "SYMBOL",
+                          "name": "_node"
                         }
+                      },
+                      {
+                        "type": "BLANK"
                       }
-                    },
-                    "named": false,
-                    "value": "zip"
+                    ]
                   },
                   {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_close_tag_delim"
-                    },
-                    "named": false,
-                    "value": ">"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "_cf_close_tag"
+                          },
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "TOKEN",
+                              "content": {
+                                "type": "PREC",
+                                "value": 1,
+                                "content": {
+                                  "type": "PATTERN",
+                                  "value": "[zZ][iI][pP]"
+                                }
+                              }
+                            },
+                            "named": false,
+                            "value": "zip"
+                          },
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "SYMBOL",
+                              "name": "_close_tag_delim"
+                            },
+                            "named": false,
+                            "value": ">"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
                   }
                 ]
               }
