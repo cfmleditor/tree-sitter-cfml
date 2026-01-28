@@ -535,7 +535,10 @@ module.exports = function defineGrammar(dialect) {
           keyword('wddx'),
           keyword('break'),
           keyword('zipparam'),
-          /[a-zA-Z0-9_:]+/,
+          keyword('directory'),
+          keyword('file'),
+          keyword('setting'),
+          keyword('dump'),
         )),
         optional(repeat($.cf_attribute)),
         $.cf_selfclose_tag_end,
@@ -679,17 +682,20 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      cf_zip_tag: $ => prec.right(3, seq(
+      cf_zip_tag: $ => prec.right(2, seq(
         $._cf_open_tag,
         keyword('zip'),
         repeat($.cf_attribute),
-        choice('/>', seq(
-          alias($._close_tag_delim, '>'),
-          repeat($._node),
-          $._cf_close_tag,
-          keyword('zip'),
-          alias($._close_tag_delim, '>'),
-        )),
+        choice(
+          $.cf_selfclose_tag_end,
+          seq(
+            alias($._close_tag_delim, '>'),
+            repeat($._node),
+            $._cf_close_tag,
+            keyword('zip'),
+            alias($._close_tag_delim, '>'),
+          ),
+        ),
       )),
 
       cf_savecontent_tag: $ => prec.right(2, seq(
@@ -881,6 +887,24 @@ module.exports = function defineGrammar(dialect) {
         alias($.cf_query_tag, $.cf_query),
       ),
 
+      cf_generic_tag: $ => prec.right(1, seq(
+        $._cf_open_tag,
+        field('cf_tag_name', $.cf_tag_name),
+        repeat($.cf_attribute),
+        choice(
+          $.cf_selfclose_tag_end,
+          seq(
+            alias($._close_tag_delim, '>'),
+            repeat($._node),
+            $._cf_close_tag,
+            field('cf_tag_name', $.cf_tag_name),
+            alias($._close_tag_delim, '>'),
+          ),
+        ),
+      )),
+
+      cf_tag_name: _ => /[a-zA-Z][a-zA-Z0-9_]*/,
+
       cf_tag: $ => prec.right(3, choice(
         $._cf_super_tags,
         $.cf_if_tag,
@@ -902,6 +926,7 @@ module.exports = function defineGrammar(dialect) {
         $.cf_zip_tag,
         alias($.cf_loop_tag, $.cf_loop),
         alias($.cf_return_tag, $.cf_return),
+        $.cf_generic_tag,
       )),
 
       cf_tag_query: $ => prec.right(3, choice(

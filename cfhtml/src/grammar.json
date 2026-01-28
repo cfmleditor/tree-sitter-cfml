@@ -2047,8 +2047,68 @@
                   "value": "zipparam"
                 },
                 {
-                  "type": "PATTERN",
-                  "value": "[a-zA-Z0-9_:]+"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "TOKEN",
+                    "content": {
+                      "type": "PREC",
+                      "value": 1,
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[dD][iI][rR][eE][cC][tT][oO][rR][yY]"
+                      }
+                    }
+                  },
+                  "named": false,
+                  "value": "directory"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "TOKEN",
+                    "content": {
+                      "type": "PREC",
+                      "value": 1,
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[fF][iI][lL][eE]"
+                      }
+                    }
+                  },
+                  "named": false,
+                  "value": "file"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "TOKEN",
+                    "content": {
+                      "type": "PREC",
+                      "value": 1,
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[sS][eE][tT][tT][iI][nN][gG]"
+                      }
+                    }
+                  },
+                  "named": false,
+                  "value": "setting"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "TOKEN",
+                    "content": {
+                      "type": "PREC",
+                      "value": 1,
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[dD][uU][mM][pP]"
+                      }
+                    }
+                  },
+                  "named": false,
+                  "value": "dump"
                 }
               ]
             }
@@ -3094,7 +3154,7 @@
     },
     "cf_zip_tag": {
       "type": "PREC_RIGHT",
-      "value": 3,
+      "value": 2,
       "content": {
         "type": "SEQ",
         "members": [
@@ -3129,8 +3189,8 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": "/>"
+                "type": "SYMBOL",
+                "name": "cf_selfclose_tag_end"
               },
               {
                 "type": "SEQ",
@@ -3985,6 +4045,89 @@
         }
       ]
     },
+    "cf_generic_tag": {
+      "type": "PREC_RIGHT",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "FIELD",
+            "name": "cf_tag_name",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_tag_name"
+            }
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_attribute"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "cf_selfclose_tag_end"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_close_tag_delim"
+                    },
+                    "named": false,
+                    "value": ">"
+                  },
+                  {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_node"
+                    }
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_cf_close_tag"
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "cf_tag_name",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "cf_tag_name"
+                    }
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_close_tag_delim"
+                    },
+                    "named": false,
+                    "value": ">"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "cf_tag_name": {
+      "type": "PATTERN",
+      "value": "[a-zA-Z][a-zA-Z0-9_]*"
+    },
     "cf_tag": {
       "type": "PREC_RIGHT",
       "value": 3,
@@ -4080,6 +4223,10 @@
             },
             "named": true,
             "value": "cf_return"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_generic_tag"
           }
         ]
       }

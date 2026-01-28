@@ -1864,7 +1864,8 @@ cfzip
                 (cf_attribute
                   (cf_attribute_name)
                   (quoted_cf_attribute_value
-                    (attribute_value))))))
+                    (attribute_value)))
+                (cf_selfclose_tag_end))))
           (cf_return
             (identifier)
             (cf_selfclose_tag_end)))
@@ -1914,3 +1915,30 @@ failing expression
             (text)
             (query_operator)
             (text)))))
+
+
+===================================
+failing expression
+===================================
+<CFTEST>
+  test
+</CFTEST>
+
+<cfzip test="" />
+<cfzip test="" />
+---
+(program
+      (cf_generic_tag
+        (cf_tag_name)
+        (text)
+        (cf_tag_name))
+      (cf_zip_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value))
+        (cf_selfclose_tag_end))
+      (cf_zip_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value))
+        (cf_selfclose_tag_end)))

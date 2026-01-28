@@ -34,6 +34,10 @@
         "named": true
       },
       {
+        "type": "cf_generic_tag",
+        "named": true
+      },
+      {
         "type": "cf_http_tag",
         "named": true
       },
@@ -1438,6 +1442,88 @@
     }
   },
   {
+    "type": "cf_generic_tag",
+    "named": true,
+    "fields": {
+      "cf_tag_name": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "cf_tag_name",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag_end",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cfscript_element",
+          "named": true
+        },
+        {
+          "type": "doctype",
+          "named": true
+        },
+        {
+          "type": "element",
+          "named": true
+        },
+        {
+          "type": "end_tag",
+          "named": true
+        },
+        {
+          "type": "entity",
+          "named": true
+        },
+        {
+          "type": "erroneous_end_tag",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "script_element",
+          "named": true
+        },
+        {
+          "type": "style_element",
+          "named": true
+        },
+        {
+          "type": "text",
+          "named": true
+        },
+        {
+          "type": "xml_decl",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_http_tag",
     "named": true,
     "fields": {},
@@ -2185,6 +2271,18 @@
             "named": false
           },
           {
+            "type": "directory",
+            "named": false
+          },
+          {
+            "type": "dump",
+            "named": false
+          },
+          {
+            "type": "file",
+            "named": false
+          },
+          {
             "type": "htmlhead",
             "named": false
           },
@@ -2843,6 +2941,10 @@
       "types": [
         {
           "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag_end",
           "named": true
         },
         {
@@ -5196,6 +5298,10 @@
     "extra": true
   },
   {
+    "type": "cf_tag_name",
+    "named": true
+  },
+  {
     "type": "cf_var",
     "named": true
   },
@@ -5228,11 +5334,19 @@
     "named": false
   },
   {
+    "type": "directory",
+    "named": false
+  },
+  {
     "type": "do",
     "named": false
   },
   {
     "type": "doctype",
+    "named": false
+  },
+  {
+    "type": "dump",
     "named": false
   },
   {
@@ -5262,6 +5376,10 @@
   {
     "type": "false",
     "named": true
+  },
+  {
+    "type": "file",
+    "named": false
   },
   {
     "type": "finally",
