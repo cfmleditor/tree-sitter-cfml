@@ -2362,6 +2362,224 @@
         ]
       }
     },
+    "cf_transaction_action_tag": {
+      "type": "PREC_RIGHT",
+      "value": 5,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "TOKEN",
+              "content": {
+                "type": "PREC",
+                "value": 1,
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[tT][rR][aA][nN][sS][aA][cC][tT][iI][oO][nN]"
+                }
+              }
+            },
+            "named": false,
+            "value": "transaction"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_attribute"
+            }
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PREC",
+                    "value": 1,
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[aA][cC][tT][iI][oO][nN]"
+                    }
+                  }
+                },
+                "named": false,
+                "value": "action"
+              },
+              {
+                "type": "STRING",
+                "value": "="
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": "\""
+                      },
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "TOKEN",
+                              "content": {
+                                "type": "PREC",
+                                "value": 1,
+                                "content": {
+                                  "type": "PATTERN",
+                                  "value": "[cC][oO][mM][mM][iI][tT]"
+                                }
+                              }
+                            },
+                            "named": false,
+                            "value": "commit"
+                          },
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "TOKEN",
+                              "content": {
+                                "type": "PREC",
+                                "value": 1,
+                                "content": {
+                                  "type": "PATTERN",
+                                  "value": "[rR][oO][lL][lL][bB][aA][cC][kK]"
+                                }
+                              }
+                            },
+                            "named": false,
+                            "value": "rollback"
+                          },
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "TOKEN",
+                              "content": {
+                                "type": "PREC",
+                                "value": 1,
+                                "content": {
+                                  "type": "PATTERN",
+                                  "value": "[sS][eE][tT][sS][aA][vV][eE][pP][oO][iI][nN][tT]"
+                                }
+                              }
+                            },
+                            "named": false,
+                            "value": "setsavepoint"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "\""
+                      }
+                    ]
+                  },
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "STRING",
+                        "value": "'"
+                      },
+                      {
+                        "type": "CHOICE",
+                        "members": [
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "TOKEN",
+                              "content": {
+                                "type": "PREC",
+                                "value": 1,
+                                "content": {
+                                  "type": "PATTERN",
+                                  "value": "[cC][oO][mM][mM][iI][tT]"
+                                }
+                              }
+                            },
+                            "named": false,
+                            "value": "commit"
+                          },
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "TOKEN",
+                              "content": {
+                                "type": "PREC",
+                                "value": 1,
+                                "content": {
+                                  "type": "PATTERN",
+                                  "value": "[rR][oO][lL][lL][bB][aA][cC][kK]"
+                                }
+                              }
+                            },
+                            "named": false,
+                            "value": "rollback"
+                          },
+                          {
+                            "type": "ALIAS",
+                            "content": {
+                              "type": "TOKEN",
+                              "content": {
+                                "type": "PREC",
+                                "value": 1,
+                                "content": {
+                                  "type": "PATTERN",
+                                  "value": "[sS][eE][tT][sS][aA][vV][eE][pP][oO][iI][nN][tT]"
+                                }
+                              }
+                            },
+                            "named": false,
+                            "value": "setsavepoint"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "STRING",
+                        "value": "'"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_attribute"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ">"
+              },
+              {
+                "type": "STRING",
+                "value": "/>"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "cf_try_tag": {
       "type": "PREC_RIGHT",
       "value": 3,
@@ -4271,6 +4489,10 @@
           {
             "type": "SYMBOL",
             "name": "cf_mailpart_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_transaction_action_tag"
           },
           {
             "type": "SYMBOL",

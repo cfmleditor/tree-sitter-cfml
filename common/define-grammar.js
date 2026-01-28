@@ -579,6 +579,30 @@ module.exports = function defineGrammar(dialect) {
         ),
       )),
 
+      cf_transaction_action_tag: $ => prec.right(5, seq(
+        $._cf_open_tag,
+        keyword('transaction'),
+        repeat($.cf_attribute),
+        seq(
+          keyword('action'),
+          '=',
+          choice(
+            seq('"', choice(
+              keyword('commit'),
+              keyword('rollback'),
+              keyword('setsavepoint')
+            ), '"'),
+            seq("'", choice(
+              keyword('commit'),
+              keyword('rollback'),
+              keyword('setsavepoint')
+            ), "'"),
+          ),
+        ),
+        repeat($.cf_attribute),
+        choice('>', '/>'),
+      )),
+
       cf_try_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('try'),
@@ -934,6 +958,7 @@ module.exports = function defineGrammar(dialect) {
         $.cf_switch_tag,
         $.cf_mail_tag,
         $.cf_mailpart_tag,
+        $.cf_transaction_action_tag,
         $.cf_transaction_tag,
         $.cf_set_tag,
         $.cf_selfclose_tag,
