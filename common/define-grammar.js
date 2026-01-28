@@ -547,7 +547,6 @@ module.exports = function defineGrammar(dialect) {
           keyword('dump'),
           keyword('header'),
           keyword('include'),
-          keyword('transaction'),
         )),
         optional(repeat($.cf_attribute)),
         $.cf_selfclose_tag_end,
@@ -568,11 +567,16 @@ module.exports = function defineGrammar(dialect) {
         $._cf_open_tag,
         keyword('transaction'),
         repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('transaction'),
-        alias($._close_tag_delim, '>'),
+        choice(
+          $.cf_selfclose_tag_end,
+          seq(
+            alias($._close_tag_delim, '>'),
+            repeat1($._node),
+            $._cf_close_tag,
+            keyword('transaction'),
+            alias($._close_tag_delim, '>'),
+          ),
+        ),
       )),
 
       cf_try_tag: $ => prec.right(3, seq(

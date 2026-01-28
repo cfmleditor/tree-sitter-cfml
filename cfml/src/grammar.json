@@ -2160,22 +2160,6 @@
                   },
                   "named": false,
                   "value": "include"
-                },
-                {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "TOKEN",
-                    "content": {
-                      "type": "PREC",
-                      "value": 1,
-                      "content": {
-                        "type": "PATTERN",
-                        "value": "[tT][rR][aA][nN][sS][aA][cC][tT][iI][oO][nN]"
-                      }
-                    }
-                  },
-                  "named": false,
-                  "value": "transaction"
                 }
               ]
             }
@@ -2317,49 +2301,63 @@
             }
           },
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_tag_delim"
-            },
-            "named": false,
-            "value": ">"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_node"
-            }
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_cf_close_tag"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[tT][rR][aA][nN][sS][aA][cC][tT][iI][oO][nN]"
-                }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "cf_selfclose_tag_end"
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_close_tag_delim"
+                    },
+                    "named": false,
+                    "value": ">"
+                  },
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_node"
+                    }
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_cf_close_tag"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "TOKEN",
+                      "content": {
+                        "type": "PREC",
+                        "value": 1,
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "[tT][rR][aA][nN][sS][aA][cC][tT][iI][oO][nN]"
+                        }
+                      }
+                    },
+                    "named": false,
+                    "value": "transaction"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "_close_tag_delim"
+                    },
+                    "named": false,
+                    "value": ">"
+                  }
+                ]
               }
-            },
-            "named": false,
-            "value": "transaction"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_tag_delim"
-            },
-            "named": false,
-            "value": ">"
+            ]
           }
         ]
       }

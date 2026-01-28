@@ -2323,10 +2323,6 @@
             "named": false
           },
           {
-            "type": "transaction",
-            "named": false
-          },
-          {
             "type": "wddx",
             "named": false
           },
@@ -2792,10 +2788,14 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag_end",
           "named": true
         },
         {

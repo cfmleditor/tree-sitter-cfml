@@ -1688,7 +1688,7 @@ cftransaction
             (identifier)
             (string))
           (cf_selfclose_tag_end))
-        (cf_selfclose_tag
+        (cf_transaction_tag
           (cf_attribute
             (cf_attribute_name)
             (quoted_cf_attribute_value
@@ -1701,7 +1701,7 @@ cftransaction
           (cf_selfclose_tag_end))
         (cf_if_tag
           (identifier)
-          (cf_selfclose_tag
+          (cf_transaction_tag
             (cf_attribute
               (cf_attribute_name)
               (quoted_cf_attribute_value
@@ -1975,7 +1975,7 @@ cftransaction
           (cf_attribute_name)
           (quoted_cf_attribute_value
             (attribute_value)))
-        (cf_selfclose_tag
+        (cf_transaction_tag
           (cf_attribute
             (cf_attribute_name)
             (quoted_cf_attribute_value
