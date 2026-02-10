@@ -1688,7 +1688,12 @@ cftransaction
             (identifier)
             (string))
           (cf_selfclose_tag_end))
-        (cf_transaction_action_tag)
+        (cf_transaction_tag
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_selfclose_tag_end))
         (cf_set_tag
           (assignment_expression
             (identifier)
@@ -1696,7 +1701,12 @@ cftransaction
           (cf_selfclose_tag_end))
         (cf_if_tag
           (identifier)
-          (cf_transaction_action_tag))
+          (cf_transaction_tag
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (attribute_value)))
+            (cf_selfclose_tag_end)))
         (cf_set_tag
           (assignment_expression
             (identifier)
@@ -1953,10 +1963,8 @@ failing expression
 ===================================
 cftransaction
 ===================================
-<cftransaction isolation="read_committed">
-			<cftransaction action="commit">
-      <cfset test = "">
-      <cfset test = "">
+<cftransaction isolation="read_committed" action="begin">
+			<cftransaction action="commit" />
 </cftransaction>
 ---
 (program
@@ -1965,14 +1973,13 @@ cftransaction
           (cf_attribute_name)
           (quoted_cf_attribute_value
             (attribute_value)))
-        (cf_transaction_action_tag)
-        (cf_set_tag
-          (assignment_expression
-            (identifier)
-            (string))
-          (cf_selfclose_tag_end))
-        (cf_set_tag
-          (assignment_expression
-            (identifier)
-            (string))
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_transaction_tag
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
           (cf_selfclose_tag_end))))

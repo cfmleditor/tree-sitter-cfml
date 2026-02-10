@@ -94,10 +94,6 @@
         "named": true
       },
       {
-        "type": "cf_transaction_action_tag",
-        "named": true
-      },
-      {
         "type": "cf_transaction_tag",
         "named": true
       },
@@ -2687,27 +2683,12 @@
     }
   },
   {
-    "type": "cf_transaction_action_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cf_transaction_tag",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "cf_attribute",
@@ -5156,10 +5137,6 @@
     "named": true
   },
   {
-    "type": "action",
-    "named": false
-  },
-  {
     "type": "argument",
     "named": false
   },
@@ -5207,10 +5184,6 @@
   {
     "type": "cfxml_content",
     "named": true
-  },
-  {
-    "type": "commit",
-    "named": false
   },
   {
     "type": "component",
@@ -5445,10 +5418,6 @@
     "named": true
   },
   {
-    "type": "rollback",
-    "named": false
-  },
-  {
     "type": "savecontent",
     "named": false
   },
@@ -5458,10 +5427,6 @@
   },
   {
     "type": "set",
-    "named": false
-  },
-  {
-    "type": "setsavepoint",
     "named": false
   },
   {
