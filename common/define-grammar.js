@@ -28,6 +28,8 @@ module.exports = function defineGrammar(dialect) {
       $._script_start_tag_name,
       $._style_start_tag_name,
       $._end_tag_name,
+      $._start_cf_tag_name,
+      $._end_cf_tag_name,
       $.erroneous_end_tag_name,
       '/>',
       $.implicit_end_tag,
@@ -151,6 +153,7 @@ module.exports = function defineGrammar(dialect) {
       [$.update_expression, $.pair],
       [$.ternary_expression, $.pair],
       [$.elvis_expression, $.pair],
+      [$.element, $.cf_generic_tag],
 
       // [$.class_static_block, $._property_name],
 
@@ -901,22 +904,28 @@ module.exports = function defineGrammar(dialect) {
         alias($.cf_function_tag, $.cf_function),
         alias($.cf_query_tag, $.cf_query),
       ),
-
-      cf_generic_tag: $ => prec.right(1, seq(
-        $._cf_open_tag,
-        field('cf_tag_name', $.cf_tag_name),
-        repeat($.cf_attribute),
-        choice(
-          $.cf_selfclose_tag_end,
-          seq(
-            alias($._close_tag_delim, '>'),
-            repeat($._node),
-            $._cf_close_tag,
-            field('cf_tag_name', $.cf_tag_name),
-            alias($._close_tag_delim, '>'),
-          ),
+      
+      cf_generic_tag: $ => choice(
+        seq(
+          $.cf_start_tag,
+          repeat($._node),
+          choice($.cf_end_tag, $.implicit_end_tag),
         ),
-      )),
+        $.self_closing_tag,
+      ),
+
+      cf_start_tag: $ => seq(
+        token('<'),
+        alias($._start_cf_tag_name, $.cf_tag_name),
+        repeat($.attribute),
+        '>',
+      ),
+
+      cf_end_tag: $ => seq(
+        token('</'),
+        alias($._end_cf_tag_name, $.cf_tag_name),
+        '>',
+      ),
 
       cf_tag_name: _ => /[a-zA-Z][a-zA-Z0-9_]*/,
 

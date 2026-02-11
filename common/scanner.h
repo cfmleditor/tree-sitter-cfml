@@ -13,6 +13,8 @@ enum TokenType {
     SCRIPT_START_TAG_NAME,
     STYLE_START_TAG_NAME,
     END_TAG_NAME,
+    CF_START_TAG_NAME,
+    CF_END_TAG_NAME,
     ERRONEOUS_END_TAG_NAME,
     SELF_CLOSING_TAG_DELIMITER,
     IMPLICIT_END_TAG,
@@ -59,8 +61,8 @@ static unsigned serialize(Scanner *scanner, char *buffer) {
 
     for (; serialized_tag_count < tag_count; serialized_tag_count++) {
         Tag tag = scanner->tags.contents[serialized_tag_count];
-        if (tag.type == CUSTOM) {
-            unsigned name_length = tag.custom_tag_name.size;
+        if (tag.type == CUSTOM || tag.type == CFML) {
+            unsigned name_length = tag.tag_name.size;
             if (name_length > UINT8_MAX) {
                 name_length = UINT8_MAX;
             }
@@ -69,7 +71,7 @@ static unsigned serialize(Scanner *scanner, char *buffer) {
             }
             buffer[size++] = (char)tag.type;
             buffer[size++] = (char)name_length;
-            strncpy(&buffer[size], tag.custom_tag_name.contents, name_length);
+            strncpy(&buffer[size], tag.tag_name.contents, name_length);
             size += name_length;
         } else {
             if (size + 1 >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
@@ -106,11 +108,11 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length) {
             for (iter = 0; iter < serialized_tag_count; iter++) {
                 Tag tag = tag_new();
                 tag.type = (TagType)buffer[size++];
-                if (tag.type == CUSTOM) {
+                if (tag.type == CUSTOM || tag.type == CFML) {
                     uint16_t name_length = (uint8_t)buffer[size++];
-                    array_reserve(&tag.custom_tag_name, name_length);
-                    tag.custom_tag_name.size = name_length;
-                    memcpy(tag.custom_tag_name.contents, &buffer[size], name_length);
+                    array_reserve(&tag.tag_name, name_length);
+                    tag.tag_name.size = name_length;
+                    memcpy(tag.tag_name.contents, &buffer[size], name_length);
                     size += name_length;
                 }
                 array_push(&scanner->tags, tag);
@@ -124,15 +126,23 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length) {
     }
 }
 
-static String scan_tag_name(TSLexer *lexer) {
+typedef struct {
+    String tag_name;
+    bool is_cf_tag;
+} TagNameResult;
+
+static TagNameResult scan_tag_name(TSLexer *lexer) {
+    TagNameResult result;
     String tag_name = array_new();
-    String empty_tag_name = array_new();
+    bool is_cf_tag = false;
 
     if ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) {
         array_push(&tag_name, towupper(lexer->lookahead));
         advance(lexer);
-        if ( lexer->lookahead == 'f' || lexer->lookahead == 'F' ) {
-            return empty_tag_name;
+        if (lexer->lookahead == 'f' || lexer->lookahead == 'F') {
+            is_cf_tag = true;
+            array_push(&tag_name, towupper(lexer->lookahead));
+            advance(lexer);
         }
     }
 
@@ -140,7 +150,11 @@ static String scan_tag_name(TSLexer *lexer) {
         array_push(&tag_name, towupper(lexer->lookahead));
         advance(lexer);
     }
-    return tag_name;
+
+    result.tag_name = tag_name;
+    result.is_cf_tag = is_cf_tag;
+    
+    return result;
 }
 
 static bool scan_comment(TSLexer *lexer) {
@@ -553,13 +567,13 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
         }
     }
 
-    String tag_name = scan_tag_name(lexer);
-    if (tag_name.size == 0 && !lexer->eof(lexer)) {
-        array_delete(&tag_name);
+    TagNameResult result = scan_tag_name(lexer);
+    if (result.tag_name.size == 0 && !lexer->eof(lexer)) {
+        array_delete(&result.tag_name);
         return false;
     }
 
-    Tag next_tag = tag_for_name(tag_name);
+    Tag next_tag = result.is_cf_tag ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name); 
 
     if (is_closing_tag) {
         // The tag correctly closes the topmost element on the stack
@@ -581,7 +595,6 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
     } else if (
         parent &&
         (
-            !tag_can_contain(parent, &next_tag) ||
             ((parent->type == HTML || parent->type == HEAD || parent->type == BODY) && lexer->eof(lexer))
         )
     ) {
@@ -597,14 +610,14 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
 
 static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer) {
 
-    String tag_name = scan_tag_name(lexer);
+    TagNameResult result = scan_tag_name(lexer);
 
-    if (tag_name.size == 0) {
-        array_delete(&tag_name);
+    if (result.tag_name.size == 0) {
+        array_delete(&result.tag_name);
         return false;
     }
 
-    Tag tag = tag_for_name(tag_name);
+    Tag tag = result.is_cf_tag ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
     array_push(&scanner->tags, tag);
     switch (tag.type) {
         case SCRIPT:
@@ -612,6 +625,9 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer) {
             break;
         case STYLE:
             lexer->result_symbol = STYLE_START_TAG_NAME;
+            break;
+        case CFML:
+            lexer->result_symbol = CF_START_TAG_NAME;
             break;
         default:
             lexer->result_symbol = START_TAG_NAME;
@@ -622,17 +638,21 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer) {
 
 static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer) {
     
-    String tag_name = scan_tag_name(lexer);
+    TagNameResult result = scan_tag_name(lexer);
 
-    if (tag_name.size == 0) {
-        array_delete(&tag_name);
+    if (result.tag_name.size == 0) {
+        array_delete(&result.tag_name);
         return false;
     }
 
-    Tag tag = tag_for_name(tag_name);
+    Tag tag = result.is_cf_tag ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
     if (scanner->tags.size > 0 && tag_eq(array_back(&scanner->tags), &tag)) {
         pop_tag(scanner);
-        lexer->result_symbol = END_TAG_NAME;
+        if ( tag.type == CFML ) {
+            lexer->result_symbol = CF_END_TAG_NAME;
+        } else {
+            lexer->result_symbol = END_TAG_NAME;
+        }
     } else {
         lexer->result_symbol = ERRONEOUS_END_TAG_NAME;
     }
@@ -1015,10 +1035,11 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
         default:
             
-            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME]) && !valid_symbols[RAW_TEXT]) {
-                return valid_symbols[START_TAG_NAME] ? scan_start_tag_name(scanner, lexer)
+            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_END_TAG_NAME]) && !valid_symbols[RAW_TEXT]) {
+                return ( valid_symbols[START_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] ) ? scan_start_tag_name(scanner, lexer)
                                                      : scan_end_tag_name(scanner, lexer);
             }
+            
             if (valid_symbols[IMPLICIT_END_TAG]) {
                 return scan_implicit_end_tag(scanner, lexer);
             }

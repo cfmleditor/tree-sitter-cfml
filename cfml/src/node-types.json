@@ -1345,6 +1345,21 @@
     }
   },
   {
+    "type": "cf_end_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_tag_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_execute_tag",
     "named": true,
     "fields": {},
@@ -1448,28 +1463,17 @@
   {
     "type": "cf_generic_tag",
     "named": true,
-    "fields": {
-      "cf_tag_name": {
-        "multiple": true,
-        "required": true,
-        "types": [
-          {
-            "type": "cf_tag_name",
-            "named": true
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
-          "type": "cf_attribute",
+          "type": "cf_end_tag",
           "named": true
         },
         {
-          "type": "cf_selfclose_tag_end",
+          "type": "cf_start_tag",
           "named": true
         },
         {
@@ -1509,7 +1513,15 @@
           "named": true
         },
         {
+          "type": "implicit_end_tag",
+          "named": true
+        },
+        {
           "type": "script_element",
+          "named": true
+        },
+        {
+          "type": "self_closing_tag",
           "named": true
         },
         {
@@ -2438,6 +2450,25 @@
         },
         {
           "type": "xml_decl",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_start_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "attribute",
+          "named": true
+        },
+        {
+          "type": "cf_tag_name",
           "named": true
         }
       ]

@@ -4132,83 +4132,99 @@
       ]
     },
     "cf_generic_tag": {
-      "type": "PREC_RIGHT",
-      "value": 1,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_cf_open_tag"
-          },
-          {
-            "type": "FIELD",
-            "name": "cf_tag_name",
-            "content": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
               "type": "SYMBOL",
-              "name": "cf_tag_name"
-            }
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "cf_attribute"
-            }
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
+              "name": "cf_start_tag"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
                 "type": "SYMBOL",
-                "name": "cf_selfclose_tag_end"
-              },
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_close_tag_delim"
-                    },
-                    "named": false,
-                    "value": ">"
-                  },
-                  {
-                    "type": "REPEAT",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_node"
-                    }
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "_cf_close_tag"
-                  },
-                  {
-                    "type": "FIELD",
-                    "name": "cf_tag_name",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "cf_tag_name"
-                    }
-                  },
-                  {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "_close_tag_delim"
-                    },
-                    "named": false,
-                    "value": ">"
-                  }
-                ]
+                "name": "_node"
               }
-            ]
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "cf_end_tag"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "implicit_end_tag"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "self_closing_tag"
+        }
+      ]
+    },
+    "cf_start_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "<"
           }
-        ]
-      }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_start_cf_tag_name"
+          },
+          "named": true,
+          "value": "cf_tag_name"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "attribute"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": ">"
+        }
+      ]
+    },
+    "cf_end_tag": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "</"
+          }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_end_cf_tag_name"
+          },
+          "named": true,
+          "value": "cf_tag_name"
+        },
+        {
+          "type": "STRING",
+          "value": ">"
+        }
+      ]
     },
     "cf_tag_name": {
       "type": "PATTERN",
@@ -11287,6 +11303,10 @@
       "pair"
     ],
     [
+      "element",
+      "cf_generic_tag"
+    ],
+    [
       "hash_expression",
       "hash_empty"
     ],
@@ -11653,6 +11673,14 @@
     {
       "type": "SYMBOL",
       "name": "_end_tag_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_start_cf_tag_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_end_cf_tag_name"
     },
     {
       "type": "SYMBOL",
