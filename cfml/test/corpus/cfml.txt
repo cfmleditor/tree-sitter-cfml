@@ -1919,7 +1919,7 @@ static accessor
     (cf_selfclose_tag_end)))
 
 ===================================
-cfzip
+cfzip3
 ===================================
 <cffunction name="validateAndUnzipFile" access="public" output="false" returntype="any">
 		<cfargument name="context" type="struct" required="true" />
@@ -2135,7 +2135,7 @@ failing expression
         (MISSING implicit_cf_end_tag)))
 
 ===================================
-cftransaction
+cftransaction2
 ===================================
 <cftransaction isolation="read_committed" action="begin">
 			<cftransaction action="commit" />
@@ -2166,4 +2166,3 @@ cftransaction
           (cf_end_tag
             (cf_tag_name)))
         (MISSING implicit_cf_end_tag)))
-        

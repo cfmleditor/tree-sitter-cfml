@@ -25,5 +25,10 @@ void tree_sitter_cfml_external_scanner_destroy(void *payload) {
         tag_free(&scanner->tags.contents[i]);
     }
     array_delete(&scanner->tags);
+
+    for (unsigned i = 0; i < scanner->cf_tags.size; i++) {
+        tag_free(&scanner->cf_tags.contents[i]);
+    }
+    array_delete(&scanner->cf_tags);
     ts_free(scanner);
 }

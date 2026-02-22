@@ -214,6 +214,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "erroneous_cf_end_tag"
+        },
+        {
+          "type": "SYMBOL",
           "name": "xml_decl"
         }
       ]
@@ -281,6 +285,10 @@
         {
           "type": "SYMBOL",
           "name": "erroneous_end_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "erroneous_cf_end_tag"
         },
         {
           "type": "SYMBOL",
@@ -908,6 +916,32 @@
           {
             "type": "SYMBOL",
             "name": "erroneous_end_tag_name"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          }
+        ]
+      }
+    },
+    "erroneous_cf_end_tag": {
+      "type": "PREC_RIGHT",
+      "value": 4,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "</"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "erroneous_cf_end_tag_name"
           },
           {
             "type": "ALIAS",
