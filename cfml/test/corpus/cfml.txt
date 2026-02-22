@@ -1,15 +1,17 @@
 ===================================
 cfif
 ===================================
-<cftest>
-    test
-</cftest>
+<cfif test>
+  test
+<cfelse>
+  test
+</cfif>
 ---
 
 (program
-  (cf_generic_tag
-    (cf_start_tag
-      (cf_tag_name))
-    (html_text)
-    (cf_end_tag
-      (cf_tag_name))))
+  (cf_if_tag
+    (identifier)
+    (text)
+    (cf_if_alt
+      (cf_else_tag)
+      (text))))

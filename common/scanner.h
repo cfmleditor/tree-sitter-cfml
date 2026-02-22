@@ -13,8 +13,8 @@ enum TokenType {
     SCRIPT_START_TAG_NAME,
     STYLE_START_TAG_NAME,
     END_TAG_NAME,
-    CF_START_TAG_NAME,
-    CF_END_TAG_NAME,
+    CF_GENERIC_START_TAG_NAME,
+    CF_GENERIC_END_TAG_NAME,
     ERRONEOUS_END_TAG_NAME,
     SELF_CLOSING_TAG_DELIMITER,
     IMPLICIT_END_TAG,
@@ -617,11 +617,38 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
     return false;
 }
 
+static const char *KNOWN_CF_TAGS[] = {
+    "IF", "ELSEIF", "ELSE", "SET", "OUTPUT", "LOOP", "QUERY", "FUNCTION",
+    "COMPONENT", "ARGUMENT", "RETURN", "INCLUDE", "PARAM", "SWITCH", "CASE",
+    "DEFAULTCASE", "TRY", "CATCH", "THROW", "RETHROW", "ABORT", "EXIT",
+    "TRANSACTION", "LOCK", "THREAD", "HTTP", "HTTPPARAM", "MAIL", "MAILPART",
+    "SAVECONTENT", "SILENT", "XML", "ZIP", "ZIPPARAM", "SCRIPT", "IMPORT",
+    "STOREDPROC", "EXECUTE", "SETTING", "HEADER", "DUMP", "LOG", "DIRECTORY",
+    "FILE", "IMAGE", "WDDX", "BREAK", "CONTINUE", "QUERYPARAM", "HTMLHEAD",
+    NULL
+};
+
+static bool is_known_cf_tag(const String *name) {
+    for (int i = 0; KNOWN_CF_TAGS[i] != NULL; i++) {
+        if (strlen(KNOWN_CF_TAGS[i]) == name->size &&
+            memcmp(name->contents, KNOWN_CF_TAGS[i], name->size) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_context) {
 
     TagNameResult result = scan_tag_name(lexer);
 
     if (result.tag_name.size == 0) {
+        array_delete(&result.tag_name);
+        return false;
+    }
+
+    // In CF generic context, reject known CF tag names so dedicated rules handle them
+    if (is_cf_context && is_known_cf_tag(&result.tag_name)) {
         array_delete(&result.tag_name);
         return false;
     }
@@ -637,7 +664,7 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
             lexer->result_symbol = STYLE_START_TAG_NAME;
             break;
         default:
-            lexer->result_symbol = is_cf ? CF_START_TAG_NAME : START_TAG_NAME;
+            lexer->result_symbol = is_cf ? CF_GENERIC_START_TAG_NAME : START_TAG_NAME;
             break;
     }
     return true;
@@ -656,7 +683,7 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
     Tag tag = is_cf ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
     if (scanner->tags.size > 0 && tag_eq(array_back(&scanner->tags), &tag)) {
         pop_tag(scanner);
-        lexer->result_symbol = is_cf ? CF_END_TAG_NAME : END_TAG_NAME;
+        lexer->result_symbol = is_cf ? CF_GENERIC_END_TAG_NAME : END_TAG_NAME;
     } else {
         lexer->result_symbol = ERRONEOUS_END_TAG_NAME;
     }
@@ -1019,10 +1046,15 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
         default:
             
-            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_END_TAG_NAME]) && !valid_symbols[RAW_TEXT]) {
-                return (valid_symbols[START_TAG_NAME] || valid_symbols[CF_START_TAG_NAME])
-                    ? scan_start_tag_name(scanner, lexer, valid_symbols[CF_START_TAG_NAME])
-                    : scan_end_tag_name(scanner, lexer, valid_symbols[CF_END_TAG_NAME]);
+            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_GENERIC_START_TAG_NAME] || valid_symbols[CF_GENERIC_END_TAG_NAME]) && !valid_symbols[RAW_TEXT]) {
+                bool cf_start_only = valid_symbols[CF_GENERIC_START_TAG_NAME] && !valid_symbols[START_TAG_NAME];
+                bool cf_end_only = valid_symbols[CF_GENERIC_END_TAG_NAME] && !valid_symbols[END_TAG_NAME];
+                if (valid_symbols[START_TAG_NAME] || cf_start_only) {
+                    return scan_start_tag_name(scanner, lexer, cf_start_only);
+                }
+                if (valid_symbols[END_TAG_NAME] || cf_end_only) {
+                    return scan_end_tag_name(scanner, lexer, cf_end_only);
+                }
             }
             
             if (valid_symbols[IMPLICIT_END_TAG]) {
