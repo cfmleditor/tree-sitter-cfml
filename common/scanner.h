@@ -552,7 +552,6 @@ static void pop_tag(Scanner *scanner) {
 }
 
 static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
-    
     Tag *parent = scanner->tags.size == 0 ? NULL : array_back(&scanner->tags);
 
     bool is_closing_tag = false;
@@ -594,13 +593,18 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
         // Otherwise, dig deeper and queue implicit end tags (to be nice in
         // the case of malformed HTML)
         for (unsigned i = scanner->tags.size; i > 0; i--) {
-            if (scanner->tags.contents[i - 1].type == next_tag.type) {
+            if (tag_eq(&scanner->tags.contents[i - 1], &next_tag)) {
                 pop_tag(scanner);
                 lexer->result_symbol = IMPLICIT_END_TAG;
                 tag_free(&next_tag);
                 return true;
             }
         }
+    } else if (
+        parent && (parent->type == CFML)
+    ) {
+        tag_free(&next_tag);
+        return false;
     } else if (
         parent &&
         (
@@ -617,27 +621,6 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
     return false;
 }
 
-static const char *KNOWN_CF_TAGS[] = {
-    "IF", "ELSEIF", "ELSE", "SET", "OUTPUT", "LOOP", "QUERY", "FUNCTION",
-    "COMPONENT", "ARGUMENT", "RETURN", "INCLUDE", "PARAM", "SWITCH", "CASE",
-    "DEFAULTCASE", "TRY", "CATCH", "THROW", "RETHROW", "ABORT", "EXIT",
-    "TRANSACTION", "LOCK", "THREAD", "HTTP", "HTTPPARAM", "MAIL", "MAILPART",
-    "SAVECONTENT", "SILENT", "XML", "ZIP", "ZIPPARAM", "SCRIPT", "IMPORT",
-    "STOREDPROC", "EXECUTE", "SETTING", "HEADER", "DUMP", "LOG", "DIRECTORY",
-    "FILE", "IMAGE", "WDDX", "BREAK", "CONTINUE", "QUERYPARAM", "HTMLHEAD",
-    NULL
-};
-
-static bool is_known_cf_tag(const String *name) {
-    for (int i = 0; KNOWN_CF_TAGS[i] != NULL; i++) {
-        if (strlen(KNOWN_CF_TAGS[i]) == name->size &&
-            memcmp(name->contents, KNOWN_CF_TAGS[i], name->size) == 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
 static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_context) {
 
     TagNameResult result = scan_tag_name(lexer);
@@ -647,24 +630,26 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         return false;
     }
 
-    // In CF generic context, reject known CF tag names so dedicated rules handle them
-    if (is_cf_context && is_known_cf_tag(&result.tag_name)) {
-        array_delete(&result.tag_name);
-        return false;
-    }
-
     bool is_cf = result.is_cf_tag || is_cf_context;
     Tag tag = is_cf ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
-    array_push(&scanner->tags, tag);
     switch (tag.type) {
         case SCRIPT:
             lexer->result_symbol = SCRIPT_START_TAG_NAME;
+            array_push(&scanner->tags, tag);
             break;
         case STYLE:
             lexer->result_symbol = STYLE_START_TAG_NAME;
+            array_push(&scanner->tags, tag);
             break;
+        case CF_VOID:
+            return false;
+        case CF_PAIRED:
+            return false;
+        case CF_SET:
+            return false;
         default:
             lexer->result_symbol = is_cf ? CF_GENERIC_START_TAG_NAME : START_TAG_NAME;
+            array_push(&scanner->tags, tag);
             break;
     }
     return true;
@@ -698,6 +683,7 @@ static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer) {
     if (lexer->lookahead == '>') {
         advance(lexer);
         if (scanner->tags.size > 0) {
+            Tag *top = array_back(&scanner->tags);
             pop_tag(scanner);
             lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
         }

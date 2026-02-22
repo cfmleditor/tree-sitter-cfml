@@ -1,14 +1,62 @@
 [
   {
-    "type": "_cf_super_tags",
+    "type": "_cf_tag",
     "named": true,
     "subtypes": [
       {
-        "type": "cf_component",
+        "type": "cf_abort_tag",
         "named": true
       },
       {
-        "type": "cf_function",
+        "type": "cf_argument_tag",
+        "named": true
+      },
+      {
+        "type": "cf_break_tag",
+        "named": true
+      },
+      {
+        "type": "cf_component_tag",
+        "named": true
+      },
+      {
+        "type": "cf_content_tag",
+        "named": true
+      },
+      {
+        "type": "cf_continue_tag",
+        "named": true
+      },
+      {
+        "type": "cf_cookie_tag",
+        "named": true
+      },
+      {
+        "type": "cf_dump_tag",
+        "named": true
+      },
+      {
+        "type": "cf_exit_tag",
+        "named": true
+      },
+      {
+        "type": "cf_function_tag",
+        "named": true
+      },
+      {
+        "type": "cf_header_tag",
+        "named": true
+      },
+      {
+        "type": "cf_include_tag",
+        "named": true
+      },
+      {
+        "type": "cf_location_tag",
+        "named": true
+      },
+      {
+        "type": "cf_log_tag",
         "named": true
       },
       {
@@ -16,61 +64,19 @@
         "named": true
       },
       {
-        "type": "cf_query",
-        "named": true
-      }
-    ]
-  },
-  {
-    "type": "cf_tag",
-    "named": true,
-    "subtypes": [
-      {
-        "type": "_cf_super_tags",
+        "type": "cf_param_tag",
         "named": true
       },
       {
-        "type": "cf_execute_tag",
+        "type": "cf_property_tag",
         "named": true
       },
       {
-        "type": "cf_generic_tag",
+        "type": "cf_rethrow_tag",
         "named": true
       },
       {
-        "type": "cf_http_tag",
-        "named": true
-      },
-      {
-        "type": "cf_if_tag",
-        "named": true
-      },
-      {
-        "type": "cf_lock_tag",
-        "named": true
-      },
-      {
-        "type": "cf_loop",
-        "named": true
-      },
-      {
-        "type": "cf_mail_tag",
-        "named": true
-      },
-      {
-        "type": "cf_mailpart_tag",
-        "named": true
-      },
-      {
-        "type": "cf_return",
-        "named": true
-      },
-      {
-        "type": "cf_savecontent_tag",
-        "named": true
-      },
-      {
-        "type": "cf_selfclose_tag",
+        "type": "cf_return_tag",
         "named": true
       },
       {
@@ -78,65 +84,11 @@
         "named": true
       },
       {
-        "type": "cf_silent_tag",
+        "type": "cf_tag",
         "named": true
       },
       {
-        "type": "cf_storedproc_tag",
-        "named": true
-      },
-      {
-        "type": "cf_switch_tag",
-        "named": true
-      },
-      {
-        "type": "cf_thread_tag",
-        "named": true
-      },
-      {
-        "type": "cf_transaction_tag",
-        "named": true
-      },
-      {
-        "type": "cf_try_tag",
-        "named": true
-      },
-      {
-        "type": "cf_xml_tag",
-        "named": true
-      },
-      {
-        "type": "cf_zip_tag",
-        "named": true
-      }
-    ]
-  },
-  {
-    "type": "cf_tag_query",
-    "named": true,
-    "subtypes": [
-      {
-        "type": "_cf_super_tags",
-        "named": true
-      },
-      {
-        "type": "cf_if_tag_query",
-        "named": true
-      },
-      {
-        "type": "cf_loop",
-        "named": true
-      },
-      {
-        "type": "cf_selfclose_tag",
-        "named": true
-      },
-      {
-        "type": "cf_set_tag",
-        "named": true
-      },
-      {
-        "type": "cf_switch_tag_cfquery",
+        "type": "cf_throw_tag",
         "named": true
       }
     ]
@@ -627,7 +579,7 @@
       "required": false,
       "types": [
         {
-          "type": "cf_tag",
+          "type": "_cf_tag",
           "named": true
         },
         {
@@ -962,6 +914,44 @@
     }
   },
   {
+    "type": "cf_abort_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag_end",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_argument_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag_end",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_attribute",
     "named": true,
     "fields": {},
@@ -1004,168 +994,26 @@
     }
   },
   {
-    "type": "cf_case_tag",
+    "type": "cf_break_tag",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "cf_case_tag_query",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag_query",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "query_operator",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_catch_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_component",
+    "type": "cf_component_tag",
     "named": true,
     "fields": {
       "body": {
@@ -1195,118 +1043,76 @@
     }
   },
   {
-    "type": "cf_defaultcase_tag",
+    "type": "cf_content_tag",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_defaultcase_tag_query",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag_query",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "query_operator",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_else_tag",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "cf_elseif_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "expression",
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag_end",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_continue_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag_end",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_cookie_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag_end",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_dump_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -1328,12 +1134,12 @@
     }
   },
   {
-    "type": "cf_execute_tag",
+    "type": "cf_exit_tag",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "cf_attribute",
@@ -1342,60 +1148,12 @@
         {
           "type": "cf_selfclose_tag_end",
           "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
         }
       ]
     }
   },
   {
-    "type": "cf_function",
+    "type": "cf_function_tag",
     "named": true,
     "fields": {
       "body": {
@@ -1425,7 +1183,7 @@
     }
   },
   {
-    "type": "cf_generic_tag",
+    "type": "cf_header_tag",
     "named": true,
     "fields": {},
     "children": {
@@ -1433,137 +1191,18 @@
       "required": true,
       "types": [
         {
-          "type": "cf_end_tag",
-          "named": true
-        },
-        {
-          "type": "cf_start_tag",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "html_text",
-          "named": true
-        },
-        {
-          "type": "implicit_end_tag",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "self_closing_tag",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_http_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "cf_if_alt",
+    "type": "cf_include_tag",
     "named": true,
     "fields": {},
     "children": {
@@ -1571,70 +1210,18 @@
       "required": true,
       "types": [
         {
-          "type": "cf_else_tag",
+          "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_elseif_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_alt",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "cf_if_alt_cfquery",
+    "type": "cf_location_tag",
     "named": true,
     "fields": {},
     "children": {
@@ -1642,42 +1229,18 @@
       "required": true,
       "types": [
         {
-          "type": "cf_else_tag",
+          "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_elseif_tag",
-          "named": true
-        },
-        {
-          "type": "cf_if_alt_cfquery",
-          "named": true
-        },
-        {
-          "type": "cf_tag_query",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "query_operator",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "cf_if_tag",
+    "type": "cf_log_tag",
     "named": true,
     "fields": {},
     "children": {
@@ -1685,358 +1248,11 @@
       "required": true,
       "types": [
         {
-          "type": "cf_if_alt",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "expression",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_if_tag_query",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_if_alt_cfquery",
-          "named": true
-        },
-        {
-          "type": "cf_tag_query",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "expression",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "query_operator",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_lock_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_loop",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_tag_query",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "query_operator",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_mail_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_mailpart_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -2051,11 +1267,11 @@
       "required": false,
       "types": [
         {
-          "type": "cf_attribute",
+          "type": "_cf_tag",
           "named": true
         },
         {
-          "type": "cf_tag",
+          "type": "cf_attribute",
           "named": true
         },
         {
@@ -2110,42 +1326,64 @@
     }
   },
   {
-    "type": "cf_query",
+    "type": "cf_param_tag",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_tag_query",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "query_operator",
-          "named": true
-        },
-        {
-          "type": "text",
+          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "cf_return",
+    "type": "cf_property_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag_end",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_rethrow_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag_end",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_return_tag",
     "named": true,
     "fields": {},
     "children": {
@@ -2158,123 +1396,6 @@
         },
         {
           "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_savecontent_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag_end",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_selfclose_tag",
-    "named": true,
-    "fields": {
-      "cf_tag_name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "abort",
-            "named": false
-          },
-          {
-            "type": "argument",
-            "named": false
-          },
-          {
-            "type": "break",
-            "named": false
-          },
-          {
-            "type": "continue",
-            "named": false
-          },
-          {
-            "type": "directory",
-            "named": false
-          },
-          {
-            "type": "dump",
-            "named": false
-          },
-          {
-            "type": "file",
-            "named": false
-          },
-          {
-            "type": "header",
-            "named": false
-          },
-          {
-            "type": "htmlhead",
-            "named": false
-          },
-          {
-            "type": "httpparam",
-            "named": false
-          },
-          {
-            "type": "img",
-            "named": false
-          },
-          {
-            "type": "import",
-            "named": false
-          },
-          {
-            "type": "include",
-            "named": false
-          },
-          {
-            "type": "param",
-            "named": false
-          },
-          {
-            "type": "queryparam",
-            "named": false
-          },
-          {
-            "type": "setting",
-            "named": false
-          },
-          {
-            "type": "wddx",
-            "named": false
-          },
-          {
-            "type": "zipparam",
-            "named": false
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag_end",
           "named": true
         }
       ]
@@ -2309,69 +1430,6 @@
     }
   },
   {
-    "type": "cf_silent_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cf_start_tag",
     "named": true,
     "fields": {},
@@ -2391,23 +1449,23 @@
     }
   },
   {
-    "type": "cf_storedproc_tag",
+    "type": "cf_tag",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
-          "type": "cf_attribute",
+          "type": "_cf_tag",
           "named": true
         },
         {
-          "type": "cf_tag",
+          "type": "cf_end_tag",
           "named": true
         },
         {
-          "type": "cfscript_element",
+          "type": "cf_start_tag",
           "named": true
         },
         {
@@ -2416,10 +1474,6 @@
         },
         {
           "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
           "named": true
         },
         {
@@ -2435,7 +1489,19 @@
           "named": true
         },
         {
+          "type": "html_text",
+          "named": true
+        },
+        {
+          "type": "implicit_end_tag",
+          "named": true
+        },
+        {
           "type": "script_element",
+          "named": true
+        },
+        {
+          "type": "self_closing_tag",
           "named": true
         },
         {
@@ -2448,120 +1514,6 @@
         },
         {
           "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_switch_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_case_tag",
-          "named": true
-        },
-        {
-          "type": "cf_defaultcase_tag",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_switch_tag_cfquery",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_case_tag_query",
-          "named": true
-        },
-        {
-          "type": "cf_defaultcase_tag_query",
-          "named": true
-        },
-        {
-          "type": "cf_tag_query",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "query_operator",
-          "named": true
-        },
-        {
-          "type": "text",
           "named": true
         }
       ]
@@ -2576,7 +1528,7 @@
       "required": true,
       "types": [
         {
-          "type": "cf_tag",
+          "type": "_cf_tag",
           "named": true
         },
         {
@@ -2651,204 +1603,7 @@
     }
   },
   {
-    "type": "cf_thread_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_transaction_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag_end",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_try_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_catch_tag",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_xml_tag",
+    "type": "cf_throw_tag",
     "named": true,
     "fields": {},
     "children": {
@@ -2860,74 +1615,7 @@
           "named": true
         },
         {
-          "type": "cfxml_content",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_zip_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
           "type": "cf_selfclose_tag_end",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
           "named": true
         }
       ]
@@ -3063,11 +1751,7 @@
       "required": true,
       "types": [
         {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
+          "type": "_cf_tag",
           "named": true
         },
         {
@@ -4093,11 +2777,7 @@
       "required": false,
       "types": [
         {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
+          "type": "_cf_tag",
           "named": true
         },
         {
@@ -4148,54 +2828,6 @@
     }
   },
   {
-    "type": "query_operator",
-    "named": true,
-    "fields": {
-      "operator": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "<",
-            "named": false
-          },
-          {
-            "type": "<=",
-            "named": false
-          },
-          {
-            "type": "<>",
-            "named": false
-          },
-          {
-            "type": "=",
-            "named": false
-          },
-          {
-            "type": ">",
-            "named": false
-          },
-          {
-            "type": ">=",
-            "named": false
-          },
-          {
-            "type": "BETWEEN",
-            "named": false
-          },
-          {
-            "type": "EXISTS",
-            "named": false
-          },
-          {
-            "type": "IN",
-            "named": false
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "quoted_attribute_value",
     "named": true,
     "fields": {},
@@ -4204,11 +2836,11 @@
       "required": false,
       "types": [
         {
-          "type": "attribute_value",
+          "type": "_cf_tag",
           "named": true
         },
         {
-          "type": "cf_tag",
+          "type": "attribute_value",
           "named": true
         },
         {
@@ -4606,11 +3238,11 @@
       "required": true,
       "types": [
         {
-          "type": "attribute",
+          "type": "_cf_tag",
           "named": true
         },
         {
-          "type": "cf_tag",
+          "type": "attribute",
           "named": true
         },
         {
@@ -5060,14 +3692,6 @@
     "named": false
   },
   {
-    "type": "<=",
-    "named": false
-  },
-  {
-    "type": "<>",
-    "named": false
-  },
-  {
     "type": "<?",
     "named": false
   },
@@ -5093,10 +3717,6 @@
   },
   {
     "type": ">",
-    "named": false
-  },
-  {
-    "type": ">=",
     "named": false
   },
   {
@@ -5129,18 +3749,6 @@
   },
   {
     "type": "@",
-    "named": false
-  },
-  {
-    "type": "BETWEEN",
-    "named": false
-  },
-  {
-    "type": "EXISTS",
-    "named": false
-  },
-  {
-    "type": "IN",
     "named": false
   },
   {
@@ -5213,10 +3821,6 @@
     "named": true
   },
   {
-    "type": "cfxml_content",
-    "named": true
-  },
-  {
     "type": "component",
     "named": false
   },
@@ -5225,19 +3829,19 @@
     "named": false
   },
   {
+    "type": "content",
+    "named": false
+  },
+  {
     "type": "continue",
     "named": false
   },
   {
+    "type": "cookie",
+    "named": false
+  },
+  {
     "type": "default",
-    "named": false
-  },
-  {
-    "type": "defaultcase",
-    "named": false
-  },
-  {
-    "type": "directory",
     "named": false
   },
   {
@@ -5257,10 +3861,6 @@
     "named": false
   },
   {
-    "type": "elseif",
-    "named": false
-  },
-  {
     "type": "entity",
     "named": true
   },
@@ -5269,7 +3869,7 @@
     "named": true
   },
   {
-    "type": "execute",
+    "type": "exit",
     "named": false
   },
   {
@@ -5279,10 +3879,6 @@
   {
     "type": "false",
     "named": true
-  },
-  {
-    "type": "file",
-    "named": false
   },
   {
     "type": "finally",
@@ -5309,18 +3905,6 @@
     "named": true
   },
   {
-    "type": "htmlhead",
-    "named": false
-  },
-  {
-    "type": "http",
-    "named": false
-  },
-  {
-    "type": "httpparam",
-    "named": false
-  },
-  {
     "type": "identifier",
     "named": true
   },
@@ -5329,16 +3913,8 @@
     "named": false
   },
   {
-    "type": "img",
-    "named": false
-  },
-  {
     "type": "implicit_end_tag",
     "named": true
-  },
-  {
-    "type": "import",
-    "named": false
   },
   {
     "type": "import",
@@ -5361,19 +3937,11 @@
     "named": false
   },
   {
-    "type": "lock",
+    "type": "location",
     "named": false
   },
   {
-    "type": "loop",
-    "named": false
-  },
-  {
-    "type": "mail",
-    "named": false
-  },
-  {
-    "type": "mailpart",
+    "type": "log",
     "named": false
   },
   {
@@ -5413,16 +3981,12 @@
     "named": true
   },
   {
+    "type": "property",
+    "named": false
+  },
+  {
     "type": "property_identifier",
     "named": true
-  },
-  {
-    "type": "query",
-    "named": false
-  },
-  {
-    "type": "queryparam",
-    "named": false
   },
   {
     "type": "raw_text",
@@ -5441,16 +4005,16 @@
     "named": true
   },
   {
+    "type": "rethrow",
+    "named": false
+  },
+  {
     "type": "return",
     "named": false
   },
   {
     "type": "return_type",
     "named": true
-  },
-  {
-    "type": "savecontent",
-    "named": false
   },
   {
     "type": "script",
@@ -5461,20 +4025,12 @@
     "named": false
   },
   {
-    "type": "setting",
-    "named": false
-  },
-  {
     "type": "shorthand_property_identifier",
     "named": true
   },
   {
     "type": "shorthand_property_identifier_pattern",
     "named": true
-  },
-  {
-    "type": "silent",
-    "named": false
   },
   {
     "type": "statement_identifier",
@@ -5491,10 +4047,6 @@
   {
     "type": "static_chain",
     "named": true
-  },
-  {
-    "type": "storedproc",
-    "named": false
   },
   {
     "type": "string_fragment",
@@ -5517,15 +4069,7 @@
     "named": true
   },
   {
-    "type": "thread",
-    "named": false
-  },
-  {
     "type": "throw",
-    "named": false
-  },
-  {
-    "type": "transaction",
     "named": false
   },
   {
@@ -5545,10 +4089,6 @@
     "named": false
   },
   {
-    "type": "wddx",
-    "named": false
-  },
-  {
     "type": "while",
     "named": false
   },
@@ -5562,14 +4102,6 @@
   },
   {
     "type": "yield",
-    "named": false
-  },
-  {
-    "type": "zip",
-    "named": false
-  },
-  {
-    "type": "zipparam",
     "named": false
   },
   {

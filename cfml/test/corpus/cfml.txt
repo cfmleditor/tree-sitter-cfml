@@ -1,17 +1,13 @@
 ===================================
-cfif
+test1234
 ===================================
 <cfif test>
-  test
+  <cfset test = "">
+  <cfzip test>
 <cfelse>
-  test
+  <cfset test = "">
+  <cfzip test>
 </cfif>
 ---
 
-(program
-  (cf_if_tag
-    (identifier)
-    (text)
-    (cf_if_alt
-      (cf_else_tag)
-      (text))))
+(program)

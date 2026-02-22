@@ -26,9 +26,13 @@ typedef enum {
     SOURCE,
     TRACK,
     WBR,
+    END_OF_VOID_TAGS,
+
     CUSTOM,
     CFML,
-    END_OF_VOID_TAGS,
+    CF_VOID,
+    CF_PAIRED,
+    CF_SET,
 
     A,
     ABBR,
@@ -304,9 +308,37 @@ static inline Tag tag_new() {
     return tag;
 }
 
+static const char *CF_VOID_TAGS[] = {
+    "PARAM", "RETURN", "ARGUMENT", "PROPERTY", "RETHROW", "THROW", "RETURN",
+    "BREAK", "CONTINUE", "ABORT", "EXIT", "INCLUDE", "LOCATION", "HEADER", "DUMP",
+    "CONTENT", "COOKIE", "LOG", NULL
+};
+
+static const char *CF_PAIRED_TAGS[] = {
+    "FUNCTION", "COMPONENT", "OUTPUT", "SCRIPT", NULL
+};
+
+static inline bool cf_tag_name_in(const String *name, const char **list) {
+    for (int i = 0; list[i] != NULL; i++) {
+        if (strlen(list[i]) == name->size &&
+            memcmp(name->contents, list[i], name->size) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static inline Tag cf_tag_for_name(String name) {
     Tag tag = tag_new();
-    tag.type = CFML;
+    if (name.size == 3 && memcmp(name.contents, "SET", 3) == 0) {
+        tag.type = CF_SET;
+    } else if (cf_tag_name_in(&name, CF_VOID_TAGS)) {
+        tag.type = CF_VOID;
+    } else if (cf_tag_name_in(&name, CF_PAIRED_TAGS)) {
+        tag.type = CF_PAIRED;
+    } else {
+        tag.type = CFML;
+    }
     tag.tag_name = name;
     return tag;
 }
@@ -323,7 +355,7 @@ static inline Tag tag_for_name(String name) {
 }
 
 static inline void tag_free(Tag *tag) {
-    if (tag->type == CUSTOM || tag->type == CFML) {
+    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_PAIRED || tag->type == CF_SET) {
         array_delete(&tag->tag_name);
     }
 }
@@ -334,7 +366,7 @@ static inline bool tag_is_void(const Tag *self) {
 
 static inline bool tag_eq(const Tag *self, const Tag *other) {
     if (self->type != other->type) return false;
-    if (self->type == CUSTOM || self->type == CFML) {
+    if (self->type == CUSTOM || self->type == CFML || self->type == CF_PAIRED || self->type == CF_SET) {
         if (self->tag_name.size != other->tag_name.size) {
             return false;
         }
