@@ -1618,6 +1618,10 @@
           "named": true
         },
         {
+          "type": "self_closing_cf_tag",
+          "named": true
+        },
+        {
           "type": "style_element",
           "named": true
         },
@@ -3206,6 +3210,25 @@
         },
         {
           "type": "start_tag",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "self_closing_cf_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_tag_name",
+          "named": true
+        },
+        {
+          "type": "tag_attributes",
           "named": true
         }
       ]

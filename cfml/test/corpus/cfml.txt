@@ -1935,7 +1935,6 @@ cfzip3
 
     </cfif>
 		
-		<cfreturn result>
 	</cffunction>
 ---
 (program
@@ -2035,7 +2034,7 @@ cfzip3
         (cf_tag_close)))
 
 ===================================
-failing expression
+failing expression 2
 ===================================
 <cfset downloadUrl = "https:"&#ARGUMENTS.download_url# />
 
@@ -2108,13 +2107,14 @@ failing expression
             (attribute
               (attribute_name)
               (quoted_attribute_value))))
-        (cf_set_tag
-          (assignment_expression
-            (identifier)
-            (string))
-          (cf_selfclose_tag_end))
-        (cf_end_tag
-          (cf_tag_name)))
+        (implicit_cf_end_tag))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (string))
+        (cf_selfclose_tag_end))
+      (erroneous_cf_end_tag
+        (erroneous_cf_end_tag_name))
       (cf_set_tag
         (assignment_expression
           (identifier)
@@ -2127,12 +2127,12 @@ failing expression
             (attribute
               (attribute_name)
               (quoted_attribute_value))))
-        (cf_set_tag
-          (assignment_expression
-            (identifier)
-            (string))
-          (cf_selfclose_tag_end))
-        (MISSING implicit_cf_end_tag)))
+        (implicit_cf_end_tag))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (string))
+        (cf_selfclose_tag_end)))
 
 ===================================
 cftransaction2
@@ -2155,14 +2155,14 @@ cftransaction2
               (attribute_name)
               (quoted_attribute_value
                 (attribute_value)))))
-        (cf_tag
-          (cf_start_tag
-            (cf_tag_name)
-            (tag_attributes
-              (attribute
-                (attribute_name)
-                (quoted_attribute_value
-                  (attribute_value)))))
-          (cf_end_tag
-            (cf_tag_name)))
-        (MISSING implicit_cf_end_tag)))
+        (implicit_cf_end_tag))
+      (cf_tag
+        (cf_start_tag
+          (cf_tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value)))))
+        (cf_end_tag
+          (cf_tag_name))))

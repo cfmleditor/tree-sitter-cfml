@@ -439,12 +439,27 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       cf_attribute_name: _ => /[^<>"\'/=\s\n\r\t#0-9]+/,
-      
-      cf_tag: $ => seq(
-        $.cf_start_tag,
-        repeat($._element_node),
-        choice($.cf_end_tag, $.implicit_cf_end_tag),
+        
+      cf_tag: $ => choice(
+        seq(
+          $.cf_start_tag,
+          repeat($._element_node),
+          choice($.cf_end_tag, $.implicit_cf_end_tag),
+        ),
+        $.self_closing_cf_tag,
       ),
+
+      self_closing_cf_tag: $ => prec.right(2, seq(
+        $._cf_open_tag,
+        alias($._start_cf_tag_name, $.cf_tag_name),
+        repeat(
+          $.tag_attributes,
+        ),
+        choice(
+          '/>',
+          alias($._close_tag_delim, '>'),
+        ),
+      )),
 
       cf_start_tag: $ => seq(
         $._cf_open_tag,

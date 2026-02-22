@@ -554,7 +554,9 @@ static void pop_tag(Scanner *scanner, bool is_cf_context) {
 
 static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_context) {
     
-    Tag *parent = scanner->tags.size == 0 ? NULL : ( is_cf_context ?  array_back(&scanner->cf_tags) : array_back(&scanner->tags) );
+    Tag *parent = is_cf_context
+        ? (scanner->cf_tags.size == 0 ? NULL : array_back(&scanner->cf_tags))
+        : (scanner->tags.size == 0 ? NULL : array_back(&scanner->tags));
 
     bool is_closing_tag = false;
     if (lexer->lookahead == '/') {
@@ -563,7 +565,12 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
     } else {
         if (parent && tag_is_void(parent)) {
             pop_tag(scanner, is_cf_context);
-            lexer->result_symbol = IMPLICIT_END_TAG;
+            lexer->result_symbol = is_cf_context ? IMPLICIT_CF_END_TAG : IMPLICIT_END_TAG;
+            return true;
+        }
+        if (is_cf_context && parent && parent->type == CFML) {
+            pop_tag(scanner, true);
+            lexer->result_symbol = IMPLICIT_CF_END_TAG;
             return true;
         }
     }
@@ -587,26 +594,33 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
 
     if (is_closing_tag) {
         // The tag correctly closes the topmost element on the stack
-        if (scanner->tags.size > 0 && tag_eq(is_cf_context ? array_back(&scanner->cf_tags) : array_back(&scanner->tags), &next_tag)) {
+        if (is_cf_context ? (scanner->cf_tags.size > 0 && tag_eq(array_back(&scanner->cf_tags), &next_tag))
+                          : (scanner->tags.size > 0 && tag_eq(array_back(&scanner->tags), &next_tag))) {
             tag_free(&next_tag);
             return false;
         }
 
         // Otherwise, dig deeper and queue implicit end tags (to be nice in
         // the case of malformed HTML)
-        for (unsigned i = scanner->tags.size; i > 0; i--) {
-            if (tag_eq(&scanner->tags.contents[i - 1], &next_tag)) {
-                pop_tag(scanner, is_cf_context);
-                lexer->result_symbol = IMPLICIT_END_TAG;
-                tag_free(&next_tag);
-                return true;
+        if (is_cf_context) {
+            for (unsigned i = scanner->cf_tags.size; i > 0; i--) {
+                if (tag_eq(&scanner->cf_tags.contents[i - 1], &next_tag)) {
+                    pop_tag(scanner, true);
+                    lexer->result_symbol = IMPLICIT_CF_END_TAG;
+                    tag_free(&next_tag);
+                    return true;
+                }
+            }
+        } else {
+            for (unsigned i = scanner->tags.size; i > 0; i--) {
+                if (tag_eq(&scanner->tags.contents[i - 1], &next_tag)) {
+                    pop_tag(scanner, false);
+                    lexer->result_symbol = IMPLICIT_END_TAG;
+                    tag_free(&next_tag);
+                    return true;
+                }
             }
         }
-    } else if (
-        parent && (parent->type == CFML)
-    ) {
-        tag_free(&next_tag);
-        return false;
     } else if (
         parent &&
         (
@@ -644,10 +658,13 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
             array_push(&scanner->tags, tag);
             break;
         case CF_VOID:
+        case CF_SET:
+            tag_free(&tag);
             return false;
         case CF_PAIRED:
-            return false;
-        case CF_SET:
+            // TODO: Push paired tags to the stack so that they can detect issues with other tags but still be defined in the grammar
+            // array_push(&scanner->cf_tags, tag);
+            tag_free(&tag);
             return false;
         default:
             lexer->result_symbol = is_cf ? CF_START_TAG_NAME : START_TAG_NAME;
@@ -689,9 +706,11 @@ static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer, bo
     advance(lexer);
     if (lexer->lookahead == '>') {
         advance(lexer);
-        if (scanner->tags.size > 0) {
-            Tag *top = array_back(&scanner->tags);
-            pop_tag(scanner, is_cf_context);
+        if (is_cf_context && scanner->cf_tags.size > 0) {
+            pop_tag(scanner, true);
+            lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
+        } else if (!is_cf_context && scanner->tags.size > 0) {
+            pop_tag(scanner, false);
             lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
         }
         return true;
@@ -913,7 +932,6 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
 // }
 
 static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_context) {
-
     if ( lexer->lookahead == '>' ) {
         advance(lexer);
         lexer->mark_end(lexer);
@@ -922,7 +940,6 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_con
     } else {
         return false;
     }
-    
 }
 
 // static bool scan_hash(Scanner *scanner, TSLexer *lexer) {
@@ -1021,7 +1038,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             advance(lexer);
             if (lexer->lookahead == '>') {
                 if (valid_symbols[SELF_CLOSING_TAG_DELIMITER]) {
-                    return scan_self_closing_tag_delimiter(scanner, lexer, false);
+                    return scan_self_closing_tag_delimiter(scanner, lexer, valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME]);
                 }
                 if (valid_symbols[CLOSE_TAG_DELIM] ) {
                     return scan_closetag_delim(scanner, lexer, false);
