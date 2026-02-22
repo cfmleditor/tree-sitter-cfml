@@ -573,6 +573,15 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
         return false;
     }
 
+    // For CF tags scanned with full name (e.g. CFTEST), strip CF prefix to match
+    // tags pushed without prefix (after _cf_open_tag consumed '<cf')
+    String *name = &result.tag_name;
+    if (result.is_cf_tag && name->size > 2) {
+        // shift contents left by 2 to remove 'CF' prefix
+        memmove(name->contents, name->contents + 2, name->size - 2);
+        name->size -= 2;
+    }
+
     Tag next_tag = result.is_cf_tag ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name); 
 
     if (is_closing_tag) {
@@ -608,7 +617,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer) {
     return false;
 }
 
-static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer) {
+static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_context) {
 
     TagNameResult result = scan_tag_name(lexer);
 
@@ -617,7 +626,8 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer) {
         return false;
     }
 
-    Tag tag = result.is_cf_tag ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
+    bool is_cf = result.is_cf_tag || is_cf_context;
+    Tag tag = is_cf ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
     array_push(&scanner->tags, tag);
     switch (tag.type) {
         case SCRIPT:
@@ -626,17 +636,14 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer) {
         case STYLE:
             lexer->result_symbol = STYLE_START_TAG_NAME;
             break;
-        case CFML:
-            lexer->result_symbol = CF_START_TAG_NAME;
-            break;
         default:
-            lexer->result_symbol = START_TAG_NAME;
+            lexer->result_symbol = is_cf ? CF_START_TAG_NAME : START_TAG_NAME;
             break;
     }
     return true;
 }
 
-static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer) {
+static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_context) {
     
     TagNameResult result = scan_tag_name(lexer);
 
@@ -645,14 +652,11 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer) {
         return false;
     }
 
-    Tag tag = result.is_cf_tag ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
+    bool is_cf = result.is_cf_tag || is_cf_context;
+    Tag tag = is_cf ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
     if (scanner->tags.size > 0 && tag_eq(array_back(&scanner->tags), &tag)) {
         pop_tag(scanner);
-        if ( tag.type == CFML ) {
-            lexer->result_symbol = CF_END_TAG_NAME;
-        } else {
-            lexer->result_symbol = END_TAG_NAME;
-        }
+        lexer->result_symbol = is_cf ? CF_END_TAG_NAME : END_TAG_NAME;
     } else {
         lexer->result_symbol = ERRONEOUS_END_TAG_NAME;
     }
@@ -977,26 +981,6 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                 return scan_comment(lexer);
             }
 
-            // if ( ( valid_symbols[CF_OUTPUT_TAG] || valid_symbols[CF_OPEN_TAG] ) && ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) ) {
-            //     if ( valid_symbols[CF_OUTPUT_TAG] ) {
-            //         advance(lexer);
-            //         return scan_open_cfoutput(scanner, lexer, &valid_symbols[CF_OPEN_TAG], &scanned_cfoutput);
-            //     } else if ( valid_symbols[CF_OPEN_TAG] ) {
-            //         advance(lexer);
-            //         return scan_open_cftag(scanner, lexer);
-            //     }
-            // }
-
-            // if ( valid_symbols[CF_CLOSE_TAG] && lexer->lookahead == '/') {
-            //     advance(lexer);
-            //     if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
-            //         if ( valid_symbols[CF_CLOSE_TAG] ) {
-            //             advance(lexer);
-            //             return scan_close_cftag(scanner, lexer);
-            //         }
-            //     }
-            // }
-
             if (valid_symbols[IMPLICIT_END_TAG]) {
                 return scan_implicit_end_tag(scanner, lexer);
             }
@@ -1036,8 +1020,9 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
         default:
             
             if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_END_TAG_NAME]) && !valid_symbols[RAW_TEXT]) {
-                return ( valid_symbols[START_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] ) ? scan_start_tag_name(scanner, lexer)
-                                                     : scan_end_tag_name(scanner, lexer);
+                return (valid_symbols[START_TAG_NAME] || valid_symbols[CF_START_TAG_NAME])
+                    ? scan_start_tag_name(scanner, lexer, valid_symbols[CF_START_TAG_NAME])
+                    : scan_end_tag_name(scanner, lexer, valid_symbols[CF_END_TAG_NAME]);
             }
             
             if (valid_symbols[IMPLICIT_END_TAG]) {

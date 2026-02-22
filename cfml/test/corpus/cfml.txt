@@ -7,8 +7,9 @@ cfif
 ---
 
 (program
-      (cf_if_tag
-        (binary_expression
-          (identifier)
-          (identifier))
-        (text)))
+  (cf_generic_tag
+    (cf_start_tag
+      (cf_tag_name))
+    (html_text)
+    (cf_end_tag
+      (cf_tag_name))))

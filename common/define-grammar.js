@@ -908,23 +908,23 @@ module.exports = function defineGrammar(dialect) {
       cf_generic_tag: $ => choice(
         seq(
           $.cf_start_tag,
-          repeat($._node),
+          repeat($._element_node),
           choice($.cf_end_tag, $.implicit_end_tag),
         ),
         $.self_closing_tag,
       ),
 
       cf_start_tag: $ => seq(
-        token('<'),
+        $._cf_open_tag,
         alias($._start_cf_tag_name, $.cf_tag_name),
-        repeat($.attribute),
-        '>',
+        repeat($.tag_attributes),
+        alias($._close_tag_delim, '>'),
       ),
 
       cf_end_tag: $ => seq(
-        token('</'),
+        $._cf_close_tag,
         alias($._end_cf_tag_name, $.cf_tag_name),
-        '>',
+        alias($._close_tag_delim, '>'),
       ),
 
       cf_tag_name: _ => /[a-zA-Z][a-zA-Z0-9_]*/,

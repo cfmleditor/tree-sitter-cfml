@@ -1493,10 +1493,6 @@
           "named": true
         },
         {
-          "type": "end_tag",
-          "named": true
-        },
-        {
           "type": "entity",
           "named": true
         },
@@ -1510,6 +1506,10 @@
         },
         {
           "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "html_text",
           "named": true
         },
         {
@@ -2464,11 +2464,11 @@
       "required": true,
       "types": [
         {
-          "type": "attribute",
+          "type": "cf_tag_name",
           "named": true
         },
         {
-          "type": "cf_tag_name",
+          "type": "tag_attributes",
           "named": true
         }
       ]
