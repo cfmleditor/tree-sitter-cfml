@@ -31,8 +31,10 @@ module.exports = function defineGrammar(dialect) {
       $._start_cf_tag_name,
       $._end_cf_tag_name,
       $.erroneous_end_tag_name,
+      $.erroneous_cf_end_tag_name,
       '/>',
       $.implicit_end_tag,
+      $.implicit_cf_end_tag,
       $.raw_text,
       $.cf_comment,
       $._cfquery_content,
@@ -151,7 +153,6 @@ module.exports = function defineGrammar(dialect) {
       [$.update_expression, $.pair],
       [$.ternary_expression, $.pair],
       [$.elvis_expression, $.pair],
-      [$.element, $.cf_tag],
 
       // [$.class_static_block, $._property_name],
 
@@ -219,10 +220,19 @@ module.exports = function defineGrammar(dialect) {
         $._hash,
         $.script_element,
         $.style_element,
+        $.cfscript_element,
         $.text,
         $.end_tag,
         $.erroneous_end_tag,
         $.xml_decl,
+      ),
+
+      _node_cfquery: $ => choice(
+        $.query_operator,
+        $._cf_tag,
+        $._hash,
+        $.cfscript_element,
+        $.text,
       ),
 
       _element_node: $ => choice(
@@ -422,13 +432,10 @@ module.exports = function defineGrammar(dialect) {
 
       cf_attribute_name: _ => /[^<>"\'/=\s\n\r\t#0-9]+/,
       
-      cf_tag: $ => choice(
-        seq(
-          $.cf_start_tag,
-          repeat($._element_node),
-          choice($.cf_end_tag, $.implicit_end_tag),
-        ),
-        $.self_closing_tag,
+      cf_tag: $ => seq(
+        $.cf_start_tag,
+        repeat($._element_node),
+        choice($.cf_end_tag, $.implicit_cf_end_tag),
       ),
 
       cf_start_tag: $ => seq(
@@ -468,6 +475,28 @@ module.exports = function defineGrammar(dialect) {
         alias($._cf_component_close, $.cf_tag_close),
       )),
 
+      cf_query_tag: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        keyword('query'),
+        repeat($.cf_attribute),
+        alias($._close_tag_delim, '>'),
+        repeat($._node_cfquery),
+        $._cf_close_tag,
+        keyword('query'),
+        alias($._close_tag_delim, '>'),
+      )),
+
+      cf_xml_tag: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        keyword('xml'),
+        repeat($.cf_attribute),
+        alias($._close_tag_delim, '>'),
+        $.cfxml_content,
+        $._cf_close_tag,
+        keyword('xml'),
+        alias($._close_tag_delim, '>'),
+      )),
+
       _cf_function_open: $ => seq(
         $._cf_open_tag,
         keyword('function'),
@@ -505,8 +534,12 @@ module.exports = function defineGrammar(dialect) {
         $.cf_content_tag,
         $.cf_cookie_tag,
         $.cf_log_tag,
+        $.cf_directory_tag,
+        $.cf_file_tag,
         $.cf_dump_tag,
         $.cf_component_tag,
+        $.cf_query_tag,
+        $.cf_xml_tag,
         $.cf_function_tag,
         $.cf_set_tag,
         $.cf_tag,
@@ -624,23 +657,26 @@ module.exports = function defineGrammar(dialect) {
         $.cf_selfclose_tag_end,
       )),
 
+      cf_directory_tag: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        keyword('directory'),
+        repeat($.cf_attribute),
+        $.cf_selfclose_tag_end,
+      )),
+
+      cf_file_tag: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        keyword('file'),
+        repeat($.cf_attribute),
+        $.cf_selfclose_tag_end,
+      )),
+
       cf_dump_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         keyword('dump'),
         repeat($.cf_attribute),
         $.cf_selfclose_tag_end,
       )),
-      /*
-static const char *CF_VOID_TAGS[] = {
-    "PARAM", "RETURN", "ARGUMENT", "PROPERTY", "RETHROW", "THROW",
-    "BREAK", "CONTINUE", "ABORT", "EXIT", "INCLUDE", "LOCATION", "HEADER",
-    "CONTENT", "COOKIE", "LOG", NULL
-};
-
-static const char *CF_PAIRED_TAGS[] = {
-    "FUNCTION", "COMPONENT", NULL
-};
-      */
 
       entity: _ => /&(([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
 

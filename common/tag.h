@@ -311,11 +311,11 @@ static inline Tag tag_new() {
 static const char *CF_VOID_TAGS[] = {
     "PARAM", "RETURN", "ARGUMENT", "PROPERTY", "RETHROW", "THROW", "RETURN",
     "BREAK", "CONTINUE", "ABORT", "EXIT", "INCLUDE", "LOCATION", "HEADER", "DUMP",
-    "CONTENT", "COOKIE", "LOG", NULL
+    "CONTENT", "COOKIE", "LOG", "FILE", "DIRECTORY", NULL
 };
 
 static const char *CF_PAIRED_TAGS[] = {
-    "FUNCTION", "COMPONENT", "OUTPUT", "SCRIPT", NULL
+    "FUNCTION", "COMPONENT", "OUTPUT", "SCRIPT", "QUERY", "XML", NULL
 };
 
 static inline bool cf_tag_name_in(const String *name, const char **list) {
