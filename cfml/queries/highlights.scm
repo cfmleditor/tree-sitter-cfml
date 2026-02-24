@@ -26,7 +26,7 @@
 (function_expression
   name: (identifier) @function) @definition.function
 
-(cf_function 
+(cf_function_tag
   (cf_tag_open
     (cf_attribute
         (cf_attribute_name) @attribute (#eq? @attribute "name")
@@ -182,7 +182,6 @@
   "%"
   "%="
   "<"
-  "<="
   "<<="
   "="
   "=="
@@ -192,7 +191,6 @@
   "!=="
   "=>"
   ">"
-  ">="
   ">>="
   ">>>="
   "~"

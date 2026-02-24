@@ -52,7 +52,7 @@ testing4
           (hash_expression
             (identifier)))
         (cf_selfclose_tag_end))
-      (cf_dump_tag
+      (cf_selfclose_tag
         (cf_attribute
           (cf_attribute_name)
           (quoted_cf_attribute_value
