@@ -93,61 +93,57 @@ cffunction
 
 ---
 (program
-      (cf_function_tag
-        (cf_tag_open
-          (cf_attribute
-            (cf_attribute_name)
-            (quoted_cf_attribute_value
-              (attribute_value))))
-        (cf_tag_body
-          (hash_expression
-            (binary_expression
+      (cf_tag
+        (cf_start_tag
+          (cf_tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value)))))
+        (html_text)
+        (implicit_cf_end_tag))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (cf_selfclose_tag_end))
+      (cf_if_tag
+        (binary_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (identifier)))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (subscript_expression
+            (identifier)
+            (identifier)))
+        (cf_selfclose_tag_end))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (member_expression
+            (call_expression
               (identifier)
-              (identifier)))
-          (hash_expression
-            (binary_expression
-              (identifier)
-              (identifier)))
-          (cf_set_tag
-            (assignment_expression
-              (identifier)
-              (string
-                (string_fragment)))
-            (cf_selfclose_tag_end))
-          (cf_if_tag
-            (binary_expression
-              (member_expression
-                (identifier)
-                (property_identifier))
-              (identifier)))
-          (cf_set_tag
-            (assignment_expression
-              (identifier)
-              (subscript_expression
-                (identifier)
+              (arguments
                 (identifier)))
-            (cf_selfclose_tag_end))
-          (cf_set_tag
-            (assignment_expression
+            (property_identifier)))
+        (cf_selfclose_tag_end))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (subscript_expression
+            (call_expression
               (identifier)
-              (member_expression
-                (call_expression
-                  (identifier)
-                  (arguments
-                    (identifier)))
-                (property_identifier)))
-            (cf_selfclose_tag_end))
-          (cf_set_tag
-            (assignment_expression
-              (identifier)
-              (subscript_expression
-                (call_expression
-                  (identifier)
-                  (arguments
-                    (identifier)))
+              (arguments
                 (identifier)))
-            (cf_selfclose_tag_end)))
-        (cf_tag_close)))
+            (identifier)))
+        (cf_selfclose_tag_end))
+      (erroneous_cf_end_tag
+        (erroneous_cf_end_tag_name)))
 
 ===================================
 get results
@@ -185,147 +181,153 @@ get results
 
 ---
 (program
-      (cf_function_tag
-        (cf_tag_open
-          (cf_attribute
-            (cf_attribute_name)
-            (quoted_cf_attribute_value
-              (attribute_value)))
-          (cf_attribute
-            (cf_attribute_name)
-            (quoted_cf_attribute_value
-              (attribute_value)))
-          (cf_attribute
-            (cf_attribute_name)
-            (quoted_cf_attribute_value
-              (attribute_value)))
-          (cf_attribute
-            (cf_attribute_name)
-            (quoted_cf_attribute_value
-              (attribute_value))))
-        (cf_tag_body
-          (cf_selfclose_tag
-            (cf_attribute
-              (cf_attribute_name)
-              (quoted_cf_attribute_value
-                (attribute_value)))
-            (cf_attribute
-              (cf_attribute_name)
-              (quoted_cf_attribute_value
-                (attribute_value)))
-            (cf_attribute
-              (cf_attribute_name)
-              (quoted_cf_attribute_value
-                (attribute_value)))
-            (cf_selfclose_tag_end))
-          (cf_set_tag
-            (cf_var)
-            (assignment_expression
-              (identifier)
-              (call_expression
-                (identifier)
-                (arguments)))
-            (cf_selfclose_tag_end))
-          (cf_set_tag
-            (cf_var)
-            (assignment_expression
-              (identifier)
-              (call_expression
-                (member_expression
-                  (member_expression
-                    (identifier)
-                    (property_identifier))
-                  (property_identifier))
-                (arguments
-                  (assignment_expression
-                    (identifier)
-                    (member_expression
-                      (identifier)
-                      (property_identifier))))))
-            (cf_selfclose_tag_end))
-          (cf_set_tag
-            (assignment_expression
-              (identifier)
-              (string
-                (hash_expression
-                  (subscript_expression
-                    (identifier)
-                    (identifier)))))
-            (cf_selfclose_tag_end))
-          (cf_set_tag
-            (assignment_expression
-              (identifier)
-              (string
-                (hash_expression
-                  (member_expression
-                    (subscript_expression
-                      (member_expression
-                        (subscript_expression
-                          (member_expression
-                            (identifier)
-                            (property_identifier))
-                          (identifier))
-                        (property_identifier))
-                      (identifier))
-                    (property_identifier)))))
-            (cf_selfclose_tag_end))
-          (cf_set_tag
-            (call_expression
+      (cf_tag
+        (cf_start_tag
+          (cf_tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value)))))
+        (implicit_cf_end_tag))
+      (cf_selfclose_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_selfclose_tag_end))
+      (cf_set_tag
+        (cf_var)
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments)))
+        (cf_selfclose_tag_end))
+      (cf_set_tag
+        (cf_var)
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (member_expression
               (member_expression
                 (identifier)
                 (property_identifier))
-              (arguments
-                (assignment_expression
+              (property_identifier))
+            (arguments
+              (assignment_expression
+                (identifier)
+                (member_expression
                   (identifier)
-                  (object
-                    (pair
-                      (string
-                        (string_fragment))
-                      (identifier))))))
-            (cf_selfclose_tag_end))
-          (element
-            (start_tag
-              (tag_name))
-            (end_tag
-              (tag_name)))
-          (cf_comment)
-          (cf_if_tag
+                  (property_identifier))))))
+        (cf_selfclose_tag_end))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (string
+            (hash_expression
+              (subscript_expression
+                (identifier)
+                (identifier)))))
+        (cf_selfclose_tag_end))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (string
+            (hash_expression
+              (member_expression
+                (subscript_expression
+                  (member_expression
+                    (subscript_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier))
+                      (identifier))
+                    (property_identifier))
+                  (identifier))
+                (property_identifier)))))
+        (cf_selfclose_tag_end))
+      (cf_set_tag
+        (call_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (arguments
+            (assignment_expression
+              (identifier)
+              (object
+                (pair
+                  (string
+                    (string_fragment))
+                  (identifier))))))
+        (cf_selfclose_tag_end))
+      (element
+        (start_tag
+          (tag_name))
+        (end_tag
+          (tag_name)))
+      (cf_comment)
+      (cf_if_tag
+        (binary_expression
+          (parenthesized_expression
+            (true))
+          (parenthesized_expression
             (binary_expression
               (parenthesized_expression
                 (true))
               (parenthesized_expression
-                (binary_expression
-                  (parenthesized_expression
-                    (true))
-                  (parenthesized_expression
-                    (true))))))
-          (cf_set_tag
-            (assignment_expression
-              (identifier)
-              (parenthesized_expression
-                (identifier)))
-            (cf_selfclose_tag_end))
-          (cf_set_tag
-            (call_expression
-              (member_expression
-                (identifier)
-                (property_identifier))
-              (arguments
-                (function_expression
-                  (formal_parameters)
-                  (statement_block
-                    (expression_statement
-                      (assignment_expression
-                        (identifier)
-                        (string
-                          (string_fragment))))
-                    (return_statement
-                      (identifier))))))
-            (cf_selfclose_tag_end))
-          (cf_return_tag
+                (true))))))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (parenthesized_expression
+            (identifier)))
+        (cf_selfclose_tag_end))
+      (cf_set_tag
+        (call_expression
+          (member_expression
             (identifier)
-            (cf_selfclose_tag_end)))
-        (cf_tag_close)))
+            (property_identifier))
+          (arguments
+            (function_expression
+              (formal_parameters)
+              (statement_block
+                (expression_statement
+                  (assignment_expression
+                    (identifier)
+                    (string
+                      (string_fragment))))
+                (return_statement
+                  (identifier))))))
+        (cf_selfclose_tag_end))
+      (cf_return_tag
+        (identifier)
+        (cf_selfclose_tag_end))
+      (erroneous_cf_end_tag
+        (erroneous_cf_end_tag_name)))
 
 ===================================
 cfscript
@@ -569,7 +571,7 @@ testing
               (quoted_attribute_value
                 (attribute_value)))))
         (cf_tag
-          (self_closing_cf_tag
+          (cf_start_tag
             (cf_tag_name)
             (tag_attributes
               (attribute
@@ -593,7 +595,8 @@ testing
               (attribute
                 (attribute_name)
                 (quoted_attribute_value
-                  (attribute_value))))))
+                  (attribute_value)))))
+          (implicit_cf_end_tag))
         (cf_set_tag
           (assignment_expression
             (identifier)
@@ -939,7 +942,7 @@ testing4
           (start_tag
             (tag_name))
           (cf_tag
-            (self_closing_cf_tag
+            (cf_start_tag
               (cf_tag_name)
               (tag_attributes
                 (attribute
@@ -956,7 +959,8 @@ testing4
                 (attribute
                   (attribute_name)
                   (quoted_attribute_value
-                    (attribute_value))))))
+                    (attribute_value)))))
+            (implicit_cf_end_tag))
           (element
             (start_tag
               (tag_name))
@@ -1749,86 +1753,92 @@ cfzip3
 	</cffunction>
 ---
 (program
-      (cf_function_tag
-        (cf_tag_open
-          (cf_attribute
-            (cf_attribute_name)
-            (quoted_cf_attribute_value
-              (attribute_value)))
-          (cf_attribute
-            (cf_attribute_name)
-            (quoted_cf_attribute_value
-              (attribute_value)))
-          (cf_attribute
-            (cf_attribute_name)
-            (quoted_cf_attribute_value
-              (attribute_value)))
-          (cf_attribute
-            (cf_attribute_name)
-            (quoted_cf_attribute_value
-              (attribute_value))))
-        (cf_tag_body
-          (cf_selfclose_tag
-            (cf_attribute
-              (cf_attribute_name)
-              (quoted_cf_attribute_value
-                (attribute_value)))
-            (cf_attribute
-              (cf_attribute_name)
-              (quoted_cf_attribute_value
-                (attribute_value)))
-            (cf_attribute
-              (cf_attribute_name)
-              (quoted_cf_attribute_value
-                (attribute_value)))
-            (cf_selfclose_tag_end))
-          (cf_if_tag
-            (binary_expression
-              (member_expression
-                (identifier)
-                (property_identifier))
-              (true))
-            (cf_comment)
-            (cf_set_tag
-              (assignment_expression
-                (identifier)
-                (call_expression
-                  (identifier)
-                  (arguments
-                    (number))))
-              (cf_selfclose_tag_end))
-            (cf_if_alt
-              (cf_else_tag)
-              (cf_tag
-                (self_closing_cf_tag
-                  (cf_tag_name)
-                  (tag_attributes
-                    (attribute
-                      (attribute_name)
-                      (quoted_attribute_value
-                        (attribute_value))))
-                  (tag_attributes
-                    (attribute
-                      (attribute_name)
-                      (quoted_attribute_value
-                        (hash_expression
-                          (call_expression
-                            (identifier)
-                            (arguments))))))
-                  (tag_attributes
-                    (attribute
-                      (attribute_name)
-                      (quoted_attribute_value
-                        (hash_expression
-                          (member_expression
-                            (identifier)
-                            (property_identifier))))))
-                  (tag_attributes
-                    (attribute
-                      (attribute_name)
-                      (quoted_attribute_value
-                        (attribute_value)))))))))
-        (cf_tag_close)))
+      (cf_tag
+        (cf_start_tag
+          (cf_tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value)))))
+        (implicit_cf_end_tag))
+      (cf_selfclose_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_selfclose_tag_end))
+      (cf_if_tag
+        (binary_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (true))
+        (cf_comment)
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (call_expression
+              (identifier)
+              (arguments
+                (number))))
+          (cf_selfclose_tag_end))
+        (cf_if_alt
+          (cf_else_tag)
+          (cf_tag
+            (self_closing_cf_tag
+              (cf_tag_name)
+              (tag_attributes
+                (attribute
+                  (attribute_name)
+                  (quoted_attribute_value
+                    (attribute_value))))
+              (tag_attributes
+                (attribute
+                  (attribute_name)
+                  (quoted_attribute_value
+                    (hash_expression
+                      (call_expression
+                        (identifier)
+                        (arguments))))))
+              (tag_attributes
+                (attribute
+                  (attribute_name)
+                  (quoted_attribute_value
+                    (hash_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier))))))
+              (tag_attributes
+                (attribute
+                  (attribute_name)
+                  (quoted_attribute_value
+                    (attribute_value))))))))
+      (erroneous_cf_end_tag
+        (erroneous_cf_end_tag_name)))
 
 ===================================
 failing expression 2
@@ -1866,9 +1876,9 @@ failing expression 2
 ===================================
 failing expression
 ===================================
-<CFTEST>
+<cftest>
   test
-</CFTEST>
+</cftest>
 
 <cfzip test="">
 <cfset test = "">
@@ -1921,10 +1931,31 @@ failing expression
 ===================================
 cftransaction2
 ===================================
+<cffunction name="Test">
+
   <cftransaction isolation="read_committed" action="begin">
+  <cftransaction action="commit">
   </cftransaction>
+
+    <cftransaction isolation="read_committed" action="begin">
+  <cftransaction action="commit" />
+  </cftransaction>
+
+  <cfreturn result />
+
+  </cffunction>
+  
 ---
-(program
+ (program
+      (cf_tag
+        (cf_start_tag
+          (cf_tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value)))))
+        (implicit_cf_end_tag))
       (cf_tag
         (cf_start_tag
           (cf_tag_name)
@@ -1938,5 +1969,43 @@ cftransaction2
               (attribute_name)
               (quoted_attribute_value
                 (attribute_value)))))
-              (cf_end_tag
-          (cf_tag_name))))
+        (implicit_cf_end_tag))
+      (cf_tag
+        (cf_start_tag
+          (cf_tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value)))))
+        (cf_end_tag
+          (cf_tag_name)))
+      (cf_tag
+        (cf_start_tag
+          (cf_tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value)))))
+        (implicit_cf_end_tag))
+      (cf_tag
+        (self_closing_cf_tag
+          (cf_tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))))
+      (erroneous_cf_end_tag
+        (erroneous_cf_end_tag_name))
+      (cf_return_tag
+        (identifier)
+        (cf_selfclose_tag_end))
+      (erroneous_cf_end_tag
+        (erroneous_cf_end_tag_name)))

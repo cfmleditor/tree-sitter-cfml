@@ -32,3 +32,4 @@ void tree_sitter_cfml_external_scanner_destroy(void *payload) {
     array_delete(&scanner->cf_tags);
     ts_free(scanner);
 }
+

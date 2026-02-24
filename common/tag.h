@@ -315,7 +315,7 @@ static const char *CF_VOID_TAGS[] = {
 };
 
 static const char *CF_PAIRED_TAGS[] = {
-    "FUNCTION", "COMPONENT", "OUTPUT", "SCRIPT", "QUERY", "XML", "IF", "ELSEIF", "ELSE", NULL
+    "OUTPUT", "SCRIPT", "QUERY", "XML", "IF", "ELSEIF", "ELSE", NULL
 };
 
 static inline bool cf_tag_name_in(const String *name, const char **list) {
