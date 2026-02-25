@@ -4,15 +4,7 @@
     "named": true,
     "subtypes": [
       {
-        "type": "cf_component_tag",
-        "named": true
-      },
-      {
         "type": "cf_if_tag",
-        "named": true
-      },
-      {
-        "type": "cf_output_tag",
         "named": true
       },
       {
@@ -912,36 +904,6 @@
     }
   },
   {
-    "type": "cf_component_tag",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "cf_tag_body",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_tag_close",
-          "named": true
-        },
-        {
-          "type": "cf_tag_open",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cf_else_tag",
     "named": true,
     "fields": {}
@@ -1033,6 +995,10 @@
           "named": true
         },
         {
+          "type": "html_text",
+          "named": true
+        },
+        {
           "type": "script_element",
           "named": true
         },
@@ -1104,70 +1070,7 @@
           "named": true
         },
         {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_output_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_cf_end_tag",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
+          "type": "html_text",
           "named": true
         },
         {
@@ -1346,6 +1249,10 @@
           "named": true
         },
         {
+          "type": "html_text",
+          "named": true
+        },
+        {
           "type": "implicit_cf_end_tag",
           "named": true
         },
@@ -1367,89 +1274,6 @@
         },
         {
           "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_tag_body",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "_cf_tag",
-          "named": true
-        },
-        {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
-          "type": "erroneous_cf_end_tag",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
-          "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_tag_close",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "cf_tag_open",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_attribute",
           "named": true
         }
       ]
@@ -2671,6 +2495,10 @@
           "named": true
         },
         {
+          "type": "html_text",
+          "named": true
+        },
+        {
           "type": "script_element",
           "named": true
         },
@@ -3730,10 +3558,6 @@
     "named": false
   },
   {
-    "type": "elseif",
-    "named": false
-  },
-  {
     "type": "entity",
     "named": true
   },
@@ -3824,10 +3648,6 @@
   {
     "type": "optional_chain",
     "named": true
-  },
-  {
-    "type": "output",
-    "named": false
   },
   {
     "type": "private_property_identifier",

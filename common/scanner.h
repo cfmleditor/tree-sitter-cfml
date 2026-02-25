@@ -27,6 +27,8 @@ enum TokenType {
     CF_VOID_START_TAG_NAME,
     CF_SET_START_TAG_NAME,
     CF_RETURN_START_TAG_NAME,
+    CF_IF_START_TAG_NAME,
+    CF_ELSEIF_START_TAG_NAME,
     CF_SPECIAL_START_TAG_NAME,
     CF_SPECIAL_END_TAG_NAME,
     CF_SPECIAL_CONTENT,
@@ -58,7 +60,7 @@ static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
     (size) += sizeof(_count); \
     for (; _serialized < _count; _serialized++) { \
         Tag _tag = (tags_field).contents[_serialized]; \
-        if (_tag.type == CUSTOM || _tag.type == CFML || _tag.type == CF_VOID || _tag.type == CF_SET || _tag.type == CF_SPECIAL || _tag.type == CF_RETURN) { \
+        if (_tag.type == CUSTOM || _tag.type == CFML || _tag.type == CF_VOID || _tag.type == CF_SET || _tag.type == CF_SPECIAL || _tag.type == CF_RETURN || _tag.type == CF_IF || _tag.type == CF_ELSEIF) { \
             unsigned _len = _tag.tag_name.size; \
             if (_len > UINT8_MAX) _len = UINT8_MAX; \
             if ((size) + 2 + _len >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) break; \
@@ -93,7 +95,7 @@ static unsigned serialize(Scanner *scanner, char *buffer) {
     for (_iter = 0; _iter < _serialized; _iter++) { \
         Tag _tag = tag_new(); \
         _tag.type = (TagType)(buffer)[(size)++]; \
-        if (_tag.type == CUSTOM || _tag.type == CFML || _tag.type == CF_VOID || _tag.type == CF_SET || _tag.type == CF_SPECIAL || _tag.type == CF_RETURN) { \
+        if (_tag.type == CUSTOM || _tag.type == CFML || _tag.type == CF_VOID || _tag.type == CF_SET || _tag.type == CF_SPECIAL || _tag.type == CF_RETURN || _tag.type == CF_IF || _tag.type == CF_ELSEIF) { \
             uint16_t _len = (uint8_t)(buffer)[(size)++]; \
             array_reserve(&_tag.tag_name, _len); \
             _tag.tag_name.size = _len; \
@@ -333,7 +335,7 @@ static bool scan_cfspecial_content(Scanner *scanner, TSLexer *lexer) {
     memcpy(end_delimiter, "</CF", 4);
     memcpy(&end_delimiter[4], cf_tag->tag_name.contents, cf_tag->tag_name.size);
     end_delimiter[cf_tag->tag_name.size + 4] = '\0';
-    printf("end_delimiter: %s\n", end_delimiter);
+    // printf("end_delimiter: %s\n", end_delimiter);
 
     unsigned delimiter_index = 0;
 
@@ -495,11 +497,6 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
     bool is_cf = result.is_cf_tag || is_cf_context;
     Tag tag = is_cf ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
 
-    if ( is_cf ) {
-        array_push(&scanner->cf_tags, tag);
-    } else {
-        array_push(&scanner->tags, tag);
-    }
     
     switch (tag.type) {
         case SCRIPT:
@@ -510,12 +507,18 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
             break;
         case CF_VOID:
             lexer->result_symbol = CF_VOID_START_TAG_NAME;
-            break;
+            return true;
         case CF_SET:
             lexer->result_symbol = CF_SET_START_TAG_NAME;
-            break;
+            return true;
         case CF_RETURN:
             lexer->result_symbol = CF_RETURN_START_TAG_NAME;
+            return true;
+        case CF_IF:
+            lexer->result_symbol = CF_IF_START_TAG_NAME;
+            break;
+        case CF_ELSEIF:
+            lexer->result_symbol = CF_ELSEIF_START_TAG_NAME;
             break;
         case CF_SPECIAL:
             lexer->result_symbol = CF_SPECIAL_START_TAG_NAME;
@@ -524,6 +527,13 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
             lexer->result_symbol = is_cf ? CF_START_TAG_NAME : START_TAG_NAME;
             break;
     }
+
+    if ( is_cf ) {
+        array_push(&scanner->cf_tags, tag);
+    } else {
+        array_push(&scanner->tags, tag);
+    }
+    
     return true;
 }
 
@@ -542,8 +552,6 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
 
     Tag *tag_back = (is_cf && scanner->cf_tags.size > 0) ? array_back(&scanner->cf_tags)
                    : (scanner->tags.size > 0) ? array_back(&scanner->tags) : NULL;
-
-    printf("tag_back: %.*s\n", tag_back ? (int)tag_back->tag_name.size : 4, tag_back ? tag_back->tag_name.contents : "NULL");
 
     if ( tag_back && tag_eq(tag_back, &tag) ) {
         pop_tag(scanner, is_cf);
@@ -879,7 +887,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             advance(lexer);
             if (lexer->lookahead == '>') {
                 if (valid_symbols[SELF_CLOSING_TAG_DELIMITER]) {
-                    return scan_self_closing_tag_delimiter(scanner, lexer, valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME]);
+                    return scan_self_closing_tag_delimiter(scanner, lexer, valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_VOID_START_TAG_NAME]);
                 }
                 if (valid_symbols[CLOSE_TAG_DELIM] ) {
                     return scan_closetag_delim(scanner, lexer, false);

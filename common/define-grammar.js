@@ -42,6 +42,8 @@ module.exports = function defineGrammar(dialect) {
       $._start_cf_void_name,
       $._start_cf_set_name,
       $._start_cf_return_name,
+      $._start_cf_if_name,
+      $._start_cf_elseif_name,
       $._start_cf_special_name,
       $._end_cf_special_name,
       $.cf_special_content,
@@ -131,7 +133,9 @@ module.exports = function defineGrammar(dialect) {
       [$.computed_property_name, $.array],
       [$.binary_expression, $._initializer],
       [$.tag_attributes, $.attribute_name],
-      // [$.element, $._node],
+      [$.element, $._node],
+      // [$.cf_tag, $._node],
+      // [$.cf_tag_body],
       [$.arrow_function, $.binary_expression],
       [$.arrow_function, $.call_expression],
       [$.arrow_function, $.subscript_expression],
@@ -207,7 +211,7 @@ module.exports = function defineGrammar(dialect) {
       cf_return_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         $._start_cf_return_name,
-        $._cf_tag_expression,
+        optional($.expression),
         $.cf_selfclose_tag_end,
       )),
 
@@ -224,27 +228,13 @@ module.exports = function defineGrammar(dialect) {
         $.script_element,
         $.style_element,
         $.text,
+        $.erroneous_end_tag,
+        $.erroneous_cf_end_tag,
         $.end_tag,
-        $.erroneous_end_tag,
-        $.erroneous_cf_end_tag,
-        $.xml_decl,
-      ),
-
-      _element_node: $ => choice(
-        $.doctype,
-        $.entity,
-        $.element,
-        $._cf_tag,
-        $._hash,
-        $.script_element,
-        $.style_element,
-        $.text,
-        $.erroneous_end_tag,
-        $.erroneous_cf_end_tag,
         $.xml_decl,
         $.html_text,
       ),
-
+      
       query_operator: $ => choice(
         field('operator', '>='),
         field('operator', '>'),
@@ -256,17 +246,6 @@ module.exports = function defineGrammar(dialect) {
         field('operator', 'BETWEEN'),
         field('operator', 'EXISTS'),
       ),
-
-      cf_output_tag: $ => prec.right(2, seq(
-        $._cf_open_tag,
-        keyword('output'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        ( dialect === 'cfml' ? repeat($._node) : repeat($._cfoutput_node) ),
-        $._cf_close_tag,
-        keyword('output'),
-        alias($._close_tag_delim, '>'),
-      )),
 
       _cfoutput_node: $ => choice(
         $.doctype,
@@ -288,7 +267,7 @@ module.exports = function defineGrammar(dialect) {
       element: $ => choice(
         seq(
           $.start_tag,
-          repeat($._element_node),
+          repeat($._node),
           choice($.end_tag, $.implicit_end_tag),
         ),
         $.self_closing_tag,
@@ -456,27 +435,7 @@ module.exports = function defineGrammar(dialect) {
 
       cf_tag_name: _ => /[a-zA-Z][a-zA-Z0-9_]*/,
 
-      _cf_component_open: $ => seq(
-        $._cf_open_tag,
-        keyword('component'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-      ),
-
-      _cf_component_close: $ => seq(
-        $._cf_close_tag,
-        keyword('component'),
-        alias($._close_tag_delim, '>'),
-      ),
-
-
       cf_tag_body: $ => ( dialect === 'cfml' ? repeat1($._node) : repeat1($._cfoutput_node) ),
-
-      cf_component_tag: $ => prec.right(1, seq(
-        alias($._cf_component_open, $.cf_tag_open),
-        field('body', optional($.cf_tag_body)),
-        alias($._cf_component_close, $.cf_tag_close),
-      )),
 
       cf_special_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
@@ -490,11 +449,8 @@ module.exports = function defineGrammar(dialect) {
       )),
 
       _cf_tag: $ => prec.right(3, choice(
-        $.cf_output_tag,
         $.cf_selfclose_tag,
-        $.cf_return_tag,
         $.cf_if_tag,
-        $.cf_component_tag,
         $.cf_set_tag,
         $.cf_return_tag,
         $.cf_tag,
@@ -508,16 +464,9 @@ module.exports = function defineGrammar(dialect) {
         $.cf_selfclose_tag_end,
       )),
 
-      cf_return_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('return'),
-        optional($.expression),
-        $.cf_selfclose_tag_end,
-      )),
-
       cf_if_tag: $ => prec.right(1, seq(
         $._cf_open_tag,
-        keyword('if'),
+        $._start_cf_if_name,
         $._cf_tag_expression,
         alias($._close_tag_delim, '>'),
         repeat($._node),
@@ -528,7 +477,7 @@ module.exports = function defineGrammar(dialect) {
       )),
 
       cf_elseif_tag: $ => prec.right(3, seq(
-        keyword('elseif'),
+        $._start_cf_elseif_name,
         $._cf_tag_expression,
         alias($._close_tag_delim, '>'),
       )),
