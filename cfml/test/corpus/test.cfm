@@ -1,9 +1,8 @@
-<cfset downloadUrl = "https:"&#ARGUMENTS.download_url# />
 
-<cfquery name="Test">
-  <cfswitch expression="#tmp_budget_no#">
-    <cfcase value="1">
-        AND	ac.budg1_amt <> 0
-    </cfcase>
-  </cfswitch>
-</cfquery>
+
+<cffunction name="DeleteGlobalNoteCategory" access="public" output="No" returntype="boolean">
+		<cfargument name="CompanyCode" required="Yes" type="string" />
+		<cfargument name="CODE" required="Yes" type="string" />
+		<cfargument name="type_code" required="false" type="string" default="X" />
+
+	</cffunction>

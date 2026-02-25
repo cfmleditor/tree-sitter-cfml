@@ -26,6 +26,7 @@ enum TokenType {
     HTML_TEXT,
     CF_VOID_START_TAG_NAME,
     CF_SET_START_TAG_NAME,
+    CF_RETURN_START_TAG_NAME,
     CF_SPECIAL_START_TAG_NAME,
     CF_SPECIAL_END_TAG_NAME,
     CF_SPECIAL_CONTENT,
@@ -57,7 +58,7 @@ static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
     (size) += sizeof(_count); \
     for (; _serialized < _count; _serialized++) { \
         Tag _tag = (tags_field).contents[_serialized]; \
-        if (_tag.type == CUSTOM || _tag.type == CFML || _tag.type == CF_VOID || _tag.type == CF_SET || _tag.type == CF_SPECIAL) { \
+        if (_tag.type == CUSTOM || _tag.type == CFML || _tag.type == CF_VOID || _tag.type == CF_SET || _tag.type == CF_SPECIAL || _tag.type == CF_RETURN) { \
             unsigned _len = _tag.tag_name.size; \
             if (_len > UINT8_MAX) _len = UINT8_MAX; \
             if ((size) + 2 + _len >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) break; \
@@ -92,7 +93,7 @@ static unsigned serialize(Scanner *scanner, char *buffer) {
     for (_iter = 0; _iter < _serialized; _iter++) { \
         Tag _tag = tag_new(); \
         _tag.type = (TagType)(buffer)[(size)++]; \
-        if (_tag.type == CUSTOM || _tag.type == CFML || _tag.type == CF_VOID || _tag.type == CF_SET || _tag.type == CF_SPECIAL) { \
+        if (_tag.type == CUSTOM || _tag.type == CFML || _tag.type == CF_VOID || _tag.type == CF_SET || _tag.type == CF_SPECIAL || _tag.type == CF_RETURN) { \
             uint16_t _len = (uint8_t)(buffer)[(size)++]; \
             array_reserve(&_tag.tag_name, _len); \
             _tag.tag_name.size = _len; \
@@ -513,6 +514,9 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         case CF_SET:
             lexer->result_symbol = CF_SET_START_TAG_NAME;
             break;
+        case CF_RETURN:
+            lexer->result_symbol = CF_RETURN_START_TAG_NAME;
+            break;
         case CF_SPECIAL:
             lexer->result_symbol = CF_SPECIAL_START_TAG_NAME;
             break;
@@ -533,9 +537,15 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
     }
 
     bool is_cf = result.is_cf_tag || is_cf_context;
+    
     Tag tag = is_cf ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
-    if (is_cf ? (scanner->cf_tags.size > 0 && tag_eq(array_back(&scanner->cf_tags), &tag))
-              : (scanner->tags.size > 0 && tag_eq(array_back(&scanner->tags), &tag))) {
+
+    Tag *tag_back = (is_cf && scanner->cf_tags.size > 0) ? array_back(&scanner->cf_tags)
+                   : (scanner->tags.size > 0) ? array_back(&scanner->tags) : NULL;
+
+    printf("tag_back: %.*s\n", tag_back ? (int)tag_back->tag_name.size : 4, tag_back ? tag_back->tag_name.contents : "NULL");
+
+    if ( tag_back && tag_eq(tag_back, &tag) ) {
         pop_tag(scanner, is_cf);
         if (is_cf && tag.type == CF_SPECIAL) {
             lexer->result_symbol = CF_SPECIAL_END_TAG_NAME;

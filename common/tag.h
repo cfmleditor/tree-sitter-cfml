@@ -33,6 +33,7 @@ typedef enum {
     CF_VOID,
     CF_SPECIAL,
     CF_SET,
+    CF_RETURN,
 
     A,
     ABBR,
@@ -151,7 +152,7 @@ typedef struct {
     String tag_name;
 } Tag;
 
-static const TagMapEntry TAG_TYPES_BY_TAG_NAME[127] = {
+static const TagMapEntry TAG_TYPES_BY_TAG_NAME[126] = {
     {"AREA",       AREA      },
     {"BASE",       BASE      },
     {"BASEFONT",   BASEFONT  },
@@ -278,7 +279,6 @@ static const TagMapEntry TAG_TYPES_BY_TAG_NAME[127] = {
     {"VAR",        VAR       },
     {"VIDEO",      VIDEO     },
     {"CUSTOM",     CUSTOM    },
-    {"CFML",     CFML    },
 };
 
 static const TagType TAG_TYPES_NOT_ALLOWED_IN_PARAGRAPHS[] = {
@@ -309,7 +309,7 @@ static inline Tag tag_new() {
 }
 
 static const char *CF_VOID_TAGS[] = {
-    "PARAM", "RETURN", "ARGUMENT", "PROPERTY", "RETHROW", "THROW", "RETURN",
+    "PARAM", "ARGUMENT", "PROPERTY", "RETHROW", "THROW",
     "BREAK", "CONTINUE", "ABORT", "EXIT", "INCLUDE", "LOCATION", "HEADER", "DUMP",
     "CONTENT", "COOKIE", "LOG", "FILE", "DIRECTORY", "SETTING", NULL
 };
@@ -332,6 +332,8 @@ static inline Tag cf_tag_for_name(String name) {
     Tag tag = tag_new();
     if (name.size == 3 && memcmp(name.contents, "SET", 3) == 0) {
         tag.type = CF_SET;
+    } else if (name.size == 6 && memcmp(name.contents, "RETURN", 6) == 0) {
+        tag.type = CF_RETURN;
     } else if (cf_tag_name_in(&name, CF_VOID_TAGS)) {
         tag.type = CF_VOID;
     } else if (cf_tag_name_in(&name, CF_SPECIAL_TAGS)) {
@@ -355,7 +357,7 @@ static inline Tag tag_for_name(String name) {
 }
 
 static inline void tag_free(Tag *tag) {
-    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_SPECIAL || tag->type == CF_SET) {
+    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_SPECIAL || tag->type == CF_SET || tag->type == CF_RETURN) {
         array_delete(&tag->tag_name);
     }
 }
@@ -370,7 +372,7 @@ static inline bool cf_tag_is_void(const Tag *self) {
 
 static inline bool tag_eq(const Tag *self, const Tag *other) {
     if (self->type != other->type) return false;
-    if (self->type == CUSTOM || self->type == CFML || self->type == CF_VOID || self->type == CF_SPECIAL || self->type == CF_SET) {
+    if (self->type == CUSTOM || self->type == CFML || self->type == CF_VOID || self->type == CF_SPECIAL || self->type == CF_SET || self->type == CF_RETURN) {
         if (self->tag_name.size != other->tag_name.size) {
             return false;
         }
