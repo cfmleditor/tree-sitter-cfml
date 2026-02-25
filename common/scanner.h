@@ -22,17 +22,7 @@ enum TokenType {
     IMPLICIT_CF_END_TAG,
     RAW_TEXT,
     CFML_COMMENT,
-    CFQUERY_CONTENT,
-    // CF_OPEN_TAG,
-    // CF_CLOSE_TAG,
-    CFSAVECONTENT_CONTENT,
-    CFXML_CONTENT,
     CLOSE_TAG_DELIM,
-    // CF_OUTPUT_TAG,
-    CFSCRIPT_CONTENT,
-    // CFOUTPUT_CONTENT,
-    // CFFUNCTION_CONTENT,
-    // HTML_HASH,
     HTML_TEXT,
     CF_VOID_START_TAG_NAME,
     CF_SET_START_TAG_NAME,
@@ -332,129 +322,6 @@ static bool scan_script_comment(TSLexer *lexer) {
     }
 }
 
-static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer) {
-    
-    lexer->mark_end(lexer);
-
-    const char *end_delimiter = "</CFQUERY";
-
-    unsigned delimiter_index = 0;
-
-    while (lexer->lookahead) {
-        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
-            delimiter_index++;
-            if (delimiter_index == strlen(end_delimiter)) {
-                break;
-            }
-            advance(lexer);
-        } else {
-            delimiter_index = 0;
-            advance(lexer);
-            lexer->mark_end(lexer);
-        }
-    }
-
-    lexer->result_symbol = CFQUERY_CONTENT;
-
-    while (lexer->lookahead) {
-        advance(lexer);
-    }
-
-    return true;
-}
-
-static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer) {
-
-    lexer->mark_end(lexer);
-
-    const char *end_delimiter = "</CFSAVECONTENT";
-
-    unsigned delimiter_index = 0;
-
-    while (lexer->lookahead) {
-        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
-            delimiter_index++;
-            if (delimiter_index == strlen(end_delimiter)) {
-                break;
-            }
-            advance(lexer);
-        } else {
-            delimiter_index = 0;
-            advance(lexer);
-            lexer->mark_end(lexer);
-        }
-    }
-
-    lexer->result_symbol = CFSAVECONTENT_CONTENT;
-
-    while (lexer->lookahead) {
-        advance(lexer);
-    }
-
-    return true;
-}
-
-static bool scan_cfxml_content(Scanner *scanner, TSLexer *lexer) {
-
-    lexer->mark_end(lexer);
-
-    const char *end_delimiter = "</CFXML";
-
-    unsigned delimiter_index = 0;
-
-    while (lexer->lookahead) {
-        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
-            delimiter_index++;
-            if (delimiter_index == strlen(end_delimiter)) {
-                break;
-            }
-            advance(lexer);
-        } else {
-            delimiter_index = 0;
-            advance(lexer);
-            lexer->mark_end(lexer);
-        }
-    }
-
-    lexer->result_symbol = CFXML_CONTENT;
-
-    while (lexer->lookahead) {
-        advance(lexer);
-    }
-
-    return true;
-}
-
-static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer) {
-
-    lexer->mark_end(lexer);
-
-    const char *end_delimiter = "</CFSCRIPT";
-
-    unsigned delimiter_index = 0;
-
-    while (lexer->lookahead) {
-        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
-            delimiter_index++;
-            if (delimiter_index == strlen(end_delimiter)) {
-                break;
-            }
-            advance(lexer);
-        } else {
-            delimiter_index = 0;
-            advance(lexer);
-            lexer->mark_end(lexer);
-        }
-    }
-
-    lexer->result_symbol = CFSCRIPT_CONTENT;
-
-    while (lexer->lookahead) {
-        advance(lexer);
-    }
-
-    return true;
-}
 
 static bool scan_cfspecial_content(Scanner *scanner, TSLexer *lexer) {
 
@@ -484,76 +351,8 @@ static bool scan_cfspecial_content(Scanner *scanner, TSLexer *lexer) {
     }
 
     lexer->result_symbol = CF_SPECIAL_CONTENT;
-
-    while (lexer->lookahead) {
-        advance(lexer);
-    }
-
     return true;
 }
-
-// static bool scan_cfoutput_content(Scanner *scanner, TSLexer *lexer) {
-
-//     lexer->mark_end(lexer);
-
-//     const char *end_delimiter = "</CFOUTPUT";
-
-//     unsigned delimiter_index = 0;
-
-//     while (lexer->lookahead) {
-//         printf("%c", towupper(lexer->lookahead));
-//         if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
-//             delimiter_index++;
-//             if (delimiter_index == strlen(end_delimiter)) {
-//                 break;
-//             }
-//             advance(lexer);
-//         } else {
-//             delimiter_index = 0;
-//             advance(lexer);
-//             lexer->mark_end(lexer);
-//         }
-//     }
-
-//     lexer->result_symbol = CFOUTPUT_CONTENT;
-
-//     while (lexer->lookahead) {
-//         advance(lexer);
-//     }
-
-//     return true;
-// }
-
-// static bool scan_cffunction_content(Scanner *scanner, TSLexer *lexer) {
-
-//     lexer->mark_end(lexer);
-
-//     const char *end_delimiter = "</CFFUNCTION";
-
-//     unsigned delimiter_index = 0;
-
-//     while (lexer->lookahead) {
-//         if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
-//             delimiter_index++;
-//             if (delimiter_index == strlen(end_delimiter)) {
-//                 break;
-//             }
-//             advance(lexer);
-//         } else {
-//             delimiter_index = 0;
-//             advance(lexer);
-//             lexer->mark_end(lexer);
-//         }
-//     }
-
-//     lexer->result_symbol = CFFUNCTION_CONTENT;
-
-//     while (lexer->lookahead) {
-//         advance(lexer);
-//     }
-
-//     return true;
-// }
 
 static bool scan_raw_text(Scanner *scanner, TSLexer *lexer) {
     if (scanner->tags.size == 0) {
@@ -738,7 +537,11 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
     if (is_cf ? (scanner->cf_tags.size > 0 && tag_eq(array_back(&scanner->cf_tags), &tag))
               : (scanner->tags.size > 0 && tag_eq(array_back(&scanner->tags), &tag))) {
         pop_tag(scanner, is_cf);
-        lexer->result_symbol = is_cf ? CF_END_TAG_NAME : END_TAG_NAME;
+        if (is_cf && tag.type == CF_SPECIAL) {
+            lexer->result_symbol = CF_SPECIAL_END_TAG_NAME;
+        } else {
+            lexer->result_symbol = is_cf ? CF_END_TAG_NAME : END_TAG_NAME;
+        }
     } else {
         lexer->result_symbol = is_cf ? ERRONEOUS_CF_END_TAG_NAME : ERRONEOUS_END_TAG_NAME;
     }
@@ -1019,22 +822,6 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
         }
     }
 
-    // if (valid_symbols[CFQUERY_CONTENT]) {
-    //     return scan_cfquery_content(scanner, lexer);
-    // }
-
-    // if (valid_symbols[CFSAVECONTENT_CONTENT]) {
-    //     return scan_cfsavecontent_content(scanner, lexer);
-    // }
-
-    // if (valid_symbols[CFXML_CONTENT]) {
-    //     return scan_cfxml_content(scanner, lexer);
-    // }
-
-    // if (valid_symbols[CFSCRIPT_CONTENT]) {
-    //     return scan_cfscript_content(scanner, lexer);
-    // }
-
     if (valid_symbols[CF_SPECIAL_CONTENT]) {
         return scan_cfspecial_content(scanner, lexer);
     }
@@ -1042,18 +829,6 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
     if (valid_symbols[HTML_TEXT] && scan_html_text(lexer)) {
         return true;
     }
-
-    // if (valid_symbols[CFOUTPUT_CONTENT]) {
-    //     return scan_cfoutput_content(scanner, lexer);
-    // }
-
-    // if (valid_symbols[CFFUNCTION_CONTENT]) {
-    //     return scan_cffunction_content(scanner, lexer);
-    // }
-
-    // if ( valid_symbols[HTML_HASH] ) {
-    //     return scan_hash(scanner, lexer);
-    // }
 
     switch (lexer->lookahead) {
         case ';':
@@ -1068,7 +843,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                 return scan_comment(lexer);
             }
 
-            if ( valid_symbols[IMPLICIT_CF_END_TAG]) {
+            if ( valid_symbols[IMPLICIT_CF_END_TAG] && !valid_symbols[CF_SPECIAL_END_TAG_NAME]) {
                 return scan_implicit_end_tag(scanner, lexer, true);
             }
 
@@ -1080,7 +855,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
         case '\0':
 
-            if ( valid_symbols[IMPLICIT_CF_END_TAG]) {
+            if ( valid_symbols[IMPLICIT_CF_END_TAG] && !valid_symbols[CF_SPECIAL_END_TAG_NAME]) {
                 return scan_implicit_end_tag(scanner, lexer, true);
             }
 

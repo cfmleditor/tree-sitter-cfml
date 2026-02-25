@@ -186,10 +186,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "cfscript_element"
-        },
-        {
-          "type": "SYMBOL",
           "name": "text"
         },
         {
@@ -207,31 +203,6 @@
         {
           "type": "SYMBOL",
           "name": "xml_decl"
-        }
-      ]
-    },
-    "_node_cfquery": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "query_operator"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_cf_tag"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_hash"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "cfscript_element"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "text"
         }
       ]
     },
@@ -479,10 +450,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "cfscript_element"
-        },
-        {
-          "type": "SYMBOL",
           "name": "text"
         },
         {
@@ -498,85 +465,6 @@
           "name": "xml_decl"
         }
       ]
-    },
-    "cfscript_element": {
-      "type": "PREC_RIGHT",
-      "value": 2,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_cf_open_tag"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[sS][cC][rR][iI][pP][tT]"
-                }
-              }
-            },
-            "named": false,
-            "value": "script"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_tag_delim"
-            },
-            "named": false,
-            "value": ">"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "cfscript_content"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_cf_close_tag"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[sS][cC][rR][iI][pP][tT]"
-                }
-              }
-            },
-            "named": false,
-            "value": "script"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_tag_delim"
-            },
-            "named": false,
-            "value": ">"
-          }
-        ]
-      }
     },
     "_cf_open_tag": {
       "type": "PREC_RIGHT",
@@ -1456,162 +1344,6 @@
         ]
       }
     },
-    "cf_query_tag": {
-      "type": "PREC_RIGHT",
-      "value": 3,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_cf_open_tag"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[qQ][uU][eE][rR][yY]"
-                }
-              }
-            },
-            "named": false,
-            "value": "query"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "cf_attribute"
-            }
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_tag_delim"
-            },
-            "named": false,
-            "value": ">"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "cfquery_content"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_cf_close_tag"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[qQ][uU][eE][rR][yY]"
-                }
-              }
-            },
-            "named": false,
-            "value": "query"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_tag_delim"
-            },
-            "named": false,
-            "value": ">"
-          }
-        ]
-      }
-    },
-    "cf_xml_tag": {
-      "type": "PREC_RIGHT",
-      "value": 3,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_cf_open_tag"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[xX][mM][lL]"
-                }
-              }
-            },
-            "named": false,
-            "value": "xml"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "cf_attribute"
-            }
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_tag_delim"
-            },
-            "named": false,
-            "value": ">"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "cfxml_content"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_cf_close_tag"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[xX][mM][lL]"
-                }
-              }
-            },
-            "named": false,
-            "value": "xml"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_tag_delim"
-            },
-            "named": false,
-            "value": ">"
-          }
-        ]
-      }
-    },
     "_cf_tag": {
       "type": "PREC_RIGHT",
       "value": 3,
@@ -1637,14 +1369,6 @@
           {
             "type": "SYMBOL",
             "name": "cf_component_tag"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "cf_query_tag"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "cf_xml_tag"
           },
           {
             "type": "SYMBOL",
@@ -9287,23 +9011,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "cfquery_content"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_cfsavecontent_content"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "cfxml_content"
-    },
-    {
-      "type": "SYMBOL",
       "name": "_close_tag_delim"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "cfscript_content"
     },
     {
       "type": "SYMBOL",

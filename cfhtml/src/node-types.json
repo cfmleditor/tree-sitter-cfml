@@ -16,10 +16,6 @@
         "named": true
       },
       {
-        "type": "cf_query_tag",
-        "named": true
-      },
-      {
         "type": "cf_return_tag",
         "named": true
       },
@@ -37,10 +33,6 @@
       },
       {
         "type": "cf_tag",
-        "named": true
-      },
-      {
-        "type": "cf_xml_tag",
         "named": true
       }
     ]
@@ -997,10 +989,6 @@
           "named": true
         },
         {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -1061,10 +1049,6 @@
         },
         {
           "type": "cf_if_alt",
-          "named": true
-        },
-        {
-          "type": "cfscript_element",
           "named": true
         },
         {
@@ -1135,10 +1119,6 @@
           "named": true
         },
         {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -1180,25 +1160,6 @@
         },
         {
           "type": "xml_decl",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_query_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cfquery_content",
           "named": true
         }
       ]
@@ -1329,10 +1290,6 @@
           "named": true
         },
         {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -1400,10 +1357,6 @@
           "named": true
         },
         {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },
@@ -1465,40 +1418,6 @@
       "types": [
         {
           "type": "cf_attribute",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_xml_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cfxml_content",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cfscript_element",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "cfscript_content",
           "named": true
         }
       ]
@@ -2668,10 +2587,6 @@
           "named": true
         },
         {
-          "type": "cfscript_element",
-          "named": true
-        },
-        {
           "type": "component",
           "named": true
         },
@@ -3727,18 +3642,6 @@
     "named": true
   },
   {
-    "type": "cfquery_content",
-    "named": true
-  },
-  {
-    "type": "cfscript_content",
-    "named": true
-  },
-  {
-    "type": "cfxml_content",
-    "named": true
-  },
-  {
     "type": "component",
     "named": false
   },
@@ -3879,10 +3782,6 @@
     "named": true
   },
   {
-    "type": "query",
-    "named": false
-  },
-  {
     "type": "raw_text",
     "named": true
   },
@@ -3905,10 +3804,6 @@
   {
     "type": "return_type",
     "named": true
-  },
-  {
-    "type": "script",
-    "named": false
   },
   {
     "type": "shorthand_property_identifier",
