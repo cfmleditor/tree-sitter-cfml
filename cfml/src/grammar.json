@@ -1249,20 +1249,8 @@
             "name": "_cf_close_tag"
           },
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[iI][fF]"
-                }
-              }
-            },
-            "named": false,
-            "value": "if"
+            "type": "SYMBOL",
+            "name": "_end_cf_if_name"
           },
           {
             "type": "ALIAS",
@@ -1309,20 +1297,8 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "TOKEN",
-              "content": {
-                "type": "PREC",
-                "value": 1,
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[eE][lL][sS][eE]"
-                }
-              }
-            },
-            "named": false,
-            "value": "else"
+            "type": "SYMBOL",
+            "name": "_start_cf_else_name"
           },
           {
             "type": "ALIAS",
@@ -8754,7 +8730,15 @@
     },
     {
       "type": "SYMBOL",
+      "name": "_end_cf_if_name"
+    },
+    {
+      "type": "SYMBOL",
       "name": "_start_cf_elseif_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_start_cf_else_name"
     },
     {
       "type": "SYMBOL",

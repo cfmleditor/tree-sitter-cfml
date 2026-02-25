@@ -43,7 +43,9 @@ module.exports = function defineGrammar(dialect) {
       $._start_cf_set_name,
       $._start_cf_return_name,
       $._start_cf_if_name,
+      $._end_cf_if_name,
       $._start_cf_elseif_name,
+      $._start_cf_else_name,
       $._start_cf_special_name,
       $._end_cf_special_name,
       $.cf_special_content,
@@ -472,7 +474,7 @@ module.exports = function defineGrammar(dialect) {
         repeat($._node),
         optional($.cf_if_alt),
         $._cf_close_tag,
-        keyword('if'),
+        $._end_cf_if_name,
         alias($._close_tag_delim, '>'),
       )),
 
@@ -483,7 +485,7 @@ module.exports = function defineGrammar(dialect) {
       )),
 
       cf_else_tag: $ => prec.right(3, seq(
-        keyword('else'),
+        $._start_cf_else_name,
         alias($._close_tag_delim, '>'),
       )),
 

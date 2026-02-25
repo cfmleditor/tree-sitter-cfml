@@ -1,8 +1,15 @@
+<cffunction name="validateAndUnzipFile" access="public" output="false" returntype="any">
+		<cfargument name="context" type="struct" required="true" />
 
+		<cfif result.bZipError IS true>
 
-<cffunction name="DeleteGlobalNoteCategory" access="public" output="No" returntype="boolean">
-		<cfargument name="CompanyCode" required="Yes" type="string" />
-		<cfargument name="CODE" required="Yes" type="string" />
-		<cfargument name="type_code" required="false" type="string" default="X" />
+			<!--- Don't return any files --->
+			<cfset arrFiles = arrayNew(1)>
 
+		<cfelse>
+
+			<cfzip action="unzip" destination="#getTempDirectory()#" file="#ARGUMENTS.zipFilePath#" overwrite="true" />
+
+    </cfif>
+		
 	</cffunction>
