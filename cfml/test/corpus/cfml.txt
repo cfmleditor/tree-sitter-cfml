@@ -1620,10 +1620,10 @@ cftransaction
 ===================================
 <cftransaction isolation="read_committed">
   <cfset test = "" />
-  <cftransaction action="commit">
+  <cftransaction action="commit" />
   <cfset test = "" />
   <cfif test>
-    <cftransaction action="rollback">
+    <cftransaction action="rollback" />
   </cfif>
   <cfset test = "" />
 </cftransaction>

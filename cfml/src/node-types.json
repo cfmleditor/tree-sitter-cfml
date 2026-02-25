@@ -8,10 +8,6 @@
         "named": true
       },
       {
-        "type": "cf_function_tag",
-        "named": true
-      },
-      {
         "type": "cf_if_tag",
         "named": true
       },
@@ -33,6 +29,10 @@
       },
       {
         "type": "cf_set_tag",
+        "named": true
+      },
+      {
+        "type": "cf_special_tag",
         "named": true
       },
       {
@@ -985,36 +985,6 @@
     }
   },
   {
-    "type": "cf_function_tag",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "cf_tag_body",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_tag_close",
-          "named": true
-        },
-        {
-          "type": "cf_tag_open",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "cf_if_alt",
     "named": true,
     "fields": {},
@@ -1280,90 +1250,7 @@
   {
     "type": "cf_selfclose_tag",
     "named": true,
-    "fields": {
-      "cf_tag_name": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "abort",
-            "named": false
-          },
-          {
-            "type": "argument",
-            "named": false
-          },
-          {
-            "type": "break",
-            "named": false
-          },
-          {
-            "type": "content",
-            "named": false
-          },
-          {
-            "type": "continue",
-            "named": false
-          },
-          {
-            "type": "cookie",
-            "named": false
-          },
-          {
-            "type": "directory",
-            "named": false
-          },
-          {
-            "type": "dump",
-            "named": false
-          },
-          {
-            "type": "exit",
-            "named": false
-          },
-          {
-            "type": "file",
-            "named": false
-          },
-          {
-            "type": "header",
-            "named": false
-          },
-          {
-            "type": "include",
-            "named": false
-          },
-          {
-            "type": "location",
-            "named": false
-          },
-          {
-            "type": "log",
-            "named": false
-          },
-          {
-            "type": "param",
-            "named": false
-          },
-          {
-            "type": "property",
-            "named": false
-          },
-          {
-            "type": "rethrow",
-            "named": false
-          },
-          {
-            "type": "setting",
-            "named": false
-          },
-          {
-            "type": "throw",
-            "named": false
-          }
-        ]
-      }
-    },
+    "fields": {},
     "children": {
       "multiple": true,
       "required": true,
@@ -1402,6 +1289,25 @@
         },
         {
           "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_special_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_special_content",
           "named": true
         }
       ]
@@ -1447,11 +1353,19 @@
           "named": true
         },
         {
+          "type": "cfscript_element",
+          "named": true
+        },
+        {
           "type": "doctype",
           "named": true
         },
         {
           "type": "element",
+          "named": true
+        },
+        {
+          "type": "end_tag",
           "named": true
         },
         {
@@ -1472,10 +1386,6 @@
         },
         {
           "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "html_text",
           "named": true
         },
         {
@@ -3832,16 +3742,8 @@
     "named": false
   },
   {
-    "type": "abort",
-    "named": false
-  },
-  {
     "type": "access_type",
     "named": true
-  },
-  {
-    "type": "argument",
-    "named": false
   },
   {
     "type": "async",
@@ -3873,6 +3775,10 @@
     "extra": true
   },
   {
+    "type": "cf_special_content",
+    "named": true
+  },
+  {
     "type": "cf_tag_name",
     "named": true
   },
@@ -3901,23 +3807,11 @@
     "named": false
   },
   {
-    "type": "content",
-    "named": false
-  },
-  {
     "type": "continue",
     "named": false
   },
   {
-    "type": "cookie",
-    "named": false
-  },
-  {
     "type": "default",
-    "named": false
-  },
-  {
-    "type": "directory",
     "named": false
   },
   {
@@ -3926,10 +3820,6 @@
   },
   {
     "type": "doctype",
-    "named": false
-  },
-  {
-    "type": "dump",
     "named": false
   },
   {
@@ -3953,20 +3843,12 @@
     "named": true
   },
   {
-    "type": "exit",
-    "named": false
-  },
-  {
     "type": "export",
     "named": false
   },
   {
     "type": "false",
     "named": true
-  },
-  {
-    "type": "file",
-    "named": false
   },
   {
     "type": "finally",
@@ -3978,10 +3860,6 @@
   },
   {
     "type": "function",
-    "named": false
-  },
-  {
-    "type": "header",
     "named": false
   },
   {
@@ -4013,23 +3891,11 @@
     "named": false
   },
   {
-    "type": "include",
-    "named": false
-  },
-  {
     "type": "instanceof",
     "named": false
   },
   {
     "type": "let",
-    "named": false
-  },
-  {
-    "type": "location",
-    "named": false
-  },
-  {
-    "type": "log",
     "named": false
   },
   {
@@ -4061,16 +3927,8 @@
     "named": false
   },
   {
-    "type": "param",
-    "named": false
-  },
-  {
     "type": "private_property_identifier",
     "named": true
-  },
-  {
-    "type": "property",
-    "named": false
   },
   {
     "type": "property_identifier",
@@ -4097,10 +3955,6 @@
     "named": true
   },
   {
-    "type": "rethrow",
-    "named": false
-  },
-  {
     "type": "return",
     "named": false
   },
@@ -4110,14 +3964,6 @@
   },
   {
     "type": "script",
-    "named": false
-  },
-  {
-    "type": "set",
-    "named": false
-  },
-  {
-    "type": "setting",
     "named": false
   },
   {

@@ -31,7 +31,7 @@ typedef enum {
     CUSTOM,
     CFML,
     CF_VOID,
-    CF_PAIRED,
+    CF_SPECIAL,
     CF_SET,
 
     A,
@@ -314,8 +314,8 @@ static const char *CF_VOID_TAGS[] = {
     "CONTENT", "COOKIE", "LOG", "FILE", "DIRECTORY", "SETTING", NULL
 };
 
-static const char *CF_PAIRED_TAGS[] = {
-    "OUTPUT", "SCRIPT", "QUERY", "XML", "IF", "ELSEIF", "ELSE", NULL
+static const char *CF_SPECIAL_TAGS[] = {
+    "OUTPUT", "SCRIPT", "QUERY", "XML", NULL
 };
 
 static inline bool cf_tag_name_in(const String *name, const char **list) {
@@ -334,8 +334,8 @@ static inline Tag cf_tag_for_name(String name) {
         tag.type = CF_SET;
     } else if (cf_tag_name_in(&name, CF_VOID_TAGS)) {
         tag.type = CF_VOID;
-    } else if (cf_tag_name_in(&name, CF_PAIRED_TAGS)) {
-        tag.type = CF_PAIRED;
+    } else if (cf_tag_name_in(&name, CF_SPECIAL_TAGS)) {
+        tag.type = CF_SPECIAL;
     } else {
         tag.type = CFML;
     }
@@ -355,7 +355,7 @@ static inline Tag tag_for_name(String name) {
 }
 
 static inline void tag_free(Tag *tag) {
-    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_PAIRED || tag->type == CF_SET) {
+    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_SPECIAL || tag->type == CF_SET) {
         array_delete(&tag->tag_name);
     }
 }
@@ -364,9 +364,13 @@ static inline bool tag_is_void(const Tag *self) {
     return self->type < END_OF_VOID_TAGS;
 }
 
+static inline bool cf_tag_is_void(const Tag *self) {
+    return self->type == CF_VOID;
+}
+
 static inline bool tag_eq(const Tag *self, const Tag *other) {
     if (self->type != other->type) return false;
-    if (self->type == CUSTOM || self->type == CFML || self->type == CF_PAIRED || self->type == CF_SET) {
+    if (self->type == CUSTOM || self->type == CFML || self->type == CF_VOID || self->type == CF_SPECIAL || self->type == CF_SET) {
         if (self->tag_name.size != other->tag_name.size) {
             return false;
         }
