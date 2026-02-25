@@ -18,6 +18,8 @@ enum TokenType {
     ERRONEOUS_END_TAG_NAME,
     ERRONEOUS_CF_END_TAG_NAME,
     SELF_CLOSING_TAG_DELIMITER,
+    CF_SELF_CLOSING_TAG_DELIMITER,
+    CF_SELF_CLOSING_VOID_TAG_DELIMITER,
     IMPLICIT_END_TAG,
     IMPLICIT_CF_END_TAG,
     RAW_TEXT,
@@ -575,15 +577,28 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
     return true;
 }
 
-
-static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer, bool is_cf_context) {
-    advance(lexer);
-    if (lexer->lookahead == '>') {
+static bool scan_cf_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer, bool is_void) {
+     if (lexer->lookahead == '>') {
         advance(lexer);
-        if (is_cf_context && scanner->cf_tags.size > 0) {
-            pop_tag(scanner, true);
-            lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
-        } else if (!is_cf_context && scanner->tags.size > 0) {
+        if (is_void) {
+            lexer->result_symbol = CF_SELF_CLOSING_VOID_TAG_DELIMITER;
+        } else {
+            lexer->result_symbol = CF_SELF_CLOSING_TAG_DELIMITER;
+            if (scanner->cf_tags.size > 0) {
+                pop_tag(scanner, true);
+            }
+
+        }
+        return true;
+    }
+    return false;
+}
+
+static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer) {
+     advance(lexer);
+     if (lexer->lookahead == '>') {
+        advance(lexer);
+        if (scanner->tags.size > 0) {
             pop_tag(scanner, false);
             lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
         }
@@ -893,8 +908,14 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
         
             advance(lexer);
             if (lexer->lookahead == '>') {
+                if (valid_symbols[CF_SELF_CLOSING_TAG_DELIMITER]) {
+                    return scan_cf_self_closing_tag_delimiter(scanner, lexer, false);
+                }
+                if (valid_symbols[CF_SELF_CLOSING_VOID_TAG_DELIMITER]) {
+                    return scan_cf_self_closing_tag_delimiter(scanner, lexer, true);
+                }
                 if (valid_symbols[SELF_CLOSING_TAG_DELIMITER]) {
-                    return scan_self_closing_tag_delimiter(scanner, lexer, valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_VOID_START_TAG_NAME]);
+                    return scan_self_closing_tag_delimiter(scanner, lexer);
                 }
                 if (valid_symbols[CLOSE_TAG_DELIM] ) {
                     return scan_closetag_delim(scanner, lexer, false);

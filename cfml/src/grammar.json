@@ -89,11 +89,16 @@
       "type": "PATTERN",
       "value": "[Dd][Oo][Cc][Tt][Yy][Pp][Ee]"
     },
-    "cf_selfclose_tag_end": {
+    "cf_selfclose_void_tag_end": {
       "type": "CHOICE",
       "members": [
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_cf_self_closing_void_tag_delimiter"
+          },
+          "named": false,
           "value": "/>"
         },
         {
@@ -144,7 +149,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "cf_selfclose_tag_end"
+            "name": "cf_selfclose_void_tag_end"
           }
         ]
       }
@@ -177,7 +182,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "cf_selfclose_tag_end"
+            "name": "cf_selfclose_void_tag_end"
           }
         ]
       }
@@ -966,11 +971,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "self_closing_cf_tag"
+          "name": "cf_start_tag_with_selfclose"
         }
       ]
     },
-    "self_closing_cf_tag": {
+    "cf_start_tag_with_selfclose": {
       "type": "PREC_RIGHT",
       "value": 2,
       "content": {
@@ -997,8 +1002,8 @@
             }
           },
           {
-            "type": "STRING",
-            "value": "/>"
+            "type": "SYMBOL",
+            "name": "_cf_self_closing_tag_delimiter"
           }
         ]
       }
@@ -1193,7 +1198,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "cf_selfclose_tag_end"
+            "name": "cf_selfclose_void_tag_end"
           }
         ]
       }
@@ -8687,6 +8692,14 @@
     {
       "type": "STRING",
       "value": "/>"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_cf_self_closing_tag_delimiter"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_cf_self_closing_void_tag_delimiter"
     },
     {
       "type": "SYMBOL",

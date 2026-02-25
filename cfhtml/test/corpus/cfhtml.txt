@@ -33,25 +33,25 @@ testing4
       (identifier)
       (string
         (hash_empty)))
-    (cf_selfclose_tag_end))
+    (cf_selfclose_void_tag_end))
   (cf_set_tag
     (assignment_expression
       (identifier)
       (number))
-    (cf_selfclose_tag_end))
+    (cf_selfclose_void_tag_end))
   (cf_set_tag
     (assignment_expression
       (identifier)
       (string
         (hash_expression
           (identifier))))
-    (cf_selfclose_tag_end))
+    (cf_selfclose_void_tag_end))
   (cf_set_tag
     (assignment_expression
       (identifier)
       (hash_expression
         (identifier)))
-    (cf_selfclose_tag_end))
+    (cf_selfclose_void_tag_end))
   (cf_selfclose_tag
     (cf_attribute
       (cf_attribute_name)
@@ -61,7 +61,7 @@ testing4
             (identifier)
             (identifier)
             (identifier)))))
-    (cf_selfclose_tag_end))
+    (cf_selfclose_void_tag_end))
   (cf_special_tag
     (cf_special_content))
   (html_text)

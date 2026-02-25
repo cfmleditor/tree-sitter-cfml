@@ -33,6 +33,8 @@ module.exports = function defineGrammar(dialect) {
       $.erroneous_end_tag_name,
       $.erroneous_cf_end_tag_name,
       '/>',
+      $._cf_self_closing_tag_delimiter,
+      $._cf_self_closing_void_tag_delimiter,
       $.implicit_end_tag,
       $.implicit_cf_end_tag,
       $.raw_text,
@@ -197,24 +199,24 @@ module.exports = function defineGrammar(dialect) {
 
       _doctype: _ => /[Dd][Oo][Cc][Tt][Yy][Pp][Ee]/,
 
-      // _cf_tag_start: $ => '<',
-      // _close_tag_delim: $ => '>',
-
-      cf_selfclose_tag_end: $ => choice('/>', alias($._close_tag_delim, '>')),
+      cf_selfclose_void_tag_end: $ => choice(
+        alias($._cf_self_closing_void_tag_delimiter, '/>'),
+        alias($._close_tag_delim, '>')
+      ),
 
       cf_set_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         $._start_cf_set_name,
         optional(alias(/[vV][aA][rR]/, $.cf_var)),
         $._cf_tag_expression,
-        $.cf_selfclose_tag_end,
+        $.cf_selfclose_void_tag_end,
       )),
 
       cf_return_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         $._start_cf_return_name,
         optional($.expression),
-        $.cf_selfclose_tag_end,
+        $.cf_selfclose_void_tag_end,
       )),
 
       // @ts-ignore
@@ -410,16 +412,16 @@ module.exports = function defineGrammar(dialect) {
           repeat($._node),
           choice($.cf_end_tag, $.implicit_cf_end_tag),
         ),
-        $.self_closing_cf_tag,
+        $.cf_start_tag_with_selfclose,
       ),
 
-      self_closing_cf_tag: $ => prec.right(2, seq(
+      cf_start_tag_with_selfclose: $ => prec.right(2, seq(
         $._cf_open_tag,
         alias($._start_cf_tag_name, $.cf_tag_name),
         repeat(
           $.tag_attributes,
         ),
-        '/>',
+        $._cf_self_closing_tag_delimiter,
       )),
 
       cf_start_tag: $ => seq(
@@ -463,7 +465,7 @@ module.exports = function defineGrammar(dialect) {
         $._cf_open_tag,
         $._start_cf_void_name,
         optional(repeat($.cf_attribute)),
-        $.cf_selfclose_tag_end,
+        $.cf_selfclose_void_tag_end,
       )),
 
       cf_if_tag: $ => prec.right(1, seq(

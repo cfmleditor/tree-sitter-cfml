@@ -1101,7 +1101,7 @@
       "required": true,
       "types": [
         {
-          "type": "cf_selfclose_tag_end",
+          "type": "cf_selfclose_void_tag_end",
           "named": true
         },
         {
@@ -1124,14 +1124,14 @@
           "named": true
         },
         {
-          "type": "cf_selfclose_tag_end",
+          "type": "cf_selfclose_void_tag_end",
           "named": true
         }
       ]
     }
   },
   {
-    "type": "cf_selfclose_tag_end",
+    "type": "cf_selfclose_void_tag_end",
     "named": true,
     "fields": {}
   },
@@ -1144,7 +1144,7 @@
       "required": true,
       "types": [
         {
-          "type": "cf_selfclose_tag_end",
+          "type": "cf_selfclose_void_tag_end",
           "named": true
         },
         {
@@ -1197,6 +1197,25 @@
     }
   },
   {
+    "type": "cf_start_tag_with_selfclose",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_tag_name",
+          "named": true
+        },
+        {
+          "type": "tag_attributes",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_tag",
     "named": true,
     "fields": {},
@@ -1214,6 +1233,10 @@
         },
         {
           "type": "cf_start_tag",
+          "named": true
+        },
+        {
+          "type": "cf_start_tag_with_selfclose",
           "named": true
         },
         {
@@ -1258,10 +1281,6 @@
         },
         {
           "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "self_closing_cf_tag",
           "named": true
         },
         {
@@ -2665,25 +2684,6 @@
         },
         {
           "type": "start_tag",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "self_closing_cf_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_tag_name",
-          "named": true
-        },
-        {
-          "type": "tag_attributes",
           "named": true
         }
       ]
