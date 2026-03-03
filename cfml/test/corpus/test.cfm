@@ -1,4 +1,4 @@
-<table class="tagcontext">
+<!--- <table class="tagcontext">
 						<cfloop from="1" to="#ArrayLen(arguments.ErrorCollection.TagContext)#" index="i">
 							<cfset template = arguments.ErrorCollection.TagContext[i].template />
 							<cfset line = arguments.ErrorCollection.TagContext[i].line />
@@ -8,4 +8,11 @@
 								</td>
 							</tr>
 						</cfloop>
-					</table>
+					</table> --->
+
+	
+  <cftransaction isolation="read_committed" action="begin">
+	<cfset test = "" />
+  <cftransaction action="commit">
+	<cfset test = "" />
+  </cftransaction>

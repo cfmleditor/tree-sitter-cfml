@@ -135,11 +135,11 @@ static TagNameResult scan_tag_name(TSLexer *lexer) {
     bool is_cf_tag = false;
 
     if ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) {
-        array_push(&tag_name, towupper(lexer->lookahead));
+        //array_push(&tag_name, towupper(lexer->lookahead));
         advance(lexer);
         if (lexer->lookahead == 'f' || lexer->lookahead == 'F') {
             is_cf_tag = true;
-            array_push(&tag_name, towupper(lexer->lookahead));
+            //array_push(&tag_name, towupper(lexer->lookahead));
             advance(lexer);
         }
     }
@@ -410,21 +410,18 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         is_closing_tag = true;
         advance(lexer);
     } else {
+        // Void tag processing
         if (!is_cf_context && parent && tag_is_void(parent)) {
             pop_tag(scanner, false);
             lexer->result_symbol = IMPLICIT_END_TAG;
             return true;
         }
+        // Void tag processing
         if (is_cf_context && parent && cf_tag_is_void(parent)) {
             pop_tag(scanner, true);
             lexer->result_symbol = IMPLICIT_CF_END_TAG;
             return true;
         }
-        // if (is_cf_context && parent && parent->type == CFML) {
-        //     pop_tag(scanner, true);
-        //     lexer->result_symbol = IMPLICIT_CF_END_TAG;
-        //     return true;
-        // }
     }
 
     TagNameResult result = scan_tag_name(lexer);
@@ -432,6 +429,8 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         array_delete(&result.tag_name);
         return false;
     }
+
+    bool is_cf = result.is_cf_tag || is_cf_context;
 
     // For CF tags scanned with full name (e.g. CFTEST), strip CF prefix to match
     // tags pushed without prefix (after _cf_open_tag consumed '<cf')
@@ -442,19 +441,27 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         name->size -= 2;
     }
 
-    Tag next_tag = result.is_cf_tag ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name); 
+    Tag next_tag = is_cf ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name); 
 
     if (is_closing_tag) {
         // The tag correctly closes the topmost element on the stack
-        if (is_cf_context ? (scanner->cf_tags.size > 0 && tag_eq(array_back(&scanner->cf_tags), &next_tag))
+        if (is_cf ? (scanner->cf_tags.size > 0 && tag_eq(array_back(&scanner->cf_tags), &next_tag))
                           : (scanner->tags.size > 0 && tag_eq(array_back(&scanner->tags), &next_tag))) {
             tag_free(&next_tag);
             return false;
         }
 
+        // if (is_cf ? (scanner->cf_tags.size > 0 && !tag_eq(array_back(&scanner->cf_tags), &next_tag))
+        //                   : (scanner->tags.size > 0 && !tag_eq(array_back(&scanner->tags), &next_tag))) {
+        //     pop_tag(scanner, is_cf);
+        //     lexer->result_symbol = is_cf ? IMPLICIT_CF_END_TAG : IMPLICIT_END_TAG;
+        //     tag_free(&next_tag);
+        //     return true;
+        // }
+
         // Otherwise, dig deeper and queue implicit end tags (to be nice in
         // the case of malformed HTML)
-        if (is_cf_context) {
+        if (is_cf) {
             for (unsigned i = scanner->cf_tags.size; i > 0; i--) {
                 if (tag_eq(&scanner->cf_tags.contents[i - 1], &next_tag)) {
                     pop_tag(scanner, true);
@@ -479,8 +486,8 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
             ((parent->type == HTML || parent->type == HEAD || parent->type == BODY) && lexer->eof(lexer))
         )
     ) {
-        pop_tag(scanner, is_cf_context);
-        lexer->result_symbol = IMPLICIT_END_TAG;
+        pop_tag(scanner, is_cf);
+        lexer->result_symbol = is_cf ? IMPLICIT_CF_END_TAG : IMPLICIT_END_TAG;
         tag_free(&next_tag);
         return true;
     }
@@ -498,6 +505,9 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         return false;
     }
 
+    // printf("scan_start_tag_name: tag=%.*s, is_cf_tag=%d, is_cf_context=%d\n",
+    // (int)result.tag_name.size, result.tag_name.contents, result.is_cf_tag, is_cf_context);
+    
     bool is_cf = result.is_cf_tag || is_cf_context;
     Tag tag = is_cf ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
 
