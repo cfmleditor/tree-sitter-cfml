@@ -40,6 +40,7 @@ module.exports = function defineGrammar(dialect) {
       $.raw_text,
       $.cf_comment,
       $._close_tag_delim,
+      $._close_cf_tag_delim,
       $.html_text,
       $._start_cf_void_name,
       $._start_cf_set_name,
@@ -201,7 +202,7 @@ module.exports = function defineGrammar(dialect) {
 
       cf_selfclose_void_tag_end: $ => choice(
         alias($._cf_self_closing_void_tag_delimiter, '/>'),
-        alias($._close_tag_delim, '>')
+        alias($._close_cf_tag_delim, '>')
       ),
 
       cf_set_tag: $ => prec.right(3, seq(
@@ -343,7 +344,7 @@ module.exports = function defineGrammar(dialect) {
       erroneous_cf_end_tag: $ => prec.right(4, seq(
         '</',
         $.erroneous_cf_end_tag_name,
-        alias($._close_tag_delim, '>'),
+        alias($._close_cf_tag_delim, '>'),
       )),
 
       style_element: $ => seq(
@@ -428,13 +429,13 @@ module.exports = function defineGrammar(dialect) {
         $._cf_open_tag,
         alias($._start_cf_tag_name, $.cf_tag_name),
         repeat($.tag_attributes),
-        alias($._close_tag_delim, '>'),
+        alias($._close_cf_tag_delim, '>'),
       ),
 
       cf_end_tag: $ => seq(
         $._cf_close_tag,
         alias($._end_cf_tag_name, $.cf_tag_name),
-        alias($._close_tag_delim, '>'),
+        alias($._close_cf_tag_delim, '>'),
       ),
 
       cf_tag_name: _ => /[a-zA-Z][a-zA-Z0-9_]*/,
@@ -445,11 +446,11 @@ module.exports = function defineGrammar(dialect) {
         $._cf_open_tag,
         $._start_cf_special_name,
         repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
+        alias($._close_cf_tag_delim, '>'),
         $.cf_special_content,
         $._cf_close_tag,
         $._end_cf_special_name,
-        alias($._close_tag_delim, '>'),
+        alias($._close_cf_tag_delim, '>'),
       )),
 
       _cf_tag: $ => prec.right(3, choice(
@@ -472,23 +473,23 @@ module.exports = function defineGrammar(dialect) {
         $._cf_open_tag,
         $._start_cf_if_name,
         $._cf_tag_expression,
-        alias($._close_tag_delim, '>'),
+        alias($._close_cf_tag_delim, '>'),
         repeat($._node),
         optional($.cf_if_alt),
         $._cf_close_tag,
         $._end_cf_if_name,
-        alias($._close_tag_delim, '>'),
+        alias($._close_cf_tag_delim, '>'),
       )),
 
       cf_elseif_tag: $ => prec.right(3, seq(
         $._start_cf_elseif_name,
         $._cf_tag_expression,
-        alias($._close_tag_delim, '>'),
+        alias($._close_cf_tag_delim, '>'),
       )),
 
       cf_else_tag: $ => prec.right(3, seq(
         $._start_cf_else_name,
-        alias($._close_tag_delim, '>'),
+        alias($._close_cf_tag_delim, '>'),
       )),
 
       cf_if_alt: $ => prec.right(3, seq(

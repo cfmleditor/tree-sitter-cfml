@@ -10,9 +10,13 @@
 						</cfloop>
 					</table> --->
 
+<cffunction name="test">
 	
   <cftransaction isolation="read_committed" action="begin">
 	<cfset test = "" />
   <cftransaction action="commit">
 	<cfset test = "" />
   </cftransaction>
+
+
+</cffunction>
