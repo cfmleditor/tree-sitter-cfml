@@ -105,7 +105,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_close_cf_tag_delim"
+            "name": "_close_tag_delim"
           },
           "named": false,
           "value": ">"
@@ -731,7 +731,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_close_cf_tag_delim"
+              "name": "_close_tag_delim"
             },
             "named": false,
             "value": ">"
@@ -1035,7 +1035,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_close_cf_tag_delim"
+            "name": "_close_tag_delim"
           },
           "named": false,
           "value": ">"
@@ -1062,7 +1062,7 @@
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
-            "name": "_close_cf_tag_delim"
+            "name": "_close_tag_delim"
           },
           "named": false,
           "value": ">"
@@ -1105,7 +1105,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_close_cf_tag_delim"
+              "name": "_close_tag_delim"
             },
             "named": false,
             "value": ">"
@@ -1126,7 +1126,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_close_cf_tag_delim"
+              "name": "_close_tag_delim"
             },
             "named": false,
             "value": ">"
@@ -1225,7 +1225,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_close_cf_tag_delim"
+              "name": "_close_tag_delim"
             },
             "named": false,
             "value": ">"
@@ -1261,7 +1261,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_close_cf_tag_delim"
+              "name": "_close_tag_delim"
             },
             "named": false,
             "value": ">"
@@ -1287,7 +1287,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_close_cf_tag_delim"
+              "name": "_close_tag_delim"
             },
             "named": false,
             "value": ">"
@@ -1309,7 +1309,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "_close_cf_tag_delim"
+              "name": "_close_tag_delim"
             },
             "named": false,
             "value": ">"
@@ -8720,10 +8720,6 @@
     {
       "type": "SYMBOL",
       "name": "_close_tag_delim"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_close_cf_tag_delim"
     },
     {
       "type": "SYMBOL",
