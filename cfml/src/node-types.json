@@ -12,10 +12,6 @@
         "named": true
       },
       {
-        "type": "cf_selfclose_tag",
-        "named": true
-      },
-      {
         "type": "cf_set_tag",
         "named": true
       },
@@ -971,10 +967,6 @@
           "named": true
         },
         {
-          "type": "end_tag",
-          "named": true
-        },
-        {
           "type": "entity",
           "named": true
         },
@@ -1042,10 +1034,6 @@
           "named": true
         },
         {
-          "type": "end_tag",
-          "named": true
-        },
-        {
           "type": "entity",
           "named": true
         },
@@ -1106,25 +1094,6 @@
         },
         {
           "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_selfclose_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_void_tag_end",
           "named": true
         }
       ]
@@ -1245,10 +1214,6 @@
         },
         {
           "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
           "named": true
         },
         {
@@ -2487,10 +2452,6 @@
         },
         {
           "type": "element",
-          "named": true
-        },
-        {
-          "type": "end_tag",
           "named": true
         },
         {

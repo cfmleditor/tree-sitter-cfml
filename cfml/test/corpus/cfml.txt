@@ -1566,7 +1566,6 @@ failing expression 2
 <cfquery name="Test">
   <cfswitch expression="#tmp_budget_no#">
     <cfcase value="1">
-        AND	ac.budg1_amt <> 0
     </cfcase>
   </cfswitch>
 </cfquery>
@@ -1651,7 +1650,7 @@ cftransaction2
 <cffunction name="Test">
 
   <cftransaction isolation="read_committed" action="begin">
-  <cftransaction action="commit" />
+  <cftransaction action="commit">
   </cftransaction>
 
     <cftransaction isolation="read_committed" action="begin">

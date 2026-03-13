@@ -25,6 +25,7 @@ enum TokenType {
     RAW_TEXT,
     CFML_COMMENT,
     CLOSE_TAG_DELIM,
+    CLOSE_CF_TAG_DELIM,
     HTML_TEXT,
     CF_VOID_START_TAG_NAME,
     CF_SET_START_TAG_NAME,
@@ -35,8 +36,7 @@ enum TokenType {
     CF_ELSE_TAG_NAME,
     CF_SPECIAL_START_TAG_NAME,
     CF_SPECIAL_END_TAG_NAME,
-    CF_SPECIAL_CONTENT,
-    ERROR_SENTINEL
+    CF_SPECIAL_CONTENT
 };
 
 typedef struct {
@@ -332,6 +332,10 @@ static bool scan_script_comment(TSLexer *lexer) {
 
 static bool scan_cfspecial_content(Scanner *scanner, TSLexer *lexer) {
 
+    if (scanner->cf_tags.size == 0) {
+        return false;
+    }
+
     lexer->mark_end(lexer);
     
     Tag *cf_tag = array_back(&scanner->cf_tags);
@@ -505,13 +509,14 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         return false;
     }
 
-    // printf("scan_start_tag_name: tag=%.*s, is_cf_tag=%d, is_cf_context=%d\n",
-    // (int)result.tag_name.size, result.tag_name.contents, result.is_cf_tag, is_cf_context);
+    
     
     bool is_cf = result.is_cf_tag || is_cf_context;
-    Tag tag = is_cf ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
+    Tag tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
 
-    
+    printf("scan_start_tag_name: tag=%.*s, is_cf_tag=%d, is_cf_context=%d, type=%d\n",
+    (int)result.tag_name.size, result.tag_name.contents, result.is_cf_tag, is_cf_context, tag.type);
+
     switch (tag.type) {
         case SCRIPT:
             lexer->result_symbol = SCRIPT_START_TAG_NAME;
@@ -541,11 +546,11 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
             lexer->result_symbol = CF_SPECIAL_START_TAG_NAME;
             break;
         default:
-            lexer->result_symbol = is_cf ? CF_START_TAG_NAME : START_TAG_NAME;
+            lexer->result_symbol = is_cf_context ? CF_START_TAG_NAME : START_TAG_NAME;
             break;
     }
 
-    if ( is_cf ) {
+    if ( is_cf_context ) {
         array_push(&scanner->cf_tags, tag);
     } else {
         array_push(&scanner->tags, tag);
@@ -834,7 +839,7 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_con
     if ( lexer->lookahead == '>' ) {
         advance(lexer);
         lexer->mark_end(lexer);
-        lexer->result_symbol = CLOSE_TAG_DELIM;
+        lexer->result_symbol = is_cf_context ? CLOSE_CF_TAG_DELIM : CLOSE_TAG_DELIM;
         return true;
     } else {
         return false;
@@ -857,10 +862,6 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_con
 static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
     // bool scanned_cfoutput = false;
-
-    if (valid_symbols[ERROR_SENTINEL]) {
-        return false;
-    }
 
     if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] && !valid_symbols[END_TAG_NAME]) {
         return scan_raw_text(scanner, lexer);
@@ -927,6 +928,9 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                 if (valid_symbols[SELF_CLOSING_TAG_DELIMITER]) {
                     return scan_self_closing_tag_delimiter(scanner, lexer);
                 }
+                if (valid_symbols[CLOSE_CF_TAG_DELIM] ) {
+                    return scan_closetag_delim(scanner, lexer, true);
+                }
                 if (valid_symbols[CLOSE_TAG_DELIM] ) {
                     return scan_closetag_delim(scanner, lexer, false);
                 }
@@ -940,9 +944,9 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
         default:
             
-            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_SPECIAL_END_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) && !valid_symbols[RAW_TEXT]) {
-                if (valid_symbols[START_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME]|| valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) {
-                    return scan_start_tag_name(scanner, lexer, valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]);
+            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_SPECIAL_END_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) && !valid_symbols[RAW_TEXT]) {
+                if (valid_symbols[START_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME]|| valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) {
+                    return scan_start_tag_name(scanner, lexer, valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]);
                 }
                 if (valid_symbols[END_TAG_NAME] || valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_SPECIAL_END_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME]) {
                     return scan_end_tag_name(scanner, lexer, valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_SPECIAL_END_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME]);
@@ -955,6 +959,12 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                 return scan_implicit_end_tag(scanner, lexer, true);
             }
 
+            if (valid_symbols[CLOSE_CF_TAG_DELIM] ) {
+                if ( scan_closetag_delim(scanner, lexer, true) ) {
+                    return true;
+                }
+            }
+            
             if (valid_symbols[CLOSE_TAG_DELIM] ) {
                 if ( scan_closetag_delim(scanner, lexer, false) ) {
                     return true;
