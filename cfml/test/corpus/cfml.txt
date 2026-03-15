@@ -1839,3 +1839,28 @@ cftransaction2
       (cf_end_tag
         (cf_tag_name)))
     (implicit_cf_end_tag)))
+
+===================================
+failing expression
+===================================
+<cfoutput>
+  #(x > 0 && y <= 10) || z == 5#
+</cfoutput>
+  
+---
+
+(program
+  (cf_output_tag
+    (hash_expression
+      (binary_expression
+        (parenthesized_expression
+          (binary_expression
+            (identifier)
+            (binary_expression
+              (number)
+              (binary_expression
+                (identifier)
+                (number)))))
+        (binary_expression
+          (identifier)
+          (number))))))
