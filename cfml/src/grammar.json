@@ -739,6 +739,10 @@
         {
           "type": "SYMBOL",
           "name": "expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_hash_expression"
         }
       ]
     },

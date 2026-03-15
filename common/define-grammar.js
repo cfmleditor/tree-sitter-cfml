@@ -362,6 +362,7 @@ module.exports = function defineGrammar(dialect) {
 
       _cf_tag_expression: $ => choice(
         $.expression,
+        $._hash_expression,
       ),
 
       attribute: $ => seq(

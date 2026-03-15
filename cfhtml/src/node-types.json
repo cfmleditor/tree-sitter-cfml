@@ -907,6 +907,14 @@
         {
           "type": "expression",
           "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
         }
       ]
     }
@@ -1038,6 +1046,14 @@
           "named": true
         },
         {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
           "type": "hash_single",
           "named": true
         },
@@ -1125,6 +1141,14 @@
         },
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         }
       ]
