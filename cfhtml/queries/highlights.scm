@@ -1,7 +1,10 @@
 (tag_name) @tag
+(cf_tag_name) @tag
 (erroneous_end_tag_name) @tag.error
+(erroneous_cf_end_tag_name) @tag.error
 (doctype) @constant
 (attribute_name) @attribute
+(cf_attribute_name) @attribute
 (attribute_value) @string
 (raw_text) @embedded
 (start_tag) @tag
@@ -28,6 +31,22 @@
 (function_declaration
   name: (identifier) @function)
 
+(function_declaration
+  (access_type) @keyword)
+
+(function_declaration
+  (return_type) @type)
+
+(cf_tag
+  (cf_start_tag
+    (cf_tag_name) @_cffunction
+    (tag_attributes
+      (attribute
+        (attribute_name) @_name
+        (_ (attribute_value) @function))))
+  (#eq? @_cffunction "function")
+  (#eq? @_name "name"))
+
 (generator_function
   name: (identifier) @function)
 
@@ -43,6 +62,12 @@
 (method_definition
   name: (property_identifier) @constructor
   (#eq? @constructor "constructor"))
+
+(formal_parameters
+  (type) @type)
+
+(formal_parameters
+  (required) @keyword)
 
 (pair
   key: (property_identifier) @function.method
@@ -101,6 +126,8 @@
 ((identifier) @variable.builtin
   (#eq? @variable.builtin "self"))
 
+(cf_var) @keyword
+
 [
   (true)
   (false)
@@ -124,6 +151,7 @@
 (hash_single) @keyword
 (string) @string
 (text) @string
+(hash_empty) @punctuation.special
 
 (regex_pattern) @string.regexp
 (regex_flags) @character.special
@@ -133,7 +161,10 @@
 
 (number) @number
 
-(hash_expression) @function
+(hash_expression
+  "#" @punctuation.special)
+
+(unary_operator) @operator
 
 ((identifier) @number
   (#any-of? @number "NaN" "Infinity"))
@@ -155,6 +186,9 @@
     "?"
     ":"
   ] @keyword.conditional.ternary)
+
+(elvis_expression
+  "?:" @keyword.conditional.ternary)
 
 [
   "-"
@@ -197,6 +231,37 @@
   "||="
   "??="
 ] @operator
+
+[
+  "var"
+  "let"
+  "const"
+  "function"
+  "new"
+  "return"
+  "if"
+  "else"
+  "for"
+  "while"
+  "do"
+  "switch"
+  "case"
+  "default"
+  "break"
+  "continue"
+  "try"
+  "catch"
+  "finally"
+  "throw"
+  "in"
+  "of"
+  "instanceof"
+  "async"
+  "static"
+  "export"
+  "yield"
+  "with"
+] @keyword
 
 [
   "("

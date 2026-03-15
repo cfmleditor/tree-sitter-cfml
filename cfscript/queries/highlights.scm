@@ -15,6 +15,8 @@
   name: (identifier) @function)
 (function_declaration
   name: (identifier) @function)
+(function_declaration
+  (return_type) @type)
 (method_definition
   name: (property_identifier) @function.method)
 
@@ -86,6 +88,10 @@
   (template_string)
 ] @string
 
+(hash_expression
+  "#" @punctuation.special)
+(hash_empty) @punctuation.special
+
 (regex) @string.special
 (number) @number
 
@@ -98,6 +104,16 @@
   "."
   ","
 ] @punctuation.delimiter
+
+(ternary_expression
+  [
+    "?"
+    ":"
+  ] @keyword.conditional.ternary)
+
+(elvis_expression
+  "?:" @keyword.conditional.ternary)
+
 
 [
   "-"
