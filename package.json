@@ -1,6 +1,6 @@
 {
   "name": "@cfmleditor/tree-sitter-cfml",
-  "version": "0.25.0",
+  "version": "0.26.0",
   "description": "CFML grammar for tree-sitter",
   "repository": "github:cfmleditor/tree-sitter-cfml",
   "license": "MIT",
@@ -32,12 +32,12 @@
     "common/html_entities.json"
   ],
   "dependencies": {
-    "node-addon-api": "^8.5.0",
+    "node-addon-api": "^8.6.0",
     "node-gyp-build": "^4.8.4"
   },
   "devDependencies": {
     "prebuildify": "^6.0.1",
-    "tree-sitter-cli": "^0.26.3"
+    "tree-sitter-cli": "^0.26.7"
   },
   "peerDependencies": {
     "tree-sitter": "^0.25.0"
