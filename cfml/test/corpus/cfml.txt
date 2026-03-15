@@ -354,8 +354,8 @@ cfscript
 ---
 
 (program
-  (cf_special_tag
-    (cf_special_content)))
+  (cf_script_tag
+    (cf_script_content)))
 
 ===================================
 nested cfif
@@ -451,8 +451,8 @@ cfscript comments
 ---
 
 (program
-  (cf_special_tag
-    (cf_special_content)))
+  (cf_script_tag
+    (cf_script_content)))
 
 ===================================
 cfscript switch
@@ -474,8 +474,8 @@ cfscript switch
 ---
 
 (program
-  (cf_special_tag
-    (cf_special_content))
+  (cf_script_tag
+    (cf_script_content))
   (cf_selfclose_tag
     (cf_selfclose_void_tag_end)))
 
@@ -490,12 +490,12 @@ testing
 ---
 
 (program
-  (cf_special_tag
+  (cf_query_tag
     (cf_attribute
       (cf_attribute_name)
       (quoted_cf_attribute_value
         (attribute_value)))
-    (cf_special_content)))
+    (cf_query_content)))
 
 ===================================
 testing2
@@ -571,8 +571,8 @@ testing3
         (true)
         (false)))
     (cf_selfclose_void_tag_end))
-  (cf_special_tag
-    (cf_special_content))
+  (cf_script_tag
+    (cf_script_content))
   (element
     (start_tag
       (tag_name)
@@ -1396,12 +1396,12 @@ cfxml
 ---
 
 (program
-  (cf_special_tag
+  (cf_xml_tag
     (cf_attribute
       (cf_attribute_name)
       (quoted_cf_attribute_value
         (attribute_value)))
-    (cf_special_content)))
+    (cf_xml_content)))
 
 ===================================
 cfquery
@@ -1426,13 +1426,13 @@ cfquery
 ---
 
 (program
-  (cf_special_tag
+  (cf_query_tag
     (cf_attribute
       (cf_attribute_name)
       (quoted_cf_attribute_value
         (attribute_value)))
-    (cf_special_content))
-  (cf_special_tag
+    (cf_query_content))
+  (cf_query_tag
     (cf_attribute
       (cf_attribute_name)
       (quoted_cf_attribute_value
@@ -1446,7 +1446,7 @@ cfquery
               (identifier)
               (property_identifier))
             (property_identifier)))))
-    (cf_special_content)))
+    (cf_query_content)))
 
 ===================================
 cftransaction
@@ -1698,12 +1698,12 @@ failing expression 2
             (identifier)
             (property_identifier)))))
     (cf_selfclose_void_tag_end))
-  (cf_special_tag
+  (cf_query_tag
     (cf_attribute
       (cf_attribute_name)
       (quoted_cf_attribute_value
         (attribute_value)))
-    (cf_special_content)))
+    (cf_query_content)))
 
 ===================================
 failing expression
@@ -1839,4 +1839,3 @@ cftransaction2
       (cf_end_tag
         (cf_tag_name)))
     (implicit_cf_end_tag)))
-

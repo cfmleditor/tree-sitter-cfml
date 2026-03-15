@@ -1073,7 +1073,7 @@
       "type": "PATTERN",
       "value": "[a-zA-Z][a-zA-Z0-9_]*"
     },
-    "cf_special_tag": {
+    "cf_xml_tag": {
       "type": "PREC_RIGHT",
       "value": 3,
       "content": {
@@ -1085,7 +1085,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "_start_cf_special_name"
+            "name": "_start_cf_xml_name"
           },
           {
             "type": "REPEAT",
@@ -1105,7 +1105,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "cf_special_content"
+            "name": "cf_xml_content"
           },
           {
             "type": "SYMBOL",
@@ -1113,7 +1113,115 @@
           },
           {
             "type": "SYMBOL",
-            "name": "_end_cf_special_name"
+            "name": "_end_cf_xml_name"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_cf_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          }
+        ]
+      }
+    },
+    "cf_query_tag": {
+      "type": "PREC_RIGHT",
+      "value": 3,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_start_cf_query_name"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_attribute"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_cf_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_query_content"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_close_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_end_cf_query_name"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_cf_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          }
+        ]
+      }
+    },
+    "cf_script_tag": {
+      "type": "PREC_RIGHT",
+      "value": 3,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_start_cf_script_name"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_attribute"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_cf_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_script_content"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_close_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_end_cf_script_name"
           },
           {
             "type": "ALIAS",
@@ -1158,8 +1266,11 @@
             "value": ">"
           },
           {
-            "type": "SYMBOL",
-            "name": "_cfoutput_node"
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_cfoutput_node"
+            }
           },
           {
             "type": "SYMBOL",
@@ -1209,7 +1320,15 @@
           },
           {
             "type": "SYMBOL",
-            "name": "cf_special_tag"
+            "name": "cf_xml_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_query_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_script_tag"
           },
           {
             "type": "SYMBOL",
@@ -8806,15 +8925,39 @@
     },
     {
       "type": "SYMBOL",
-      "name": "_start_cf_special_name"
+      "name": "_start_cf_xml_name"
     },
     {
       "type": "SYMBOL",
-      "name": "_end_cf_special_name"
+      "name": "_end_cf_xml_name"
     },
     {
       "type": "SYMBOL",
-      "name": "cf_special_content"
+      "name": "cf_xml_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_start_cf_query_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_end_cf_query_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "cf_query_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_start_cf_script_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_end_cf_script_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "cf_script_content"
     },
     {
       "type": "SYMBOL",

@@ -31,13 +31,15 @@ typedef enum {
     CUSTOM,
     CFML,
     CF_VOID,
-    CF_SPECIAL,
     CF_SET,
     CF_RETURN,
     CF_IF,
     CF_ELSEIF,
     CF_ELSE,
     CF_OUTPUT,
+    CF_QUERY,
+    CF_XML,
+    CF_SCRIPT,
 
     A,
     ABBR,
@@ -320,10 +322,6 @@ static const char *CF_VOID_TAGS[] = {
     "CONTENT", "COOKIE", "LOG", "FILE", "DIRECTORY", "SETTING", "WDDX", NULL
 };
 
-static const char *CF_SPECIAL_TAGS[] = {
-    "SCRIPT", "QUERY", "XML", NULL
-};
-
 static inline bool cf_tag_name_in(const String *name, const char **list) {
     for (int i = 0; list[i] != NULL; i++) {
         if (strlen(list[i]) == name->size &&
@@ -349,11 +347,14 @@ static inline Tag cf_tag_for_name(String name) {
         tag.type = CF_ELSEIF;
     } else if (name.size == 4 && memcmp(name.contents, "ELSE", 4) == 0) {
         tag.type = CF_ELSE;
+    } else if (name.size == 3 && memcmp(name.contents, "XML", 3) == 0) {
+        tag.type = CF_XML;
+    } else if (name.size == 5 && memcmp(name.contents, "QUERY", 5) == 0) {
+        tag.type = CF_QUERY;
+    } else if (name.size == 6 && memcmp(name.contents, "SCRIPT", 6) == 0) {
+        tag.type = CF_SCRIPT;
     } else if (cf_tag_name_in(&name, CF_VOID_TAGS)) {
-        // printf("found void tag\n");
         tag.type = CF_VOID;
-    } else if (cf_tag_name_in(&name, CF_SPECIAL_TAGS)) {
-        tag.type = CF_SPECIAL;
     } else {
         tag.type = CFML;
     }
@@ -373,7 +374,7 @@ static inline Tag tag_for_name(String name) {
 }
 
 static inline void tag_free(Tag *tag) {
-    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_SPECIAL || tag->type == CF_OUTPUT || tag->type == CF_SET || tag->type == CF_RETURN || tag->type == CF_IF || tag->type == CF_ELSEIF || tag->type == CF_ELSE) {
+    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_XML || tag->type == CF_QUERY || tag->type == CF_SCRIPT || tag->type == CF_OUTPUT || tag->type == CF_SET || tag->type == CF_RETURN || tag->type == CF_IF || tag->type == CF_ELSEIF || tag->type == CF_ELSE) {
         array_delete(&tag->tag_name);
     }
 }
@@ -388,7 +389,7 @@ static inline bool cf_tag_is_void(const Tag *self) {
 
 static inline bool tag_eq(const Tag *self, const Tag *other) {
     if (self->type != other->type) return false;
-    if (self->type == CUSTOM || self->type == CFML || self->type == CF_VOID || self->type == CF_SPECIAL || self->type == CF_OUTPUT || self->type == CF_SET || self->type == CF_RETURN || self->type == CF_IF || self->type == CF_ELSEIF || self->type == CF_ELSE) {
+    if (self->type == CUSTOM || self->type == CFML || self->type == CF_VOID || self->type == CF_XML || self->type == CF_QUERY || self->type == CF_SCRIPT || self->type == CF_OUTPUT || self->type == CF_SET || self->type == CF_RETURN || self->type == CF_IF || self->type == CF_ELSEIF || self->type == CF_ELSE) {
         if (self->tag_name.size != other->tag_name.size) {
             return false;
         }
