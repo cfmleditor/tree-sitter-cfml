@@ -438,7 +438,11 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         return false;
     }
 
-    bool is_cf = result.is_cf_tag || is_cf_context;
+    if (result.is_cf_tag && !is_cf_context) {
+        array_delete(&result.tag_name);
+        return false;
+    }
+
 
     // For CF tags scanned with full name (e.g. CFTEST), strip CF prefix to match
     // tags pushed without prefix (after _cf_open_tag consumed '<cf')
@@ -453,7 +457,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
 
     if (is_closing_tag) {
         // The tag correctly closes the topmost element on the stack
-        if (is_cf ? (scanner->cf_tags.size > 0 && tag_eq(array_back(&scanner->cf_tags), &next_tag))
+        if (is_cf_context ? (scanner->cf_tags.size > 0 && tag_eq(array_back(&scanner->cf_tags), &next_tag))
                           : (scanner->tags.size > 0 && tag_eq(array_back(&scanner->tags), &next_tag))) {
             tag_free(&next_tag);
             return false;
@@ -469,7 +473,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
 
         // Otherwise, dig deeper and queue implicit end tags (to be nice in
         // the case of malformed HTML)
-        if (is_cf) {
+        if (is_cf_context) {
             for (unsigned i = scanner->cf_tags.size; i > 0; i--) {
                 if (tag_eq(&scanner->cf_tags.contents[i - 1], &next_tag)) {
                     pop_tag(scanner, true);
@@ -490,7 +494,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         }
     } else {
 
-        if (is_cf && parent && tag_eq(parent, &next_tag)) {
+        if (is_cf_context && parent && tag_eq(parent, &next_tag)) {
             pop_tag(scanner, true);
             lexer->result_symbol = IMPLICIT_CF_END_TAG;
             tag_free(&next_tag);
@@ -501,11 +505,11 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
             parent &&
             (
                 ((parent->type == HTML || parent->type == HEAD || parent->type == BODY) && lexer->eof(lexer))
-                || (is_cf && lexer->eof(lexer))
+                || (is_cf_context && lexer->eof(lexer))
             )
         ) {
-            pop_tag(scanner, is_cf);
-            lexer->result_symbol = is_cf ? IMPLICIT_CF_END_TAG : IMPLICIT_END_TAG;
+            pop_tag(scanner, is_cf_context);
+            lexer->result_symbol = is_cf_context ? IMPLICIT_CF_END_TAG : IMPLICIT_END_TAG;
             tag_free(&next_tag);
             return true;
         }
@@ -524,7 +528,10 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         return false;
     }
 
-    
+    if ( result.is_cf_tag && !is_cf_context ) {
+        array_delete(&result.tag_name);
+        return false;
+    }
     
     // bool is_cf = result.is_cf_tag || is_cf_context;
     Tag tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
@@ -583,26 +590,35 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
         return false;
     }
 
-    bool is_cf = result.is_cf_tag || is_cf_context;
-    
-    Tag tag = is_cf ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
+    if ( result.is_cf_tag && !is_cf_context ) {
+        array_delete(&result.tag_name);
+        return false;
+    }
 
-    Tag *tag_back = (is_cf && scanner->cf_tags.size > 0) ? array_back(&scanner->cf_tags)
-                   : (scanner->tags.size > 0) ? array_back(&scanner->tags) : NULL;
+    // printf("scan_end_tag_name: tag=%.*s, is_cf_context=%d, tags.size=%d, cf_tags.size=%d\n",
+    // (int)result.tag_name.size, result.tag_name.contents, is_cf_context,
+    // scanner->tags.size, scanner->cf_tags.size);
+    
+    // bool is_cf = result.is_cf_tag || is_cf_context;
+    
+    Tag tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
+
+    Tag *tag_back = (is_cf_context) ? ( scanner->cf_tags.size > 0 ? array_back(&scanner->cf_tags) : NULL )
+                   : ( scanner->tags.size > 0) ? array_back(&scanner->tags) : NULL;
 
     if ( tag_back && tag_eq(tag_back, &tag) ) {
-        pop_tag(scanner, is_cf);
-        if (is_cf && tag.type == CF_SPECIAL) {
+        pop_tag(scanner, is_cf_context);
+        if (is_cf_context && tag.type == CF_SPECIAL) {
             lexer->result_symbol = CF_SPECIAL_END_TAG_NAME;
-        } else if (is_cf && tag.type == CF_IF) {
+        } else if (is_cf_context && tag.type == CF_IF) {
             lexer->result_symbol = CF_IF_END_TAG_NAME;
         } else {
-            lexer->result_symbol = is_cf ? CF_END_TAG_NAME : END_TAG_NAME;
+            lexer->result_symbol = is_cf_context ? CF_END_TAG_NAME : END_TAG_NAME;
         }
     } else {
         // Search deeper in the stack for a matching tag
         bool found = false;
-        if (is_cf) {
+        if (is_cf_context) {
             for (unsigned i = scanner->cf_tags.size; i > 0; i--) {
                 if (tag_eq(&scanner->cf_tags.contents[i - 1], &tag)) {
                     found = true;
@@ -619,16 +635,16 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
         }
 
         if (found) {
-            pop_tag(scanner, is_cf);
-            if (is_cf && tag.type == CF_SPECIAL) {
+            pop_tag(scanner, is_cf_context);
+            if (is_cf_context && tag.type == CF_SPECIAL) {
                 lexer->result_symbol = CF_SPECIAL_END_TAG_NAME;
-            } else if (is_cf && tag.type == CF_IF) {
+            } else if (is_cf_context && tag.type == CF_IF) {
                 lexer->result_symbol = CF_IF_END_TAG_NAME;
             } else {
-                lexer->result_symbol = is_cf ? CF_END_TAG_NAME : END_TAG_NAME;
+                lexer->result_symbol = is_cf_context ? CF_END_TAG_NAME : END_TAG_NAME;
             }
         } else {
-            lexer->result_symbol = is_cf ? ERRONEOUS_CF_END_TAG_NAME : ERRONEOUS_END_TAG_NAME;
+            lexer->result_symbol = is_cf_context ? ERRONEOUS_CF_END_TAG_NAME : ERRONEOUS_END_TAG_NAME;
         }
     }
 

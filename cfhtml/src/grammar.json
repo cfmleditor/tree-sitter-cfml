@@ -358,7 +358,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "end_tag"
+          "name": "html_text"
         },
         {
           "type": "SYMBOL",
@@ -685,7 +685,7 @@
     },
     "erroneous_end_tag": {
       "type": "PREC_RIGHT",
-      "value": 4,
+      "value": 1,
       "content": {
         "type": "SEQ",
         "members": [
@@ -711,7 +711,7 @@
     },
     "erroneous_cf_end_tag": {
       "type": "PREC_RIGHT",
-      "value": 4,
+      "value": 1,
       "content": {
         "type": "SEQ",
         "members": [

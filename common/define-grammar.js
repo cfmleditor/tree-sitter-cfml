@@ -259,7 +259,7 @@ module.exports = function defineGrammar(dialect) {
         $.script_element,
         $.style_element,
         $.text,
-        $.end_tag,
+        $.html_text,
         $.erroneous_end_tag,
         $.xml_decl,
       ),
@@ -333,13 +333,13 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      erroneous_end_tag: $ => prec.right(4, seq(
+      erroneous_end_tag: $ => prec.right(1, seq(
         '</',
         $.erroneous_end_tag_name,
         alias($._close_tag_delim, '>'),
       )),
 
-      erroneous_cf_end_tag: $ => prec.right(4, seq(
+      erroneous_cf_end_tag: $ => prec.right(1, seq(
         '</',
         $.erroneous_cf_end_tag_name,
         alias($._close_cf_tag_delim, '>'),
