@@ -321,55 +321,6 @@
         }
       ]
     },
-    "_cfoutput_node": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "doctype"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "entity"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "element"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_cf_tag"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_hash_expression"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "script_element"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "style_element"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "text"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "html_text"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "erroneous_end_tag"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "xml_decl"
-        }
-      ]
-    },
     "_cf_open_tag": {
       "type": "PREC_RIGHT",
       "value": 1,
@@ -1068,13 +1019,6 @@
     "cf_tag_name": {
       "type": "PATTERN",
       "value": "[a-zA-Z][a-zA-Z0-9_]*"
-    },
-    "cf_tag_body": {
-      "type": "REPEAT1",
-      "content": {
-        "type": "SYMBOL",
-        "name": "_cfoutput_node"
-      }
     },
     "cf_special_tag": {
       "type": "PREC_RIGHT",

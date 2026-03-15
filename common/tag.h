@@ -153,6 +153,7 @@ typedef struct {
 typedef struct {
     TagType type;
     String tag_name;
+    unsigned html_depth;
 } Tag;
 
 static const TagMapEntry TAG_TYPES_BY_TAG_NAME[126] = {
@@ -308,6 +309,7 @@ static inline Tag tag_new() {
     Tag tag;
     tag.type = END_;
     tag.tag_name = (String) array_new();
+    tag.html_depth = 0;
     return tag;
 }
 

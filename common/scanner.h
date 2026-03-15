@@ -67,11 +67,13 @@ static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
         if (_tag.type == CUSTOM || _tag.type == CFML || _tag.type == CF_VOID || _tag.type == CF_SET || _tag.type == CF_SPECIAL || _tag.type == CF_RETURN || _tag.type == CF_IF || _tag.type == CF_ELSEIF || _tag.type == CF_ELSE) { \
             unsigned _len = _tag.tag_name.size; \
             if (_len > UINT8_MAX) _len = UINT8_MAX; \
-            if ((size) + 2 + _len >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) break; \
+            if ((size) + 2 + _len + sizeof(_tag.html_depth) >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) break; \
             (buffer)[(size)++] = (char)_tag.type; \
             (buffer)[(size)++] = (char)_len; \
             strncpy(&(buffer)[(size)], _tag.tag_name.contents, _len); \
             (size) += _len; \
+            memcpy(&(buffer)[(size)], &_tag.html_depth, sizeof(_tag.html_depth)); \
+            (size) += sizeof(_tag.html_depth); \
         } else { \
             if ((size) + 1 >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) break; \
             (buffer)[(size)++] = (char)_tag.type; \
@@ -105,6 +107,8 @@ static unsigned serialize(Scanner *scanner, char *buffer) {
             _tag.tag_name.size = _len; \
             memcpy(_tag.tag_name.contents, &(buffer)[(size)], _len); \
             (size) += _len; \
+            memcpy(&_tag.html_depth, &(buffer)[(size)], sizeof(_tag.html_depth)); \
+            (size) += sizeof(_tag.html_depth); \
         } \
         array_push(&(tags_field), _tag); \
     } \
@@ -438,6 +442,28 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         return false;
     }
 
+    if (result.is_cf_tag && !is_cf_context && is_closing_tag) {
+        // A CF closing tag in HTML context: only implicitly close HTML tags
+        // that were opened inside this CF tag (i.e. tags.size > cf html_depth)
+        Tag cf_next = cf_tag_for_name(result.tag_name);
+        unsigned cf_html_depth = 0;
+        bool found = false;
+        for (unsigned i = scanner->cf_tags.size; i > 0; i--) {
+            if (tag_eq(&scanner->cf_tags.contents[i - 1], &cf_next)) {
+                cf_html_depth = scanner->cf_tags.contents[i - 1].html_depth;
+                found = true;
+                break;
+            }
+        }
+        tag_free(&cf_next);
+        if (found && scanner->tags.size > cf_html_depth) {
+            pop_tag(scanner, false);
+            lexer->result_symbol = IMPLICIT_END_TAG;
+            return true;
+        }
+        return false;
+    }
+
     if (result.is_cf_tag && !is_cf_context) {
         array_delete(&result.tag_name);
         return false;
@@ -580,6 +606,7 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
     }
 
     if ( is_cf_context ) {
+        tag.html_depth = scanner->tags.size;
         array_push(&scanner->cf_tags, tag);
     } else {
         array_push(&scanner->tags, tag);

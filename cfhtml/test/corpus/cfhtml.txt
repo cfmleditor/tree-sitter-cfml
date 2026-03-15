@@ -10,7 +10,9 @@ testing4
 
 <cfdump var="#[a, b, c]#">
 
+<!---
 <cfoutput>test<cfoutput>test</cfoutput>test</cfoutput>
+--->
 
 ---
 
@@ -62,11 +64,7 @@ testing4
             (identifier)
             (identifier)))))
     (cf_selfclose_void_tag_end))
-  (cf_special_tag
-    (cf_special_content))
-  (html_text)
-  (erroneous_cf_end_tag
-    (erroneous_cf_end_tag_name)))
+  (cf_comment))
 
 ===================================
 testing4
@@ -113,54 +111,64 @@ testing4
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)))))
-    (element
-      (start_tag
-        (tag_name))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (tag_attributes
+          (attribute
+            (attribute_name)
+            (quoted_attribute_value
+              (attribute_value)))))
       (element
         (start_tag
           (tag_name))
-        (html_text)
-        (end_tag
-          (tag_name)))
-      (element
-        (start_tag
-          (tag_name))
-        (html_text)
-        (end_tag
-          (tag_name)))
-      (element
-        (start_tag
-          (tag_name))
-        (html_text)
-        (end_tag
-          (tag_name)))
-      (element
-        (start_tag
-          (tag_name))
-        (html_text)
-        (end_tag
-          (tag_name)))
-      (element
-        (start_tag
-          (tag_name))
-        (html_text)
-        (end_tag
-          (tag_name)))
-      (element
-        (start_tag
-          (tag_name))
-        (html_text)
-        (end_tag
-          (tag_name)))
-      (element
-        (start_tag
-          (tag_name))
-        (html_text)
-        (end_tag
-          (tag_name)))
-      (cf_comment)
-      (erroneous_end_tag
-        (erroneous_end_tag_name))
-      (implicit_end_tag))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (cf_comment)
+        (erroneous_end_tag
+          (erroneous_end_tag_name))
+        (implicit_end_tag))
+      (cf_end_tag
+        (cf_tag_name)))
     (end_tag
       (tag_name))))
