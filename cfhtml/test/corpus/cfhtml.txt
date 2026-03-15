@@ -26,8 +26,9 @@ testing4
           (quoted_attribute_value
             (attribute_value)
             (hash_single)
-            (cf_special_tag
-              (cf_special_content))))))
+            (cf_output_tag
+              (hash_expression
+                (identifier)))))))
     (end_tag
       (tag_name)))
   (cf_set_tag

@@ -103,7 +103,14 @@ cffunction
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)))))
-    (html_text)
+    (hash_expression
+      (binary_expression
+        (identifier)
+        (identifier)))
+    (hash_expression
+      (binary_expression
+        (identifier)
+        (identifier)))
     (cf_set_tag
       (assignment_expression
         (identifier)
@@ -381,7 +388,9 @@ nested cfif
           (true)
           (true)))
       (html_text))
-    (html_text)))
+    (hash_expression
+      (identifier))
+    (hash_empty)))
 
 ===================================
 / Characters used in tags and nested cfml comments
@@ -574,8 +583,9 @@ testing3
             (hash_empty)))))
     (end_tag
       (tag_name)))
-  (cf_special_tag
-    (cf_special_content))
+  (cf_output_tag
+    (hash_expression
+      (identifier)))
   (cf_selfclose_tag
     (cf_attribute
       (cf_attribute_name)
@@ -623,8 +633,100 @@ testing3
     (html_text)
     (end_tag
       (tag_name)))
-  (cf_special_tag
-    (cf_special_content)))
+  (cf_output_tag
+    (element
+      (start_tag
+        (tag_name)
+        (tag_attributes
+          (attribute
+            (attribute_name)
+            (quoted_attribute_value
+              (hash_empty))))
+        (cf_comment)
+        (tag_attributes
+          (attribute
+            (attribute_name)
+            (quoted_attribute_value
+              (attribute_value)
+              (hash_expression
+                (identifier))
+              (attribute_value))))
+        (tag_attributes
+          (attribute
+            (attribute_name)
+            (quoted_attribute_value
+              (attribute_value)
+              (hash_expression
+                (identifier))
+              (attribute_value)
+              (attribute_value)
+              (hash_expression
+                (identifier))
+              (attribute_value)
+              (hash_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier)))
+              (attribute_value)
+              (hash_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier)))
+              (attribute_value)
+              (hash_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier)))
+              (attribute_value)
+              (attribute_value)
+              (attribute_value)
+              (attribute_value)
+              (attribute_value)
+              (hash_expression
+                (identifier))
+              (attribute_value)
+              (attribute_value)
+              (hash_expression
+                (member_expression
+                  (subscript_expression
+                    (identifier)
+                    (identifier))
+                  (property_identifier)))
+              (attribute_value)
+              (attribute_value)
+              (attribute_value)))))
+      (element
+        (self_closing_tag
+          (tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value)))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value)
+                (attribute_value)
+                (attribute_value)
+                (attribute_value))))))
+      (end_tag
+        (tag_name)))))
 
 ===================================
 testing4
@@ -728,8 +830,9 @@ testing4
         (attribute
           (attribute_name)
           (quoted_attribute_value
-            (cf_special_tag
-              (cf_special_content))))))
+            (cf_output_tag
+              (hash_expression
+                (identifier)))))))
     (end_tag
       (tag_name))))
 
@@ -869,8 +972,22 @@ testing6
 ---
 
 (program
-  (cf_special_tag
-    (cf_special_content)))
+  (cf_output_tag
+    (element
+      (start_tag
+        (tag_name)
+        (tag_attributes
+          (attribute
+            (attribute_name)
+            (quoted_attribute_value
+              (hash_empty)
+              (attribute_value))))
+        (tag_attributes
+          (attribute
+            (attribute_name)
+            (quoted_attribute_value))))
+      (end_tag
+        (tag_name)))))
 
 ===================================
 testing7
@@ -1722,3 +1839,4 @@ cftransaction2
       (cf_end_tag
         (cf_tag_name)))
     (implicit_cf_end_tag)))
+

@@ -37,6 +37,7 @@ typedef enum {
     CF_IF,
     CF_ELSEIF,
     CF_ELSE,
+    CF_OUTPUT,
 
     A,
     ABBR,
@@ -320,7 +321,7 @@ static const char *CF_VOID_TAGS[] = {
 };
 
 static const char *CF_SPECIAL_TAGS[] = {
-    "OUTPUT", "SCRIPT", "QUERY", "XML", "SAVECONTENT", NULL
+    "SCRIPT", "QUERY", "XML", NULL
 };
 
 static inline bool cf_tag_name_in(const String *name, const char **list) {
@@ -340,6 +341,8 @@ static inline Tag cf_tag_for_name(String name) {
         tag.type = CF_SET;
     } else if (name.size == 6 && memcmp(name.contents, "RETURN", 6) == 0) {
         tag.type = CF_RETURN;
+    } else if (name.size == 6 && memcmp(name.contents, "OUTPUT", 6) == 0) {
+        tag.type = CF_OUTPUT;
     } else if (name.size == 2 && memcmp(name.contents, "IF", 2) == 0) {
         tag.type = CF_IF;
     } else if (name.size == 6 && memcmp(name.contents, "ELSEIF", 6) == 0) {
@@ -370,7 +373,7 @@ static inline Tag tag_for_name(String name) {
 }
 
 static inline void tag_free(Tag *tag) {
-    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_SPECIAL || tag->type == CF_SET || tag->type == CF_RETURN || tag->type == CF_IF || tag->type == CF_ELSEIF || tag->type == CF_ELSE) {
+    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_SPECIAL || tag->type == CF_OUTPUT || tag->type == CF_SET || tag->type == CF_RETURN || tag->type == CF_IF || tag->type == CF_ELSEIF || tag->type == CF_ELSE) {
         array_delete(&tag->tag_name);
     }
 }
@@ -385,7 +388,7 @@ static inline bool cf_tag_is_void(const Tag *self) {
 
 static inline bool tag_eq(const Tag *self, const Tag *other) {
     if (self->type != other->type) return false;
-    if (self->type == CUSTOM || self->type == CFML || self->type == CF_VOID || self->type == CF_SPECIAL || self->type == CF_SET || self->type == CF_RETURN || self->type == CF_IF || self->type == CF_ELSEIF || self->type == CF_ELSE) {
+    if (self->type == CUSTOM || self->type == CFML || self->type == CF_VOID || self->type == CF_SPECIAL || self->type == CF_OUTPUT || self->type == CF_SET || self->type == CF_RETURN || self->type == CF_IF || self->type == CF_ELSEIF || self->type == CF_ELSE) {
         if (self->tag_name.size != other->tag_name.size) {
             return false;
         }
