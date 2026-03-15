@@ -1,5 +1,3 @@
-(tag_name) @tag
-(cf_tag_name) @tag
 (erroneous_end_tag_name) @tag.error
 (erroneous_cf_end_tag_name) @tag.error
 (doctype) @constant
@@ -11,6 +9,15 @@
 (end_tag) @tag
 (self_closing_tag) @tag
 (cf_selfclose_tag) @tag
+(cf_output_tag) @tag
+(cf_script_tag) @tag
+(cf_start_tag) @tag
+(cf_end_tag) @tag
+(cf_if_tag) @tag
+(cf_query_tag) @tag
+(cf_else_tag) @tag
+(cf_elseif_tag) @tag
+(cf_return_tag) @tag
 
 ; Variables
 ;----------
@@ -36,16 +43,6 @@
 
 (function_declaration
   (return_type) @type)
-
-(cf_tag
-  (cf_start_tag
-    (cf_tag_name) @_cffunction
-    (tag_attributes
-      (attribute
-        (attribute_name) @_name
-        (_ (attribute_value) @function))))
-  (#eq? @_cffunction "function")
-  (#eq? @_name "name"))
 
 (generator_function
   name: (identifier) @function)
