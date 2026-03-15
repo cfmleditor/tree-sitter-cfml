@@ -28,24 +28,30 @@ module.exports = function defineGrammar(dialect) {
       $._script_start_tag_name,
       $._style_start_tag_name,
       $._end_tag_name,
+      $._start_cf_tag_name,
+      $._end_cf_tag_name,
       $.erroneous_end_tag_name,
+      $.erroneous_cf_end_tag_name,
       '/>',
+      $._cf_self_closing_tag_delimiter,
+      $._cf_self_closing_void_tag_delimiter,
       $.implicit_end_tag,
+      $.implicit_cf_end_tag,
       $.raw_text,
       $.cf_comment,
-      $._cfquery_content,
-      // $._cf_open_tag_external,
-      // $._cf_close_tag_external,
-      $._cfsavecontent_content,
-      $.cfxml_content,
       $._close_tag_delim,
-      // $._cf_output_tag_external,
-      $.cfscript_content,
-      // $.cfoutput_content,
-      // $.cffunction_content,
-      // $.html_hash,
+      $._close_cf_tag_delim,
       $.html_text,
-      $.error_sentinel,
+      $._start_cf_void_name,
+      $._start_cf_set_name,
+      $._start_cf_return_name,
+      $._start_cf_if_name,
+      $._end_cf_if_name,
+      $._start_cf_elseif_name,
+      $._start_cf_else_name,
+      $._start_cf_special_name,
+      $._end_cf_special_name,
+      $.cf_special_content
     ],
 
     supertypes: $ => [
@@ -54,9 +60,7 @@ module.exports = function defineGrammar(dialect) {
       $.expression,
       $.primary_expression,
       $.pattern,
-      $._cf_super_tags,
-      $.cf_tag,
-      $.cf_tag_query,
+      $._cf_tag,
     ],
 
     inline: $ => [
@@ -133,7 +137,9 @@ module.exports = function defineGrammar(dialect) {
       [$.computed_property_name, $.array],
       [$.binary_expression, $._initializer],
       [$.tag_attributes, $.attribute_name],
-      // [$.element, $._node],
+      // [$._node, $.element],
+      // [$.cf_tag, $._node],
+      // [$.cf_tag_body],
       [$.arrow_function, $.binary_expression],
       [$.arrow_function, $.call_expression],
       [$.arrow_function, $.subscript_expression],
@@ -193,10 +199,25 @@ module.exports = function defineGrammar(dialect) {
 
       _doctype: _ => /[Dd][Oo][Cc][Tt][Yy][Pp][Ee]/,
 
-      // _cf_tag_start: $ => '<',
-      // _close_tag_delim: $ => '>',
+      cf_selfclose_void_tag_end: $ => choice(
+        alias($._cf_self_closing_void_tag_delimiter, '/>'),
+        alias($._close_cf_tag_delim, '>')
+      ),
 
-      cf_selfclose_tag_end: $ => choice('/>', alias($._close_tag_delim, '>')),
+      cf_set_tag: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        $._start_cf_set_name,
+        optional(alias(/[vV][aA][rR]/, $.cf_var)),
+        $._cf_tag_expression,
+        $.cf_selfclose_void_tag_end,
+      )),
+
+      cf_return_tag: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        $._start_cf_return_name,
+        optional($.expression),
+        $.cf_selfclose_void_tag_end,
+      )),
 
       // @ts-ignore
       text: $ => /[^<>&\s#\r\n\u2028\u2029]([^<>&#]*[^<>&\s#\r\n\u2028\u2029])?/,
@@ -206,40 +227,17 @@ module.exports = function defineGrammar(dialect) {
         $.doctype,
         $.entity,
         $.element,
-        $.cf_tag,
+        $._cf_tag,
         $._hash,
         $.script_element,
         $.style_element,
-        $.cfscript_element,
-        $.text,
-        $.end_tag,
-        $.erroneous_end_tag,
-        $.xml_decl,
-      ),
-
-      _element_node: $ => choice(
-        $.doctype,
-        $.entity,
-        $.element,
-        $.cf_tag,
-        $._hash,
-        $.script_element,
-        $.style_element,
-        $.cfscript_element,
         $.text,
         $.erroneous_end_tag,
+        $.erroneous_cf_end_tag,
         $.xml_decl,
         $.html_text,
       ),
-
-      _node_cfquery: $ => choice(
-        $.query_operator,
-        $.cf_tag_query,
-        $._hash,
-        $.cfscript_element,
-        $.text,
-      ),
-
+      
       query_operator: $ => choice(
         field('operator', '>='),
         field('operator', '>'),
@@ -252,40 +250,20 @@ module.exports = function defineGrammar(dialect) {
         field('operator', 'EXISTS'),
       ),
 
-      _cfoutput_node: $ => choice(
-        $.doctype,
-        $.entity,
-        $.element,
-        $.cf_tag,
-        $._hash_expression,
-        $.script_element,
-        $.style_element,
-        $.cfscript_element,
-        $.text,
-        $.end_tag,
-        $.erroneous_end_tag,
-        $.xml_decl,
-      ),
-
-      cfscript_element: $ => prec.right(2, seq(
-        $._cf_open_tag,
-        keyword('script'),
-        alias($._close_tag_delim, '>'),
-        optional($.cfscript_content),
-        $._cf_close_tag,
-        keyword('script'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      // cf_script: $ => prec.right(2, seq(
-      //   $._cf_open_tag,
-      //   keyword('script'),
-      //   alias($._close_tag_delim, '>'),
-      //   repeat($.statement),
-      //   $._cf_close_tag,
-      //   keyword('script'),
-      //   alias($._close_tag_delim, '>'),
-      // )),
+      // _cfoutput_node: $ => choice(
+      //   $.doctype,
+      //   $.entity,
+      //   $.element,
+      //   $._cf_tag,
+      //   $._hash_expression,
+      //   $.script_element,
+      //   $.style_element,
+      //   $.text,
+      //   $.erroneous_end_tag,
+      //   $.erroneous_cf_end_tag,
+      //   $.xml_decl,
+      //   $.html_text,
+      // ),
 
       _cf_open_tag: $ => prec.right(1, keyword('<cf')),
       _cf_close_tag: $ => prec.right(1, keyword('</cf')),
@@ -293,7 +271,7 @@ module.exports = function defineGrammar(dialect) {
       element: $ => choice(
         seq(
           $.start_tag,
-          repeat($._element_node),
+          repeat($._node),
           choice($.end_tag, $.implicit_end_tag),
         ),
         $.self_closing_tag,
@@ -316,7 +294,7 @@ module.exports = function defineGrammar(dialect) {
         // $.style_attribute,
         $.attribute,
         $.quoted_attribute_value,
-        $.cf_tag,
+        $._cf_tag,
         $._hash,
       ),
 
@@ -356,10 +334,16 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
-      erroneous_end_tag: $ => prec.right(4, seq(
+      erroneous_end_tag: $ => prec.right(1, seq(
         '</',
         $.erroneous_end_tag_name,
         alias($._close_tag_delim, '>'),
+      )),
+
+      erroneous_cf_end_tag: $ => prec.right(1, seq(
+        '</',
+        $.erroneous_cf_end_tag_name,
+        alias($._close_cf_tag_delim, '>'),
       )),
 
       style_element: $ => seq(
@@ -376,482 +360,9 @@ module.exports = function defineGrammar(dialect) {
       // @ts-ignore
       hash_value: $ => /[a-zA-Z0-9_-]+/,
 
-      _cf_component_open: $ => seq(
-        $._cf_open_tag,
-        keyword('component'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-      ),
-
-      _cf_component_close: $ => seq(
-        $._cf_close_tag,
-        keyword('component'),
-        alias($._close_tag_delim, '>'),
-      ),
-
-
-      cf_tag_body: $ => ( dialect === 'cfml' ? repeat1($._node) : repeat1($._cfoutput_node) ),
-
-      cf_component_tag: $ => prec.right(1, seq(
-        alias($._cf_component_open, $.cf_tag_open),
-        field('body', optional($.cf_tag_body)),
-        alias($._cf_component_close, $.cf_tag_close),
-      )),
-
-      _cf_function_open: $ => seq(
-        $._cf_open_tag,
-        keyword('function'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-      ),
-
-      _cf_function_close: $ => seq(
-        $._cf_close_tag,
-        keyword('function'),
-        alias($._close_tag_delim, '>'),
-      ),
-        
-      cf_function_tag: $ => prec.right(2, seq(
-        alias($._cf_function_open, $.cf_tag_open),
-        field('body', optional($.cf_tag_body)),
-        alias($._cf_function_close, $.cf_tag_close),
-      )),
-
-      cf_silent_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('silent'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('silent'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_lock_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('lock'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('lock'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_thread_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('thread'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('thread'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_execute_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('execute'),
-        repeat($.cf_attribute),
-        choice(
-          $.cf_selfclose_tag_end,
-          seq(
-            alias($._close_tag_delim, '>'),
-            optional(repeat($._node)),
-            optional(seq(
-              $._cf_close_tag,
-              keyword('execute'),
-              alias($._close_tag_delim, '>'),
-            )),
-          ),
-        ),
-      )),
-
-      cf_storedproc_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('storedproc'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('storedproc'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_http_tag: $ => prec.right(2, seq(
-        $._cf_open_tag,
-        keyword('http'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat(
-          $._node,
-        ),
-        $._cf_close_tag,
-        keyword('http'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_xml_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('xml'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        $.cfxml_content,
-        $._cf_close_tag,
-        keyword('xml'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_mail_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('mail'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('mail'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_mailpart_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('mailpart'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('mailpart'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_selfclose_tag: $ => prec.right(4, seq(
-        $._cf_open_tag,
-        field('cf_tag_name', choice(
-          keyword('setting'),
-          keyword('htmlhead'),
-          keyword('img'),
-          keyword('queryparam'),
-          keyword('param'),
-          keyword('import'),
-          keyword('abort'),
-          keyword('argument'),
-          keyword('continue'),
-          keyword('httpparam'),
-          keyword('wddx'),
-          keyword('break'),
-          keyword('zipparam'),
-          keyword('directory'),
-          keyword('file'),
-          keyword('setting'),
-          keyword('dump'),
-          keyword('header'),
-          keyword('include'),
-        )),
-        optional(repeat($.cf_attribute)),
-        $.cf_selfclose_tag_end,
-      )),
-
-      cf_query_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('query'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node_cfquery),
-        $._cf_close_tag,
-        keyword('query'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_transaction_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('transaction'),
-        repeat($.cf_attribute),
-        choice(
-          $.cf_selfclose_tag_end,
-          seq(
-            alias($._close_tag_delim, '>'),
-            repeat($._node),
-            $._cf_close_tag,
-            keyword('transaction'),
-            alias($._close_tag_delim, '>'),
-          ),
-        ),
-      )),
-
-      cf_try_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('try'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        repeat($.cf_catch_tag),
-        $._cf_close_tag,
-        keyword('try'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_switch_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('switch'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        repeat($.cf_case_tag),
-        optional($.cf_defaultcase_tag),
-        $._cf_close_tag,
-        keyword('switch'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_switch_tag_cfquery: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('switch'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node_cfquery),
-        repeat($.cf_case_tag_query),
-        optional($.cf_defaultcase_tag_query),
-        $._cf_close_tag,
-        keyword('switch'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_case_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('case'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('case'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_defaultcase_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('defaultcase'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('defaultcase'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_case_tag_query: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('case'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node_cfquery),
-        $._cf_close_tag,
-        keyword('case'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_defaultcase_tag_query: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('defaultcase'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node_cfquery),
-        $._cf_close_tag,
-        keyword('defaultcase'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-
-      cf_catch_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('catch'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('catch'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_loop_tag: $ => prec.right(2, seq(
-        $._cf_open_tag,
-        keyword('loop'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        $._cf_close_tag,
-        keyword('loop'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_loop_tag_cfquery: $ => prec.right(2, seq(
-        $._cf_open_tag,
-        keyword('loop'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        repeat($._node_cfquery),
-        $._cf_close_tag,
-        keyword('loop'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_zip_tag: $ => prec.right(2, seq(
-        $._cf_open_tag,
-        keyword('zip'),
-        repeat($.cf_attribute),
-        choice(
-          $.cf_selfclose_tag_end,
-          seq(
-            alias($._close_tag_delim, '>'),
-            optional(repeat($._node)),
-            optional(seq(
-              $._cf_close_tag,
-              keyword('zip'),
-              alias($._close_tag_delim, '>'),
-            )),
-          ),
-        ),
-      )),
-
-      cf_savecontent_tag: $ => prec.right(2, seq(
-        $._cf_open_tag,
-        keyword('savecontent'),
-        repeat($.cf_attribute),
-        $.cf_selfclose_tag_end,
-        $._cfsavecontent_content,
-        $._cf_close_tag,
-        keyword('savecontent'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      // _cf_output_tag: $ => keyword('<cfoutput'),
-
-      cf_output_tag: $ => prec.right(2, seq(
-        $._cf_open_tag,
-        keyword('output'),
-        repeat($.cf_attribute),
-        alias($._close_tag_delim, '>'),
-        ( dialect === 'cfml' ? repeat($._node) : repeat($._cfoutput_node) ),
-        $._cf_close_tag,
-        keyword('output'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-
-      cf_return_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('return'),
-        optional($.expression),
-        $.cf_selfclose_tag_end,
-      )),
-
-      cf_if_tag: $ => prec.right(1, seq(
-        $._cf_open_tag,
-        keyword('if'),
-        $._cf_tag_expression,
-        alias($._close_tag_delim, '>'),
-        repeat($._node),
-        optional($.cf_if_alt),
-        $._cf_close_tag,
-        keyword('if'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_if_tag_query: $ => prec.right(1, seq(
-        $._cf_open_tag,
-        keyword('if'),
-        $._cf_tag_expression,
-        alias($._close_tag_delim, '>'),
-        repeat($._node_cfquery),
-        optional($.cf_if_alt_cfquery),
-        $._cf_close_tag,
-        keyword('if'),
-        alias($._close_tag_delim, '>'),
-      )),
-
       _cf_tag_expression: $ => choice(
         $.expression,
       ),
-
-      cf_set_tag: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        keyword('set'),
-        optional(alias(/[vV][aA][rR]/, $.cf_var)),
-        $._cf_tag_expression,
-        $.cf_selfclose_tag_end,
-      )),
-
-      // cf_elseif_tag: $ => prec.right(2, seq(
-      //   $._cf_open_tag,
-      //   keyword('elseif'),
-      //   $._cf_tag_expression,
-      //   alias($._close_tag_delim, '>'),
-      //   repeat($._node),
-      // )),
-
-      cf_elseif_tag: $ => prec.right(3, seq(
-        keyword('elseif'),
-        $._cf_tag_expression,
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_else_tag: $ => prec.right(3, seq(
-        keyword('else'),
-        alias($._close_tag_delim, '>'),
-      )),
-
-      cf_if_alt: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        choice(
-          $.cf_elseif_tag,
-          $.cf_else_tag,
-        ),
-        optional(repeat($._node)),
-        optional($.cf_if_alt),
-      )),
-
-      cf_if_alt_cfquery: $ => prec.right(3, seq(
-        $._cf_open_tag,
-        choice(
-          $.cf_elseif_tag,
-          $.cf_else_tag,
-        ),
-        optional(repeat($._node_cfquery)),
-        optional($.cf_if_alt_cfquery),
-      )),
-
-      // style_attribute: $ => seq(
-      //   keyword('style'),
-      //   optional(
-      //     seq(
-      //       '=',
-      //       $._quoted_style,
-      //     ),
-      //   ),
-      // ),
-
-      // _quoted_style: $ => choice(
-      //   seq(
-      //     '"',
-      //     repeat(
-      //       seq(
-      //         $.style_item,
-      //         optional(';'),
-      //       ),
-      //     ),
-      //     '"',
-      //   ),
-      //   seq(
-      //     '\'',
-      //     repeat(
-      //       seq(
-      //         $.style_item,
-      //         optional(';'),
-      //       ),
-      //     ),
-      //     '\'',
-      //   ),
-      // ),
 
       attribute: $ => seq(
         $.attribute_name,
@@ -872,7 +383,7 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       attribute_value: $ => choice(
-        prec.left(1, $.cf_tag),
+        prec.left(1, $._cf_tag),
         prec.left(2, $._hash),
         prec.left(3, /[^"'=\s\n\r\t#]+/),
       ),
@@ -894,64 +405,103 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       cf_attribute_name: _ => /[^<>"\'/=\s\n\r\t#0-9]+/,
-
-      _cf_super_tags: $ => choice(
-        $.cf_output_tag,
-        alias($.cf_component_tag, $.cf_component),
-        alias($.cf_function_tag, $.cf_function),
-        alias($.cf_query_tag, $.cf_query),
+        
+      cf_tag: $ => choice(
+        seq(
+          $.cf_start_tag,
+          repeat($._node),
+          choice($.cf_end_tag, $.implicit_cf_end_tag),
+        ),
+        $.cf_start_tag_with_selfclose,
       ),
 
-      cf_generic_tag: $ => prec.right(1, seq(
+      cf_start_tag_with_selfclose: $ => prec.right(2, seq(
         $._cf_open_tag,
-        field('cf_tag_name', $.cf_tag_name),
-        repeat($.cf_attribute),
-        choice(
-          $.cf_selfclose_tag_end,
-          seq(
-            alias($._close_tag_delim, '>'),
-            repeat($._node),
-            $._cf_close_tag,
-            field('cf_tag_name', $.cf_tag_name),
-            alias($._close_tag_delim, '>'),
-          ),
+        alias($._start_cf_tag_name, $.cf_tag_name),
+        repeat(
+          $.tag_attributes,
         ),
+        $._cf_self_closing_tag_delimiter,
       )),
+
+      cf_start_tag: $ => seq(
+        $._cf_open_tag,
+        alias($._start_cf_tag_name, $.cf_tag_name),
+        repeat($.tag_attributes),
+        alias($._close_cf_tag_delim, '>'),
+      ),
+
+      cf_end_tag: $ => seq(
+        $._cf_close_tag,
+        alias($._end_cf_tag_name, $.cf_tag_name),
+        alias($._close_cf_tag_delim, '>'),
+      ),
 
       cf_tag_name: _ => /[a-zA-Z][a-zA-Z0-9_]*/,
 
-      cf_tag: $ => prec.right(3, choice(
-        $._cf_super_tags,
-        $.cf_if_tag,
-        $.cf_thread_tag,
-        $.cf_execute_tag,
-        $.cf_storedproc_tag,
-        $.cf_silent_tag,
-        $.cf_lock_tag,
-        $.cf_http_tag,
-        $.cf_xml_tag,
-        $.cf_try_tag,
-        $.cf_switch_tag,
-        $.cf_mail_tag,
-        $.cf_mailpart_tag,
-        $.cf_transaction_tag,
-        $.cf_set_tag,
-        $.cf_selfclose_tag,
-        $.cf_savecontent_tag,
-        $.cf_zip_tag,
-        alias($.cf_loop_tag, $.cf_loop),
-        alias($.cf_return_tag, $.cf_return),
-        $.cf_generic_tag,
+      // cf_tag_body: $ => ( dialect === 'cfml' ? repeat1($._node) : repeat1($._cfoutput_node) ),
+
+      cf_special_tag: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        $._start_cf_special_name,
+        repeat($.cf_attribute),
+        alias($._close_cf_tag_delim, '>'),
+        $.cf_special_content,
+        $._cf_close_tag,
+        $._end_cf_special_name,
+        alias($._close_cf_tag_delim, '>'),
       )),
 
-      cf_tag_query: $ => prec.right(3, choice(
-        $._cf_super_tags,
-        $.cf_if_tag_query,
-        $.cf_switch_tag_cfquery,
-        $.cf_set_tag,
+      _cf_tag: $ => prec.right(3, choice(
         $.cf_selfclose_tag,
-        alias($.cf_loop_tag_cfquery, $.cf_loop),
+        $.cf_if_tag,
+        $.cf_set_tag,
+        $.cf_return_tag,
+        $.cf_tag,
+        $.cf_special_tag,
       )),
+
+      cf_selfclose_tag: $ => prec.right(4, seq(
+        $._cf_open_tag,
+        $._start_cf_void_name,
+        optional(repeat($.cf_attribute)),
+        $.cf_selfclose_void_tag_end,
+      )),
+
+      cf_if_tag: $ => prec.right(1, seq(
+        $._cf_open_tag,
+        $._start_cf_if_name,
+        $._cf_tag_expression,
+        alias($._close_cf_tag_delim, '>'),
+        repeat($._node),
+        optional($.cf_if_alt),
+        $._cf_close_tag,
+        $._end_cf_if_name,
+        alias($._close_cf_tag_delim, '>'),
+      )),
+
+      cf_elseif_tag: $ => prec.right(3, seq(
+        $._start_cf_elseif_name,
+        $._cf_tag_expression,
+        alias($._close_cf_tag_delim, '>'),
+      )),
+
+      cf_else_tag: $ => prec.right(3, seq(
+        $._start_cf_else_name,
+        alias($._close_cf_tag_delim, '>'),
+      )),
+
+      cf_if_alt: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        choice(
+          $.cf_elseif_tag,
+          $.cf_else_tag,
+        ),
+        optional(repeat($._node)),
+        optional($.cf_if_alt),
+      )),
+
+      
 
       entity: _ => /&(([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
 
@@ -987,7 +537,7 @@ module.exports = function defineGrammar(dialect) {
           // $.hash_single,
           repeat(
             choice(
-              $.cf_tag,
+              $._cf_tag,
               $._hash,
               alias(/[^'\s\n\r\t#]+/, $.attribute_value),
             ),
@@ -999,7 +549,7 @@ module.exports = function defineGrammar(dialect) {
           // $.hash_single,
           repeat(
             choice(
-              $.cf_tag,
+              $._cf_tag,
               $._hash,
               alias(/[^"\s\n\r\t#]+/, $.attribute_value),
             ),

@@ -26,8 +26,17 @@ typedef enum {
     SOURCE,
     TRACK,
     WBR,
-    CUSTOM,
     END_OF_VOID_TAGS,
+
+    CUSTOM,
+    CFML,
+    CF_VOID,
+    CF_SPECIAL,
+    CF_SET,
+    CF_RETURN,
+    CF_IF,
+    CF_ELSEIF,
+    CF_ELSE,
 
     A,
     ABBR,
@@ -143,7 +152,8 @@ typedef struct {
 
 typedef struct {
     TagType type;
-    String custom_tag_name;
+    String tag_name;
+    unsigned html_depth;
 } Tag;
 
 static const TagMapEntry TAG_TYPES_BY_TAG_NAME[126] = {
@@ -283,7 +293,7 @@ static const TagType TAG_TYPES_NOT_ALLOWED_IN_PARAGRAPHS[] = {
 };
 
 static TagType tag_type_for_name(const String *tag_name) {
-    for (int i = 0; i < 126; i++) {
+    for (int i = 0; i < 127; i++) {
         const TagMapEntry *entry = &TAG_TYPES_BY_TAG_NAME[i];
         if (
             strlen(entry->tag_name) == tag_name->size &&
@@ -298,7 +308,53 @@ static TagType tag_type_for_name(const String *tag_name) {
 static inline Tag tag_new() {
     Tag tag;
     tag.type = END_;
-    tag.custom_tag_name = (String) array_new();
+    tag.tag_name = (String) array_new();
+    tag.html_depth = 0;
+    return tag;
+}
+
+static const char *CF_VOID_TAGS[] = {
+    "PARAM", "ARGUMENT", "PROPERTY", "RETHROW", "THROW", "SCHEDULE", "HTTPPARAM", "TIMER", "FLUSH", "CACHE", "LOGOUT", "PROCESSINGDIRECTIVE", "ZIPELEMENT",
+    "BREAK", "CONTINUE", "ABORT", "EXIT", "INCLUDE", "LOCATION", "HEADER", "DUMP",
+    "CONTENT", "COOKIE", "LOG", "FILE", "DIRECTORY", "SETTING", "WDDX", NULL
+};
+
+static const char *CF_SPECIAL_TAGS[] = {
+    "OUTPUT", "SCRIPT", "QUERY", "XML", "SAVECONTENT", NULL
+};
+
+static inline bool cf_tag_name_in(const String *name, const char **list) {
+    for (int i = 0; list[i] != NULL; i++) {
+        if (strlen(list[i]) == name->size &&
+            memcmp(name->contents, list[i], name->size) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static inline Tag cf_tag_for_name(String name) {
+    Tag tag = tag_new();
+    // printf("checking if %.*s is a cf tag\n", name.size, name.contents);
+    if (name.size == 3 && memcmp(name.contents, "SET", 3) == 0) {
+        tag.type = CF_SET;
+    } else if (name.size == 6 && memcmp(name.contents, "RETURN", 6) == 0) {
+        tag.type = CF_RETURN;
+    } else if (name.size == 2 && memcmp(name.contents, "IF", 2) == 0) {
+        tag.type = CF_IF;
+    } else if (name.size == 6 && memcmp(name.contents, "ELSEIF", 6) == 0) {
+        tag.type = CF_ELSEIF;
+    } else if (name.size == 4 && memcmp(name.contents, "ELSE", 4) == 0) {
+        tag.type = CF_ELSE;
+    } else if (cf_tag_name_in(&name, CF_VOID_TAGS)) {
+        // printf("found void tag\n");
+        tag.type = CF_VOID;
+    } else if (cf_tag_name_in(&name, CF_SPECIAL_TAGS)) {
+        tag.type = CF_SPECIAL;
+    } else {
+        tag.type = CFML;
+    }
+    tag.tag_name = name;
     return tag;
 }
 
@@ -306,7 +362,7 @@ static inline Tag tag_for_name(String name) {
     Tag tag = tag_new();
     tag.type = tag_type_for_name(&name);
     if (tag.type == CUSTOM) {
-        tag.custom_tag_name = name;
+        tag.tag_name = name;
     } else {
         array_delete(&name);
     }
@@ -314,8 +370,8 @@ static inline Tag tag_for_name(String name) {
 }
 
 static inline void tag_free(Tag *tag) {
-    if (tag->type == CUSTOM) {
-        array_delete(&tag->custom_tag_name);
+    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_SPECIAL || tag->type == CF_SET || tag->type == CF_RETURN || tag->type == CF_IF || tag->type == CF_ELSEIF || tag->type == CF_ELSE) {
+        array_delete(&tag->tag_name);
     }
 }
 
@@ -323,16 +379,20 @@ static inline bool tag_is_void(const Tag *self) {
     return self->type < END_OF_VOID_TAGS;
 }
 
+static inline bool cf_tag_is_void(const Tag *self) {
+    return self->type == CF_VOID;
+}
+
 static inline bool tag_eq(const Tag *self, const Tag *other) {
     if (self->type != other->type) return false;
-    if (self->type == CUSTOM) {
-        if (self->custom_tag_name.size != other->custom_tag_name.size) {
+    if (self->type == CUSTOM || self->type == CFML || self->type == CF_VOID || self->type == CF_SPECIAL || self->type == CF_SET || self->type == CF_RETURN || self->type == CF_IF || self->type == CF_ELSEIF || self->type == CF_ELSE) {
+        if (self->tag_name.size != other->tag_name.size) {
             return false;
         }
         if (memcmp(
-            self->custom_tag_name.contents,
-            other->custom_tag_name.contents,
-            self->custom_tag_name.size
+            self->tag_name.contents,
+            other->tag_name.contents,
+            self->tag_name.size
         ) != 0) {
             return false;
         }
@@ -340,44 +400,44 @@ static inline bool tag_eq(const Tag *self, const Tag *other) {
     return true;
 }
 
-static bool tag_can_contain(Tag *self, const Tag *other) {
-    TagType child = other->type;
+// static bool tag_can_contain(Tag *self, const Tag *other) {
+//     TagType child = other->type;
 
-    switch (self->type) {
-        case LI:
-            return child != LI;
+//     switch (self->type) {
+//         case LI:
+//             return child != LI;
 
-        case DT:
-        case DD:
-            return child != DT && child != DD;
+//         case DT:
+//         case DD:
+//             return child != DT && child != DD;
 
-        case P:
-            for (int i = 0; i < 26; i++) {
-                if (child == TAG_TYPES_NOT_ALLOWED_IN_PARAGRAPHS[i]) {
-                    return false;
-                }
-            }
-            return true;
+//         case P:
+//             for (int i = 0; i < 26; i++) {
+//                 if (child == TAG_TYPES_NOT_ALLOWED_IN_PARAGRAPHS[i]) {
+//                     return false;
+//                 }
+//             }
+//             return true;
 
-        case COLGROUP:
-            return child == COL;
+//         case COLGROUP:
+//             return child == COL;
 
-        case RB:
-        case RT:
-        case RP:
-            return child != RB && child != RT && child != RP;
+//         case RB:
+//         case RT:
+//         case RP:
+//             return child != RB && child != RT && child != RP;
 
-        case OPTGROUP:
-            return child != OPTGROUP;
+//         case OPTGROUP:
+//             return child != OPTGROUP;
 
-        case TR:
-            return child != TR;
+//         case TR:
+//             return child != TR;
 
-        case TD:
-        case TH:
-            return child != TD && child != TH && child != TR;
+//         case TD:
+//         case TH:
+//             return child != TD && child != TH && child != TR;
 
-        default:
-            return true;
-    }
-}
+//         default:
+//             return true;
+//     }
+// }

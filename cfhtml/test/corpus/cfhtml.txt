@@ -10,69 +10,67 @@ testing4
 
 <cfdump var="#[a, b, c]#">
 
+<!---
 <cfoutput>test<cfoutput>test</cfoutput>test</cfoutput>
+--->
 
 ---
-(program
-      (element
-        (start_tag
-          (tag_name)
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
-                (attribute_value)
-                (hash_single)
-                (cf_output_tag
-                  (hash_expression
-                    (identifier)))))))
-        (end_tag
-          (tag_name)))
-      (cf_set_tag
-        (assignment_expression
-          (identifier)
-          (string
-            (hash_empty)))
-            (cf_selfclose_tag_end))
-      (cf_set_tag
-        (assignment_expression
-          (identifier)
-          (number))
-        (cf_selfclose_tag_end))
-      (cf_set_tag
-        (assignment_expression
-          (identifier)
-          (string
-            (hash_expression
-              (identifier))))
-        (cf_selfclose_tag_end))
-      (cf_set_tag
-        (assignment_expression
-          (identifier)
-          (hash_expression
-            (identifier)))
-        (cf_selfclose_tag_end))
-      (cf_selfclose_tag
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (hash_expression
-              (array
-                (identifier)
-                (identifier)
-                (identifier)))))
-        (cf_selfclose_tag_end))
-      (cf_output_tag
-        (text)
-        (cf_output_tag
-          (text))
-        (text)))
 
+(program
+  (element
+    (start_tag
+      (tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value)
+            (hash_single)
+            (cf_special_tag
+              (cf_special_content))))))
+    (end_tag
+      (tag_name)))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (string
+        (hash_empty)))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (string
+        (hash_expression
+          (identifier))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (hash_expression
+        (identifier)))
+    (cf_selfclose_void_tag_end))
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (hash_expression
+          (array
+            (identifier)
+            (identifier)
+            (identifier)))))
+    (cf_selfclose_void_tag_end))
+  (cf_comment))
 
 ===================================
 testing4
 ===================================
 <table class="dataEntry" cellSpacing="2" cellPadding="2" width="710">
+<cfloop test="test">
 	<tr>
 		<td>1</td>
 		<td>2</td>
@@ -85,79 +83,92 @@ testing4
     <td>8</td>
     --->
 	</tr>
+</cfloop>
 </table>
 ---
+
 (program
+  (element
+    (start_tag
+      (tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value)))))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (tag_attributes
+          (attribute
+            (attribute_name)
+            (quoted_attribute_value
+              (attribute_value)))))
       (element
         (start_tag
-          (tag_name)
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
-                (attribute_value))))
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
-                (attribute_value))))
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
-                (attribute_value))))
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
-                (attribute_value)))))
+          (tag_name))
         (element
           (start_tag
             (tag_name))
-          (element
-            (start_tag
-              (tag_name))
-            (html_text)
-            (end_tag
-              (tag_name)))
-          (element
-            (start_tag
-              (tag_name))
-            (html_text)
-            (end_tag
-              (tag_name)))
-          (element
-            (start_tag
-              (tag_name))
-            (html_text)
-            (end_tag
-              (tag_name)))
-          (element
-            (start_tag
-              (tag_name))
-            (html_text)
-            (end_tag
-              (tag_name)))
-          (element
-            (start_tag
-              (tag_name))
-            (html_text)
-            (end_tag
-              (tag_name)))
-          (element
-            (start_tag
-              (tag_name))
-            (html_text)
-            (end_tag
-              (tag_name)))
-          (element
-            (start_tag
-              (tag_name))
-            (html_text)
-            (end_tag
-              (tag_name)))
-          (cf_comment)
+          (html_text)
           (end_tag
             (tag_name)))
-        (end_tag
-          (tag_name))))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (element
+          (start_tag
+            (tag_name))
+          (html_text)
+          (end_tag
+            (tag_name)))
+        (cf_comment)
+        (erroneous_end_tag
+          (erroneous_end_tag_name))
+        (implicit_end_tag))
+      (cf_end_tag
+        (cf_tag_name)))
+    (end_tag
+      (tag_name))))

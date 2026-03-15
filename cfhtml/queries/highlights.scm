@@ -8,7 +8,6 @@
 (end_tag) @tag
 (self_closing_tag) @tag
 (cf_selfclose_tag) @tag
-(cf_output_tag) @tag
 
 ; Variables
 ;----------
@@ -25,17 +24,6 @@
 
 (function_expression
   name: (identifier) @function) @definition.function
-
-(cf_function 
-  (cf_tag_open
-    (cf_attribute
-        (cf_attribute_name) @attribute (#eq? @attribute "name")
-          (quoted_cf_attribute_value 
-            (attribute_value) @function
-          )
-    )
-  )
-) @definition.function
 
 (function_declaration
   name: (identifier) @function)
@@ -184,7 +172,6 @@
   "%"
   "%="
   "<"
-  "<="
   "<<="
   "="
   "=="
@@ -194,7 +181,6 @@
   "!=="
   "=>"
   ">"
-  ">="
   ">>="
   ">>>="
   "~"
