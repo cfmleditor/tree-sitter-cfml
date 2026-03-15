@@ -500,6 +500,13 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
             tag_free(&next_tag);
             return true;
         }
+
+        if (!is_cf_context && parent && tag_eq(parent, &next_tag)) {
+            pop_tag(scanner, false);
+            lexer->result_symbol = IMPLICIT_END_TAG;
+            tag_free(&next_tag);
+            return true;
+        }
         
         if (
             parent &&

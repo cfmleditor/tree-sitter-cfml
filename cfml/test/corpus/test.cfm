@@ -32,7 +32,8 @@
   <table>
 
     <tr>
-
-      <td>test</td>
+      <cfloop test="1">
+        <td><cfoutput>test</cfoutput></td>
+      </cfloop>
     </tr>
   </table>

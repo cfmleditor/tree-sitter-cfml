@@ -250,19 +250,20 @@ module.exports = function defineGrammar(dialect) {
         field('operator', 'EXISTS'),
       ),
 
-      _cfoutput_node: $ => choice(
-        $.doctype,
-        $.entity,
-        $.element,
-        $._cf_tag,
-        $._hash_expression,
-        $.script_element,
-        $.style_element,
-        $.text,
-        $.html_text,
-        $.erroneous_end_tag,
-        $.xml_decl,
-      ),
+      // _cfoutput_node: $ => choice(
+      //   $.doctype,
+      //   $.entity,
+      //   $.element,
+      //   $._cf_tag,
+      //   $._hash_expression,
+      //   $.script_element,
+      //   $.style_element,
+      //   $.text,
+      //   $.erroneous_end_tag,
+      //   $.erroneous_cf_end_tag,
+      //   $.xml_decl,
+      //   $.html_text,
+      // ),
 
       _cf_open_tag: $ => prec.right(1, keyword('<cf')),
       _cf_close_tag: $ => prec.right(1, keyword('</cf')),
@@ -438,7 +439,7 @@ module.exports = function defineGrammar(dialect) {
 
       cf_tag_name: _ => /[a-zA-Z][a-zA-Z0-9_]*/,
 
-      cf_tag_body: $ => ( dialect === 'cfml' ? repeat1($._node) : repeat1($._cfoutput_node) ),
+      // cf_tag_body: $ => ( dialect === 'cfml' ? repeat1($._node) : repeat1($._cfoutput_node) ),
 
       cf_special_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
