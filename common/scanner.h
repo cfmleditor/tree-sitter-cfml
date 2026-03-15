@@ -1038,7 +1038,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
         default:
             
-            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_VOID_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_SPECIAL_END_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) && !valid_symbols[RAW_TEXT] && !valid_symbols[CF_SPECIAL_CONTENT]) {
+            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_VOID_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_SPECIAL_END_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME] || valid_symbols[CF_ELSE_TAG_NAME]) && !valid_symbols[RAW_TEXT] && !valid_symbols[CF_SPECIAL_CONTENT]) {
                 if (valid_symbols[START_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_VOID_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME]|| valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) {
                     return scan_start_tag_name(scanner, lexer, valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_VOID_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]);
                 }
@@ -1052,6 +1052,13 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             } else if (valid_symbols[IMPLICIT_CF_END_TAG]) {
                 return scan_implicit_end_tag(scanner, lexer, true);
             }
+
+            if (valid_symbols[ERRONEOUS_END_TAG_NAME]) {
+                return scan_end_tag_name(scanner, lexer, false);
+            } else if (valid_symbols[ERRONEOUS_CF_END_TAG_NAME]) {
+                return scan_end_tag_name(scanner, lexer, true);
+            }
+
 
             if (valid_symbols[CLOSE_CF_TAG_DELIM] ) {
                 if ( scan_closetag_delim(scanner, lexer, true) ) {
