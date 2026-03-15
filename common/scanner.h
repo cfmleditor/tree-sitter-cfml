@@ -138,12 +138,13 @@ static TagNameResult scan_tag_name(TSLexer *lexer) {
     String tag_name = array_new();
     bool is_cf_tag = false;
 
+    // ColdFusion tags might start with 'C', ie. <cfcomponent or <cfcontinue
     if ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) {
-        //array_push(&tag_name, towupper(lexer->lookahead));
+        array_push(&tag_name, towupper(lexer->lookahead));
         advance(lexer);
         if (lexer->lookahead == 'f' || lexer->lookahead == 'F') {
             is_cf_tag = true;
-            //array_push(&tag_name, towupper(lexer->lookahead));
+            array_delete(&tag_name);
             advance(lexer);
         }
     }
@@ -1038,9 +1039,9 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
         default:
             
-            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_SPECIAL_END_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) && !valid_symbols[RAW_TEXT] && !valid_symbols[CF_SPECIAL_CONTENT]) {
-                if (valid_symbols[START_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME]|| valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) {
-                    return scan_start_tag_name(scanner, lexer, valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]);
+            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_VOID_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_SPECIAL_END_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) && !valid_symbols[RAW_TEXT] && !valid_symbols[CF_SPECIAL_CONTENT]) {
+                if (valid_symbols[START_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_VOID_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME]|| valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) {
+                    return scan_start_tag_name(scanner, lexer, valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_VOID_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]);
                 }
                 if (valid_symbols[END_TAG_NAME] || valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_SPECIAL_END_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME]) {
                     return scan_end_tag_name(scanner, lexer, valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_SPECIAL_END_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME]);

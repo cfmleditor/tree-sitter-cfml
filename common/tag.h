@@ -314,9 +314,9 @@ static inline Tag tag_new() {
 }
 
 static const char *CF_VOID_TAGS[] = {
-    "PARAM", "ARGUMENT", "PROPERTY", "RETHROW", "THROW",
+    "PARAM", "ARGUMENT", "PROPERTY", "RETHROW", "THROW", "SCHEDULE", "HTTPPARAM", "TIMER", "FLUSH", "CACHE", "LOGOUT", "PROCESSINGDIRECTIVE", "ZIPELEMENT",
     "BREAK", "CONTINUE", "ABORT", "EXIT", "INCLUDE", "LOCATION", "HEADER", "DUMP",
-    "CONTENT", "COOKIE", "LOG", "FILE", "DIRECTORY", "SETTING", NULL
+    "CONTENT", "COOKIE", "LOG", "FILE", "DIRECTORY", "SETTING", "WDDX", NULL
 };
 
 static const char *CF_SPECIAL_TAGS[] = {
@@ -335,6 +335,7 @@ static inline bool cf_tag_name_in(const String *name, const char **list) {
 
 static inline Tag cf_tag_for_name(String name) {
     Tag tag = tag_new();
+    // printf("checking if %.*s is a cf tag\n", name.size, name.contents);
     if (name.size == 3 && memcmp(name.contents, "SET", 3) == 0) {
         tag.type = CF_SET;
     } else if (name.size == 6 && memcmp(name.contents, "RETURN", 6) == 0) {
@@ -346,6 +347,7 @@ static inline Tag cf_tag_for_name(String name) {
     } else if (name.size == 4 && memcmp(name.contents, "ELSE", 4) == 0) {
         tag.type = CF_ELSE;
     } else if (cf_tag_name_in(&name, CF_VOID_TAGS)) {
+        // printf("found void tag\n");
         tag.type = CF_VOID;
     } else if (cf_tag_name_in(&name, CF_SPECIAL_TAGS)) {
         tag.type = CF_SPECIAL;
