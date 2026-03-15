@@ -336,9 +336,13 @@ static bool scan_cfspecial_content(Scanner *scanner, TSLexer *lexer) {
         return false;
     }
 
+    Tag *cf_tag = array_back(&scanner->cf_tags);
+    if (cf_tag->type != CF_SPECIAL) {
+        return false;
+    }
+    
     lexer->mark_end(lexer);
     
-    Tag *cf_tag = array_back(&scanner->cf_tags);
     char end_delimiter[cf_tag->tag_name.size + 5];
     memcpy(end_delimiter, "</CF", 4);
     memcpy(&end_delimiter[4], cf_tag->tag_name.contents, cf_tag->tag_name.size);
@@ -445,7 +449,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         name->size -= 2;
     }
 
-    Tag next_tag = is_cf ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name); 
+    Tag next_tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name); 
 
     if (is_closing_tag) {
         // The tag correctly closes the topmost element on the stack
@@ -484,16 +488,27 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
                 }
             }
         }
-    } else if (
-        parent &&
-        (
-            ((parent->type == HTML || parent->type == HEAD || parent->type == BODY) && lexer->eof(lexer))
-        )
-    ) {
-        pop_tag(scanner, is_cf);
-        lexer->result_symbol = is_cf ? IMPLICIT_CF_END_TAG : IMPLICIT_END_TAG;
-        tag_free(&next_tag);
-        return true;
+    } else {
+
+        if (is_cf && parent && tag_eq(parent, &next_tag)) {
+            pop_tag(scanner, true);
+            lexer->result_symbol = IMPLICIT_CF_END_TAG;
+            tag_free(&next_tag);
+            return true;
+        }
+        
+        if (
+            parent &&
+            (
+                ((parent->type == HTML || parent->type == HEAD || parent->type == BODY) && lexer->eof(lexer))
+                || (is_cf && lexer->eof(lexer))
+            )
+        ) {
+            pop_tag(scanner, is_cf);
+            lexer->result_symbol = is_cf ? IMPLICIT_CF_END_TAG : IMPLICIT_END_TAG;
+            tag_free(&next_tag);
+            return true;
+        }
     }
 
     tag_free(&next_tag);
@@ -511,11 +526,11 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
 
     
     
-    bool is_cf = result.is_cf_tag || is_cf_context;
+    // bool is_cf = result.is_cf_tag || is_cf_context;
     Tag tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
 
-    printf("scan_start_tag_name: tag=%.*s, is_cf_tag=%d, is_cf_context=%d, type=%d\n",
-    (int)result.tag_name.size, result.tag_name.contents, result.is_cf_tag, is_cf_context, tag.type);
+    // printf("scan_start_tag_name: tag=%.*s, is_cf_tag=%d, is_cf_context=%d, type=%d\n",
+    // (int)result.tag_name.size, result.tag_name.contents, result.is_cf_tag, is_cf_context, tag.type);
 
     switch (tag.type) {
         case SCRIPT:
@@ -585,7 +600,36 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
             lexer->result_symbol = is_cf ? CF_END_TAG_NAME : END_TAG_NAME;
         }
     } else {
-        lexer->result_symbol = is_cf ? ERRONEOUS_CF_END_TAG_NAME : ERRONEOUS_END_TAG_NAME;
+        // Search deeper in the stack for a matching tag
+        bool found = false;
+        if (is_cf) {
+            for (unsigned i = scanner->cf_tags.size; i > 0; i--) {
+                if (tag_eq(&scanner->cf_tags.contents[i - 1], &tag)) {
+                    found = true;
+                    break;
+                }
+            }
+        } else {
+            for (unsigned i = scanner->tags.size; i > 0; i--) {
+                if (tag_eq(&scanner->tags.contents[i - 1], &tag)) {
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (found) {
+            pop_tag(scanner, is_cf);
+            if (is_cf && tag.type == CF_SPECIAL) {
+                lexer->result_symbol = CF_SPECIAL_END_TAG_NAME;
+            } else if (is_cf && tag.type == CF_IF) {
+                lexer->result_symbol = CF_IF_END_TAG_NAME;
+            } else {
+                lexer->result_symbol = is_cf ? CF_END_TAG_NAME : END_TAG_NAME;
+            }
+        } else {
+            lexer->result_symbol = is_cf ? ERRONEOUS_CF_END_TAG_NAME : ERRONEOUS_END_TAG_NAME;
+        }
     }
 
     tag_free(&tag);
@@ -944,7 +988,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
         default:
             
-            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_SPECIAL_END_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) && !valid_symbols[RAW_TEXT]) {
+            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_SPECIAL_END_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) && !valid_symbols[RAW_TEXT] && !valid_symbols[CF_SPECIAL_CONTENT]) {
                 if (valid_symbols[START_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME]|| valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) {
                     return scan_start_tag_name(scanner, lexer, valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_SPECIAL_START_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]);
                 }

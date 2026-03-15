@@ -8,7 +8,7 @@ const parsers = ["cfml", "cfhtml", "cfscript"];
 for (const dir of parsers) {
   console.log(`testing ${dir}`);
   try {
-    execSync("tree-sitter test", {
+    execSync("tree-sitter test -u", {
       stdio: "inherit",
       cwd: join(__dirname, "..", dir)
     });

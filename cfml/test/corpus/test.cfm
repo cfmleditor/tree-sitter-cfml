@@ -1,12 +1,30 @@
 
-
+<cffunction name="Test">
   <cftransaction isolation="read_committed" action="begin">
   <cftransaction action="commit" />
   </cftransaction>
 
     <cftransaction isolation="read_committed" action="begin">
-  <cftransaction action="commit" />
+  <cftransaction action="commit">
   </cftransaction>
 
+<cfquery name="Test">
+  SELECT * FROM ...
+</cfquery>
+  </cffunction>
 
-  
+  <cffunction name="validateAndUnzipFile" access="public" output="false" returntype="any">
+		<cfargument name="context" type="struct" required="true" />
+
+		<cfif result.bZipError IS true>
+
+			<!--- Don't return any files --->
+			<cfset arrFiles = arrayNew(1)>
+
+		<cfelse>
+
+			<cfzip action="unzip" destination="#getTempDirectory()#" file="#ARGUMENTS.zipFilePath#" overwrite="true" />
+
+    </cfif>
+		
+	</cffunction>

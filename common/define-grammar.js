@@ -452,7 +452,7 @@ module.exports = function defineGrammar(dialect) {
       )),
 
       _cf_tag: $ => prec.right(3, choice(
-        // $.cf_selfclose_tag,
+        $.cf_selfclose_tag,
         $.cf_if_tag,
         $.cf_set_tag,
         $.cf_return_tag,

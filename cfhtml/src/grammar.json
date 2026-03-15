@@ -1138,6 +1138,10 @@
         "members": [
           {
             "type": "SYMBOL",
+            "name": "cf_selfclose_tag"
+          },
+          {
+            "type": "SYMBOL",
             "name": "cf_if_tag"
           },
           {
