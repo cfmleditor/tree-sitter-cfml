@@ -496,7 +496,6 @@ testing2
   <br />
 </cfif>
 
-
 ---
 
 (program
@@ -621,12 +620,14 @@ testing4
 			<cfloop from="1" to="#maxLabelLoop#" index="ii">
 				<tr>
 					<td align="middle" width="10">
+						<control:textinput />
 						
 					</td>
 				</tr>
 			</cfloop>
 		</tbody>
 	</table>
+  <div style="<cfoutput>#scrollHeight#</cfoutput>"></div>
 ---
 
 (program
@@ -691,6 +692,9 @@ testing4
                   (attribute_name)
                   (quoted_attribute_value
                     (attribute_value)))))
+            (element
+              (self_closing_tag
+                (tag_name)))
             (end_tag
               (tag_name)))
           (erroneous_end_tag
@@ -700,6 +704,17 @@ testing4
           (cf_tag_name)))
       (end_tag
         (tag_name)))
+    (end_tag
+      (tag_name)))
+  (element
+    (start_tag
+      (tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (cf_special_tag
+              (cf_special_content))))))
     (end_tag
       (tag_name))))
 

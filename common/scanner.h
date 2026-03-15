@@ -705,7 +705,6 @@ static bool scan_cf_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer,
 }
 
 static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer) {
-     advance(lexer);
      if (lexer->lookahead == '>') {
         advance(lexer);
         if (scanner->tags.size > 0) {
