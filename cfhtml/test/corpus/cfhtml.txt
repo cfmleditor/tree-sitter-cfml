@@ -31,17 +31,20 @@ testing4
                 (identifier)))))))
     (end_tag
       (tag_name)))
+  (html_text)
   (cf_set_tag
     (assignment_expression
       (identifier)
       (string
         (hash_empty)))
     (cf_selfclose_void_tag_end))
+  (html_text)
   (cf_set_tag
     (assignment_expression
       (identifier)
       (number))
     (cf_selfclose_void_tag_end))
+  (html_text)
   (cf_set_tag
     (assignment_expression
       (identifier)
@@ -49,12 +52,14 @@ testing4
         (hash_expression
           (identifier))))
     (cf_selfclose_void_tag_end))
+  (html_text)
   (cf_set_tag
     (assignment_expression
       (identifier)
       (hash_expression
         (identifier)))
     (cf_selfclose_void_tag_end))
+  (html_text)
   (cf_selfclose_tag
     (cf_attribute
       (cf_attribute_name)
@@ -65,7 +70,9 @@ testing4
             (identifier)
             (identifier)))))
     (cf_selfclose_void_tag_end))
-  (cf_comment))
+  (html_text)
+  (cf_comment)
+  (html_text))
 
 ===================================
 testing4
@@ -112,6 +119,7 @@ testing4
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)))))
+    (html_text)
     (cf_tag
       (cf_start_tag
         (cf_tag_name)
@@ -120,56 +128,68 @@ testing4
             (attribute_name)
             (quoted_attribute_value
               (attribute_value)))))
+      (html_text)
       (element
         (start_tag
           (tag_name))
-        (element
-          (start_tag
-            (tag_name))
-          (html_text)
-          (end_tag
-            (tag_name)))
-        (element
-          (start_tag
-            (tag_name))
-          (html_text)
-          (end_tag
-            (tag_name)))
-        (element
-          (start_tag
-            (tag_name))
-          (html_text)
-          (end_tag
-            (tag_name)))
-        (element
-          (start_tag
-            (tag_name))
-          (html_text)
-          (end_tag
-            (tag_name)))
-        (element
-          (start_tag
-            (tag_name))
-          (html_text)
-          (end_tag
-            (tag_name)))
-        (element
-          (start_tag
-            (tag_name))
-          (html_text)
-          (end_tag
-            (tag_name)))
-        (element
-          (start_tag
-            (tag_name))
-          (html_text)
-          (end_tag
-            (tag_name)))
-        (cf_comment)
-        (erroneous_end_tag
-          (erroneous_end_tag_name))
+        (html_text)
         (implicit_end_tag))
+      (element
+        (start_tag
+          (tag_name))
+        (html_text)
+        (end_tag
+          (tag_name)))
+      (html_text)
+      (element
+        (start_tag
+          (tag_name))
+        (html_text)
+        (end_tag
+          (tag_name)))
+      (html_text)
+      (element
+        (start_tag
+          (tag_name))
+        (html_text)
+        (end_tag
+          (tag_name)))
+      (html_text)
+      (element
+        (start_tag
+          (tag_name))
+        (html_text)
+        (end_tag
+          (tag_name)))
+      (html_text)
+      (element
+        (start_tag
+          (tag_name))
+        (html_text)
+        (end_tag
+          (tag_name)))
+      (html_text)
+      (element
+        (start_tag
+          (tag_name))
+        (html_text)
+        (end_tag
+          (tag_name)))
+      (html_text)
+      (element
+        (start_tag
+          (tag_name))
+        (html_text)
+        (end_tag
+          (tag_name)))
+      (html_text)
+      (cf_comment)
+      (html_text)
+      (erroneous_end_tag
+        (erroneous_end_tag_name))
+      (html_text)
       (cf_end_tag
         (cf_tag_name)))
+    (html_text)
     (end_tag
       (tag_name))))
