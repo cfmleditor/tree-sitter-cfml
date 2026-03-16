@@ -296,7 +296,7 @@ static const TagType TAG_TYPES_NOT_ALLOWED_IN_PARAGRAPHS[] = {
 };
 
 static TagType tag_type_for_name(const String *tag_name) {
-    for (int i = 0; i < 127; i++) {
+    for (int i = 0; i < 126; i++) {
         const TagMapEntry *entry = &TAG_TYPES_BY_TAG_NAME[i];
         if (
             strlen(entry->tag_name) == tag_name->size &&
@@ -403,45 +403,3 @@ static inline bool tag_eq(const Tag *self, const Tag *other) {
     }
     return true;
 }
-
-// static bool tag_can_contain(Tag *self, const Tag *other) {
-//     TagType child = other->type;
-
-//     switch (self->type) {
-//         case LI:
-//             return child != LI;
-
-//         case DT:
-//         case DD:
-//             return child != DT && child != DD;
-
-//         case P:
-//             for (int i = 0; i < 26; i++) {
-//                 if (child == TAG_TYPES_NOT_ALLOWED_IN_PARAGRAPHS[i]) {
-//                     return false;
-//                 }
-//             }
-//             return true;
-
-//         case COLGROUP:
-//             return child == COL;
-
-//         case RB:
-//         case RT:
-//         case RP:
-//             return child != RB && child != RT && child != RP;
-
-//         case OPTGROUP:
-//             return child != OPTGROUP;
-
-//         case TR:
-//             return child != TR;
-
-//         case TD:
-//         case TH:
-//             return child != TD && child != TH && child != TR;
-
-//         default:
-//             return true;
-//     }
-// }

@@ -120,7 +120,7 @@ static unsigned serialize(Scanner *scanner, char *buffer) {
     unsigned _iter = 0; \
     for (_iter = 0; _iter < _serialized; _iter++) { \
         Tag _tag = tag_new(); \
-        _tag.type = (TagType)(buffer)[(size)++]; \
+        _tag.type = (TagType)(unsigned char)(buffer)[(size)++]; \
         if (_tag.type == CUSTOM || _tag.type == CFML || _tag.type == CF_VOID || _tag.type == CF_SET || _tag.type == CF_XML || _tag.type == CF_SCRIPT || _tag.type == CF_QUERY || _tag.type == CF_OUTPUT || _tag.type == CF_RETURN || _tag.type == CF_IF || _tag.type == CF_ELSEIF || _tag.type == CF_ELSE) { \
             uint16_t _len = (uint8_t)(buffer)[(size)++]; \
             array_reserve(&_tag.tag_name, _len); \
@@ -583,6 +583,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
     bool is_closing_tag = false;
     if (lexer->lookahead == '/') {
         is_closing_tag = true;
+        lexer->mark_end(lexer);
         advance(lexer);
     } else {
         // Void tag processing
@@ -696,7 +697,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
             tag_free(&next_tag);
             return true;
         }
-        
+
         if (
             parent &&
             (
