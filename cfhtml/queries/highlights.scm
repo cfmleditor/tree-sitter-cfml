@@ -30,6 +30,9 @@
 
 (identifier) @variable
 
+; CFML scopes (variables, session, etc.)
+(cf_scope_identifier) @namespace
+
 ; Properties
 ;-----------
 

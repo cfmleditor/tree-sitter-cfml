@@ -1459,7 +1459,6 @@ module.exports = grammar({
     _reserved_identifier: (_) => choice(
       'get',
       'set',
-      // 'async',
       'static',
       'export',
       'let',
