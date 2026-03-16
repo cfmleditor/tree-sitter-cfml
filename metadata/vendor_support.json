@@ -1,0 +1,23 @@
+{
+  "$schema": "https://example.com/schemas/cfml-vendor-support.schema.json",
+  "description": "Vendor/version support metadata for CFML constructs. This file is intended to be consumed by tooling that wants to filter the grammar/features by engine (ACF vs Lucee) and version.",
+  "version": 1,
+  "constructs": [
+    {
+      "kind": "tag|function|operator|attribute|scope|option",
+      "name": "example_only_do_not_use",
+      "notes": "This is an illustrative example entry. Replace with real constructs as you populate this file.",
+      "vendors": {
+        "ACF": {
+          "since": "ACF 2018",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "Lucee 5.3",
+          "deprecated_since": null
+        }
+      }
+    }
+  ]
+}
+
