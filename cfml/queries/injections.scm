@@ -9,4 +9,10 @@
 ((cf_script_tag
   (cf_script_content) @injection.content)
  (#set! injection.language "cfscript"))
-((cf_script_content) @injection.content (#set! injection.language "cfscript")) 
+
+((cf_script_content) @injection.content
+ (#set! injection.language "cfscript"))
+
+;; SQL inside cfquery bodies
+((cf_query_content) @injection.content
+ (#set! injection.language "sql"))
