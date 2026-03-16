@@ -14,4 +14,4 @@
 ((cf_query_tag
   (cf_query_body
     (cf_query_content) @injection.content))
- (#set! injection.language "sql"))
+ (#set! injection.language "cfquery"))

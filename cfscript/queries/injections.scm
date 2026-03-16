@@ -8,7 +8,7 @@
   function: (identifier) @fn
   arguments: (arguments
     (string) @injection.content
-    .))
+    (_)*))
  (#eq? @fn "QueryExecute")
  (#set! injection.language "cfquery"))
 
