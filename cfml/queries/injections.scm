@@ -14,5 +14,6 @@
  (#set! injection.language "cfscript"))
 
 ;; SQL inside cfquery bodies
-((cf_query_content) @injection.content
+((cf_query_tag
+  (cf_query_content) @injection.content)
  (#set! injection.language "sql"))
