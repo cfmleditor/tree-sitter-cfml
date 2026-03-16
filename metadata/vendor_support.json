@@ -1,0 +1,248 @@
+{
+  "$schema": "https://example.com/schemas/cfml-vendor-support.schema.json",
+  "description": "Vendor/version support metadata for CFML constructs. This file is intended to be consumed by tooling that wants to filter the grammar/features by engine (ACF vs Lucee) and version.",
+  "version": 1,
+  "constructs": [
+    {
+      "kind": "tag",
+      "name": "cfquery",
+      "notes": "Database query tag. Present in both ACF and Lucee from earliest supported versions.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "tag",
+      "name": "cfscript",
+      "notes": "CFScript block tag. Supported by both ACF and Lucee.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "tag",
+      "name": "cfxml",
+      "notes": "XML processing tag. Supported by both ACF and Lucee.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "tag",
+      "name": "cftransaction",
+      "notes": "Transaction control tag for database operations. Supported by both ACF and Lucee.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "function",
+      "name": "QueryExecute",
+      "notes": "Function form of cfquery. Present in both ACF and Lucee CFML function references.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "operator",
+      "name": "NOT",
+      "notes": "Logical NOT operator. Supported by both ACF and Lucee.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "operator",
+      "name": "XOR",
+      "notes": "Logical XOR operator. Supported by both ACF and Lucee.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "operator",
+      "name": "MOD",
+      "notes": "Modulo operator (MOD keyword). Supported by both ACF and Lucee.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "operator",
+      "name": "CT",
+      "notes": "Contains operator (CT). Documented in Lucee operators; available in ACF as part of CFML expression language.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "operator",
+      "name": "NCT",
+      "notes": "Does not contain operator (NCT). Documented in Lucee operators; available in ACF as part of CFML expression language.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "operator",
+      "name": "<>",
+      "notes": "Not-equal comparison operator. Supported by both ACF and Lucee.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "operator",
+      "name": "\\\\",
+      "notes": "Integer division operator. Documented in Lucee; also available in ACF expression language.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "scope",
+      "name": "variables",
+      "notes": "Standard CFML VARIABLES scope. Present in both ACF and Lucee from earliest versions.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "scope",
+      "name": "arguments",
+      "notes": "Standard CFML ARGUMENTS scope. Present in both ACF and Lucee from earliest versions.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "scope",
+      "name": "session",
+      "notes": "Standard CFML SESSION scope. Present in both ACF and Lucee from earliest versions.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "scope",
+      "name": "application",
+      "notes": "Standard CFML APPLICATION scope. Present in both ACF and Lucee from earliest versions.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    }
+  ]
+}
+
