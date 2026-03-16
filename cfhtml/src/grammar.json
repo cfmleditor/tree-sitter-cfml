@@ -4838,8 +4838,71 @@
                 {
                   "type": "ALIAS",
                   "content": {
-                    "type": "SYMBOL",
-                    "name": "identifier"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "STRING",
+                              "value": "variables"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "arguments"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "session"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "application"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "server"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "cgi"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "form"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "url"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "cookie"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "client"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "request"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "local"
+                            }
+                          ]
+                        },
+                        "named": true,
+                        "value": "cf_scope_identifier"
+                      }
+                    ]
                   },
                   "named": true,
                   "value": "property_identifier"
@@ -8667,7 +8730,11 @@
       "members": [
         {
           "type": "STRING",
-          "value": "async"
+          "value": "get"
+        },
+        {
+          "type": "STRING",
+          "value": "set"
         },
         {
           "type": "STRING",

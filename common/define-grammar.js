@@ -1204,7 +1204,32 @@ module.exports = function defineGrammar(dialect) {
         choice('.', field('optional_chain', $.optional_chain), field('static_chain', $.static_chain)),
         field('property', choice(
           $.private_property_identifier,
-          alias($.identifier, $.property_identifier))),
+          // Treat common CFML scopes as a distinct kind of identifier so tooling can
+          // recognize scope-qualified accesses like variables.foo or session.user.
+          alias(
+            choice(
+              $.identifier,
+              alias(
+                choice(
+                  'variables',
+                  'arguments',
+                  'session',
+                  'application',
+                  'server',
+                  'cgi',
+                  'form',
+                  'url',
+                  'cookie',
+                  'client',
+                  'request',
+                  'local',
+                ),
+                $.cf_scope_identifier,
+              ),
+            ),
+            $.property_identifier,
+          ),
+        )),
       )),
 
       subscript_expression: $ => prec.right('member', seq(
@@ -1664,26 +1689,11 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       _reserved_identifier: _ => choice(
-        // 'get',
-        // 'set',
-        'async',
+        'get',
+        'set',
         'static',
         'export',
         'let',
-        // 'this',
-        // 'arguments',
-        // 'form',
-        // 'url',
-        // 'variables',
-        // 'cgi',
-        // 'cookies',
-        // 'server',
-        // 'application',
-        // 'request',
-        // 'session',
-        // 'super',
-        // 'local',
-        // 'client',
       ),
 
       _semicolon: $ => choice($._automatic_semicolon, ';'),

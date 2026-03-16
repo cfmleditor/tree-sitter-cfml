@@ -2264,6 +2264,10 @@
         "required": true,
         "types": [
           {
+            "type": "cf_scope_identifier",
+            "named": true
+          },
+          {
             "type": "private_property_identifier",
             "named": true
           },
@@ -3675,6 +3679,10 @@
     "named": true
   },
   {
+    "type": "cf_scope_identifier",
+    "named": true
+  },
+  {
     "type": "cf_script_content",
     "named": true
   },
@@ -3748,6 +3756,10 @@
   },
   {
     "type": "function",
+    "named": false
+  },
+  {
+    "type": "get",
     "named": false
   },
   {
@@ -3841,6 +3853,10 @@
   {
     "type": "return_type",
     "named": true
+  },
+  {
+    "type": "set",
+    "named": false
   },
   {
     "type": "shorthand_property_identifier",
