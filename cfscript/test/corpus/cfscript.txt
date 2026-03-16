@@ -1043,3 +1043,73 @@ Lucee operators (NOT, XOR, MOD, CT, NCT, <>)
         (identifier)
         (identifier)))
     (statement_block)))
+
+===================================
+Lucee built-in functions (all parse as call_expression)
+===================================
+  get();
+  set();
+  array(1);
+  structNew();
+  queryNew("col");
+  writeOutput("");
+  arrayLen([]);
+  isDefined("x");
+  de("x");
+  createObject("java", "java.lang.String");
+---
+
+(program
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments)))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments)))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (number))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments)))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (string
+          (string_fragment)))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (string))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (array))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (string
+          (string_fragment)))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (string
+          (string_fragment)))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (string
+          (string_fragment))
+        (string
+          (string_fragment))))))

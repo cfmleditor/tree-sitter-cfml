@@ -6,7 +6,7 @@
     {
       "kind": "tag",
       "name": "cfquery",
-      "notes": "Database query tag. Present in both ACF and Lucee from earliest supported versions.",
+      "notes": "Database query tag whose body is parsed using the cfquery-sql dialect. Present in both ACF and Lucee from earliest supported versions.",
       "vendors": {
         "ACF": {
           "since": "",
@@ -66,7 +66,67 @@
     {
       "kind": "function",
       "name": "QueryExecute",
-      "notes": "Function form of cfquery. Present in both ACF and Lucee CFML function references.",
+      "notes": "Function form of cfquery whose SQL argument is parsed using the cfquery-sql dialect. Present in both ACF and Lucee CFML function references.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "function",
+      "name": "QueryNew",
+      "notes": "Creates an in-memory query object. Available in both ACF and Lucee.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "function",
+      "name": "QueryAddRow",
+      "notes": "Adds a row to an in-memory query. Available in both ACF and Lucee.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "function",
+      "name": "QueryAddColumn",
+      "notes": "Adds a column to an in-memory query. Available in both ACF and Lucee.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "function",
+      "name": "QueryEach",
+      "notes": "Iterates over query rows with a callback. Available in both ACF and Lucee.",
       "vendors": {
         "ACF": {
           "since": "",
@@ -232,6 +292,51 @@
       "kind": "scope",
       "name": "application",
       "notes": "Standard CFML APPLICATION scope. Present in both ACF and Lucee from earliest versions.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "dialect",
+      "name": "cfquery-sql",
+      "notes": "SQL dialect used inside cfquery bodies and QueryExecute(...) calls. Models common SELECT/INSERT/UPDATE/DELETE forms, joins, unions, expressions, and parameter syntaxes shared by Adobe ColdFusion and Lucee. Dialect-friendly toward common PostgreSQL/MySQL/SQL Server usage (e.g. TOP, LIMIT/OFFSET, ILIKE) without being a fully versioned RDBMS grammar.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "dialect",
+      "name": "cfqoq-sql",
+      "notes": "Query-of-Queries dialect used when cfquery specifies dbtype=\"query\". Shares syntax with cfquery-sql but executes against in-memory query objects.",
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "dialect",
+      "name": "cfhql-sql",
+      "notes": "HQL/ORM query dialect used when cfquery specifies dbtype=\"hql\". Parsed with the same tolerant cfquery-sql grammar but semantically targets HQL/ORM queries.",
       "vendors": {
         "ACF": {
           "since": "",

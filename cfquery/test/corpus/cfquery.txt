@@ -1,0 +1,342 @@
+===================================
+simple select
+===================================
+SELECT foo FROM bar WHERE id = ?
+---
+
+(program
+  (select_statement
+    (keyword_select)
+    (select_list
+      (expression
+        (primary_expression
+          (identifier))))
+    (from_clause
+      (keyword_from)
+      (table_reference
+        (identifier)))
+    (where_clause
+      (keyword_where)
+      (expression
+        (binary_expression
+          (primary_expression
+            (identifier))
+          (primary_expression
+            (parameter)))))))
+
+===================================
+hash parameter and between
+===================================
+SELECT * FROM users WHERE created_at BETWEEN #ARGUMENTS.startDate# AND #ARGUMENTS.endDate#
+---
+
+(program
+  (select_statement
+    (keyword_select)
+    (select_list)
+    (from_clause
+      (keyword_from)
+      (table_reference
+        (identifier)))
+    (where_clause
+      (keyword_where)
+      (expression
+        (between_expression
+          (primary_expression
+            (identifier))
+          (keyword_between)
+          (primary_expression
+            (hash_param
+              (cf_identifier_path
+                (identifier)
+                (identifier))))
+          (keyword_and)
+          (primary_expression
+            (hash_param
+              (cf_identifier_path
+                (identifier)
+                (identifier)))))))))
+
+===================================
+joins and having
+===================================
+SELECT u.id, o.total
+FROM users u
+INNER JOIN orders o ON o.user_id = u.id
+LEFT OUTER JOIN refunds r ON r.order_id = o.id
+WHERE o.status = 'PAID'
+GROUP BY u.id, o.total
+HAVING sum(o.total) > 100
+---
+
+(program
+  (select_statement
+    (keyword_select)
+    (select_list
+      (expression
+        (primary_expression
+          (qualified_identifier
+            (identifier)
+            (identifier
+              (identifier)))))
+      (expression
+        (primary_expression
+          (qualified_identifier
+            (identifier)
+            (identifier
+              (identifier))))))
+    (from_clause
+      (keyword_from)
+      (table_reference
+        (identifier)
+        (identifier)
+        (join_clause
+          (keyword_inner)
+          (keyword_join)
+          (table_reference
+            (identifier)
+            (identifier))
+          (keyword_on)
+          (expression
+            (binary_expression
+              (primary_expression
+                (qualified_identifier
+                  (identifier)
+                  (identifier
+                    (identifier))))
+              (primary_expression
+                (qualified_identifier
+                  (identifier)
+                  (identifier
+                    (identifier)))))))
+        (join_clause
+          (keyword_left)
+          (keyword_outer)
+          (keyword_join)
+          (table_reference
+            (identifier)
+            (identifier))
+          (keyword_on)
+          (expression
+            (binary_expression
+              (primary_expression
+                (qualified_identifier
+                  (identifier)
+                  (identifier
+                    (identifier))))
+              (primary_expression
+                (qualified_identifier
+                  (identifier)
+                  (identifier
+                    (identifier)))))))))
+    (where_clause
+      (keyword_where)
+      (expression
+        (binary_expression
+          (primary_expression
+            (qualified_identifier
+              (identifier)
+              (identifier
+                (identifier))))
+          (primary_expression
+            (string)))))
+    (group_by_clause
+      (keyword_group_by)
+      (keyword_group_by)
+      (keyword_group_by)
+      (expression
+        (primary_expression
+          (qualified_identifier
+            (identifier)
+            (identifier
+              (identifier)))))
+      (expression
+        (primary_expression
+          (qualified_identifier
+            (identifier)
+            (identifier
+              (identifier)))))
+      (having_clause
+        (keyword_having)
+        (expression
+          (binary_expression
+            (primary_expression
+              (function_call
+                (identifier)
+                (identifier)
+                (identifier
+                  (primary_expression
+                    (qualified_identifier
+                      (identifier)
+                      (identifier
+                        (identifier)))))
+                (identifier)))
+            (primary_expression
+              (number))))))))
+
+===================================
+top, union and limit
+===================================
+SELECT TOP 10 * FROM logs
+UNION ALL
+SELECT * FROM logs_archive
+LIMIT 100
+---
+
+(program
+  (union_statement
+    (select_statement
+      (keyword_select)
+      (top_clause
+        (keyword_top)
+        (number))
+      (select_list)
+      (from_clause
+        (keyword_from)
+        (table_reference
+          (identifier))))
+    (keyword_union)
+    (keyword_all)
+    (select_statement
+      (keyword_select)
+      (select_list)
+      (from_clause
+        (keyword_from)
+        (table_reference
+          (identifier)))
+      (limit_clause
+        (keyword_limit)
+        (number)))))
+
+===================================
+distinct, exists, case and indexed hash
+===================================
+SELECT DISTINCT u.id,
+       CASE WHEN EXISTS (SELECT 1 FROM orders o WHERE o.user_id = u.id)
+            THEN 'Y'
+            ELSE 'N'
+       END AS has_orders
+FROM users u
+WHERE u.id = #ARGUMENTS.userIds[1]#
+---
+
+(program
+  (select_statement
+    (keyword_select)
+    (keyword_distinct)
+    (select_list
+      (expression
+        (primary_expression
+          (qualified_identifier
+            (identifier)
+            (identifier
+              (identifier)))))
+      (expression
+        (case_expression
+          (keyword_case)
+          (when_clause
+            (keyword_when)
+            (expression
+              (exists_expression
+                (keyword_exists)
+                (subquery
+                  (select_statement
+                    (keyword_select)
+                    (select_list
+                      (expression
+                        (primary_expression
+                          (number))))
+                    (from_clause
+                      (keyword_from)
+                      (table_reference
+                        (identifier)
+                        (identifier)))
+                    (where_clause
+                      (keyword_where)
+                      (expression
+                        (binary_expression
+                          (primary_expression
+                            (qualified_identifier
+                              (identifier)
+                              (identifier
+                                (identifier))))
+                          (primary_expression
+                            (qualified_identifier
+                              (identifier)
+                              (identifier
+                                (identifier)))))))))))
+            (keyword_then)
+            (expression
+              (primary_expression
+                (string))))
+          (else_clause
+            (keyword_else)
+            (expression
+              (primary_expression
+                (string))))
+          (keyword_end)))
+      (keyword_as)
+      (identifier))
+    (from_clause
+      (keyword_from)
+      (table_reference
+        (identifier)
+        (identifier)))
+    (where_clause
+      (keyword_where)
+      (expression
+        (binary_expression
+          (primary_expression
+            (qualified_identifier
+              (identifier)
+              (identifier
+                (identifier))))
+          (primary_expression
+            (hash_param
+              (cf_identifier_path
+                (identifier)
+                (identifier)
+                (number)))))))))
+
+===================================
+malformed select (fault tolerant)
+===================================
+SELECT FROM
+---
+
+(program
+  (select_statement
+    (keyword_select)
+    (select_list
+      (expression
+        (primary_expression
+          (identifier))))))
+
+===================================
+limit offset and ilike
+===================================
+SELECT * FROM users WHERE name ILIKE '%foo%' LIMIT 10 OFFSET 20
+---
+
+(program
+  (select_statement
+    (keyword_select)
+    (select_list)
+    (from_clause
+      (keyword_from)
+      (table_reference
+        (identifier)))
+    (where_clause
+      (keyword_where)
+      (expression
+        (binary_expression
+          (primary_expression
+            (identifier))
+          (keyword_ilike)
+          (primary_expression
+            (string)))))
+    (limit_clause
+      (keyword_limit)
+      (number)
+      (keyword_offset)
+      (number))))

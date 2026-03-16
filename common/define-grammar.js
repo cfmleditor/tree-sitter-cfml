@@ -468,11 +468,13 @@ module.exports = function defineGrammar(dialect) {
         $._start_cf_query_name,
         repeat($.cf_attribute),
         alias($._close_cf_tag_delim, '>'),
-        $.cf_query_content,
+        field('body', $.cf_query_body),
         $._cf_close_tag,
         $._end_cf_query_name,
         alias($._close_cf_tag_delim, '>'),
       )),
+
+      cf_query_body: $ => $.cf_query_content,
 
       cf_script_tag: $ => prec.right(3, seq(
         $._cf_open_tag,

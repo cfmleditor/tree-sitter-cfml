@@ -19,17 +19,21 @@
   (#match? @_cfcomponent "(?i)^component$")
   (#eq? @_name "name")) @definition.class
 
-; CFML tags as generic definition points (outline/symbol list)
+; CFML tags as definition points (Lucee-style; for outline/symbol list)
 (cf_tag
   (cf_start_tag
     (cf_tag_name) @name)) @definition.tag
 
-; CFML self-closing tags with name (e.g. <cffunction name=\"x\" />)
+; CFML self-closing tags with name (e.g. <cffunction name="x" />)
 (cf_tag
   (cf_start_tag_with_selfclose
     (cf_tag_name) @name)) @definition.tag
 
-; cffunction tag as function definition
+; HTML self-closing tags (e.g. <br />)
+(self_closing_tag
+  (tag_name) @name) @definition.tag
+
+; cffunction tag
 (cf_tag
   (cf_start_tag
     (cf_tag_name) @_cffunction

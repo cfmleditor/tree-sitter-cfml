@@ -6,13 +6,14 @@
 
 [Tree-sitter](https://tree-sitter.github.io/) grammars for [ColdFusion Markup Language (CFML)](https://en.wikipedia.org/wiki/ColdFusion_Markup_Language).
 
-Three grammars are provided to cover the different ways CFML is written:
+Three grammars are provided to cover the different ways CFML is written, plus an embedded SQL dialect for `cfquery`:
 
 | Grammar | Scope | File types | Description |
 |---------|-------|------------|-------------|
 | `cfml` | `source.cfml` | `.cfc` | ColdFusion components — CFScript inside a `component {}` block or tag-based component files |
 | `cfhtml` | `source.cfhtml` | `.cfm` | CFML template files — HTML with embedded CF tags and hash expressions |
 | `cfscript` | `source.cfscript` | `.cfs` | Pure CFScript files |
+| `cfquery` | `source.cfquery` | *(embedded)* | SQL dialect used inside `<cfquery>` bodies and `QueryExecute(...)` calls (joins, unions, parameters, CF-style `#hash#` interpolation) |
 
 ## Playground
 
@@ -116,9 +117,10 @@ Each grammar is built independently from its subdirectory:
 cd cfml && make
 cd cfhtml && make
 cd cfscript && make
+cd cfquery && make   # cfquery SQL dialect
 ```
 
-Or build all three plus the Node.js bindings:
+Or build all grammars plus the Node.js bindings:
 
 ```bash
 npm run build
@@ -126,12 +128,13 @@ npm run build
 
 ### Generating the parser
 
-After editing `common/define-grammar.js`:
+After editing `common/define-grammar.js` or any of the `grammar.js` entry points:
 
 ```bash
 cd cfml && tree-sitter generate
 cd cfhtml && tree-sitter generate
 cd cfscript && tree-sitter generate
+cd cfquery && tree-sitter generate
 ```
 
 ### Testing
@@ -158,11 +161,11 @@ npm run playground
 
 ## Grammar structure
 
-All three grammars share a common base defined in `common/define-grammar.js`, with an external scanner in `common/scanner.h` that handles context-sensitive tokenisation (implicit end tags, CF tag names, hash expressions, raw text, etc.).
+All CFML grammars share a common base defined in `common/define-grammar.js`, with an external scanner in `common/scanner.h` that handles context-sensitive tokenisation (implicit end tags, CF tag names, hash expressions, raw text, etc.).
 
 ```
 common/
-  define-grammar.js   # shared grammar rules for all three dialects
+  define-grammar.js   # shared grammar rules for all dialects (cfml, cfhtml, cfscript, cfquery)
   scanner.h           # external scanner (C)
   tag.h               # HTML/CF tag type definitions
 
@@ -176,16 +179,46 @@ cfscript/             # .cfs grammar
     indents.scm       # indentation
     injections.scm    # language injections
     tags.scm          # symbol navigation
+
+cfquery/              # SQL dialect used inside cfquery / QueryExecute
+  grammar.js          # SQL grammar with CF-style parameters and #hash# interpolation
+  src/                # generated parser (do not edit)
+  queries/
+    highlights.scm    # SQL + CF parameter highlighting
+    tags.scm          # table/column aliases, CF variables in hashes
 ```
 
 ## Queries
 
-Each grammar ships with query files for editor integration:
+Each grammar (including the `cfquery` SQL dialect) ships with query files for editor integration:
 
 - `highlights.scm` — syntax highlighting captures
-- `indents.scm` — indentation rules
-- `injections.scm` — embedded language injections (e.g. SQL inside `<cfquery>`)
-- `tags.scm` — function/method definitions and call references for go-to-definition and symbol search
+- `indents.scm` — indentation rules (where applicable)
+- `injections.scm` — embedded language injections (e.g. `cfquery` SQL inside `<cfquery>` / `QueryExecute(...)`)
+- `tags.scm` — function/method definitions, call references, and query-related symbols (e.g. table/column aliases, CF variables used in SQL)
+
+## cfquery SQL dialect
+
+The `cfquery` grammar (`source.cfquery`) is a SQL dialect tailored for CFML:
+
+- **Where it is used**:
+  - `<cfquery>` tag bodies in CFML/CFHTML templates.
+  - The first string argument to `QueryExecute(...)` in CFML/CFScript.
+  - Conceptually reused for Query-of-Queries (`dbtype="query"`) and HQL/ORM queries (`dbtype="hql"`), which are distinguished in `metadata/vendor_support.json` via the `cfqoq-sql` and `cfhql-sql` dialect entries.
+
+- **Major SQL constructs recognised** (fault-tolerant, not a full SQL engine):
+  - Statements: `SELECT`, `INSERT INTO ... VALUES (...)`, `UPDATE ... SET ...`, `DELETE [FROM ...]`.
+  - Clauses: `FROM`, `WHERE`, `GROUP BY`, `HAVING`, `ORDER BY`, `LIMIT [OFFSET ...]`, `TOP`.
+  - Joins: `INNER|LEFT|RIGHT|FULL [OUTER] JOIN ... ON ...`.
+  - Set ops: `UNION [ALL]`.
+  - Expressions: `CASE ... WHEN ... THEN ... ELSE ... END`, `EXISTS (subquery)`, `IN (...)` / `IN (subquery)`, `BETWEEN ... AND ...`, comparison and arithmetic operators, `LIKE` / `ILIKE`.
+
+- **CF-style parameters and hashes**:
+  - Positional and named SQL parameters: `?` and `:name` appear as `parameter` nodes.
+  - CF hash parameters: `#scope.var#`, `#ARGUMENTS.userIds[1]#`, etc. appear as `hash_param` containing a `cf_identifier_path` that encodes scope and member access.
+  - In tag-based CFML, `<cfqueryparam>` tags inside `<cfquery>` bodies are parsed by the CFML grammar and can be used alongside `?` / `:name` / `#hash#` parameters.
+
+This structure is intended to give downstream tools (linters, refactorings, security scanners) a stable, vendor-neutral view of CFML SQL while remaining friendly to common PostgreSQL/MySQL/SQL Server constructs.
 
 ## License
 

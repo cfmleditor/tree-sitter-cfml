@@ -49,6 +49,13 @@
         "cfscript/queries/injections.scm"
       ],
       "tags": "cfscript/queries/tags.scm"
+    },
+    {
+      "name": "cfquery",
+      "scope": "source.cfquery",
+      "path": "cfquery",
+      "highlights": "cfquery/queries/highlights.scm",
+      "tags": "cfquery/queries/tags.scm"
     }
   ],
   "metadata": {

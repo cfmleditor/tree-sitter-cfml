@@ -1180,19 +1180,41 @@
     }
   },
   {
-    "type": "cf_query_tag",
+    "type": "cf_query_body",
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
           "type": "cf_query_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_query_tag",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "cf_query_body",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cf_attribute",
           "named": true
         }
       ]

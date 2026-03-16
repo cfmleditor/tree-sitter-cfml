@@ -1158,8 +1158,12 @@
             "value": ">"
           },
           {
-            "type": "SYMBOL",
-            "name": "cf_query_content"
+            "type": "FIELD",
+            "name": "body",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_query_body"
+            }
           },
           {
             "type": "SYMBOL",
@@ -1180,6 +1184,10 @@
           }
         ]
       }
+    },
+    "cf_query_body": {
+      "type": "SYMBOL",
+      "name": "cf_query_content"
     },
     "cf_script_tag": {
       "type": "PREC_RIGHT",
