@@ -3850,7 +3850,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "logical_or",
+          "value": "logical_xor",
           "content": {
             "type": "SEQ",
             "members": [
@@ -7053,6 +7053,10 @@
       {
         "type": "STRING",
         "value": "logical_and"
+      },
+      {
+        "type": "STRING",
+        "value": "logical_xor"
       },
       {
         "type": "STRING",

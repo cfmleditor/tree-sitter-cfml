@@ -5405,7 +5405,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "logical_or",
+          "value": "logical_xor",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6988,8 +6988,13 @@
           "value": "+"
         },
         {
-          "type": "PATTERN",
-          "value": "[nN][oO][tT]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[nN][oO][tT]"
+          },
+          "named": false,
+          "value": "not"
         }
       ]
     },
@@ -8926,6 +8931,10 @@
       },
       {
         "type": "STRING",
+        "value": "logical_xor"
+      },
+      {
+        "type": "STRING",
         "value": "logical_or"
       },
       {
@@ -8973,6 +8982,16 @@
       {
         "type": "STRING",
         "value": "logical_and"
+      }
+    ],
+    [
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      },
+      {
+        "type": "STRING",
+        "value": "logical_xor"
       }
     ],
     [
