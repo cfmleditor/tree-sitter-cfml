@@ -135,8 +135,6 @@ module.exports = function defineGrammar(dialect) {
 
     conflicts: ($, previous) => previous.concat([
       [$.primary_expression, $._property_name],
-      [$.primary_expression, $._property_name, $.arrow_function],
-      [$.primary_expression, $.arrow_function],
       [$.primary_expression, $.method_definition],
       [$.primary_expression, $.rest_pattern],
       [$.primary_expression, $.pattern],
