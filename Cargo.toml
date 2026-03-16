@@ -3,9 +3,8 @@ name = "tree-sitter-cfml"
 description = "cfml grammar for tree-sitter"
 version = "0.26.1"
 authors = [
-  "Max Brunsfeld <maxbrunsfeld@gmail.com>",
-  "Amaan Qureshi <amaanq12@gmail.com>",
   "Gareth Edwards <ghedwards@gmail.com>",
+  "Gavin Baumanis <gavinbaumanis@gmail.com>"
 ]
 license = "MIT"
 readme = "README.md"
