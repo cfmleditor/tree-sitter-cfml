@@ -72,6 +72,7 @@ module.exports = grammar({
       'bitwise_xor',
       'bitwise_or',
       'logical_and',
+      'logical_xor',
       'logical_or',
       'ternary',
       'elvis',
@@ -115,7 +116,6 @@ module.exports = grammar({
     [$.component, $.parameter_type],
     // [$.component, $.return_type],
     [$.component, $.primary_expression],
-    [$.query_tag, $.return_type],
     [$.query_tag, $.expression],
 
     // [$.component, $.call_expression],
@@ -127,6 +127,7 @@ module.exports = grammar({
     [$.expression, $._property_name],
 
     [$.return_type, $.tag_statement],
+    [$.primary_expression, $.parameter_type],
     [$.tag_statement, $.expression],
     [$.sequence_expression, $.arguments],
 
@@ -849,14 +850,13 @@ module.exports = grammar({
       'package',
     ),
 
+    // Type names that are also Lucee/CFML built-in functions (array, struct, query, etc.)
+    // are matched via $.identifier so that e.g. array(1) and structNew() parse as calls.
     return_type: ($) => choice(
       'any',
       'string',
       'numeric',
       'xml',
-      'query',
-      'struct',
-      'array',
       'binary',
       'boolean',
       'component',
@@ -872,9 +872,6 @@ module.exports = grammar({
       'string',
       'numeric',
       'xml',
-      'query',
-      'struct',
-      'array',
       'binary',
       'boolean',
       'component',
@@ -883,6 +880,7 @@ module.exports = grammar({
       'guid',
       'void',
       $.path,
+      $.identifier,
     ),
 
     function_declaration: ($) => prec.right('declaration', seq(
@@ -1075,6 +1073,7 @@ module.exports = grammar({
         [/[aA][nN][dD]/, 'logical_and'],
         ['||', 'logical_or'],
         [/[oO][rR]/, 'logical_or'],
+        [/[xX][oO][rR]/, 'logical_xor'],
         ['>>', 'binary_shift'],
         ['>>>', 'binary_shift'],
         ['<<', 'binary_shift'],
@@ -1086,6 +1085,7 @@ module.exports = grammar({
         ['*', 'binary_times'],
         ['/', 'binary_times'],
         ['%', 'binary_times'],
+        ['\\\\', 'binary_times'],
         [/[mM][oO][dD]/, 'binary_times'],
         ['**', 'binary_exp', 'right'],
         ['<', 'binary_relation'],
@@ -1101,7 +1101,9 @@ module.exports = grammar({
         ['!==', 'binary_equality'],
         [/[nN][eE][qQ]/, 'binary_equality'],
         [/[cC][oO][nN][tT][aA][iI][nN][sS]/, 'binary_equality'],
+        [/[cC][tT]/, 'binary_equality'],
         [/[dD][oO][eE][sS]\s[nN][oO][tT]\s[cC][oO][nN][tT][aA][iI][nN]/, 'binary_equality'],
+        [/[nN][cC][tT]/, 'binary_equality'],
         ['>=', 'binary_relation'],
         [/[gG][tT][eE]/, 'binary_relation'],
         ['>', 'binary_relation'],
@@ -1120,7 +1122,7 @@ module.exports = grammar({
     ),
 
     unary_expression: ($) => prec.left('unary_void', seq(
-      field('operator', choice('!', '~', '-', '+')),
+      field('operator', choice('!', '~', '-', '+', /[nN][oO][tT]/)),
       field('argument', $.expression),
     )),
 
