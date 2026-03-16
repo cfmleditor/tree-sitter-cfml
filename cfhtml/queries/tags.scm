@@ -8,6 +8,16 @@
 (method_definition
   name: (property_identifier) @name) @definition.method
 
+; CFML tags as definition points (Lucee-style; for outline/symbol list)
+(cf_tag
+  (cf_start_tag
+    (cf_tag_name) @name)) @definition.tag
+
+; CFML self-closing tags with name (e.g. <cffunction name="x" />)
+(cf_tag
+  (cf_start_tag_with_selfclose
+    (cf_tag_name) @name)) @definition.tag
+
 ; cffunction tag
 (cf_tag
   (cf_start_tag

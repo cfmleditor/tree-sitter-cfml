@@ -1,6 +1,11 @@
+; Document and structure (from Lucee-style rules)
+(program) @document
+(doctype) @doctype
+(entity) @constant
+(html_text) @text
+
 (erroneous_end_tag_name) @tag.error
 (erroneous_cf_end_tag_name) @tag.error
-(doctype) @constant
 (attribute_name) @attribute
 (cf_attribute_name) @attribute
 (attribute_value) @string
@@ -9,6 +14,7 @@
 (end_tag) @tag
 (self_closing_tag) @tag
 (cf_selfclose_tag) @tag
+(cf_start_tag_with_selfclose) @tag
 (cf_output_tag) @tag
 (cf_script_tag) @tag
 (cf_start_tag) @tag

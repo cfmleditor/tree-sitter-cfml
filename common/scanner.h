@@ -1,6 +1,8 @@
 #include "tag.h"
 #include "tree_sitter/parser.h"
 
+#include <stddef.h>
+#include <stdlib.h>
 #include <wctype.h>
 #include <stdio.h>
 
@@ -62,6 +64,13 @@ typedef enum {
 } WhitespaceResult;
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+/*
+ * Fixed size for end_delimiter buffers. Do not replace with VLAs
+ * (e.g. char buf[tag->size + 5]): MSVC requires constant expression
+ * array sizes. This approach is C99-compatible and works on all platforms.
+ */
+#define MAX_CF_END_DELIMITER_SIZE 256
 
 static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 
@@ -358,19 +367,36 @@ static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer) {
     }
     
     lexer->mark_end(lexer);
-    
-    char end_delimiter[cf_tag->tag_name.size + 5];
-    memcpy(end_delimiter, "</CF", 4);
-    memcpy(&end_delimiter[4], cf_tag->tag_name.contents, cf_tag->tag_name.size);
-    end_delimiter[cf_tag->tag_name.size + 4] = '\0';
-    // printf("end_delimiter: %s\n", end_delimiter);
 
-    unsigned delimiter_index = 0;
+    char end_delimiter_stack[MAX_CF_END_DELIMITER_SIZE];
+    char *end_delimiter = end_delimiter_stack;
+    bool end_delimiter_heap = false;
+
+    size_t tag_len = cf_tag->tag_name.size;
+    size_t max_payload = MAX_CF_END_DELIMITER_SIZE - 5;
+
+    if (tag_len > max_payload) {
+        size_t alloc_size = 4 + tag_len + 1;
+        end_delimiter = (char *)malloc(alloc_size);
+        if (!end_delimiter) {
+            return false;
+        }
+        end_delimiter_heap = true;
+    } else {
+        tag_len = cf_tag->tag_name.size;
+    }
+
+    memcpy(end_delimiter, "</CF", 4);
+    memcpy(&end_delimiter[4], cf_tag->tag_name.contents, tag_len);
+    end_delimiter[4 + tag_len] = '\0';
+
+    size_t delimiter_index = 0;
+    size_t end_delim_len = 4 + tag_len;
 
     while (lexer->lookahead) {
         if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
             delimiter_index++;
-            if (delimiter_index == strlen(end_delimiter)) {
+            if (delimiter_index == end_delim_len) {
                 break;
             }
             advance(lexer);
@@ -379,6 +405,10 @@ static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer) {
             advance(lexer);
             lexer->mark_end(lexer);
         }
+    }
+
+    if (end_delimiter_heap) {
+        free(end_delimiter);
     }
 
     lexer->result_symbol = CF_QUERY_CONTENT;
@@ -397,19 +427,36 @@ static bool scan_cfxml_content(Scanner *scanner, TSLexer *lexer) {
     }
     
     lexer->mark_end(lexer);
-    
-    char end_delimiter[cf_tag->tag_name.size + 5];
-    memcpy(end_delimiter, "</CF", 4);
-    memcpy(&end_delimiter[4], cf_tag->tag_name.contents, cf_tag->tag_name.size);
-    end_delimiter[cf_tag->tag_name.size + 4] = '\0';
-    // printf("end_delimiter: %s\n", end_delimiter);
 
-    unsigned delimiter_index = 0;
+    char end_delimiter_stack[MAX_CF_END_DELIMITER_SIZE];
+    char *end_delimiter = end_delimiter_stack;
+    bool end_delimiter_heap = false;
+
+    size_t tag_len = cf_tag->tag_name.size;
+    size_t max_payload = MAX_CF_END_DELIMITER_SIZE - 5;
+
+    if (tag_len > max_payload) {
+        size_t alloc_size = 4 + tag_len + 1;
+        end_delimiter = (char *)malloc(alloc_size);
+        if (!end_delimiter) {
+            return false;
+        }
+        end_delimiter_heap = true;
+    } else {
+        tag_len = cf_tag->tag_name.size;
+    }
+
+    memcpy(end_delimiter, "</CF", 4);
+    memcpy(&end_delimiter[4], cf_tag->tag_name.contents, tag_len);
+    end_delimiter[4 + tag_len] = '\0';
+
+    size_t delimiter_index = 0;
+    size_t end_delim_len = 4 + tag_len;
 
     while (lexer->lookahead) {
         if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
             delimiter_index++;
-            if (delimiter_index == strlen(end_delimiter)) {
+            if (delimiter_index == end_delim_len) {
                 break;
             }
             advance(lexer);
@@ -418,6 +465,10 @@ static bool scan_cfxml_content(Scanner *scanner, TSLexer *lexer) {
             advance(lexer);
             lexer->mark_end(lexer);
         }
+    }
+
+    if (end_delimiter_heap) {
+        free(end_delimiter);
     }
 
     lexer->result_symbol = CF_XML_CONTENT;
@@ -437,19 +488,36 @@ static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer) {
     }
     
     lexer->mark_end(lexer);
-    
-    char end_delimiter[cf_tag->tag_name.size + 5];
-    memcpy(end_delimiter, "</CF", 4);
-    memcpy(&end_delimiter[4], cf_tag->tag_name.contents, cf_tag->tag_name.size);
-    end_delimiter[cf_tag->tag_name.size + 4] = '\0';
-    // printf("end_delimiter: %s\n", end_delimiter);
 
-    unsigned delimiter_index = 0;
+    char end_delimiter_stack[MAX_CF_END_DELIMITER_SIZE];
+    char *end_delimiter = end_delimiter_stack;
+    bool end_delimiter_heap = false;
+
+    size_t tag_len = cf_tag->tag_name.size;
+    size_t max_payload = MAX_CF_END_DELIMITER_SIZE - 5;
+
+    if (tag_len > max_payload) {
+        size_t alloc_size = 4 + tag_len + 1;
+        end_delimiter = (char *)malloc(alloc_size);
+        if (!end_delimiter) {
+            return false;
+        }
+        end_delimiter_heap = true;
+    } else {
+        tag_len = cf_tag->tag_name.size;
+    }
+
+    memcpy(end_delimiter, "</CF", 4);
+    memcpy(&end_delimiter[4], cf_tag->tag_name.contents, tag_len);
+    end_delimiter[4 + tag_len] = '\0';
+
+    size_t delimiter_index = 0;
+    size_t end_delim_len = 4 + tag_len;
 
     while (lexer->lookahead) {
         if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
             delimiter_index++;
-            if (delimiter_index == strlen(end_delimiter)) {
+            if (delimiter_index == end_delim_len) {
                 break;
             }
             advance(lexer);
@@ -458,6 +526,10 @@ static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer) {
             advance(lexer);
             lexer->mark_end(lexer);
         }
+    }
+
+    if (end_delimiter_heap) {
+        free(end_delimiter);
     }
 
     lexer->result_symbol = CF_SCRIPT_CONTENT;

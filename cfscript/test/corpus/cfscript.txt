@@ -11,23 +11,23 @@ cfscript comments
 ---
 
 (program
-      (comment)
+  (comment)
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments)))
+  (comment)
+  (if_statement
+    (parenthesized_expression
+      (binary_expression
+        (identifier)
+        (identifier)))
+    (statement_block
       (expression_statement
         (call_expression
           (identifier)
-          (arguments)))
-      (comment)
-      (if_statement
-        (parenthesized_expression
-          (binary_expression
-            (identifier)
-            (identifier)))
-        (statement_block
-          (expression_statement
-            (call_expression
-              (identifier)
-              (arguments)))))
-      (comment))
+          (arguments)))))
+  (comment))
 
 ===================================
 cfscript
@@ -47,82 +47,82 @@ cfscript
   writeDump([x, y, z]);
 
 ---
+
 (program
-      (expression_statement
-        (assignment_expression
-          (identifier)
-          (call_expression
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (string
+            (string_fragment))
+          (string
+            (string_fragment))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (assignment_expression
             (identifier)
-            (arguments
-              (string
-                (string_fragment))
-              (string
-                (string_fragment))))))
-      (expression_statement
-        (assignment_expression
-          (identifier)
-          (call_expression
+            (string
+              (hash_expression
+                (identifier))))
+          (assignment_expression
             (identifier)
-            (arguments
-              (assignment_expression
-                (identifier)
-                (string
-                  (hash_expression
-                    (identifier))))
-              (assignment_expression
-                (identifier)
-                (string
-                  (string_fragment)))
-              (identifier)))))
-      (expression_statement
-        (assignment_expression
-          (identifier)
-          (call_expression
-            (subscript_expression
-              (identifier)
-              (string
-                (string_fragment)))
-            (arguments
-              (assignment_expression
-                (identifier)
-                (string
-                  (string_fragment)))
-              (assignment_expression
-                (identifier)
-                (string
-                  (string_fragment)))))))
-      (expression_statement
-        (call_expression
-          (member_expression
-            (call_expression
-              (identifier)
-              (arguments))
-            (property_identifier))
-          (arguments)))
-      (expression_statement
-        (assignment_expression
-          (identifier)
-          (number)))
-      (expression_statement
-        (assignment_expression
+            (string
+              (string_fragment)))
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (subscript_expression
           (identifier)
           (string
-            (hash_expression
-              (identifier)))))
-      (expression_statement
-        (assignment_expression
-          (identifier)
-          (hash_expression
-            (identifier))))
-      (expression_statement
+            (string_fragment)))
+        (arguments
+          (assignment_expression
+            (identifier)
+            (string
+              (string_fragment)))
+          (assignment_expression
+            (identifier)
+            (string
+              (string_fragment)))))))
+  (expression_statement
+    (call_expression
+      (member_expression
         (call_expression
           (identifier)
-          (arguments
-            (array
-              (identifier)
-              (identifier)
-              (identifier))))))
-
+          (arguments))
+        (property_identifier))
+      (arguments)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (string
+        (hash_expression
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (hash_expression
+        (identifier))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (array
+          (identifier)
+          (identifier)
+          (identifier))))))
 
 ===================================
 cfscript switch
@@ -137,28 +137,28 @@ cfscript switch
       test();
   }
 ---
-(program
-      (comment)
-      (switch_statement
-        (parenthesized_expression
-          (identifier))
-        (switch_body
-          (switch_case
-            (string
-              (string_fragment))
-            (expression_statement
-              (call_expression
-                (identifier)
-                (arguments)))
-            (comment)
-            (break_statement))
-          (switch_default
-            (comment)
-            (expression_statement
-              (call_expression
-                (identifier)
-                (arguments)))))))
 
+(program
+  (comment)
+  (switch_statement
+    (parenthesized_expression
+      (identifier))
+    (switch_body
+      (switch_case
+        (string
+          (string_fragment))
+        (expression_statement
+          (call_expression
+            (identifier)
+            (arguments)))
+        (comment)
+        (break_statement))
+      (switch_default
+        (comment)
+        (expression_statement
+          (call_expression
+            (identifier)
+            (arguments)))))))
 
 ===================================
 cfscript function 1
@@ -168,13 +168,14 @@ public string function doThing()
 
 }
 ---
+
 (program
-      (function_declaration
-        (function_access)
-        (return_type)
-        (identifier)
-        (formal_parameters)
-        (statement_block)))
+  (function_declaration
+    (function_access)
+    (return_type)
+    (identifier)
+    (formal_parameters)
+    (statement_block)))
 
 ===================================
 cfscript function 2
@@ -184,6 +185,7 @@ public string function doThing(string firstName = "blah",required string firstNa
 
 }
 ---
+
 (program
   (function_declaration
     (function_access)
@@ -209,22 +211,23 @@ public function function doThing(string firstName = "blah",required function fir
 
 }
 ---
+
 (program
-      (function_declaration
-        (function_access)
-        (return_type)
+  (function_declaration
+    (function_access)
+    (return_type)
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (assignment_pattern
         (identifier)
-        (formal_parameters
-          (parameter_type)
-          (assignment_pattern
-            (identifier)
-            (string
-              (string_fragment)))
-          (parameter_type)
-          (identifier)
-          (parameter_type)
-          (identifier))
-        (statement_block)))
+        (string
+          (string_fragment)))
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier))
+    (statement_block)))
 
 ===================================
 script tag
@@ -233,6 +236,7 @@ cfmail(test=test){
 
 };
 ---
+
 (program
   (tag_statement
     (identifier)
@@ -251,31 +255,32 @@ component test:displayLabel="${test} ${test}" singleton {
     }
 }
 ---
+
 (program
-      (expression_statement
-        (component
-          (component_attribute
-            (attribute_label)
-            (component_attribute
-              (identifier)
-              (string
-                (string_fragment))))
-          (component_attribute
-            (identifier))
-          (component_body
-            (function_declaration
-              (function_access)
-              (identifier)
-              (formal_parameters)
-              (statement_block
-                (expression_statement
-                  (assignment_expression
-                    (subscript_expression
-                      (identifier)
-                      (string
-                        (string_fragment)))
-                    (string
-                      (string_fragment))))))))))
+  (expression_statement
+    (component
+      (component_attribute
+        (attribute_label)
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment))))
+      (component_attribute
+        (identifier))
+      (component_body
+        (function_declaration
+          (function_access)
+          (identifier)
+          (formal_parameters)
+          (statement_block
+            (expression_statement
+              (assignment_expression
+                (subscript_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))
+                (string
+                  (string_fragment))))))))))
 
 ===================================
 component test
@@ -310,100 +315,100 @@ try {
 		}
     
 ---
+
 (program
-      (import_statement
-        (identifier))
-      (expression_statement
-        (component
-          (component_body
-            (function_declaration
-              (return_type)
-              (identifier)
-              (formal_parameters
-                (parameter_type
-                  (path
-                    (identifier)
-                    (identifier)
-                    (identifier)))
-                (identifier))
-              (statement_block
-                (variable_declaration
-                  (variable_declarator
-                    (identifier)
-                    (query_expression
-                      (query_text)
+  (import_statement
+    (identifier))
+  (expression_statement
+    (component
+      (component_body
+        (function_declaration
+          (return_type)
+          (identifier)
+          (formal_parameters
+            (parameter_type
+              (path
+                (identifier)
+                (identifier)
+                (identifier)))
+            (identifier))
+          (statement_block
+            (variable_declaration
+              (variable_declarator
+                (identifier)
+                (query_expression
+                  (query_text)
+                  (object
+                    (pair
+                      (property_identifier)
                       (object
                         (pair
                           (property_identifier)
-                          (object
-                            (pair
-                              (property_identifier)
-                              (string
-                                (string_fragment)))
-                            (pair
-                              (property_identifier)
-                              (call_expression
-                                (member_expression
-                                  (identifier)
-                                  (property_identifier))
-                                (arguments)))))))))
-                (return_statement
+                          (string
+                            (string_fragment)))
+                        (pair
+                          (property_identifier)
+                          (call_expression
+                            (member_expression
+                              (identifier)
+                              (property_identifier))
+                            (arguments)))))))))
+            (return_statement
+              (member_expression
+                (identifier)
+                (property_identifier))))))))
+  (try_statement
+    (statement_block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (arguments
+            (call_expression
+              (identifier)
+              (arguments
+                (null))))))
+      (expression_statement
+        (call_expression
+          (identifier)
+          (arguments
+            (binary_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (identifier)
+                  (string
+                    (string_fragment))))
+              (parenthesized_expression
+                (binary_expression
                   (member_expression
                     (identifier)
-                    (property_identifier))))))))
-      (try_statement
-        (statement_block
-          (expression_statement
+                    (property_identifier))
+                  (string
+                    (string_fragment)))))
+            (true))))
+      (variable_declaration
+        (variable_declarator
+          (identifier)
+          (null)))
+      (expression_statement
+        (call_expression
+          (identifier)
+          (arguments
             (call_expression
               (identifier)
               (arguments
-                (call_expression
-                  (identifier)
-                  (arguments
-                    (null))))))
-          (expression_statement
-            (call_expression
-              (identifier)
-              (arguments
-                (binary_expression
-                  (call_expression
-                    (identifier)
-                    (arguments
-                      (identifier)
-                      (string
-                        (string_fragment))))
-                  (parenthesized_expression
-                    (binary_expression
-                      (member_expression
-                        (identifier)
-                        (property_identifier))
-                      (string
-                        (string_fragment)))))
-                (true))))
-          (variable_declaration
-            (variable_declarator
-              (identifier)
-              (null)))
-          (expression_statement
-            (call_expression
-              (identifier)
-              (arguments
-                (call_expression
-                  (identifier)
-                  (arguments
-                    (identifier)))))))
-        (finally_clause
-          (statement_block
-            (tag_statement
-              (identifier)
-              (assignment_expression
-                (identifier)
-                (string
-                  (string_fragment)))
-              (assignment_expression
-                (identifier)
                 (identifier)))))))
-
+    (finally_clause
+      (statement_block
+        (tag_statement
+          (identifier)
+          (assignment_expression
+            (identifier)
+            (string
+              (string_fragment)))
+          (assignment_expression
+            (identifier)
+            (identifier)))))))
 
 ===================================
 testNamedArgNull
@@ -430,87 +435,88 @@ component {
 
 }
 ---
+
 (program
-      (expression_statement
-        (component
-          (component_body
-            (expression_statement
-              (call_expression
+  (expression_statement
+    (component
+      (component_body
+        (expression_statement
+          (call_expression
+            (identifier)
+            (arguments
+              (assignment_expression
                 (identifier)
-                (arguments
-                  (assignment_expression
+                (number)))))
+        (function_declaration
+          (function_access)
+          (return_type)
+          (identifier)
+          (formal_parameters)
+          (statement_block
+            (variable_declaration
+              (variable_declarator
+                (identifier)
+                (member_expression
+                  (call_expression
                     (identifier)
-                    (number)))))
-            (function_declaration
-              (function_access)
-              (return_type)
+                    (arguments))
+                  (property_identifier))))
+            (tag_statement
               (identifier)
-              (formal_parameters)
+              (assignment_expression
+                (identifier)
+                (string
+                  (string_fragment)))
+              (assignment_expression
+                (identifier)
+                (true)))
+            (try_statement
               (statement_block
-                (variable_declaration
-                  (variable_declarator
+                (expression_statement
+                  (call_expression
                     (identifier)
-                    (member_expression
-                      (call_expression
-                        (identifier)
-                        (arguments))
-                      (property_identifier))))
-                (tag_statement
-                  (identifier)
-                  (assignment_expression
-                    (identifier)
-                    (string
-                      (string_fragment)))
-                  (assignment_expression
-                    (identifier)
-                    (true)))
-                (try_statement
-                  (statement_block
-                    (expression_statement
-                      (call_expression
-                        (identifier)
-                        (arguments
-                          (string
-                            (string_fragment))
-                          (call_expression
-                            (identifier)
-                            (arguments
-                              (pair
-                                (null)
-                                (string
-                                  (string_fragment))))))))
-                    (expression_statement
-                      (call_expression
-                        (identifier)
-                        (arguments
-                          (string
-                            (string_fragment))
-                          (call_expression
-                            (identifier)
-                            (arguments
-                              (assignment_expression
-                                (null)
-                                (string
-                                  (string_fragment)))))))))
-                  (finally_clause
-                    (statement_block
-                      (tag_statement
-                        (identifier)
-                        (assignment_expression
-                          (identifier)
-                          (string
-                            (string_fragment)))
-                        (assignment_expression
-                          (identifier)
-                          (identifier))))))
-                (if_statement
-                  (parenthesized_expression
-                    (binary_expression
+                    (arguments
                       (string
                         (string_fragment))
+                      (call_expression
+                        (identifier)
+                        (arguments
+                          (pair
+                            (null)
+                            (string
+                              (string_fragment))))))))
+                (expression_statement
+                  (call_expression
+                    (identifier)
+                    (arguments
                       (string
-                        (string_fragment))))
-                  (statement_block))))))))
+                        (string_fragment))
+                      (call_expression
+                        (identifier)
+                        (arguments
+                          (assignment_expression
+                            (null)
+                            (string
+                              (string_fragment)))))))))
+              (finally_clause
+                (statement_block
+                  (tag_statement
+                    (identifier)
+                    (assignment_expression
+                      (identifier)
+                      (string
+                        (string_fragment)))
+                    (assignment_expression
+                      (identifier)
+                      (identifier))))))
+            (if_statement
+              (parenthesized_expression
+                (binary_expression
+                  (string
+                    (string_fragment))
+                  (string
+                    (string_fragment))))
+              (statement_block))))))))
 
 ===================================
 query test / multiline tags
@@ -523,6 +529,7 @@ http
   test="test"
   test2="Test";
 ---
+
 (program
   (query_tag
     (assignment_expression
@@ -562,69 +569,71 @@ try{
   assertEquals( e.message, 'No access, password is invalid' );
 }
 ---
+
 (program
-      (try_statement
-        (statement_block
-          (comment)
-          (expression_statement
-            (call_expression
+  (try_statement
+    (statement_block
+      (comment)
+      (expression_statement
+        (call_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (arguments
+            (assignment_expression
+              (identifier)
+              (string
+                (hash_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier)))))
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))))))
+    (catch_clause
+      (catch_type)
+      (identifier)
+      (statement_block
+        (expression_statement
+          (assignment_expression
+            (member_expression
+              (identifier)
+              (property_identifier))
+            (member_expression
               (member_expression
                 (identifier)
                 (property_identifier))
-              (arguments
-                (assignment_expression
-                  (identifier)
-                  (string
-                    (hash_expression
-                      (member_expression
-                        (identifier)
-                        (property_identifier)))))
-                (assignment_expression
-                  (identifier)
-                  (string
-                    (string_fragment)))))))
-        (catch_clause
-          (catch_type)
-          (identifier)
-          (statement_block
-            (expression_statement
-            (assignment_expression
-                (member_expression
-                  (identifier)
-                  (property_identifier))
-                (member_expression
-                  (member_expression
-                    (identifier)
-                    (property_identifier))
-                  (property_identifier))))
-            (expression_statement
-              (call_expression
-                (identifier)
-                (arguments
-                  (member_expression
-                    (identifier)
-                    (property_identifier))
-                  (string
-                    (string_fragment)))))))))
-
-===================================
-javascript escape sequences that don't work in CF
-===================================
-var mapping = ListChangeDelims( arguments.testMapping, "", "/\" );
----
-(program
-      (variable_declaration
-        (variable_declarator
-          (identifier)
+              (property_identifier))))
+        (expression_statement
           (call_expression
             (identifier)
             (arguments
               (member_expression
                 (identifier)
                 (property_identifier))
-              (string)
               (string
-                (string_fragment)))))))
+                (string_fragment)))))))))
+
+===================================
+javascript escape sequences that don't work in CF
+===================================
+var mapping = ListChangeDelims( arguments.testMapping, "", "/\" );
+---
+
+(program
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (string)
+          (string
+            (string_fragment)))))))
 
 ===================================
 tag statements
@@ -637,24 +646,25 @@ imap
     action = "close",
     connection="testImap";
 ---
+
 (program
-      (tag_statement
-        (identifier)
-        (statement_block
-          (expression_statement
-            (call_expression
-              (identifier)
-               (arguments)))))
-      (tag_statement
-        (identifier)
-        (assignment_expression
+  (tag_statement
+    (identifier)
+    (statement_block
+      (expression_statement
+        (call_expression
           (identifier)
-          (string
-            (string_fragment)))
-        (assignment_expression
-          (identifier)
-          (string
-            (string_fragment)))))
+          (arguments)))))
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))))
 
 ===================================
 ternary / elvis operator / cfml comments / regex
@@ -667,6 +677,7 @@ src = reReplace(src, "<!---.*?--->", "", "all"); // cfml comments
 src = reReplace(src, "\/{2}.*|\/\*[\s\S]*?\*\/", "", "all"); // regex
   
 ---
+
 (program
   (expression_statement
     (elvis_expression
@@ -680,40 +691,40 @@ src = reReplace(src, "\/{2}.*|\/\*[\s\S]*?\*\/", "", "all"); // regex
         (string_fragment))
       (string
         (string_fragment))))
-      (expression_statement
-        (assignment_expression
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (object_pattern
+        (object_assignment_pattern
+          (shorthand_property_identifier_pattern)
+          (string
+            (string_fragment))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
           (identifier)
-          (object_pattern
-            (object_assignment_pattern
-              (shorthand_property_identifier_pattern)
-              (string
-                (string_fragment))))))
-      (expression_statement
-        (assignment_expression
+          (string
+            (string_fragment))
+          (string)
+          (string
+            (string_fragment))))))
+  (comment)
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
           (identifier)
-          (call_expression
-            (identifier)
-            (arguments
-              (identifier)
-              (string
-                (string_fragment))
-              (string)
-              (string
-                (string_fragment))))))
-      (comment)
-      (expression_statement
-        (assignment_expression
-          (identifier)
-          (call_expression
-            (identifier)
-            (arguments
-              (identifier)
-              (string
-                (string_fragment))
-              (string)
-              (string
-                (string_fragment))))))
-      (comment))
+          (string
+            (string_fragment))
+          (string)
+          (string
+            (string_fragment))))))
+  (comment))
 
 ===================================
 failing expressions
@@ -734,6 +745,7 @@ private function verifyPacket(required struct samlPacket){
 }
 
 ---
+
 (program
   (comment)
   (expression_statement
@@ -749,108 +761,255 @@ private function verifyPacket(required struct samlPacket){
             (identifier)
             (true))
           (statement_block)))))
-      (function_declaration
-        (function_access)
-        (identifier)
-        (formal_parameters
-          (parameter_type)
-          (identifier))
-        (statement_block
-          (expression_statement
-            (assignment_expression
-              (subscript_expression
-                (member_expression
-                  (identifier)
-                  (property_identifier))
-                (string
-                  (string_fragment)))
-              (object
-                (pair
-                  (string
-                    (string_fragment))
-                  (ternary_expression
-                    (binary_expression
-                      (call_expression
-                        (identifier)
-                        (arguments
-                          (member_expression
-                            (member_expression
-                              (member_expression
-                                (identifier)
-                                (property_identifier))
-                              (property_identifier))
-                            (property_identifier))
-                          (member_expression
-                            (member_expression
-                              (member_expression
-                                (identifier)
-                                (property_identifier))
-                              (property_identifier))
-                            (property_identifier))
-                          (string
-                            (string_fragment))))
-                      (number))
-                    (true)
-                    (false)))
-                (pair
-                  (string
-                    (string_fragment))
-                  (ternary_expression
-                    (binary_expression
-                      (call_expression
-                        (identifier)
-                        (arguments
-                          (member_expression
-                            (member_expression
-                              (member_expression
-                                (identifier)
-                                (property_identifier))
-                              (property_identifier))
-                            (property_identifier))
-                          (member_expression
-                            (member_expression
-                              (member_expression
-                                (identifier)
-                                (property_identifier))
-                              (property_identifier))
-                            (property_identifier))
-                          (string
-                            (string_fragment))))
-                      (number))
-                    (false)
-                    (true))))))
-          (expression_statement
-            (call_expression
-              (identifier)
-              (arguments
-                (pair
-                  (property_identifier)
-                  (string
-                    (string_fragment)))
-                (pair
-                  (property_identifier)
-                  (string
-                    (string_fragment)
-                    (hash_expression
-                      (member_expression
-                        (identifier)
-                        (property_identifier))))))))
-          (throw_statement
-            (parenthesized_expression
-              (sequence_expression
-                (pair
-                  (property_identifier)
-                  (string
-                    (string_fragment)))
-                (pair
-                  (property_identifier)
-                  (string
-                    (string_fragment)
-                    (hash_expression
-                      (member_expression
-                        (identifier)
-                        (property_identifier))))))))
-          (return_statement
+  (function_declaration
+    (function_access)
+    (identifier)
+    (formal_parameters
+      (parameter_type
+        (identifier))
+      (identifier))
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (subscript_expression
             (member_expression
               (identifier)
-              (property_identifier))))))
+              (property_identifier))
+            (string
+              (string_fragment)))
+          (object
+            (pair
+              (string
+                (string_fragment))
+              (ternary_expression
+                (binary_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (member_expression
+                        (member_expression
+                          (member_expression
+                            (identifier)
+                            (property_identifier))
+                          (property_identifier))
+                        (property_identifier))
+                      (member_expression
+                        (member_expression
+                          (member_expression
+                            (identifier)
+                            (property_identifier))
+                          (property_identifier))
+                        (property_identifier))
+                      (string
+                        (string_fragment))))
+                  (number))
+                (true)
+                (false)))
+            (pair
+              (string
+                (string_fragment))
+              (ternary_expression
+                (binary_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (member_expression
+                        (member_expression
+                          (member_expression
+                            (identifier)
+                            (property_identifier))
+                          (property_identifier))
+                        (property_identifier))
+                      (member_expression
+                        (member_expression
+                          (member_expression
+                            (identifier)
+                            (property_identifier))
+                          (property_identifier))
+                        (property_identifier))
+                      (string
+                        (string_fragment))))
+                  (number))
+                (false)
+                (true))))))
+      (expression_statement
+        (call_expression
+          (identifier)
+          (arguments
+            (pair
+              (property_identifier)
+              (string
+                (string_fragment)))
+            (pair
+              (property_identifier)
+              (string
+                (string_fragment)
+                (hash_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier))))))))
+      (throw_statement
+        (parenthesized_expression
+          (sequence_expression
+            (pair
+              (property_identifier)
+              (string
+                (string_fragment)))
+            (pair
+              (property_identifier)
+              (string
+                (string_fragment)
+                (hash_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier))))))))
+      (return_statement
+        (member_expression
+          (identifier)
+          (property_identifier))))))
+
+===================================
+Lucee built-in functions (all parse as call_expression)
+===================================
+  get();
+  set();
+  array(1);
+  structNew();
+  queryNew("col");
+  writeOutput("");
+  arrayLen([]);
+  isDefined("x");
+  de("x");
+  createObject("java", "java.lang.String");
+---
+
+(program
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments)))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments)))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (number))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments)))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (string
+          (string_fragment)))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (string))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (array))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (string
+          (string_fragment)))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (string
+          (string_fragment)))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (string
+          (string_fragment))
+        (string
+          (string_fragment))))))
+
+===================================
+Lucee operators (NOT, XOR, MOD, CT, NCT, <>)
+===================================
+  if (NOT x) { }
+  if (not y) { }
+  if (a XOR b) { }
+  n = 5 mod 2;
+  if ("SMILES" CONTAINS "MILE") { }
+  if ("SMILES" CT "MILE") { }
+  if ("SMILES" DOES NOT CONTAIN "X") { }
+  if ("SMILES" NCT "X") { }
+  if (x <> y) { }
+---
+
+(program
+  (if_statement
+    (parenthesized_expression
+      (unary_expression
+        (identifier)))
+    (statement_block))
+  (if_statement
+    (parenthesized_expression
+      (unary_expression
+        (identifier)))
+    (statement_block))
+  (if_statement
+    (parenthesized_expression
+      (binary_expression
+        (identifier)
+        (identifier)))
+    (statement_block))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (number)
+        (number))))
+  (if_statement
+    (parenthesized_expression
+      (binary_expression
+        (string
+          (string_fragment))
+        (string
+          (string_fragment))))
+    (statement_block))
+  (if_statement
+    (parenthesized_expression
+      (binary_expression
+        (string
+          (string_fragment))
+        (string
+          (string_fragment))))
+    (statement_block))
+  (if_statement
+    (parenthesized_expression
+      (binary_expression
+        (string
+          (string_fragment))
+        (string
+          (string_fragment))))
+    (statement_block))
+  (if_statement
+    (parenthesized_expression
+      (binary_expression
+        (string
+          (string_fragment))
+        (string
+          (string_fragment))))
+    (statement_block))
+  (if_statement
+    (parenthesized_expression
+      (binary_expression
+        (identifier)
+        (identifier)))
+    (statement_block)))
