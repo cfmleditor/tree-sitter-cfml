@@ -17,3 +17,7 @@ try {
 try {
   module.exports.cfscript.nodeTypeInfo = require("../../cfscript/src/node-types.json");
 } catch (_) { }
+
+try {
+  module.exports.cfquery.nodeTypeInfo = require("../../cfquery/src/node-types.json");
+} catch (_) { }

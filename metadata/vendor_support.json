@@ -2,11 +2,28 @@
   "$schema": "https://example.com/schemas/cfml-vendor-support.schema.json",
   "description": "Vendor/version support metadata for CFML constructs. This file is intended to be consumed by tooling that wants to filter the grammar/features by engine (ACF vs Lucee) and version.",
   "version": 1,
+  "documentation_sources": {
+    "ACF": {
+      "name": "Adobe ColdFusion",
+      "url": "https://helpx.adobe.com/support/coldfusion.html",
+      "notes": "Adobe ColdFusion CFML Reference (tags, functions) under helpx.adobe.com/coldfusion/cfml-reference/."
+    },
+    "Lucee": {
+      "name": "Lucee CFML",
+      "url": "http://localhost:4040",
+      "url_public": "https://docs.lucee.org",
+      "notes": "Local Lucee docs at localhost:4040; public reference at docs.lucee.org."
+    }
+  },
   "constructs": [
     {
       "kind": "tag",
       "name": "cfquery",
-      "notes": "Database query tag. Present in both ACF and Lucee from earliest supported versions.",
+      "notes": "Passes SQL to a data source; Adobe recommends cfqueryparam for security. ACF: attribute history (e.g. returnType 2021, disableAutoGenKeys 2018); deprecated sql/provider/dbServer/dbName/connectString removed in CF11.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-p-q/cfquery.html",
+        "Lucee": "https://docs.lucee.org/reference/tags/cfquery.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -21,7 +38,11 @@
     {
       "kind": "tag",
       "name": "cfscript",
-      "notes": "CFScript block tag. Supported by both ACF and Lucee.",
+      "notes": "CFScript block tag. Embeds script syntax in tag-based pages. Documented in both Adobe ColdFusion and Lucee CFML references.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-c-d/cfscript.html",
+        "Lucee": "https://docs.lucee.org/reference/tags/cfscript.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -36,7 +57,11 @@
     {
       "kind": "tag",
       "name": "cfxml",
-      "notes": "XML processing tag. Supported by both ACF and Lucee.",
+      "notes": "XML processing tag. Creates XML document object from literal or variable. Documented in Adobe CFML Reference and Lucee.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-u-z/cfxml.html",
+        "Lucee": "https://docs.lucee.org/reference/tags/cfxml.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -51,7 +76,11 @@
     {
       "kind": "tag",
       "name": "cftransaction",
-      "notes": "Transaction control tag for database operations. Supported by both ACF and Lucee.",
+      "notes": "Groups database operations as a single transaction; supports action (begin/commit/rollback/setsavepoint), isolation, savepoint, nested. Documented in both Adobe and Lucee.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-t/cftransaction.html",
+        "Lucee": "https://docs.lucee.org/reference/tags/cftransaction.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -66,10 +95,14 @@
     {
       "kind": "function",
       "name": "QueryExecute",
-      "notes": "Function form of cfquery. Present in both ACF and Lucee CFML function references.",
+      "notes": "Executes SQL with optional params and options; script alternative to cfquery. Adobe CFML Reference and Lucee function reference.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-functions/functions-m-r/queryexecute.html",
+        "Lucee": "https://docs.lucee.org/reference/functions/queryexecute.html"
+      },
       "vendors": {
         "ACF": {
-          "since": "",
+          "since": "11",
           "deprecated_since": null
         },
         "Lucee": {
@@ -81,7 +114,11 @@
     {
       "kind": "operator",
       "name": "NOT",
-      "notes": "Logical NOT operator. Supported by both ACF and Lucee.",
+      "notes": "Logical NOT (keyword form). Equivalent to ! in both Adobe and Lucee; documented in expression/operator references.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/developing-applications/the-cfml-programming-language/using-expressions-and-number-signs/expressions-developing-guide.ug.html",
+        "Lucee": "https://docs.lucee.org/guides/developing-with-lucee-server/operators.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -96,7 +133,11 @@
     {
       "kind": "operator",
       "name": "XOR",
-      "notes": "Logical XOR operator. Supported by both ACF and Lucee.",
+      "notes": "Logical exclusive OR (keyword form). Documented in Adobe expressions and Lucee operators.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/developing-applications/the-cfml-programming-language/using-expressions-and-number-signs/expressions-developing-guide.ug.html",
+        "Lucee": "https://docs.lucee.org/guides/developing-with-lucee-server/operators.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -111,7 +152,11 @@
     {
       "kind": "operator",
       "name": "MOD",
-      "notes": "Modulo operator (MOD keyword). Supported by both ACF and Lucee.",
+      "notes": "Modulo (remainder) operator; keyword form. Equivalent to % in Adobe and Lucee; documented in operator references.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/developing-applications/the-cfml-programming-language/using-expressions-and-number-signs/expressions-developing-guide.ug.html",
+        "Lucee": "https://docs.lucee.org/guides/developing-with-lucee-server/operators.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -126,7 +171,11 @@
     {
       "kind": "operator",
       "name": "CT",
-      "notes": "Contains operator (CT). Documented in Lucee operators; available in ACF as part of CFML expression language.",
+      "notes": "Shorthand for CONTAINS. Documented in Lucee operators; available in ACF expression language.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/developing-applications/the-cfml-programming-language/using-expressions-and-number-signs/expressions-developing-guide.ug.html",
+        "Lucee": "https://docs.lucee.org/guides/developing-with-lucee-server/operators.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -141,7 +190,11 @@
     {
       "kind": "operator",
       "name": "NCT",
-      "notes": "Does not contain operator (NCT). Documented in Lucee operators; available in ACF as part of CFML expression language.",
+      "notes": "Shorthand for DOES NOT CONTAIN. Documented in Lucee operators; available in ACF expression language.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/developing-applications/the-cfml-programming-language/using-expressions-and-number-signs/expressions-developing-guide.ug.html",
+        "Lucee": "https://docs.lucee.org/guides/developing-with-lucee-server/operators.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -156,7 +209,11 @@
     {
       "kind": "operator",
       "name": "<>",
-      "notes": "Not-equal comparison operator. Supported by both ACF and Lucee.",
+      "notes": "Not-equal comparison operator. Documented in both Adobe and Lucee operator/expression references.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/developing-applications/the-cfml-programming-language/using-expressions-and-number-signs/expressions-developing-guide.ug.html",
+        "Lucee": "https://docs.lucee.org/guides/developing-with-lucee-server/operators.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -172,6 +229,29 @@
       "kind": "operator",
       "name": "\\\\",
       "notes": "Integer division operator. Documented in Lucee; also available in ACF expression language.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/developing-applications/the-cfml-programming-language/using-expressions-and-number-signs/expressions-developing-guide.ug.html",
+        "Lucee": "https://docs.lucee.org/guides/developing-with-lucee-server/operators.html"
+      },
+      "vendors": {
+        "ACF": {
+          "since": "",
+          "deprecated_since": null
+        },
+        "Lucee": {
+          "since": "",
+          "deprecated_since": null
+        }
+      }
+    },
+    {
+      "kind": "operator",
+      "name": "?:",
+      "notes": "Elvis operator. ACF (CF2016+): shorthand ternary; Lucee: null-coalescing (default when left side is null/undefined). Semantics differ between engines.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-script-functions/elvis-operator.html",
+        "Lucee": "https://docs.lucee.org/guides/developing-with-lucee-server/operators.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -186,7 +266,11 @@
     {
       "kind": "scope",
       "name": "variables",
-      "notes": "Standard CFML VARIABLES scope. Present in both ACF and Lucee from earliest versions.",
+      "notes": "VARIABLES scope for component/page variables. Documented in Adobe and Lucee scope references.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/developing-applications/the-cfml-programming-language/using-cfml-elements/using-data-types.html",
+        "Lucee": "https://docs.lucee.org/reference/scopes/variables.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -201,7 +285,11 @@
     {
       "kind": "scope",
       "name": "arguments",
-      "notes": "Standard CFML ARGUMENTS scope. Present in both ACF and Lucee from earliest versions.",
+      "notes": "ARGUMENTS scope for function parameters. Documented in Adobe and Lucee scope references.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/developing-applications/the-cfml-programming-language/using-cfml-elements/using-data-types.html",
+        "Lucee": "https://docs.lucee.org/reference/scopes/arguments.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -216,7 +304,11 @@
     {
       "kind": "scope",
       "name": "session",
-      "notes": "Standard CFML SESSION scope. Present in both ACF and Lucee from earliest versions.",
+      "notes": "SESSION scope for session-level data. Documented in Adobe and Lucee scope references.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/developing-applications/the-cfml-programming-language/using-cfml-elements/using-data-types.html",
+        "Lucee": "https://docs.lucee.org/reference/scopes/session.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",
@@ -231,7 +323,11 @@
     {
       "kind": "scope",
       "name": "application",
-      "notes": "Standard CFML APPLICATION scope. Present in both ACF and Lucee from earliest versions.",
+      "notes": "APPLICATION scope for application-level data. Documented in Adobe and Lucee scope references.",
+      "documentation": {
+        "ACF": "https://helpx.adobe.com/coldfusion/developing-applications/the-cfml-programming-language/using-cfml-elements/using-data-types.html",
+        "Lucee": "https://docs.lucee.org/reference/scopes/application.html"
+      },
       "vendors": {
         "ACF": {
           "since": "",

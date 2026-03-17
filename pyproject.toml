@@ -16,6 +16,7 @@ classifiers = [
 ]
 authors = [
   { name = "Gareth Edwards", email = "ghedwards@gmail.com" },
+  { name = "Gavin Baumanis", email = "gavinbaumanis@gmail.com"},
   { name = "Max Brunsfeld", email = "maxbrunsfeld@gmail.com" },
   { name = "Amaan Qureshi", email = "amaanq12@gmail.com" },
 ]

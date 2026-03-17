@@ -6,6 +6,7 @@ extern "C" {
     fn tree_sitter_cfml() -> *const ();
     fn tree_sitter_cfhtml() -> *const ();
     fn tree_sitter_cfscript() -> *const ();
+    fn tree_sitter_cfquery() -> *const ();
 }
 
 /// The tree-sitter [`LanguageFn`] for CFML.
@@ -23,12 +24,18 @@ pub const LANGUAGE_CFHTML: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitte
 /// [LanguageFn]: https://docs.rs/tree-sitter-language/*/tree_sitter_language/struct.LanguageFn.html
 pub const LANGUAGE_CFSCRIPT: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_cfscript) };
 
+/// The tree-sitter [`LanguageFn`] for CFQUERY SQL dialect.
+///
+/// [LanguageFn]: https://docs.rs/tree-sitter-language/*/tree_sitter_language/struct.LanguageFn.html
+pub const LANGUAGE_CFQUERY: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_cfquery) };
+
 /// The content of the [`node-types.json`][] file for this grammar.
 ///
 /// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types
 pub const CFML_NODE_TYPES: &str = include_str!("../../cfml/src/node-types.json");
 pub const CFHTML_NODE_TYPES: &str = include_str!("../../cfhtml/src/node-types.json");
 pub const CFSCRIPT_NODE_TYPES: &str = include_str!("../../cfscript/src/node-types.json");
+pub const CFQUERY_NODE_TYPES: &str = include_str!("../../cfquery/src/node-types.json");
 
 /// The syntax highlighting query for CFML.
 pub const HIGHLIGHTS_QUERY: &str = include_str!("../../cfml/queries/highlights.scm");
