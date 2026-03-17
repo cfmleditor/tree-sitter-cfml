@@ -134,6 +134,10 @@ Or build all three plus the Node.js bindings:
 npm run build
 ```
 
+**Note on build warnings**
+When running `npm run build`, you may see tree-sitter warnings about “unnecessary conflicts” such as `binary_expression`, `call_expression`, `switch_case`, or `assignment_expression` versus `_property_name`, and hash-related conflicts for the cfquery dialect.
+These conflicts are **intentionally declared** in `common/define-grammar.js` to resolve real ambiguities in CFML/CFHTML/cfquery syntax; attempts to remove them cause `tree-sitter generate` to fail with unresolved conflicts. It is safe to **ignore** these warnings as long as the build and tests succeed.
+
 ### Generating the parser
 
 After editing `common/define-grammar.js`:
