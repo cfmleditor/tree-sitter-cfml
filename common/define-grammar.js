@@ -263,17 +263,22 @@ module.exports = function defineGrammar(dialect) {
       text: $ => /[^<>&\s#\r\n\u2028\u2029]([^<>&#]*[^<>&\s#\r\n\u2028\u2029])?/,
       // cf_tag_close: $ => /<\/cf/i,
 
-      _node: $ => choice(
+      _node: $ => ( dialect === 'cfquery' ) ? choice(
+        $._cf_tag,
+        $._hash,
+        $.erroneous_cf_end_tag,
+        $.text,
+      ) : choice(
+        $._cf_tag,
+        $._hash,
+        $.erroneous_end_tag,
+        $.erroneous_cf_end_tag,
+        $.text,
         $.doctype,
         $.entity,
         $.element,
-        $._cf_tag,
-        $._hash,
         $.script_element,
         $.style_element,
-        $.text,
-        $.erroneous_end_tag,
-        $.erroneous_cf_end_tag,
         $.xml_decl,
         $.html_text,
       ),
@@ -284,12 +289,12 @@ module.exports = function defineGrammar(dialect) {
       cfquery_content: $ => seq(
         choice(
           $.cfquery_segment,
-          $._cfquery_content_node,
+          $._node,
         ),
         repeat(
           choice(
             $.cfquery_segment,
-            $._cfquery_content_node,
+            $._node,
           )
         )
       ),
@@ -298,13 +303,6 @@ module.exports = function defineGrammar(dialect) {
       // Grouping SQL into segments makes it easier for tools to work with
       // the SQL portions between CFML constructs.
       cfquery_segment: $ => $._cfquery_sql_statement,
-
-      _cfquery_content_node: $ => choice(
-        $._cf_tag,
-        $._hash,
-        $.text,
-        $.erroneous_cf_end_tag,
-      ),
 
       query_operator: $ => choice(
         field('operator', '>='),

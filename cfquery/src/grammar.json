@@ -184,18 +184,6 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "doctype"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "entity"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "element"
-        },
-        {
-          "type": "SYMBOL",
           "name": "_cf_tag"
         },
         {
@@ -204,31 +192,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "script_element"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "style_element"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "text"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "erroneous_end_tag"
-        },
-        {
-          "type": "SYMBOL",
           "name": "erroneous_cf_end_tag"
         },
         {
           "type": "SYMBOL",
-          "name": "xml_decl"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "html_text"
+          "name": "text"
         }
       ]
     },
@@ -244,7 +212,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "_cfquery_content_node"
+              "name": "_node"
             }
           ]
         },
@@ -259,7 +227,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "_cfquery_content_node"
+                "name": "_node"
               }
             ]
           }
@@ -269,27 +237,6 @@
     "cfquery_segment": {
       "type": "SYMBOL",
       "name": "_cfquery_sql_statement"
-    },
-    "_cfquery_content_node": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_cf_tag"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_hash"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "text"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "erroneous_cf_end_tag"
-        }
-      ]
     },
     "query_operator": {
       "type": "CHOICE",

@@ -998,23 +998,7 @@
           "named": true
         },
         {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
           "type": "erroneous_cf_end_tag",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
           "named": true
         },
         {
@@ -1022,23 +1006,7 @@
           "named": true
         },
         {
-          "type": "html_text",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
           "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
           "named": true
         }
       ]
@@ -1061,23 +1029,7 @@
           "named": true
         },
         {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
           "type": "erroneous_cf_end_tag",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
           "named": true
         },
         {
@@ -1097,23 +1049,7 @@
           "named": true
         },
         {
-          "type": "html_text",
-          "named": true
-        },
-        {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
           "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
           "named": true
         }
       ]
@@ -1357,23 +1293,7 @@
           "named": true
         },
         {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
-          "named": true
-        },
-        {
           "type": "erroneous_cf_end_tag",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
           "named": true
         },
         {
@@ -1381,27 +1301,11 @@
           "named": true
         },
         {
-          "type": "html_text",
-          "named": true
-        },
-        {
           "type": "implicit_cf_end_tag",
           "named": true
         },
         {
-          "type": "script_element",
-          "named": true
-        },
-        {
-          "type": "style_element",
-          "named": true
-        },
-        {
           "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
           "named": true
         }
       ]
@@ -2836,19 +2740,7 @@
           "named": true
         },
         {
-          "type": "doctype",
-          "named": true
-        },
-        {
-          "type": "element",
-          "named": true
-        },
-        {
           "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "entity",
           "named": true
         },
         {
@@ -2856,23 +2748,11 @@
           "named": true
         },
         {
-          "type": "erroneous_end_tag",
-          "named": true
-        },
-        {
           "type": "hash_single",
           "named": true
         },
         {
-          "type": "html_text",
-          "named": true
-        },
-        {
           "type": "implicit_end_tag",
-          "named": true
-        },
-        {
-          "type": "script_element",
           "named": true
         },
         {
@@ -2884,15 +2764,7 @@
           "named": true
         },
         {
-          "type": "style_element",
-          "named": true
-        },
-        {
           "type": "text",
-          "named": true
-        },
-        {
-          "type": "xml_decl",
           "named": true
         }
       ]
@@ -5022,10 +4894,6 @@
   },
   {
     "type": "hash_single",
-    "named": true
-  },
-  {
-    "type": "html_text",
     "named": true
   },
   {
