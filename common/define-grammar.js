@@ -190,14 +190,21 @@ module.exports = function defineGrammar(dialect) {
       [$.ternary_expression, $.pair],
       [$.elvis_expression, $.pair],
       // Ambiguities involving property names (required for cfquery/cfhtml)
-      [$.assignment_expression, $._property_name],
-      [$.call_expression, $._property_name],
-      [$.binary_expression, $._property_name],
-      [$.switch_case, $._property_name],
+      // [$.assignment_expression, $._property_name],
+      // [$.call_expression, $._property_name],
+      // [$.binary_expression, $._property_name],
+      // [$.switch_case, $._property_name],
       // [$.class_static_block, $._property_name],
 
     ]).concat(
-      dialect === 'cfml' ? [
+      ( dialect === 'cfquery' ? [
+        [$._hash, $.hash_expression],
+        [$.assignment_expression, $._property_name],
+        [$.switch_case, $._property_name],
+        [$.call_expression, $._property_name],
+        [$.binary_expression, $._property_name],
+      ] :
+      (dialect === 'cfml' ? [
         [$.hash_expression, $.hash_empty],
         [$.assignment_expression, $._property_name],
         [$.switch_case, $._property_name],
@@ -207,7 +214,7 @@ module.exports = function defineGrammar(dialect) {
         [$.hash_empty, $._hash],
         [$.hash_expression, $._hash],
         [$.hash_empty, $.hash_expression],
-      ],
+      ])),
     ),
 
     rules: {

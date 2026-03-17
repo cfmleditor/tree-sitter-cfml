@@ -10874,7 +10874,15 @@
       "pair"
     ],
     [
+      "_hash",
+      "hash_expression"
+    ],
+    [
       "assignment_expression",
+      "_property_name"
+    ],
+    [
+      "switch_case",
       "_property_name"
     ],
     [
@@ -10884,22 +10892,6 @@
     [
       "binary_expression",
       "_property_name"
-    ],
-    [
-      "switch_case",
-      "_property_name"
-    ],
-    [
-      "hash_empty",
-      "_hash"
-    ],
-    [
-      "hash_expression",
-      "_hash"
-    ],
-    [
-      "hash_empty",
-      "hash_expression"
     ]
   ],
   "precedences": [

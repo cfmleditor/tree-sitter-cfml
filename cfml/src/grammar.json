@@ -10917,22 +10917,6 @@
       "pair"
     ],
     [
-      "assignment_expression",
-      "_property_name"
-    ],
-    [
-      "call_expression",
-      "_property_name"
-    ],
-    [
-      "binary_expression",
-      "_property_name"
-    ],
-    [
-      "switch_case",
-      "_property_name"
-    ],
-    [
       "hash_expression",
       "hash_empty"
     ],
