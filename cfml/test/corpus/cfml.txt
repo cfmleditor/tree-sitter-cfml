@@ -95,7 +95,6 @@ cffunction
 ---
 
 (program
-  (html_text)
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
@@ -104,32 +103,26 @@ cffunction
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)))))
-    (html_text)
     (hash_expression
       (binary_expression
         (identifier)
         (identifier)))
-    (html_text)
     (hash_expression
       (binary_expression
         (identifier)
         (identifier)))
-    (html_text)
     (cf_set_tag
       (assignment_expression
         (identifier)
         (string
           (string_fragment)))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_if_tag
       (binary_expression
         (member_expression
           (identifier)
           (property_identifier))
-        (identifier))
-      (html_text))
-    (html_text)
+        (identifier)))
     (cf_set_tag
       (assignment_expression
         (identifier)
@@ -137,7 +130,6 @@ cffunction
           (identifier)
           (identifier)))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_set_tag
       (assignment_expression
         (identifier)
@@ -148,7 +140,6 @@ cffunction
               (identifier)))
           (property_identifier)))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_set_tag
       (assignment_expression
         (identifier)
@@ -159,10 +150,8 @@ cffunction
               (identifier)))
           (identifier)))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_end_tag
-      (cf_tag_name)))
-  (html_text))
+      (cf_tag_name))))
 
 ===================================
 get results
@@ -224,7 +213,6 @@ get results
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)))))
-    (html_text)
     (cf_selfclose_tag
       (cf_attribute
         (cf_attribute_name)
@@ -239,7 +227,6 @@ get results
         (quoted_cf_attribute_value
           (attribute_value)))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_set_tag
       (cf_var)
       (assignment_expression
@@ -248,7 +235,6 @@ get results
           (identifier)
           (arguments)))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_set_tag
       (cf_var)
       (assignment_expression
@@ -266,7 +252,6 @@ get results
                 (identifier)
                 (property_identifier))))))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_set_tag
       (assignment_expression
         (identifier)
@@ -276,7 +261,6 @@ get results
               (identifier)
               (identifier)))))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_set_tag
       (assignment_expression
         (identifier)
@@ -294,7 +278,6 @@ get results
                 (identifier))
               (property_identifier)))))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_set_tag
       (call_expression
         (member_expression
@@ -309,15 +292,12 @@ get results
                   (string_fragment))
                 (identifier))))))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (element
       (start_tag
         (tag_name))
       (end_tag
         (tag_name)))
-    (html_text)
     (cf_comment)
-    (html_text)
     (cf_if_tag
       (binary_expression
         (parenthesized_expression
@@ -327,16 +307,13 @@ get results
             (parenthesized_expression
               (true))
             (parenthesized_expression
-              (true)))))
-      (html_text))
-    (html_text)
+              (true))))))
     (cf_set_tag
       (assignment_expression
         (identifier)
         (parenthesized_expression
           (identifier)))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_set_tag
       (call_expression
         (member_expression
@@ -354,14 +331,11 @@ get results
               (return_statement
                 (identifier))))))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_return_tag
       (identifier)
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_end_tag
-      (cf_tag_name)))
-  (html_text))
+      (cf_tag_name))))
 
 ===================================
 cfscript
@@ -404,7 +378,6 @@ nested cfif
 ---
 
 (program
-  (html_text)
   (cf_if_tag
     (parenthesized_expression
       (true))
@@ -415,13 +388,9 @@ nested cfif
           (true)
           (true)))
       (html_text))
-    (html_text)
     (hash_expression
       (identifier))
-    (html_text)
-    (hash_empty)
-    (html_text))
-  (html_text))
+    (hash_empty)))
 
 ===================================
 / Characters used in tags and nested cfml comments
@@ -443,7 +412,6 @@ nested cfif
 ---
 
 (program
-  (html_text)
   (element
     (start_tag
       (tag_name)
@@ -453,14 +421,12 @@ nested cfif
           (quoted_attribute_value))))
     (end_tag
       (tag_name)))
-  (html_text)
   (cf_if_tag
     (parenthesized_expression
       (binary_expression
         (true)
         (true)))
     (html_text))
-  (html_text)
   (cf_set_tag
     (assignment_expression
       (identifier)
@@ -468,7 +434,6 @@ nested cfif
         (number)
         (number)))
     (cf_selfclose_void_tag_end))
-  (html_text)
   (cf_comment))
 
 ===================================
@@ -509,15 +474,13 @@ cfscript switch
 ---
 
 (program
-  (html_text)
   (cf_script_tag
     (cf_script_content))
-  (html_text)
   (cf_selfclose_tag
     (cf_selfclose_void_tag_end)))
 
 ===================================
-testing
+cfquery with cfqueryparam in cfml
 ===================================
 <cfquery name="qry">
     SELECT foo
@@ -535,7 +498,7 @@ testing
     (cf_query_content)))
 
 ===================================
-testing2
+cfif with html-only branch and erroneous html end tags
 ===================================
 
 <cfif true>
@@ -550,32 +513,24 @@ testing2
 ---
 
 (program
-  (html_text)
   (cf_if_tag
     (true)
-    (html_text)
     (element
       (self_closing_tag
-        (tag_name)))
-    (html_text))
-  (html_text)
+        (tag_name))))
   (cf_if_tag
     (binary_expression
       (identifier)
       (string))
-    (html_text)
     (erroneous_end_tag
       (erroneous_end_tag_name))
-    (html_text)
     (erroneous_end_tag
       (erroneous_end_tag_name))
-    (html_text)
     (erroneous_end_tag
-      (erroneous_end_tag_name))
-    (html_text)))
+      (erroneous_end_tag_name))))
 
 ===================================
-testing3
+mixed cfset, cfscript, cfoutput, and complex attribute hashes
 ===================================
 <cfset temp = "<cfif></cfif>" />
 <cfset args.log_enable = compareNoCase(log_enable, "Y") EQ 0 ? true : false />
@@ -599,7 +554,6 @@ testing3
       (string
         (string_fragment)))
     (cf_selfclose_void_tag_end))
-  (html_text)
   (cf_set_tag
     (assignment_expression
       (member_expression
@@ -617,10 +571,8 @@ testing3
         (true)
         (false)))
     (cf_selfclose_void_tag_end))
-  (html_text)
   (cf_script_tag
     (cf_script_content))
-  (html_text)
   (element
     (start_tag
       (tag_name)
@@ -631,27 +583,22 @@ testing3
             (hash_empty)))))
     (end_tag
       (tag_name)))
-  (html_text)
   (cf_output_tag
     (hash_expression
       (identifier)))
-  (html_text)
   (cf_selfclose_tag
     (cf_attribute
       (cf_attribute_name)
       (quoted_cf_attribute_value
         (hash_empty)))
     (cf_selfclose_void_tag_end))
-  (html_text)
   (cf_selfclose_tag
     (cf_selfclose_void_tag_end))
-  (html_text)
   (cf_set_tag
     (assignment_expression
       (identifier)
       (identifier))
     (cf_selfclose_void_tag_end))
-  (html_text)
   (element
     (start_tag
       (tag_name)
@@ -686,7 +633,6 @@ testing3
     (html_text)
     (end_tag
       (tag_name)))
-  (html_text)
   (cf_output_tag
     (element
       (start_tag
@@ -783,7 +729,7 @@ testing3
         (tag_name)))))
 
 ===================================
-testing4
+html table with nested cfloop and cfoutput attribute
 ===================================
 
 	<table class="dataEntry" cellSpacing="2" cellPadding="2" width="710">
@@ -802,7 +748,6 @@ testing4
 ---
 
 (program
-  (html_text)
   (element
     (start_tag
       (tag_name)
@@ -826,11 +771,9 @@ testing4
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)))))
-    (html_text)
     (element
       (start_tag
         (tag_name))
-      (html_text)
       (cf_tag
         (cf_start_tag
           (cf_tag_name)
@@ -850,45 +793,35 @@ testing4
               (attribute_name)
               (quoted_attribute_value
                 (attribute_value)))))
-        (html_text)
         (element
           (start_tag
             (tag_name))
-          (html_text)
-          (implicit_end_tag))
-        (element
-          (start_tag
-            (tag_name)
-            (tag_attributes
-              (attribute
-                (attribute_name)
-                (quoted_attribute_value
-                  (attribute_value))))
-            (tag_attributes
-              (attribute
-                (attribute_name)
-                (quoted_attribute_value
-                  (attribute_value)))))
-          (html_text)
           (element
-            (self_closing_tag
+            (start_tag
+              (tag_name)
+              (tag_attributes
+                (attribute
+                  (attribute_name)
+                  (quoted_attribute_value
+                    (attribute_value))))
+              (tag_attributes
+                (attribute
+                  (attribute_name)
+                  (quoted_attribute_value
+                    (attribute_value)))))
+            (element
+              (self_closing_tag
+                (tag_name)))
+            (end_tag
               (tag_name)))
-          (html_text)
           (end_tag
             (tag_name)))
-        (html_text)
-        (erroneous_end_tag
-          (erroneous_end_tag_name))
-        (html_text)
         (cf_end_tag
           (cf_tag_name)))
-      (html_text)
       (end_tag
         (tag_name)))
-    (html_text)
     (end_tag
       (tag_name)))
-  (html_text)
   (element
     (start_tag
       (tag_name)
@@ -903,7 +836,7 @@ testing4
       (tag_name))))
 
 ===================================
-testing5
+hash-empty attributes, cfif with complex call chain, and cfloop/cfset attribute hashes
 ===================================
 <a href="##test" style="color: ##fff"></a>
 <div test="test" style="color: ##fff;" test="test"> </div>
@@ -933,7 +866,6 @@ testing5
             (attribute_value)))))
     (end_tag
       (tag_name)))
-  (html_text)
   (element
     (start_tag
       (tag_name)
@@ -957,7 +889,6 @@ testing5
     (html_text)
     (end_tag
       (tag_name)))
-  (html_text)
   (cf_if_tag
     (binary_expression
       (call_expression
@@ -967,7 +898,6 @@ testing5
           (string
             (string_fragment))))
       (number))
-    (html_text)
     (cf_set_tag
       (assignment_expression
         (identifier)
@@ -993,9 +923,7 @@ testing5
               (identifier)
               (string
                 (string_fragment))))))
-      (cf_selfclose_void_tag_end))
-    (html_text))
-  (html_text)
+      (cf_selfclose_void_tag_end)))
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
@@ -1020,7 +948,6 @@ testing5
             (attribute_value)))))
     (cf_end_tag
       (cf_tag_name)))
-  (html_text)
   (cf_set_tag
     (call_expression
       (member_expression
@@ -1038,7 +965,7 @@ testing5
     (cf_selfclose_void_tag_end)))
 
 ===================================
-testing6
+cfoutput wrapping anchor with hash-empty and normal attributes
 ===================================
 <cfoutput><a ref="##Test-test" tabindex=""></a></cfoutput>
 ---
@@ -1062,7 +989,7 @@ testing6
         (tag_name)))))
 
 ===================================
-testing7
+deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
 ===================================
 		<cfif true>
 			<cfif true>
@@ -1127,40 +1054,25 @@ testing7
   (html_text)
   (cf_if_tag
     (true)
+    (cf_if_tag
+      (true))
     (html_text)
     (cf_if_tag
-      (true)
-      (html_text))
-    (html_text)
-    (cf_if_tag
-      (true)
-      (html_text))
-    (html_text)
+      (true))
     (cf_if_alt
       (cf_elseif_tag
         (true))
-      (html_text)
       (cf_if_tag
-        (true)
-        (html_text))
-      (html_text)
+        (true))
       (cf_if_tag
-        (true)
-        (html_text))
-      (html_text)
+        (true))
       (cf_if_alt
         (cf_elseif_tag
           (true))
-        (html_text)
         (cf_if_tag
-          (true)
-          (html_text))
-        (html_text)
+          (true))
         (cf_if_tag
-          (true)
-          (html_text))
-        (html_text))))
-  (html_text)
+          (true)))))
   (cf_if_tag
     (binary_expression
       (call_expression
@@ -1187,7 +1099,6 @@ testing7
           (string
             (string_fragment))))
       (number))
-    (html_text)
     (cf_if_tag
       (call_expression
         (identifier)
@@ -1205,7 +1116,6 @@ testing7
                   (string_fragment)))))
           (string
             (string_fragment))))
-      (html_text)
       (cf_if_alt
         (cf_elseif_tag
           (call_expression
@@ -1221,7 +1131,6 @@ testing7
                 (string_fragment))
               (string
                 (string_fragment)))))
-        (html_text)
         (cf_if_alt
           (cf_elseif_tag
             (call_expression
@@ -1236,10 +1145,7 @@ testing7
                 (string
                   (string_fragment))
                 (string
-                  (string_fragment)))))
-          (html_text))))
-    (html_text))
-  (html_text)
+                  (string_fragment)))))))))
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
@@ -1264,7 +1170,6 @@ testing7
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)))))
-    (html_text)
     (cf_tag
       (cf_start_tag
         (cf_tag_name)
@@ -1287,7 +1192,6 @@ testing7
                   (identifier)
                   (arguments
                     (identifier))))))))
-      (html_text)
       (cf_tag
         (cf_start_tag
           (cf_tag_name)
@@ -1312,9 +1216,7 @@ testing7
               (attribute_name)
               (quoted_attribute_value
                 (attribute_value)))))
-        (html_text)
         (cf_comment)
-        (html_text)
         (cf_selfclose_tag
           (cf_attribute
             (cf_attribute_name)
@@ -1344,7 +1246,6 @@ testing7
             (quoted_cf_attribute_value
               (attribute_value)))
           (cf_selfclose_void_tag_end))
-        (html_text)
         (cf_if_tag
           (binary_expression
             (call_expression
@@ -1360,7 +1261,6 @@ testing7
                 (string
                   (string_fragment))))
             (number))
-          (html_text)
           (cf_tag
             (cf_start_tag_with_selfclose
               (cf_tag_name)
@@ -1410,7 +1310,6 @@ testing7
                             (property_identifier))
                           (string
                             (string_fragment))))))))))
-          (html_text)
           (cf_if_alt
             (cf_elseif_tag
               (binary_expression
@@ -1427,7 +1326,6 @@ testing7
                     (string
                       (string_fragment))))
                 (number)))
-            (html_text)
             (cf_tag
               (cf_start_tag_with_selfclose
                 (cf_tag_name)
@@ -1476,18 +1374,13 @@ testing7
                                 (identifier))
                               (property_identifier))
                             (string
-                              (string_fragment))))))))))
-            (html_text)))
-        (html_text)
+                              (string_fragment))))))))))))
         (cf_end_tag
           (cf_tag_name)))
-      (html_text)
       (cf_end_tag
         (cf_tag_name)))
-    (html_text)
     (cf_end_tag
-      (cf_tag_name)))
-  (html_text))
+      (cf_tag_name))))
 
 ===================================
 cfxml
@@ -1538,7 +1431,6 @@ cfquery
       (quoted_cf_attribute_value
         (attribute_value)))
     (cf_query_content))
-  (html_text)
   (cf_query_tag
     (cf_attribute
       (cf_attribute_name)
@@ -1578,13 +1470,11 @@ cftransaction
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)))))
-    (html_text)
     (cf_set_tag
       (assignment_expression
         (identifier)
         (string))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_tag
       (cf_start_tag_with_selfclose
         (cf_tag_name)
@@ -1593,16 +1483,13 @@ cftransaction
             (attribute_name)
             (quoted_attribute_value
               (attribute_value))))))
-    (html_text)
     (cf_set_tag
       (assignment_expression
         (identifier)
         (string))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_if_tag
       (identifier)
-      (html_text)
       (cf_tag
         (cf_start_tag_with_selfclose
           (cf_tag_name)
@@ -1610,15 +1497,12 @@ cftransaction
             (attribute
               (attribute_name)
               (quoted_attribute_value
-                (attribute_value))))))
-      (html_text))
-    (html_text)
+                (attribute_value)))))))
     (cf_set_tag
       (assignment_expression
         (identifier)
         (string))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_end_tag
       (cf_tag_name))))
 
@@ -1640,7 +1524,6 @@ var vs VARIABLES
         (identifier)
         (arguments)))
     (cf_selfclose_void_tag_end))
-  (html_text)
   (cf_set_tag
     (cf_var)
     (assignment_expression
@@ -1649,7 +1532,6 @@ var vs VARIABLES
         (identifier)
         (arguments)))
     (cf_selfclose_void_tag_end))
-  (html_text)
   (cf_set_tag
     (cf_var)
     (assignment_expression
@@ -1673,7 +1555,6 @@ static accessor
       (static_chain)
       (property_identifier))
     (cf_selfclose_void_tag_end))
-  (html_text)
   (cf_set_tag
     (call_expression
       (member_expression
@@ -1728,7 +1609,6 @@ cfzip3
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)))))
-    (html_text)
     (cf_selfclose_tag
       (cf_attribute
         (cf_attribute_name)
@@ -1743,16 +1623,13 @@ cfzip3
         (quoted_cf_attribute_value
           (attribute_value)))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_if_tag
       (binary_expression
         (member_expression
           (identifier)
           (property_identifier))
         (true))
-      (html_text)
       (cf_comment)
-      (html_text)
       (cf_set_tag
         (assignment_expression
           (identifier)
@@ -1761,10 +1638,8 @@ cfzip3
             (arguments
               (number))))
         (cf_selfclose_void_tag_end))
-      (html_text)
       (cf_if_alt
         (cf_else_tag)
-        (html_text)
         (cf_tag
           (cf_start_tag_with_selfclose
             (cf_tag_name)
@@ -1793,14 +1668,12 @@ cfzip3
               (attribute
                 (attribute_name)
                 (quoted_attribute_value
-                  (attribute_value))))))
-        (html_text)))
-    (html_text)
+                  (attribute_value))))))))
     (cf_end_tag
       (cf_tag_name))))
 
 ===================================
-failing expression 2
+cfset string-plus-hash expression and cfswitch inside cfquery
 ===================================
 <cfset downloadUrl = "https:"&#ARGUMENTS.download_url# />
 
@@ -1824,7 +1697,6 @@ failing expression 2
             (identifier)
             (property_identifier)))))
     (cf_selfclose_void_tag_end))
-  (html_text)
   (cf_query_tag
     (cf_attribute
       (cf_attribute_name)
@@ -1833,7 +1705,7 @@ failing expression 2
     (cf_query_content)))
 
 ===================================
-failing expression
+cfzip tag with mixed start/end/selfclose and embedded cfset
 ===================================
 <cftest>
   test
@@ -1854,7 +1726,6 @@ failing expression
     (html_text)
     (cf_end_tag
       (cf_tag_name)))
-  (html_text)
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
@@ -1862,22 +1733,18 @@ failing expression
         (attribute
           (attribute_name)
           (quoted_attribute_value))))
-    (html_text)
     (cf_set_tag
       (assignment_expression
         (identifier)
         (string))
       (cf_selfclose_void_tag_end))
-    (html_text)
     (cf_end_tag
       (cf_tag_name)))
-  (html_text)
   (cf_set_tag
     (assignment_expression
       (identifier)
       (string))
     (cf_selfclose_void_tag_end))
-  (html_text)
   (cf_tag
     (cf_start_tag_with_selfclose
       (cf_tag_name)
@@ -1885,7 +1752,6 @@ failing expression
         (attribute
           (attribute_name)
           (quoted_attribute_value)))))
-  (html_text)
   (cf_set_tag
     (assignment_expression
       (identifier)
@@ -1920,7 +1786,6 @@ cftransaction2
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)))))
-    (html_text)
     (cf_tag
       (cf_start_tag
         (cf_tag_name)
@@ -1934,7 +1799,6 @@ cftransaction2
             (attribute_name)
             (quoted_attribute_value
               (attribute_value)))))
-      (html_text)
       (cf_tag
         (cf_start_tag
           (cf_tag_name)
@@ -1943,10 +1807,8 @@ cftransaction2
               (attribute_name)
               (quoted_attribute_value
                 (attribute_value)))))
-        (html_text)
         (cf_end_tag
           (cf_tag_name)))
-      (html_text)
       (cf_tag
         (cf_start_tag
           (cf_tag_name)
@@ -1960,7 +1822,6 @@ cftransaction2
               (attribute_name)
               (quoted_attribute_value
                 (attribute_value)))))
-        (html_text)
         (cf_tag
           (cf_start_tag_with_selfclose
             (cf_tag_name)
@@ -1969,21 +1830,17 @@ cftransaction2
                 (attribute_name)
                 (quoted_attribute_value
                   (attribute_value))))))
-        (html_text)
         (cf_end_tag
           (cf_tag_name)))
-      (html_text)
       (cf_return_tag
         (identifier)
         (cf_selfclose_void_tag_end))
-      (html_text)
       (cf_end_tag
         (cf_tag_name)))
-    (html_text)
     (implicit_cf_end_tag)))
 
 ===================================
-failing expression
+cfoutput boolean expression with JS-style operators
 ===================================
 <cfoutput>
   #(x > 0 && y <= 10) || z == 5#
@@ -2005,5 +1862,4 @@ failing expression
                 (number)))))
         (binary_expression
           (identifier)
-          (number)))))
-  (html_text))
+          (number))))))

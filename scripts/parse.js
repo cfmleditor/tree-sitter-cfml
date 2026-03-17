@@ -4,8 +4,9 @@ const {execSync} = require('child_process');
 const {join, resolve} = require('path');
 
 const file = process.argv[2];
+const parsers = ['cfml', 'cfhtml', 'cfscript', 'cfquery'];
 
-for (const dir of ['cfml']) {
+for (const dir of parsers) {
   console.log(`parsing ${dir}`);
   const cmd = file 
     ? `tree-sitter parse ${resolve(process.cwd(), file)}` 

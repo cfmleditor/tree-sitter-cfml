@@ -1,11 +1,32 @@
 /**
  * @file CFML grammar for tree-sitter
- * @author Gareth Edwards
+ * @author Gareth Edwards, Gavin Baumanis
  * @license MIT
  */
 
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
+
+const SQL_PREC = {
+  OR: 1,
+  AND: 2,
+  NOT: 3,
+  COMPARE: 4,
+  ADD: 5,
+  MULTIPLY: 6,
+};
+
+/**
+ * Case-insensitive keyword helper for the cfquery SQL dialect.
+ * @param {string} word
+ */
+const ci = (word) =>
+  new RegExp(
+    word
+      .split('')
+      .map((ch) => `[${ch.toLowerCase()}${ch.toUpperCase()}]`)
+      .join(''),
+  );
 
 module.exports = function defineGrammar(dialect) {
   return grammar({
@@ -168,7 +189,11 @@ module.exports = function defineGrammar(dialect) {
       [$.update_expression, $.pair],
       [$.ternary_expression, $.pair],
       [$.elvis_expression, $.pair],
-
+      // Ambiguities involving property names (required for cfquery/cfhtml)
+      [$.assignment_expression, $._property_name],
+      [$.call_expression, $._property_name],
+      [$.binary_expression, $._property_name],
+      [$.switch_case, $._property_name],
       // [$.class_static_block, $._property_name],
 
     ]).concat(
@@ -187,11 +212,15 @@ module.exports = function defineGrammar(dialect) {
 
     rules: {
 
-      program: $ => choice(
-        repeat(
-          $._node,
-        ),
-        $.component,
+      program: $ => (
+        dialect === 'cfquery'
+          ? $.cfquery_content
+          : choice(
+              repeat(
+                $._node,
+              ),
+              $.component,
+            )
       ),
 
       doctype: $ => seq(
@@ -248,7 +277,35 @@ module.exports = function defineGrammar(dialect) {
         $.xml_decl,
         $.html_text,
       ),
-      
+
+      // Root content for the cfquery dialect: interleaved SQL segments
+      // and CFML content (no HTML elements). Must not be empty to satisfy
+      // tree-sitter's restriction on non-start rules.
+      cfquery_content: $ => seq(
+        choice(
+          $.cfquery_segment,
+          $._cfquery_content_node,
+        ),
+        repeat(
+          choice(
+            $.cfquery_segment,
+            $._cfquery_content_node,
+          )
+        )
+      ),
+
+      // A single SQL statement (or compound UNION) inside a cfquery body.
+      // Grouping SQL into segments makes it easier for tools to work with
+      // the SQL portions between CFML constructs.
+      cfquery_segment: $ => $._cfquery_sql_statement,
+
+      _cfquery_content_node: $ => choice(
+        $._cf_tag,
+        $._hash,
+        $.text,
+        $.erroneous_cf_end_tag,
+      ),
+
       query_operator: $ => choice(
         field('operator', '>='),
         field('operator', '>'),
@@ -260,6 +317,408 @@ module.exports = function defineGrammar(dialect) {
         field('operator', 'BETWEEN'),
         field('operator', 'EXISTS'),
       ),
+
+      //
+      // cfquery SQL dialect (statements and expressions)
+      // Only used when dialect === 'cfquery' via cfquery_content.
+      //
+
+      _cfquery_sql_statement: $ => choice(
+        $.cfquery_union_statement,
+        $.cfquery_select_statement,
+        $.cfquery_insert_statement,
+        $.cfquery_update_statement,
+        $.cfquery_delete_statement,
+      ),
+
+      cfquery_select_statement: $ =>
+        seq(
+          alias(ci('select'), $.keyword_select),
+          optional(alias(ci('distinct'), $.keyword_distinct)),
+          optional($.cfquery_top_clause),
+          field('columns', $.cfquery_select_list),
+          optional($.cfquery_from_clause),
+          optional($.cfquery_where_clause),
+          optional($.cfquery_group_by_clause),
+          optional($.cfquery_order_by_clause),
+          optional($.cfquery_limit_clause),
+        ),
+
+      cfquery_union_statement: $ =>
+        seq(
+          $.cfquery_select_statement,
+          repeat1(
+            seq(
+              alias(ci('union'), $.keyword_union),
+              optional(alias(ci('all'), $.keyword_all)),
+              $.cfquery_select_statement,
+            ),
+          ),
+        ),
+
+      cfquery_top_clause: $ =>
+        seq(
+          alias(ci('top'), $.keyword_top),
+          choice($.number, $.parameter),
+        ),
+
+      cfquery_select_list: $ =>
+        seq(
+          field('first', choice(
+            '*',
+            field('column', $.cfquery_expression),
+            seq(field('column', $.cfquery_expression), alias(ci('as'), $.keyword_as), field('alias', $.identifier)),
+          )),
+          repeat(
+            seq(
+              ',',
+              choice(
+                '*',
+                field('column', $.cfquery_expression),
+                seq(field('column', $.cfquery_expression), alias(ci('as'), $.keyword_as), field('alias', $.identifier)),
+              ),
+            )
+          ),
+        ),
+
+      cfquery_from_clause: $ =>
+        seq(
+          alias(ci('from'), $.keyword_from),
+          field('tables', $.cfquery_from_table_list),
+        ),
+
+      cfquery_from_table_list: $ =>
+        seq(
+          field('first', $.cfquery_table_reference),
+          repeat(seq(',', field('rest', $.cfquery_table_reference))),
+        ),
+
+      cfquery_table_reference: $ =>
+        seq(
+          field('name', $.identifier),
+          optional(
+            seq(
+              optional(alias(ci('as'), $.keyword_as)),
+              field('alias', $.identifier),
+            ),
+          ),
+          repeat($.cfquery_join_clause),
+        ),
+
+      cfquery_join_clause: $ =>
+        seq(
+          field(
+            'join_type',
+            optional(
+              choice(
+                alias(ci('inner'), $.keyword_inner),
+                alias(ci('left'), $.keyword_left),
+                alias(ci('right'), $.keyword_right),
+                alias(ci('full'), $.keyword_full),
+              ),
+            ),
+          ),
+          optional(alias(ci('outer'), $.keyword_outer)),
+          alias(ci('join'), $.keyword_join),
+          field('table', $.cfquery_table_reference),
+          alias(ci('on'), $.keyword_on),
+          field('condition', $.cfquery_expression),
+        ),
+
+      cfquery_where_clause: $ =>
+        seq(alias(ci('where'), $.keyword_where), field('condition', $.cfquery_expression)),
+
+      cfquery_group_by_clause: $ =>
+        seq(
+          alias(seq(ci('group'), /\s+/, ci('by')), $.keyword_group_by),
+          $.cfquery_group_by_expression_list,
+          optional($.cfquery_having_clause),
+        ),
+
+      cfquery_group_by_expression_list: $ =>
+        seq(
+          field('first', $.cfquery_expression),
+          repeat(seq(',', field('rest', $.cfquery_expression))),
+        ),
+
+      cfquery_having_clause: $ =>
+        seq(
+          alias(ci('having'), $.keyword_having),
+          $.cfquery_expression,
+        ),
+
+      cfquery_order_by_clause: $ =>
+        seq(
+          alias(seq(ci('order'), /\s+/, ci('by')), $.keyword_order_by),
+          $.cfquery_order_by_expression_list,
+        ),
+
+      cfquery_order_by_expression_list: $ =>
+        seq(
+          field('first', $.cfquery_order_by_expression),
+          repeat(seq(',', field('rest', $.cfquery_order_by_expression))),
+        ),
+
+      cfquery_order_by_expression: $ =>
+        seq(
+          $.cfquery_expression,
+          optional(choice(alias(ci('asc'), $.keyword_asc), alias(ci('desc'), $.keyword_desc))),
+        ),
+
+      cfquery_limit_clause: $ =>
+        seq(
+          alias(ci('limit'), $.keyword_limit),
+          choice($.number, $.parameter),
+          optional(
+            seq(
+              alias(ci('offset'), $.keyword_offset),
+              choice($.number, $.parameter),
+            ),
+          ),
+        ),
+
+      cfquery_insert_statement: $ =>
+        seq(
+          alias(ci('insert'), $.keyword_insert),
+          alias(ci('into'), $.keyword_into),
+          field('table', $.identifier),
+          optional(field('columns', $.cfquery_column_list)),
+          alias(ci('values'), $.keyword_values),
+          field('values', $.cfquery_value_list),
+        ),
+
+      cfquery_column_list: $ => seq('(', $.cfquery_column_list_body, ')'),
+
+      cfquery_column_list_body: $ =>
+        seq(
+          field('first', $.identifier),
+          repeat(seq(',', field('rest', $.identifier))),
+        ),
+
+      cfquery_value_list: $ => seq('(', $.cfquery_value_list_body, ')'),
+
+      cfquery_value_list_body: $ =>
+        seq(
+          field('first', $.cfquery_expression),
+          repeat(seq(',', field('rest', $.cfquery_expression))),
+        ),
+
+      cfquery_update_statement: $ =>
+        seq(
+          alias(ci('update'), $.keyword_update),
+          field('table', $.identifier),
+          alias(ci('set'), $.keyword_set),
+          $.cfquery_assignment_list,
+          optional($.cfquery_where_clause),
+        ),
+
+      cfquery_assignment_list: $ =>
+        seq(
+          field('first', $.cfquery_assignment),
+          repeat(seq(',', field('rest', $.cfquery_assignment))),
+        ),
+
+      cfquery_assignment: $ =>
+        seq(field('column', $.identifier), '=', field('value', $.cfquery_expression)),
+
+      cfquery_delete_statement: $ =>
+        seq(
+          alias(ci('delete'), $.keyword_delete),
+          optional(seq(alias(ci('from'), $.keyword_from), field('table', $.identifier))),
+          optional($.cfquery_where_clause),
+        ),
+
+      //
+      // cfquery SQL expressions
+      //
+
+      cfquery_expression: $ =>
+        choice(
+          $.cfquery_exists_expression,
+          $.cfquery_case_expression,
+          $.cfquery_between_expression,
+          $.cfquery_in_expression,
+          $.cfquery_binary_expression,
+          $.cfquery_unary_expression,
+          $.cfquery_primary_expression,
+        ),
+
+      cfquery_between_expression: $ =>
+        prec(
+          SQL_PREC.COMPARE,
+          seq(
+            field('value', $.cfquery_primary_expression),
+            alias(ci('between'), $.keyword_between),
+            field('lower', $.cfquery_primary_expression),
+            alias(ci('and'), $.keyword_and),
+            field('upper', $.cfquery_primary_expression),
+          ),
+        ),
+
+      cfquery_in_expression: $ =>
+        prec(
+          SQL_PREC.COMPARE,
+          seq(
+            field('value', $.cfquery_primary_expression),
+            alias(ci('in'), $.keyword_in),
+            field('set', $.cfquery_in_list),
+          ),
+        ),
+
+      cfquery_in_list: $ =>
+        choice(
+          seq('(', $.cfquery_in_list_body, ')'),
+          $.cfquery_subquery,
+        ),
+
+      cfquery_in_list_body: $ =>
+        seq(
+          field('first', $.cfquery_expression),
+          repeat(seq(',', field('rest', $.cfquery_expression))),
+        ),
+
+      cfquery_subquery: $ => seq('(', $.cfquery_select_statement, ')'),
+
+      cfquery_exists_expression: $ =>
+        prec(
+          SQL_PREC.COMPARE,
+          seq(
+            alias(ci('exists'), $.keyword_exists),
+            $.cfquery_subquery,
+          ),
+        ),
+
+      cfquery_case_expression: $ =>
+        seq(
+          alias(ci('case'), $.keyword_case),
+          repeat1($.cfquery_when_clause),
+          optional($.cfquery_else_clause),
+          alias(ci('end'), $.keyword_end),
+        ),
+
+      cfquery_when_clause: $ =>
+        seq(
+          alias(ci('when'), $.keyword_when),
+          field('condition', $.cfquery_expression),
+          alias(ci('then'), $.keyword_then),
+          field('result', $.cfquery_expression),
+        ),
+
+      cfquery_else_clause: $ =>
+        seq(
+          alias(ci('else'), $.keyword_else),
+          field('result', $.cfquery_expression),
+        ),
+
+      cfquery_binary_expression: $ =>
+        choice(
+          prec.left(
+            SQL_PREC.OR,
+            seq(field('left', $.cfquery_expression), alias(ci('or'), $.keyword_or), field('right', $.cfquery_expression)),
+          ),
+          prec.left(
+            SQL_PREC.AND,
+            seq(field('left', $.cfquery_expression), alias(ci('and'), $.keyword_and), field('right', $.cfquery_expression)),
+          ),
+          prec.left(
+            SQL_PREC.COMPARE,
+            seq(
+              field('left', $.cfquery_primary_expression),
+              field(
+                'operator',
+                choice(
+                  '=',
+                  '<>',
+                  '<',
+                  '>',
+                  '<=',
+                  '>=',
+                  alias(ci('like'), $.keyword_like),
+                  alias(ci('ilike'), $.keyword_ilike),
+                ),
+              ),
+              field('right', $.cfquery_primary_expression),
+            ),
+          ),
+          prec.left(
+            SQL_PREC.ADD,
+            seq(
+              field('left', $.cfquery_primary_expression),
+              field('operator', choice('+', '-')),
+              field('right', $.cfquery_primary_expression),
+            ),
+          ),
+          prec.left(
+            SQL_PREC.MULTIPLY,
+            seq(
+              field('left', $.cfquery_primary_expression),
+              field('operator', choice('*', '/', alias(ci('mod'), $.keyword_mod))),
+              field('right', $.cfquery_primary_expression),
+            ),
+          ),
+        ),
+
+      cfquery_unary_expression: $ =>
+        prec.right(
+          SQL_PREC.NOT,
+          seq(alias(ci('not'), $.keyword_not), field('operand', $.cfquery_expression)),
+        ),
+
+      cfquery_primary_expression: $ =>
+        choice(
+          $.cfquery_parenthesized_expression,
+          $.function_call,
+          $.qualified_identifier,
+          $.identifier,
+          $.number,
+          $.string,
+          $.parameter,
+          $.hash_param,
+        ),
+
+      cfquery_parenthesized_expression: $ => seq('(', $.cfquery_expression, ')'),
+
+      parameter: $ =>
+        choice(
+          '?',
+          seq(':', $.identifier),
+        ),
+
+      hash_param: $ => seq('#', $.cf_identifier_path, '#'),
+
+      cf_identifier_path: $ =>
+        seq(
+          $.identifier,
+          repeat(
+            choice(
+              seq('.', $.identifier),
+              seq('[', $.number, ']'),
+            ),
+          ),
+        ),
+
+      qualified_identifier: $ =>
+        alias(
+          seq($.identifier, repeat1(seq('.', $.identifier))),
+          $.identifier,
+        ),
+
+      function_call: $ =>
+        alias(
+          seq(
+            $.identifier,
+            '(',
+            optional($.function_call_args),
+            ')',
+          ),
+          $.identifier,
+        ),
+
+      function_call_args: $ =>
+        seq(
+          field('first', $.expression),
+          repeat(seq(',', field('rest', $.expression))),
+        ),
 
       _cfoutput_node: $ => choice(
         $.doctype,

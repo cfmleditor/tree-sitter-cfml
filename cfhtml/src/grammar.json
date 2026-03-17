@@ -244,6 +244,65 @@
         }
       ]
     },
+    "cfquery_content": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cfquery_segment"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_cfquery_content_node"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "cfquery_segment"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_cfquery_content_node"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "cfquery_segment": {
+      "type": "SYMBOL",
+      "name": "_cfquery_sql_statement"
+    },
+    "_cfquery_content_node": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_hash"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "text"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "erroneous_cf_end_tag"
+        }
+      ]
+    },
     "query_operator": {
       "type": "CHOICE",
       "members": [
@@ -317,6 +376,1984 @@
           "content": {
             "type": "STRING",
             "value": "EXISTS"
+          }
+        }
+      ]
+    },
+    "_cfquery_sql_statement": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_union_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_select_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_insert_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_update_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_delete_statement"
+        }
+      ]
+    },
+    "cfquery_select_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[sS][eE][lL][eE][cC][tT]"
+          },
+          "named": true,
+          "value": "keyword_select"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "PATTERN",
+                "value": "[dD][iI][sS][tT][iI][nN][cC][tT]"
+              },
+              "named": true,
+              "value": "keyword_distinct"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cfquery_top_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "name": "columns",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_select_list"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cfquery_from_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cfquery_where_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cfquery_group_by_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cfquery_order_by_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cfquery_limit_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "cfquery_union_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_select_statement"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[uU][nN][iI][oO][nN]"
+                },
+                "named": true,
+                "value": "keyword_union"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[aA][lL][lL]"
+                    },
+                    "named": true,
+                    "value": "keyword_all"
+                  },
+                  {
+                    "type": "BLANK"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "cfquery_select_statement"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "cfquery_top_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[tT][oO][pP]"
+          },
+          "named": true,
+          "value": "keyword_top"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "number"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "parameter"
+            }
+          ]
+        }
+      ]
+    },
+    "cfquery_select_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "first",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "*"
+              },
+              {
+                "type": "FIELD",
+                "name": "column",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_expression"
+                }
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "column",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "cfquery_expression"
+                    }
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[aA][sS]"
+                    },
+                    "named": true,
+                    "value": "keyword_as"
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "alias",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "identifier"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "*"
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "column",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "cfquery_expression"
+                    }
+                  },
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "FIELD",
+                        "name": "column",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "cfquery_expression"
+                        }
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "[aA][sS]"
+                        },
+                        "named": true,
+                        "value": "keyword_as"
+                      },
+                      {
+                        "type": "FIELD",
+                        "name": "alias",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "identifier"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "cfquery_from_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[fF][rR][oO][mM]"
+          },
+          "named": true,
+          "value": "keyword_from"
+        },
+        {
+          "type": "FIELD",
+          "name": "tables",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_from_table_list"
+          }
+        }
+      ]
+    },
+    "cfquery_from_table_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "first",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_table_reference"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "FIELD",
+                "name": "rest",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_table_reference"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "cfquery_table_reference": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[aA][sS]"
+                      },
+                      "named": true,
+                      "value": "keyword_as"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "FIELD",
+                  "name": "alias",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_join_clause"
+          }
+        }
+      ]
+    },
+    "cfquery_join_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "join_type",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[iI][nN][nN][eE][rR]"
+                    },
+                    "named": true,
+                    "value": "keyword_inner"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[lL][eE][fF][tT]"
+                    },
+                    "named": true,
+                    "value": "keyword_left"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[rR][iI][gG][hH][tT]"
+                    },
+                    "named": true,
+                    "value": "keyword_right"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[fF][uU][lL][lL]"
+                    },
+                    "named": true,
+                    "value": "keyword_full"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "PATTERN",
+                "value": "[oO][uU][tT][eE][rR]"
+              },
+              "named": true,
+              "value": "keyword_outer"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[jJ][oO][iI][nN]"
+          },
+          "named": true,
+          "value": "keyword_join"
+        },
+        {
+          "type": "FIELD",
+          "name": "table",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_table_reference"
+          }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[oO][nN]"
+          },
+          "named": true,
+          "value": "keyword_on"
+        },
+        {
+          "type": "FIELD",
+          "name": "condition",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_expression"
+          }
+        }
+      ]
+    },
+    "cfquery_where_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[wW][hH][eE][rR][eE]"
+          },
+          "named": true,
+          "value": "keyword_where"
+        },
+        {
+          "type": "FIELD",
+          "name": "condition",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_expression"
+          }
+        }
+      ]
+    },
+    "cfquery_group_by_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[gG][rR][oO][uU][pP]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "\\s+"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[bB][yY]"
+              }
+            ]
+          },
+          "named": true,
+          "value": "keyword_group_by"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_group_by_expression_list"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cfquery_having_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "cfquery_group_by_expression_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "first",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_expression"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "FIELD",
+                "name": "rest",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_expression"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "cfquery_having_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[hH][aA][vV][iI][nN][gG]"
+          },
+          "named": true,
+          "value": "keyword_having"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_expression"
+        }
+      ]
+    },
+    "cfquery_order_by_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "[oO][rR][dD][eE][rR]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "\\s+"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[bB][yY]"
+              }
+            ]
+          },
+          "named": true,
+          "value": "keyword_order_by"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_order_by_expression_list"
+        }
+      ]
+    },
+    "cfquery_order_by_expression_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "first",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_order_by_expression"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "FIELD",
+                "name": "rest",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_order_by_expression"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "cfquery_order_by_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_expression"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[aA][sS][cC]"
+                  },
+                  "named": true,
+                  "value": "keyword_asc"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[dD][eE][sS][cC]"
+                  },
+                  "named": true,
+                  "value": "keyword_desc"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "cfquery_limit_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[lL][iI][mM][iI][tT]"
+          },
+          "named": true,
+          "value": "keyword_limit"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "number"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "parameter"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[oO][fF][fF][sS][eE][tT]"
+                  },
+                  "named": true,
+                  "value": "keyword_offset"
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "number"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "parameter"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "cfquery_insert_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[iI][nN][sS][eE][rR][tT]"
+          },
+          "named": true,
+          "value": "keyword_insert"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[iI][nN][tT][oO]"
+          },
+          "named": true,
+          "value": "keyword_into"
+        },
+        {
+          "type": "FIELD",
+          "name": "table",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "columns",
+              "content": {
+                "type": "SYMBOL",
+                "name": "cfquery_column_list"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[vV][aA][lL][uU][eE][sS]"
+          },
+          "named": true,
+          "value": "keyword_values"
+        },
+        {
+          "type": "FIELD",
+          "name": "values",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_value_list"
+          }
+        }
+      ]
+    },
+    "cfquery_column_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_column_list_body"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "cfquery_column_list_body": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "first",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "FIELD",
+                "name": "rest",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "cfquery_value_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_value_list_body"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "cfquery_value_list_body": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "first",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_expression"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "FIELD",
+                "name": "rest",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_expression"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "cfquery_update_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[uU][pP][dD][aA][tT][eE]"
+          },
+          "named": true,
+          "value": "keyword_update"
+        },
+        {
+          "type": "FIELD",
+          "name": "table",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[sS][eE][tT]"
+          },
+          "named": true,
+          "value": "keyword_set"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_assignment_list"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cfquery_where_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "cfquery_assignment_list": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "first",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_assignment"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "FIELD",
+                "name": "rest",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_assignment"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "cfquery_assignment": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "column",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_expression"
+          }
+        }
+      ]
+    },
+    "cfquery_delete_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[dD][eE][lL][eE][tT][eE]"
+          },
+          "named": true,
+          "value": "keyword_delete"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[fF][rR][oO][mM]"
+                  },
+                  "named": true,
+                  "value": "keyword_from"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "table",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cfquery_where_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        }
+      ]
+    },
+    "cfquery_expression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_exists_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_case_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_between_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_in_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_binary_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_unary_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_primary_expression"
+        }
+      ]
+    },
+    "cfquery_between_expression": {
+      "type": "PREC",
+      "value": 4,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cfquery_primary_expression"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "[bB][eE][tT][wW][eE][eE][nN]"
+            },
+            "named": true,
+            "value": "keyword_between"
+          },
+          {
+            "type": "FIELD",
+            "name": "lower",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cfquery_primary_expression"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "[aA][nN][dD]"
+            },
+            "named": true,
+            "value": "keyword_and"
+          },
+          {
+            "type": "FIELD",
+            "name": "upper",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cfquery_primary_expression"
+            }
+          }
+        ]
+      }
+    },
+    "cfquery_in_expression": {
+      "type": "PREC",
+      "value": 4,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "value",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cfquery_primary_expression"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "[iI][nN]"
+            },
+            "named": true,
+            "value": "keyword_in"
+          },
+          {
+            "type": "FIELD",
+            "name": "set",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cfquery_in_list"
+            }
+          }
+        ]
+      }
+    },
+    "cfquery_in_list": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "("
+            },
+            {
+              "type": "SYMBOL",
+              "name": "cfquery_in_list_body"
+            },
+            {
+              "type": "STRING",
+              "value": ")"
+            }
+          ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_subquery"
+        }
+      ]
+    },
+    "cfquery_in_list_body": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "first",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_expression"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "FIELD",
+                "name": "rest",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_expression"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "cfquery_subquery": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_select_statement"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "cfquery_exists_expression": {
+      "type": "PREC",
+      "value": 4,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "[eE][xX][iI][sS][tT][sS]"
+            },
+            "named": true,
+            "value": "keyword_exists"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cfquery_subquery"
+          }
+        ]
+      }
+    },
+    "cfquery_case_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[cC][aA][sS][eE]"
+          },
+          "named": true,
+          "value": "keyword_case"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_when_clause"
+          }
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "cfquery_else_clause"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[eE][nN][dD]"
+          },
+          "named": true,
+          "value": "keyword_end"
+        }
+      ]
+    },
+    "cfquery_when_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[wW][hH][eE][nN]"
+          },
+          "named": true,
+          "value": "keyword_when"
+        },
+        {
+          "type": "FIELD",
+          "name": "condition",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_expression"
+          }
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[tT][hH][eE][nN]"
+          },
+          "named": true,
+          "value": "keyword_then"
+        },
+        {
+          "type": "FIELD",
+          "name": "result",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_expression"
+          }
+        }
+      ]
+    },
+    "cfquery_else_clause": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[eE][lL][sS][eE]"
+          },
+          "named": true,
+          "value": "keyword_else"
+        },
+        {
+          "type": "FIELD",
+          "name": "result",
+          "content": {
+            "type": "SYMBOL",
+            "name": "cfquery_expression"
+          }
+        }
+      ]
+    },
+    "cfquery_binary_expression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "PREC_LEFT",
+          "value": 1,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_expression"
+                }
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[oO][rR]"
+                },
+                "named": true,
+                "value": "keyword_or"
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 2,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_expression"
+                }
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[aA][nN][dD]"
+                },
+                "named": true,
+                "value": "keyword_and"
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 4,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_primary_expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "="
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "<>"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "<"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": ">"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "<="
+                    },
+                    {
+                      "type": "STRING",
+                      "value": ">="
+                    },
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[lL][iI][kK][eE]"
+                      },
+                      "named": true,
+                      "value": "keyword_like"
+                    },
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[iI][lL][iI][kK][eE]"
+                      },
+                      "named": true,
+                      "value": "keyword_ilike"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_primary_expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 5,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_primary_expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "+"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "-"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_primary_expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 6,
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_primary_expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "*"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "/"
+                    },
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[mM][oO][dD]"
+                      },
+                      "named": true,
+                      "value": "keyword_mod"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "cfquery_primary_expression"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "cfquery_unary_expression": {
+      "type": "PREC_RIGHT",
+      "value": 3,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "[nN][oO][tT]"
+            },
+            "named": true,
+            "value": "keyword_not"
+          },
+          {
+            "type": "FIELD",
+            "name": "operand",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cfquery_expression"
+            }
+          }
+        ]
+      }
+    },
+    "cfquery_primary_expression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_parenthesized_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "function_call"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "qualified_identifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "number"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "string"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "parameter"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "hash_param"
+        }
+      ]
+    },
+    "cfquery_parenthesized_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_expression"
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "parameter": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "?"
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": ":"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "identifier"
+            }
+          ]
+        }
+      ]
+    },
+    "hash_param": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_identifier_path"
+        },
+        {
+          "type": "STRING",
+          "value": "#"
+        }
+      ]
+    },
+    "cf_identifier_path": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "."
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  }
+                ]
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "["
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "number"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "]"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "qualified_identifier": {
+      "type": "ALIAS",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "."
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "named": true,
+      "value": "identifier"
+    },
+    "function_call": {
+      "type": "ALIAS",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          {
+            "type": "STRING",
+            "value": "("
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "function_call_args"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": ")"
+          }
+        ]
+      },
+      "named": true,
+      "value": "identifier"
+    },
+    "function_call_args": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "first",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          }
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "FIELD",
+                "name": "rest",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              }
+            ]
           }
         }
       ]
@@ -8900,6 +10937,22 @@
     [
       "elvis_expression",
       "pair"
+    ],
+    [
+      "assignment_expression",
+      "_property_name"
+    ],
+    [
+      "call_expression",
+      "_property_name"
+    ],
+    [
+      "binary_expression",
+      "_property_name"
+    ],
+    [
+      "switch_case",
+      "_property_name"
     ],
     [
       "hash_empty",

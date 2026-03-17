@@ -65,6 +65,7 @@ Thumbs.db
 *.swo
 .idea/
 .vscode/
+.cursor/
 
 # Archives
 *.tar.gz

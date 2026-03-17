@@ -6,13 +6,14 @@
 
 [Tree-sitter](https://tree-sitter.github.io/) grammars for [ColdFusion Markup Language (CFML)](https://en.wikipedia.org/wiki/ColdFusion_Markup_Language).
 
-Three grammars are provided to cover the different ways CFML is written:
+Three grammars are provided to cover the different ways CFML is written, plus an embedded SQL dialect for `cfquery`:
 
-| Grammar | Scope | File types | Description |
-|---------|-------|------------|-------------|
-| `cfml` | `source.cfml` | `.cfc` | ColdFusion components — CFScript inside a `component {}` block or tag-based component files |
-| `cfhtml` | `source.cfhtml` | `.cfm` | CFML template files — HTML with embedded CF tags and hash expressions |
+| Grammar  | Scope          | File types | Description |
+|----------|----------------|------------|-------------|
+| `cfml`   | `source.cfml`  | `.cfc`     | ColdFusion components — CFScript inside a `component {}` block or tag-based component files |
+| `cfhtml` | `source.cfhtml`| `.cfm`     | CFML template files — HTML with embedded CF tags and hash expressions |
 | `cfscript` | `source.cfscript` | `.cfs` | Pure CFScript files |
+| `cfquery`  | `source.cfquery`  | *(embedded)* | SQL dialect used inside `<cfquery>` bodies (and compatible with QueryExecute-style usage) with CF-style `#hash#` interpolation and CF tags in the body |
 
 ## Playground
 
@@ -27,7 +28,7 @@ npm install @cfmleditor/tree-sitter-cfml
 ```
 
 ```js
-const { cfml, cfhtml, cfscript } = require('@cfmleditor/tree-sitter-cfml');
+const { cfml, cfhtml, cfscript, cfquery } = require('@cfmleditor/tree-sitter-cfml');
 const Parser = require('tree-sitter');
 
 const parser = new Parser();
@@ -48,7 +49,7 @@ tree-sitter-cfml = "0.26"
 ```
 
 ```rust
-use tree_sitter_cfml::{LANGUAGE_CFML, LANGUAGE_CFHTML, LANGUAGE_CFSCRIPT};
+use tree_sitter_cfml::{LANGUAGE_CFML, LANGUAGE_CFHTML, LANGUAGE_CFSCRIPT, LANGUAGE_CFQUERY};
 
 // cfml for .cfc component files
 let mut parser = tree_sitter::Parser::new();
@@ -83,6 +84,9 @@ parser = Parser(Language(ts_cfml.language_cfml()))
 
 # cfscript for .cfs pure script files
 parser = Parser(Language(ts_cfml.language_cfscript()))
+
+# cfquery SQL dialect (embedded)
+parser = Parser(Language(ts_cfml.language_cfquery()))
 ```
 
 ### Go
@@ -99,6 +103,12 @@ parser.SetLanguage(sitter.NewLanguage(tree_sitter_cfml.LanguageCfml()))
 
 // cfhtml for .cfm template files
 parser.SetLanguage(sitter.NewLanguage(tree_sitter_cfml.LanguageCfhtml()))
+
+// cfscript for .cfs pure script files
+parser.SetLanguage(sitter.NewLanguage(tree_sitter_cfml.LanguageCfscript()))
+
+// cfquery SQL dialect (embedded)
+parser.SetLanguage(sitter.NewLanguage(tree_sitter_cfml.LanguageCfquery()))
 ```
 
 ## Development
@@ -123,6 +133,10 @@ Or build all three plus the Node.js bindings:
 ```bash
 npm run build
 ```
+
+**Note on build warnings**
+When running `npm run build`, you may see tree-sitter warnings about “unnecessary conflicts” such as `binary_expression`, `call_expression`, `switch_case`, or `assignment_expression` versus `_property_name`, and hash-related conflicts for the cfquery dialect.
+These conflicts are **intentionally declared** in `common/define-grammar.js` to resolve real ambiguities in CFML/CFHTML/cfquery syntax; attempts to remove them cause `tree-sitter generate` to fail with unresolved conflicts. It is safe to **ignore** these warnings as long as the build and tests succeed.
 
 ### Generating the parser
 
@@ -158,7 +172,7 @@ npm run playground
 
 ## Grammar structure
 
-All three grammars share a common base defined in `common/define-grammar.js`, with an external scanner in `common/scanner.h` that handles context-sensitive tokenisation (implicit end tags, CF tag names, hash expressions, raw text, etc.).
+All four grammars share a common base defined in `common/define-grammar.js`, with an external scanner in `common/scanner.h` that handles context-sensitive tokenisation (implicit end tags, CF tag names, hash expressions, raw text, etc.).
 
 ```
 common/
@@ -169,6 +183,7 @@ common/
 cfml/                 # .cfc grammar
 cfhtml/               # .cfm grammar
 cfscript/             # .cfs grammar
+cfquery/              # cfquery SQL dialect (embedded)
   grammar.js          # entry point (calls defineGrammar with dialect name)
   src/                # generated parser (do not edit)
   queries/

@@ -1,6 +1,6 @@
 /**
  * @file CFSCRIPT grammar for tree-sitter
- * @author Gareth Edwards
+ * @author Gareth Edwards, Gavin Baumanis
  * @license MIT
  */
 
