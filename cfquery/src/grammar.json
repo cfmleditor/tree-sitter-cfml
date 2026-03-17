@@ -3,8 +3,11 @@
   "name": "cfquery",
   "rules": {
     "program": {
-      "type": "SYMBOL",
-      "name": "cfquery_content"
+      "type": "REPEAT",
+      "content": {
+        "type": "SYMBOL",
+        "name": "_node"
+      }
     },
     "doctype": {
       "type": "SEQ",
@@ -196,41 +199,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "text"
-        }
-      ]
-    },
-    "cfquery_content": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "cfquery_segment"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_node"
-            }
-          ]
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "cfquery_segment"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_node"
-              }
-            ]
-          }
+          "name": "cfquery_segment"
         }
       ]
     },

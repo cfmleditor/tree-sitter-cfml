@@ -5,8 +5,26 @@ SELECT foo FROM bar WHERE id = ?
 ---
 
 (program
-  (cfquery_content
-    (text)))
+  (cfquery_segment
+    (cfquery_select_statement
+      (keyword_select)
+      (cfquery_select_list
+        (cfquery_expression
+          (cfquery_primary_expression
+            (identifier))))
+      (cfquery_from_clause
+        (keyword_from)
+        (cfquery_from_table_list
+          (cfquery_table_reference
+            (identifier))))
+      (cfquery_where_clause
+        (keyword_where)
+        (cfquery_expression
+          (cfquery_binary_expression
+            (cfquery_primary_expression
+              (identifier))
+            (cfquery_primary_expression
+              (parameter))))))))
 
 ===================================
 hash parameter and between
@@ -15,17 +33,33 @@ SELECT * FROM users WHERE created_at BETWEEN #ARGUMENTS.startDate# AND #ARGUMENT
 ---
 
 (program
-  (cfquery_content
-    (text)
-    (hash_expression
-      (member_expression
-        (identifier)
-        (property_identifier)))
-    (text)
-    (hash_expression
-      (member_expression
-        (identifier)
-        (property_identifier)))))
+  (cfquery_segment
+    (cfquery_select_statement
+      (keyword_select)
+      (cfquery_select_list)
+      (cfquery_from_clause
+        (keyword_from)
+        (cfquery_from_table_list
+          (cfquery_table_reference
+            (identifier))))
+      (cfquery_where_clause
+        (keyword_where)
+        (cfquery_expression
+          (cfquery_between_expression
+            (cfquery_primary_expression
+              (identifier))
+            (keyword_between)
+            (cfquery_primary_expression
+              (hash_param
+                (cf_identifier_path
+                  (identifier)
+                  (identifier))))
+            (keyword_and)
+            (cfquery_primary_expression
+              (hash_param
+                (cf_identifier_path
+                  (identifier)
+                  (identifier))))))))))
 
 ===================================
 top, union and limit
@@ -37,8 +71,32 @@ LIMIT 100
 ---
 
 (program
-  (cfquery_content
-    (text)))
+  (cfquery_segment
+    (cfquery_union_statement
+      (cfquery_select_statement
+        (keyword_select)
+        (cfquery_top_clause
+          (keyword_top)
+          (number))
+        (cfquery_select_list)
+        (cfquery_from_clause
+          (keyword_from)
+          (cfquery_from_table_list
+            (cfquery_table_reference
+              (identifier)))))
+      (keyword_union)
+      (keyword_all)
+      (cfquery_select_statement
+        (keyword_select)
+        (cfquery_select_list)
+        (cfquery_from_clause
+          (keyword_from)
+          (cfquery_from_table_list
+            (cfquery_table_reference
+              (identifier))))
+        (cfquery_limit_clause
+          (keyword_limit)
+          (number))))))
 
 ===================================
 distinct, exists, case and indexed hash
@@ -53,14 +111,87 @@ WHERE u.id = #ARGUMENTS.userIds[1]#
 ---
 
 (program
-  (cfquery_content
-    (text)
-    (hash_expression
-      (subscript_expression
-        (member_expression
-          (identifier)
-          (property_identifier))
-        (number)))))
+  (cfquery_segment
+    (cfquery_select_statement
+      (keyword_select)
+      (keyword_distinct)
+      (cfquery_select_list
+        (cfquery_expression
+          (cfquery_primary_expression
+            (qualified_identifier
+              (identifier)
+              (identifier
+                (identifier)))))
+        (cfquery_expression
+          (cfquery_case_expression
+            (keyword_case)
+            (cfquery_when_clause
+              (keyword_when)
+              (cfquery_expression
+                (cfquery_exists_expression
+                  (keyword_exists)
+                  (cfquery_subquery
+                    (cfquery_select_statement
+                      (keyword_select)
+                      (cfquery_select_list
+                        (cfquery_expression
+                          (cfquery_primary_expression
+                            (number))))
+                      (cfquery_from_clause
+                        (keyword_from)
+                        (cfquery_from_table_list
+                          (cfquery_table_reference
+                            (identifier)
+                            (identifier))))
+                      (cfquery_where_clause
+                        (keyword_where)
+                        (cfquery_expression
+                          (cfquery_binary_expression
+                            (cfquery_primary_expression
+                              (qualified_identifier
+                                (identifier)
+                                (identifier
+                                  (identifier))))
+                            (cfquery_primary_expression
+                              (qualified_identifier
+                                (identifier)
+                                (identifier
+                                  (identifier)))))))))))
+              (keyword_then)
+              (cfquery_expression
+                (cfquery_primary_expression
+                  (string
+                    (string_fragment)))))
+            (cfquery_else_clause
+              (keyword_else)
+              (cfquery_expression
+                (cfquery_primary_expression
+                  (string
+                    (string_fragment)))))
+            (keyword_end)))
+        (keyword_as)
+        (identifier))
+      (cfquery_from_clause
+        (keyword_from)
+        (cfquery_from_table_list
+          (cfquery_table_reference
+            (identifier)
+            (identifier))))
+      (cfquery_where_clause
+        (keyword_where)
+        (cfquery_expression
+          (cfquery_binary_expression
+            (cfquery_primary_expression
+              (qualified_identifier
+                (identifier)
+                (identifier
+                  (identifier))))
+            (cfquery_primary_expression
+              (hash_param
+                (cf_identifier_path
+                  (identifier)
+                  (identifier)
+                  (number))))))))))
 
 ===================================
 malformed select (fault tolerant)
@@ -69,15 +200,42 @@ SELECT FROM
 ---
 
 (program
-  (cfquery_content
-    (text)))
+  (cfquery_segment
+    (cfquery_select_statement
+      (keyword_select)
+      (cfquery_select_list
+        (cfquery_expression
+          (cfquery_primary_expression
+            (identifier)))))))
 
 ===================================
 limit offset and ilike
 ===================================
-SELECT * FROM users WHERE name ILIKE '%foo%' LIMIT 10 OFFSET 20
+SELECT * FROM users WHERE name LIKE '%foo%' LIMIT 10 OFFSET 20
 ---
 
 (program
-  (cfquery_content
-    (text)))
+  (cfquery_segment
+    (cfquery_select_statement
+      (keyword_select)
+      (cfquery_select_list)
+      (cfquery_from_clause
+        (keyword_from)
+        (cfquery_from_table_list
+          (cfquery_table_reference
+            (identifier))))
+      (cfquery_where_clause
+        (keyword_where)
+        (cfquery_expression
+          (cfquery_binary_expression
+            (cfquery_primary_expression
+              (identifier))
+            (keyword_like)
+            (cfquery_primary_expression
+              (string
+                (string_fragment))))))
+      (cfquery_limit_clause
+        (keyword_limit)
+        (number)
+        (keyword_offset)
+        (number)))))

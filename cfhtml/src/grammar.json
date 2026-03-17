@@ -244,40 +244,6 @@
         }
       ]
     },
-    "cfquery_content": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "cfquery_segment"
-            },
-            {
-              "type": "SYMBOL",
-              "name": "_node"
-            }
-          ]
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "cfquery_segment"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "_node"
-              }
-            ]
-          }
-        }
-      ]
-    },
     "cfquery_segment": {
       "type": "SYMBOL",
       "name": "_cfquery_sql_statement"

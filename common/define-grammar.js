@@ -221,7 +221,7 @@ module.exports = function defineGrammar(dialect) {
 
       program: $ => (
         dialect === 'cfquery'
-          ? $.cfquery_content
+          ? repeat($._node)
           : choice(
               repeat(
                 $._node,
@@ -274,7 +274,8 @@ module.exports = function defineGrammar(dialect) {
         $._cf_tag,
         $._hash,
         $.erroneous_cf_end_tag,
-        $.text,
+        // $.text,
+        $.cfquery_segment,
       ) : choice(
         $._cf_tag,
         $._hash,
@@ -293,18 +294,18 @@ module.exports = function defineGrammar(dialect) {
       // Root content for the cfquery dialect: interleaved SQL segments
       // and CFML content (no HTML elements). Must not be empty to satisfy
       // tree-sitter's restriction on non-start rules.
-      cfquery_content: $ => seq(
-        choice(
-          $.cfquery_segment,
-          $._node,
-        ),
-        repeat(
-          choice(
-            $.cfquery_segment,
-            $._node,
-          )
-        )
-      ),
+      // cfquery_content: $ => seq(
+      //   choice(
+      //     $.cfquery_segment,
+      //     $._node,
+      //   ),
+      //   repeat(
+      //     choice(
+      //       $.cfquery_segment,
+      //       $._node,
+      //     )
+      //   )
+      // ),
 
       // A single SQL statement (or compound UNION) inside a cfquery body.
       // Grouping SQL into segments makes it easier for tools to work with
