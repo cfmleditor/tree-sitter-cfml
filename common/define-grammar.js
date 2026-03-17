@@ -198,7 +198,7 @@ module.exports = function defineGrammar(dialect) {
 
     ]).concat(
       ( dialect === 'cfquery' ? [
-        [$._hash, $.hash_expression],
+        [$.hash_expression, $.hash_empty],
         [$.assignment_expression, $._property_name],
         [$.switch_case, $._property_name],
         [$.call_expression, $._property_name],
@@ -1020,7 +1020,7 @@ module.exports = function defineGrammar(dialect) {
         seq('\'',
           repeat(
             choice(
-              ( dialect === 'cfhtml' ? $._hash_expression : $._hash),
+              $._hash_expression,
               alias(/[^'\s\n\r\t#]+/, $.attribute_value),
             ),
           ),
@@ -1028,7 +1028,7 @@ module.exports = function defineGrammar(dialect) {
         seq('"',
           repeat(
             choice(
-              ( dialect === 'cfhtml' ? $._hash_expression : $._hash),
+              $._hash_expression,
               '""',
               alias(/[^"\s\n\r\t#]+/, $.attribute_value),
             ),
@@ -2118,7 +2118,7 @@ module.exports = function defineGrammar(dialect) {
 
       _hash: ($, previous) => {
         const choices = [];
-        if (dialect === 'cfml') {
+        if (dialect === 'cfml' || dialect === 'cfquery') {
           choices.push($.hash_expression);
           choices.push($.hash_empty);
         } else {

@@ -3577,7 +3577,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_hash"
+                    "name": "_hash_expression"
                   },
                   {
                     "type": "ALIAS",
@@ -3611,7 +3611,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_hash"
+                    "name": "_hash_expression"
                   },
                   {
                     "type": "STRING",

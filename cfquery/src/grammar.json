@@ -3533,7 +3533,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_hash"
+                    "name": "_hash_expression"
                   },
                   {
                     "type": "ALIAS",
@@ -3567,7 +3567,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_hash"
+                    "name": "_hash_expression"
                   },
                   {
                     "type": "STRING",
@@ -10640,13 +10640,12 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "STRING",
-            "value": "#"
-          },
-          "named": true,
-          "value": "hash_single"
+          "type": "SYMBOL",
+          "name": "hash_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "hash_empty"
         }
       ]
     },
@@ -10874,8 +10873,8 @@
       "pair"
     ],
     [
-      "_hash",
-      "hash_expression"
+      "hash_expression",
+      "hash_empty"
     ],
     [
       "assignment_expression",
