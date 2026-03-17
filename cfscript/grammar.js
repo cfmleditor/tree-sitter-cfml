@@ -217,6 +217,7 @@ module.exports = grammar({
       // $.class_declaration,
       $.lexical_declaration,
       $.variable_declaration,
+      $.component,
     ),
 
     //
