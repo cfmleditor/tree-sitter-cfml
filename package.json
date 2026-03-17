@@ -28,6 +28,9 @@
     "cfscript/grammar.js",
     "cfscript/queries/*",
     "cfscript/src/**",
+    "cfquery/grammar.js",
+    "cfquery/queries/*",
+    "cfquery/src/**",
     "common/common.js",
     "common/html_entities.json"
   ],

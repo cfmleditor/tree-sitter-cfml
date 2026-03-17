@@ -3,7 +3,9 @@
 const {execSync} = require('child_process');
 const {join} = require('path');
 
-for (const dir of ['cfml', 'cfhtml', 'cfscript']) {
+const parsers = ['cfml', 'cfhtml', 'cfscript', 'cfquery'];
+
+for (const dir of parsers) {
   console.log(`building ${dir}`);
   execSync('tree-sitter playground', {
     stdio: 'inherit',
