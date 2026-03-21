@@ -16,8 +16,7 @@ module.exports = grammar({
     $._ternary_qmark,
     $._elvis_operator,
     '||',
-    // We use escape sequence and regex pattern to tell the scanner if we're currently inside a string or template string, in which case
-    // it should NOT parse html comments.
+    // Scanner tracks string/template context so HTML comments are not parsed inside them.
     // $.escape_sequence,
     $.regex_pattern,
     $.query_text,
@@ -90,6 +89,7 @@ module.exports = grammar({
   ],
 
   conflicts: ($) => [
+    [$.declaration, $.primary_expression],
     [$.primary_expression, $._property_name],
     // [$.primary_expression, $._property_name, $.arrow_function],
     // [$.primary_expression, $.arrow_function],
@@ -780,13 +780,8 @@ module.exports = grammar({
     //   ),
     // ),
 
-    // Workaround to https://github.com/tree-sitter/tree-sitter/issues/1156
-    // We give names to the token() constructs containing a regexp
-    // so as to obtain a node in the CST.
-    //
+    // Commented-out JSX string fragments (tree-sitter/tree-sitter#1156 token naming).
     // unescaped_double_jsx_string_fragment: (_) => token.immediate(prec(1, /([^"&#]|&[^#A-Za-z])+/)),
-
-    // same here
     // unescaped_single_jsx_string_fragment: (_) => token.immediate(prec(1, /([^'&#]|&[^#A-Za-z])+/)),
 
     // _jsx_attribute_value: ($) => choice(
@@ -1173,13 +1168,11 @@ module.exports = grammar({
       ),
     ),
 
-    // Workaround to https://github.com/tree-sitter/tree-sitter/issues/1156
-    // We give names to the token() constructs containing a regexp
-    // so as to obtain a node in the CST.
+    // tree-sitter/tree-sitter#1156: named token() regexp rules so string fragments appear in the CST.
     //
     unescaped_double_string_fragment: (_) => token.immediate(prec(1, /[^"#\r\n]+/)),
 
-    // same here
+    // Pair: single-quoted string fragment.
     unescaped_single_string_fragment: (_) => token.immediate(prec(1, /[^'#\r\n]+/)),
 
     // escape_sequence: (_) => token.immediate(seq(
@@ -1284,8 +1277,7 @@ module.exports = grammar({
     // 'undefined' is syntactically a regular identifier in JavaScript.
     // However, its main use is as the read-only global variable whose
     // value is [undefined], for which there's no literal representation
-    // unlike 'null'. We gave it its own rule so it's easy to
-    // highlight in text editors and other applications.
+    // unlike 'null'. Kept as a distinct rule for highlighting and tooling.
     _identifier: ($) => choice(
       $.undefined,
       $.identifier,
