@@ -7,6 +7,9 @@
       ],
       "include_dirs": [
         "cfml/src",
+        "cfhtml/src",
+        "cfscript/src",
+        "cfquery/src",
       ],
       "sources": [
         "cfml/src/parser.c",

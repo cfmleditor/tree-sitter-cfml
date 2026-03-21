@@ -10,3 +10,9 @@ for (const dir of ['cfml', 'cfhtml', 'cfscript', 'cfquery']) {
     cwd: join(__dirname, '..', dir),
   });
 }
+
+console.log('building native addon');
+execSync('node-gyp rebuild', {
+  stdio: 'inherit',
+  cwd: join(__dirname, '..'),
+});
