@@ -1,40 +1,36 @@
 fn main() {
     let root_dir = std::path::Path::new(".");
-    let cfml_dir = root_dir.join("cfml").join("src");
-    let cfhtml_dir = root_dir.join("cfhtml").join("src");
-    let cfscript_dir = root_dir.join("cfscript").join("src");
-    let cfquery_dir = root_dir.join("cfquery").join("src");
     let common_dir = root_dir.join("common");
 
-    let mut config = cc::Build::new();
-    config.include(&cfml_dir);
-    config
-        .flag_if_supported("-std=c11")
-        .flag_if_supported("-Wno-unused-parameter")
-        .flag_if_supported("-Wno-unused-value")
-        .flag_if_supported("-Wno-implicit-fallthrough");
+    let flags = [
+        "-std=c11",
+        "-Wno-unused-parameter",
+        "-Wno-unused-value",
+        "-Wno-implicit-fallthrough",
+    ];
 
-    let mut config = cc::Build::new();
-    config.include(&cfml_dir);
-
-    for path in &[
-        cfml_dir.join("parser.c"),
-        cfml_dir.join("scanner.c"),
-        cfhtml_dir.join("parser.c"),
-        cfhtml_dir.join("scanner.c"),
-        cfscript_dir.join("parser.c"),
-        cfscript_dir.join("scanner.c"),
-        cfquery_dir.join("parser.c"),
-        cfquery_dir.join("scanner.c"),
+    for (name, dir_name) in &[
+        ("tree-sitter-cfml", "cfml"),
+        ("tree-sitter-cfhtml", "cfhtml"),
+        ("tree-sitter-cfscript", "cfscript"),
+        ("tree-sitter-cfquery", "cfquery"),
     ] {
-        config.file(path);
-        println!("cargo:rerun-if-changed={}", path.to_str().unwrap());
+        let src_dir = root_dir.join(dir_name).join("src");
+        let mut config = cc::Build::new();
+        config.include(&src_dir);
+        for flag in &flags {
+            config.flag_if_supported(flag);
+        }
+        for file in &["parser.c", "scanner.c"] {
+            let path = src_dir.join(file);
+            config.file(&path);
+            println!("cargo:rerun-if-changed={}", path.to_str().unwrap());
+        }
+        config.compile(name);
     }
 
     println!(
         "cargo:rerun-if-changed={}",
         common_dir.join("scanner.h").to_str().unwrap()
     );
-
-    config.compile("tree-sitter-cfml");
 }
