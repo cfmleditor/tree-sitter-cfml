@@ -10693,13 +10693,12 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "STRING",
-            "value": "#"
-          },
-          "named": true,
-          "value": "hash_single"
+          "type": "SYMBOL",
+          "name": "hash_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "hash_empty"
         }
       ]
     },
@@ -10943,16 +10942,24 @@
       "_property_name"
     ],
     [
-      "hash_empty",
-      "_hash"
-    ],
-    [
       "hash_expression",
-      "_hash"
+      "hash_empty"
     ],
     [
-      "hash_empty",
-      "hash_expression"
+      "assignment_expression",
+      "_property_name"
+    ],
+    [
+      "switch_case",
+      "_property_name"
+    ],
+    [
+      "call_expression",
+      "_property_name"
+    ],
+    [
+      "binary_expression",
+      "_property_name"
     ]
   ],
   "precedences": [

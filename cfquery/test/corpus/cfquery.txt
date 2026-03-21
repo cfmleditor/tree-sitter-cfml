@@ -17,13 +17,15 @@ SELECT * FROM users WHERE created_at BETWEEN #ARGUMENTS.startDate# AND #ARGUMENT
 (program
   (cfquery_content
     (text)
-    (hash_single)
+    (hash_expression
+      (member_expression
+        (identifier)
+        (property_identifier)))
     (text)
-    (hash_single)
-    (text)
-    (hash_single)
-    (text)
-    (hash_single)))
+    (hash_expression
+      (member_expression
+        (identifier)
+        (property_identifier)))))
 
 ===================================
 top, union and limit
@@ -53,9 +55,12 @@ WHERE u.id = #ARGUMENTS.userIds[1]#
 (program
   (cfquery_content
     (text)
-    (hash_single)
-    (text)
-    (hash_single)))
+    (hash_expression
+      (subscript_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (number)))))
 
 ===================================
 malformed select (fault tolerant)
@@ -76,3 +81,28 @@ SELECT * FROM users WHERE name ILIKE '%foo%' LIMIT 10 OFFSET 20
 (program
   (cfquery_content
     (text)))
+
+===================================
+cfqueryparam with hash in attribute
+===================================
+SELECT t.column_name
+FROM table_name t
+WHERE t.column_name = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.column_name#">
+---
+
+(program
+  (cfquery_content
+    (text)
+    (cf_selfclose_tag
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (hash_expression
+            (member_expression
+              (identifier)
+              (property_identifier)))))
+      (cf_selfclose_void_tag_end))))
