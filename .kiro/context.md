@@ -5,6 +5,7 @@ CFML grammar for tree-sitter. This is a multi-grammar project with three parsers
 - `cfml/` - Main CFML grammar
 - `cfhtml/` - CFHTML grammar
 - `cfscript/` - CFScript grammar
+- `cfquery/` - CFQuery grammar
 
 ## Build Commands
 

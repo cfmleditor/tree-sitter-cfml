@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "TreeSitterCfml",
     products: [
-        .library(name: "TreeSitterCfml", targets: ["TreeSitterCfml", "TreeSitterCfhtml", "TreeSitterCfscript"]),
+        .library(name: "TreeSitterCfml", targets: ["TreeSitterCfml", "TreeSitterCfhtml", "TreeSitterCfscript", "TreeSitterCfquery"]),
     ],
     dependencies: [],
     targets: [
@@ -37,6 +37,19 @@ let package = Package(
                 cSettings: [.headerSearchPath("src")])
         .target(name: "TreeSitterCfscript",
                 path: "cfscript",
+                exclude: [
+                ],
+                sources: [
+                    "src/parser.c",
+                    "src/scanner.c"
+                ],
+                resources: [
+                    .copy("queries")
+                ],
+                publicHeadersPath: "bindings/swift",
+                cSettings: [.headerSearchPath("src")])
+        .target(name: "TreeSitterCfquery",
+                path: "cfquery",
                 exclude: [
                 ],
                 sources: [

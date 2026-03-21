@@ -10,6 +10,7 @@ extern "C" {
 const TSLanguage *tree_sitter_cfml();
 const TSLanguage *tree_sitter_cfhtml();
 const TSLanguage *tree_sitter_cfscript();
+const TSLanguage *tree_sitter_cfquery();
 
 #ifdef __cplusplus
 }

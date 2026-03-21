@@ -27,3 +27,10 @@ func TestCanLoadCfscriptGrammar(t *testing.T) {
 		t.Errorf("Error loading CFSCRIPT grammar")
 	}
 }
+
+func TestCanLoadCfqueryGrammar(t *testing.T) {
+	language := tree_sitter.NewLanguage(tree_sitter_cfml.LanguageCfquery())
+	if language == nil {
+		t.Errorf("Error loading CFQUERY grammar")
+	}
+}

@@ -71,4 +71,12 @@ mod tests {
             .set_language(&super::LANGUAGE_CFSCRIPT.into())
             .expect("Error loading CFSCRIPT parser");
     }
+
+    #[test]
+    fn test_can_load_cfquery_grammar() {
+        let mut parser = tree_sitter::Parser::new();
+        parser
+            .set_language(&super::LANGUAGE_CFQUERY.into())
+            .expect("Error loading CFQUERY parser");
+    }
 }

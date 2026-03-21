@@ -15,6 +15,8 @@
         "cfhtml/src/scanner.c",
         "cfscript/src/parser.c",
         "cfscript/src/scanner.c",
+        "cfquery/src/parser.c",
+        "cfquery/src/scanner.c",
         "bindings/node/binding.cc",
       ],
       "conditions": [

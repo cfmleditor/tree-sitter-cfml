@@ -17,3 +17,8 @@ test('can load CFSCRIPT grammar', () => {
   const parser = new Parser();
   assert.doesNotThrow(() => parser.setLanguage(require('./cfscript')));
 });
+
+test('can load CFQUERY grammar', () => {
+  const parser = new Parser();
+  assert.doesNotThrow(() => parser.setLanguage(require('./cfquery')));
+});

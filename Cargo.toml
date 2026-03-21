@@ -24,6 +24,8 @@ include = [
   "cfhtml/src",
   "cfscript/grammar.js",
   "cfscript/src",
+  "cfquery/grammar.js",
+  "cfquery/src",
   "queries",
   "tree-sitter.json"
 ]

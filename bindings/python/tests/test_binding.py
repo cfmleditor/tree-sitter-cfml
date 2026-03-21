@@ -21,3 +21,9 @@ class TestLanguage(TestCase):
             tree_sitter.Language(tree_sitter_cfml.language_cfscript())
         except Exception:
             self.fail("Error loading CFSCRIPT grammar")
+
+    def test_can_load_cfquery_grammar(self):
+        try:
+            tree_sitter.Language(tree_sitter_cfml.language_cfquery())
+        except Exception:
+            self.fail("Error loading CFQUERY grammar")

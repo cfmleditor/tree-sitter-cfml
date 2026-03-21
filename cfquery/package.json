@@ -1,0 +1,10 @@
+{
+  "main": "../bindings/node/cfquery.js",
+  "private": true,
+  "scripts": {
+    "build": "tree-sitter generate",
+    "test": "tree-sitter test",
+    "prestart": "tree-sitter build --wasm",
+    "start": "tree-sitter playground"
+  }
+}

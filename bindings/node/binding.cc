@@ -5,6 +5,7 @@ typedef struct TSLanguage TSLanguage;
 extern "C" TSLanguage *tree_sitter_cfml();
 extern "C" TSLanguage *tree_sitter_cfhtml();
 extern "C" TSLanguage *tree_sitter_cfscript();
+extern "C" TSLanguage *tree_sitter_cfquery();
 
 // "tree-sitter", "language" hashed with BLAKE2
 const napi_type_tag LANGUAGE_TYPE_TAG = {
@@ -30,9 +31,16 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     cfscript_language.TypeTag(&LANGUAGE_TYPE_TAG);
     cfscript["language"] = cfscript_language;
 
+    auto cfquery = Napi::Object::New(env);
+    cfquery["name"] = Napi::String::New(env, "cfquery");
+    auto cfquery_language = Napi::External<TSLanguage>::New(env, tree_sitter_cfquery());
+    cfquery_language.TypeTag(&LANGUAGE_TYPE_TAG);
+    cfquery["language"] = cfquery_language;
+
     exports["cfml"] = cfml;
     exports["cfhtml"] = cfhtml;
     exports["cfscript"] = cfscript;
+    exports["cfquery"] = cfquery;
 
     return exports;
 }

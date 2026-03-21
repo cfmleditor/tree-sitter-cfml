@@ -3,6 +3,7 @@ fn main() {
     let cfml_dir = root_dir.join("cfml").join("src");
     let cfhtml_dir = root_dir.join("cfhtml").join("src");
     let cfscript_dir = root_dir.join("cfscript").join("src");
+    let cfquery_dir = root_dir.join("cfquery").join("src");
     let common_dir = root_dir.join("common");
 
     let mut config = cc::Build::new();
@@ -23,6 +24,8 @@ fn main() {
         cfhtml_dir.join("scanner.c"),
         cfscript_dir.join("parser.c"),
         cfscript_dir.join("scanner.c"),
+        cfquery_dir.join("parser.c"),
+        cfquery_dir.join("scanner.c"),
     ] {
         config.file(path);
         println!("cargo:rerun-if-changed={}", path.to_str().unwrap());
