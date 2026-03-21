@@ -8,7 +8,7 @@ const parsers = ['cfml', 'cfhtml', 'cfscript', 'cfquery'];
 for (const dir of parsers) {
   console.log(`testing ${dir}`);
   try {
-    const r = spawnTreeSitter(['test', '-u'], { cwd: join(root, dir) });
+    const r = spawnTreeSitter(['test'], { cwd: join(root, dir) });
     if (r.status !== 0) {
       process.exitCode |= parsers.indexOf(dir) + 1;
     }
