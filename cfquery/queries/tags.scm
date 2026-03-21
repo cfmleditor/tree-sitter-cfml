@@ -16,10 +16,12 @@
 
 ; Capture column-like expressions in SELECT list (very loose)
 ((cfquery_select_list
-   (cfquery_expression
-     (_) @variable)
-   (cfquery_expression
-     (_) @variable))
+   (cfquery_select_item
+     (cfquery_expression
+       (_) @variable))
+   (cfquery_select_item
+     (cfquery_expression
+       (_) @variable)))
  (#set! role "column"))
 
 ; NOTE: cfquery dialect trees do not currently contain full CF tag nodes,

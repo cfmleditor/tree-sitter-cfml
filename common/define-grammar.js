@@ -468,7 +468,7 @@ module.exports = function defineGrammar(dialect) {
             alias(ci('execute'), $.keyword_execute),
             alias(ci('call'), $.keyword_call),
           ),
-          field('name', $.qualified_identifier),
+          field('name', $.cfquery_qualified_name),
           optional(
             seq(
               '(',
@@ -484,23 +484,23 @@ module.exports = function defineGrammar(dialect) {
           choice($.number, $.parameter),
         ),
 
+      cfquery_star: _ => '*',
+
+      cfquery_select_item: $ =>
+        choice(
+          $.cfquery_star,
+          field('expression', $.cfquery_expression),
+          seq(
+            field('expression', $.cfquery_expression),
+            alias(ci('as'), $.keyword_as),
+            field('alias', $.identifier),
+          ),
+        ),
+
       cfquery_select_list: $ =>
         seq(
-          field('first', choice(
-            '*',
-            field('column', $.cfquery_expression),
-            seq(field('column', $.cfquery_expression), alias(ci('as'), $.keyword_as), field('alias', $.identifier)),
-          )),
-          repeat(
-            seq(
-              ',',
-              choice(
-                '*',
-                field('column', $.cfquery_expression),
-                seq(field('column', $.cfquery_expression), alias(ci('as'), $.keyword_as), field('alias', $.identifier)),
-              ),
-            )
-          ),
+          field('first', $.cfquery_select_item),
+          repeat(seq(',', field('rest', $.cfquery_select_item))),
         ),
 
       cfquery_from_clause: $ =>
@@ -892,8 +892,8 @@ module.exports = function defineGrammar(dialect) {
           $.cfquery_cast_expression,
           $.cfquery_parenthesized_expression,
           $.cfquery_window_invocation,
-          $.function_call,
-          $.qualified_identifier,
+          $.cfquery_function_call,
+          $.cfquery_qualified_name,
           $.cfquery_bracket_identifier,
           $.cfquery_boolean_literal,
           $.cfquery_double_quoted_identifier,
@@ -980,10 +980,10 @@ module.exports = function defineGrammar(dialect) {
           ),
         ),
 
-      qualified_identifier: $ =>
-        alias(
-          seq($.identifier, repeat1(seq('.', $.identifier))),
-          $.identifier,
+      cfquery_qualified_name: $ =>
+        seq(
+          field('first', $.identifier),
+          repeat1(seq('.', field('rest', $.identifier))),
         ),
 
       cfquery_window_invocation: $ =>
@@ -1004,15 +1004,12 @@ module.exports = function defineGrammar(dialect) {
           ')',
         ),
 
-      function_call: $ =>
-        alias(
-          seq(
-            $.identifier,
-            '(',
-            optional($.function_call_args),
-            ')',
-          ),
-          $.identifier,
+      cfquery_function_call: $ =>
+        seq(
+          field('function', $.identifier),
+          '(',
+          optional($.function_call_args),
+          ')',
         ),
 
       function_call_args: $ =>

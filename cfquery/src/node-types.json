@@ -1914,7 +1914,7 @@
         "required": true,
         "types": [
           {
-            "type": "qualified_identifier",
+            "type": "cfquery_qualified_name",
             "named": true
           }
         ]
@@ -2094,6 +2094,32 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "cfquery_function_call",
+    "named": true,
+    "fields": {
+      "function": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "function_call_args",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2753,7 +2779,15 @@
           "named": true
         },
         {
+          "type": "cfquery_function_call",
+          "named": true
+        },
+        {
           "type": "cfquery_parenthesized_expression",
+          "named": true
+        },
+        {
+          "type": "cfquery_qualified_name",
           "named": true
         },
         {
@@ -2762,10 +2796,6 @@
         },
         {
           "type": "cfquery_window_invocation",
-          "named": true
-        },
-        {
-          "type": "function_call",
           "named": true
         },
         {
@@ -2783,12 +2813,34 @@
         {
           "type": "parameter",
           "named": true
-        },
-        {
-          "type": "qualified_identifier",
-          "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "cfquery_qualified_name",
+    "named": true,
+    "fields": {
+      "first": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "rest": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -2901,11 +2953,11 @@
     }
   },
   {
-    "type": "cfquery_select_list",
+    "type": "cfquery_select_item",
     "named": true,
     "fields": {
       "alias": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
           {
@@ -2914,8 +2966,8 @@
           }
         ]
       },
-      "column": {
-        "multiple": true,
+      "expression": {
+        "multiple": false,
         "required": false,
         "types": [
           {
@@ -2923,31 +2975,47 @@
             "named": true
           }
         ]
-      },
-      "first": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "*",
-            "named": false
-          },
-          {
-            "type": "keyword_as",
-            "named": true
-          }
-        ]
       }
     },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": false,
       "types": [
+        {
+          "type": "cfquery_star",
+          "named": true
+        },
         {
           "type": "keyword_as",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "cfquery_select_list",
+    "named": true,
+    "fields": {
+      "first": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "cfquery_select_item",
+            "named": true
+          }
+        ]
+      },
+      "rest": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "cfquery_select_item",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -2991,6 +3059,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "cfquery_star",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "cfquery_subquery",
@@ -4019,21 +4092,6 @@
     }
   },
   {
-    "type": "function_call",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "function_call_args",
     "named": true,
     "fields": {
@@ -4263,46 +4321,7 @@
   {
     "type": "identifier",
     "named": true,
-    "fields": {
-      "first": {
-        "multiple": false,
-        "required": false,
-        "types": [
-          {
-            "type": "*",
-            "named": false
-          },
-          {
-            "type": "cfquery_expression",
-            "named": true
-          }
-        ]
-      },
-      "rest": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "*",
-            "named": false
-          },
-          {
-            "type": "cfquery_expression",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
-    }
+    "fields": {}
   },
   {
     "type": "if_statement",
@@ -4816,21 +4835,6 @@
         },
         {
           "type": "hash_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "qualified_identifier",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
           "named": true
         }
       ]
