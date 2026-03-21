@@ -187,7 +187,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_cf_tag"
+          "name": "_cf_tags"
         },
         {
           "type": "SYMBOL",
@@ -2279,7 +2279,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_cf_tag"
+          "name": "_cf_tags"
         },
         {
           "type": "SYMBOL",
@@ -2470,7 +2470,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_cf_tag"
+          "name": "_cf_tags"
         },
         {
           "type": "SYMBOL",
@@ -2796,7 +2796,7 @@
           "value": 1,
           "content": {
             "type": "SYMBOL",
-            "name": "_cf_tag"
+            "name": "_cf_tags"
           }
         },
         {
@@ -3233,7 +3233,7 @@
         ]
       }
     },
-    "_cf_tag": {
+    "_cf_tags": {
       "type": "PREC_RIGHT",
       "value": 3,
       "content": {
@@ -3579,7 +3579,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_cf_tag"
+                    "name": "_cf_tags"
                   },
                   {
                     "type": "SYMBOL",
@@ -3617,7 +3617,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_cf_tag"
+                    "name": "_cf_tags"
                   },
                   {
                     "type": "SYMBOL",
@@ -11363,7 +11363,7 @@
     "expression",
     "primary_expression",
     "pattern",
-    "_cf_tag"
+    "_cf_tags"
   ],
   "reserved": {}
 }

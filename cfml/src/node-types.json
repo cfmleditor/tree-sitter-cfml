@@ -1,6 +1,6 @@
 [
   {
-    "type": "_cf_tag",
+    "type": "_cf_tags",
     "named": true,
     "subtypes": [
       {
@@ -531,7 +531,7 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "_cf_tags",
           "named": true
         },
         {
@@ -991,7 +991,7 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "_cf_tags",
           "named": true
         },
         {
@@ -1066,7 +1066,7 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "_cf_tags",
           "named": true
         },
         {
@@ -1137,7 +1137,7 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "_cf_tags",
           "named": true
         },
         {
@@ -1350,7 +1350,7 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "_cf_tags",
           "named": true
         },
         {
@@ -1554,7 +1554,7 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "_cf_tags",
           "named": true
         },
         {
@@ -2619,7 +2619,7 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "_cf_tags",
           "named": true
         },
         {
@@ -2686,7 +2686,7 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "_cf_tags",
           "named": true
         },
         {
@@ -3092,7 +3092,7 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tag",
+          "type": "_cf_tags",
           "named": true
         },
         {

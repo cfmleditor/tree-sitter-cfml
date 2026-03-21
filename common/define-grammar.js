@@ -92,7 +92,7 @@ module.exports = function defineGrammar(dialect) {
       $.expression,
       $.primary_expression,
       $.pattern,
-      $._cf_tag,
+      $._cf_tags,
     ],
 
     inline: $ => [
@@ -271,13 +271,13 @@ module.exports = function defineGrammar(dialect) {
       // cf_tag_close: $ => /<\/cf/i,
 
       _node: $ => ( dialect === 'cfquery' ) ? choice(
-        $._cf_tag,
+        $._cf_tags,
         $._hash,
         $.erroneous_cf_end_tag,
         // $.text,
         $.cfquery_segment,
       ) : choice(
-        $._cf_tag,
+        $._cf_tags,
         $._hash,
         $.erroneous_end_tag,
         $.erroneous_cf_end_tag,
@@ -730,7 +730,7 @@ module.exports = function defineGrammar(dialect) {
         $.doctype,
         $.entity,
         $.element,
-        $._cf_tag,
+        $._cf_tags,
         $._hash_expression,
         $.script_element,
         $.style_element,
@@ -769,7 +769,7 @@ module.exports = function defineGrammar(dialect) {
         // $.style_attribute,
         $.attribute,
         $.quoted_attribute_value,
-        $._cf_tag,
+        $._cf_tags,
         $._hash,
       ),
 
@@ -859,7 +859,7 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       attribute_value: $ => choice(
-        prec.left(1, $._cf_tag),
+        prec.left(1, $._cf_tags),
         prec.left(2, $._hash),
         prec.left(3, /[^"'=\s\n\r\t#]+/),
       ),
@@ -961,7 +961,7 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_cf_tag_delim, '>'),
       )),
 
-      _cf_tag: $ => prec.right(3, choice(
+      _cf_tags: $ => prec.right(3, choice(
         $.cf_selfclose_tag,
         $.cf_if_tag,
         $.cf_set_tag,
@@ -1049,7 +1049,7 @@ module.exports = function defineGrammar(dialect) {
           // $.hash_single,
           repeat(
             choice(
-              $._cf_tag,
+              $._cf_tags,
               $._hash,
               alias(/[^'\s\n\r\t#]+/, $.attribute_value),
             ),
@@ -1061,7 +1061,7 @@ module.exports = function defineGrammar(dialect) {
           // $.hash_single,
           repeat(
             choice(
-              $._cf_tag,
+              $._cf_tags,
               $._hash,
               alias(/[^"\s\n\r\t#]+/, $.attribute_value),
             ),
