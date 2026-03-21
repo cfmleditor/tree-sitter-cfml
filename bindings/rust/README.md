@@ -1,34 +1,31 @@
-# tree-sitter-cfml
+# tree-sitter-cfml (Rust)
 
-This crate provides a CFML grammar for the [tree-sitter][] parsing library.
-To use this crate, add it to the `[dependencies]` section of your `Cargo.toml`
-file. (Note that you will probably also need to depend on the
-[`tree-sitter`][tree-sitter crate] crate to use the parsed result in any useful
-way.)
+Rust bindings for the [tree-sitter](https://tree-sitter.github.io/) CFML grammars: **cfml**, **cfhtml**, **cfscript**, and **cfquery**.
+
+## Dependencies
+
+Add this crate and [`tree-sitter`](https://crates.io/crates/tree-sitter) to your project:
 
 ```toml
 [dependencies]
-tree-sitter = "0.20.10"
-tree-sitter-html = "0.20.0"
+tree-sitter = "0.24"
+tree-sitter-cfml = "0.26"
 ```
 
-Typically, you will use the [language][language func] function to add this
-grammar to a tree-sitter [Parser][], and then use the parser to parse some code:
+The grammar exposes [`LanguageFn`](https://docs.rs/tree-sitter-language/*/tree_sitter_language/struct.LanguageFn.html) values from [`tree-sitter-language`](https://crates.io/crates/tree-sitter-language) (this crate’s dependency).
+
+## Example
 
 ```rust
-let code = r#"
-    def double(x):
-        return x * 2
-"#;
-let mut parser = Parser::new();
-parser.set_language(tree_sitter_cfml::language()).expect("Error loading CFML grammar");
-let parsed = parser.parse(code, None);
+use tree_sitter_cfml::{LANGUAGE_CFHTML, LANGUAGE_CFML};
+
+let mut parser = tree_sitter::Parser::new();
+parser.set_language(&LANGUAGE_CFHTML.into()).expect("load CFHTML");
+let tree = parser.parse(b"<cfif x>#x#</cfif>", None).expect("parse");
 ```
 
-If you have any questions, please reach out to us in the [tree-sitter-discussions] page.
+Use `LANGUAGE_CFML` for `.cfc`, `LANGUAGE_CFSCRIPT` for `.cfs`, and `LANGUAGE_CFQUERY` for embedded SQL in `<cfquery>`.
 
-[language func]: https://docs.rs/tree-sitter-html/*/tree_sitter_html/fn.language.html
-[Parser]: https://docs.rs/tree-sitter/*/tree_sitter/struct.Parser.html
-[tree-sitter]: https://tree-sitter.github.io/
-[tree-sitter crate]: https://crates.io/crates/tree-sitter
-[tree-sitter discussions]: https://github.com/tree-sitter/tree-sitter/discussions
+## More documentation
+
+- Repository root [`README.md`](../../README.md): installation, Node/Python/Go bindings, development, and playground.
