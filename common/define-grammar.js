@@ -197,14 +197,7 @@ module.exports = function defineGrammar(dialect) {
       // [$.class_static_block, $._property_name],
 
     ]).concat(
-      ( dialect === 'cfquery' ? [
-        [$.hash_expression, $.hash_empty],
-        [$.assignment_expression, $._property_name],
-        [$.switch_case, $._property_name],
-        [$.call_expression, $._property_name],
-        [$.binary_expression, $._property_name],
-      ] :
-      (dialect === 'cfml' ? [
+      dialect === 'cfml' || dialect === 'cfquery' ? [
         [$.hash_expression, $.hash_empty],
         [$.assignment_expression, $._property_name],
         [$.switch_case, $._property_name],
@@ -214,8 +207,7 @@ module.exports = function defineGrammar(dialect) {
         [$.hash_empty, $._hash],
         [$.hash_expression, $._hash],
         [$.hash_empty, $.hash_expression],
-      ])),
-    ),
+      ]),
 
     rules: {
 
@@ -1876,9 +1868,7 @@ module.exports = function defineGrammar(dialect) {
         ),
       ),
 
-      // Workaround to https://github.com/tree-sitter/tree-sitter/issues/1156
-      // We give names to the token() constructs containing a regexp
-      // so as to obtain a node in the CST.
+      // tree-sitter/tree-sitter#1156: named token() regexp rules so string fragments appear in the CST.
       //
       unescaped_double_string_fragment: _ => token.immediate(prec(1, /[^"#]+/)),
 
@@ -1974,8 +1964,7 @@ module.exports = function defineGrammar(dialect) {
       // 'undefined' is syntactically a regular identifier in JavaScript.
       // However, its main use is as the read-only global variable whose
       // value is [undefined], for which there's no literal representation
-      // unlike 'null'. We gave it its own rule so it's easy to
-      // highlight in text editors and other applications.
+      // unlike 'null'. Kept as a distinct rule for highlighting and tooling.
       _identifier: $ => choice(
         // $.undefined,
         $.identifier,

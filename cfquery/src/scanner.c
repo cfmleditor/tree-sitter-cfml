@@ -1,36 +1,34 @@
-#include "tree_sitter/parser.h"
-#include <stdbool.h>
-#include <stdint.h>
+#include "../../common/scanner.h"
 
-// The cfquery dialect reuses the common CFML grammar but does not currently
-// rely on any external tokens. We provide a stub external scanner that never
-// produces any tokens, in order to satisfy the symbols that the generated
-// parser expects.
-
-void *tree_sitter_cfquery_external_scanner_create(void) {
-  return NULL;
-}
-
-void tree_sitter_cfquery_external_scanner_destroy(void *payload) {
-  (void)payload;
-}
-
-unsigned tree_sitter_cfquery_external_scanner_serialize(void *payload, char *buffer) {
-  (void)payload;
-  (void)buffer;
-  return 0;
-}
-
-void tree_sitter_cfquery_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
-  (void)payload;
-  (void)buffer;
-  (void)length;
+void *tree_sitter_cfquery_external_scanner_create() {
+    Scanner *scanner = (Scanner *)ts_calloc(1, sizeof(Scanner));
+    return scanner;
 }
 
 bool tree_sitter_cfquery_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
-  (void)payload;
-  (void)lexer;
-  (void)valid_symbols;
-  return false;
+    return external_scanner_scan(payload, lexer, valid_symbols);
 }
 
+unsigned tree_sitter_cfquery_external_scanner_serialize(void *payload, char *buffer) {
+    Scanner *scanner = (Scanner *)payload;
+    return serialize(scanner, buffer);
+}
+
+void tree_sitter_cfquery_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
+    Scanner *scanner = (Scanner *)payload;
+    deserialize(scanner, buffer, length);
+}
+
+void tree_sitter_cfquery_external_scanner_destroy(void *payload) {
+    Scanner *scanner = (Scanner *)payload;
+    for (unsigned i = 0; i < scanner->tags.size; i++) {
+        tag_free(&scanner->tags.contents[i]);
+    }
+    array_delete(&scanner->tags);
+
+    for (unsigned i = 0; i < scanner->cf_tags.size; i++) {
+        tag_free(&scanner->cf_tags.contents[i]);
+    }
+    array_delete(&scanner->cf_tags);
+    ts_free(scanner);
+}
