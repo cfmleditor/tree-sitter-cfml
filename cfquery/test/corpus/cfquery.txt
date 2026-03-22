@@ -239,3 +239,51 @@ SELECT * FROM users WHERE name LIKE '%foo%' LIMIT 10 OFFSET 20
         (number)
         (keyword_offset)
         (number)))))
+
+===================================
+cfqueryparam with hash in attribute
+===================================
+SELECT t.column_name
+FROM table_name t
+WHERE t.column_name = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.column_name#">
+---
+
+(program
+  (cfquery_segment
+    (cfquery_select_statement
+      (keyword_select)
+      (cfquery_select_list
+        (cfquery_expression
+          (cfquery_primary_expression
+            (qualified_identifier
+              (identifier)
+              (identifier
+                (identifier))))))
+      (cfquery_from_clause
+        (keyword_from)
+        (cfquery_from_table_list
+          (cfquery_table_reference
+            (identifier)
+            (identifier))))
+      (cfquery_where_clause
+        (keyword_where)
+        (cfquery_expression
+          (cfquery_primary_expression
+            (qualified_identifier
+              (identifier)
+              (identifier
+                (identifier))))))))
+  (ERROR)
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (hash_expression
+          (member_expression
+            (identifier)
+            (property_identifier)))))
+    (cf_selfclose_void_tag_end)))
