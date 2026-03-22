@@ -12,7 +12,7 @@
       "name": "Lucee CFML",
       "url": "http://localhost:4040",
       "url_public": "https://docs.lucee.org",
-      "notes": "Local Lucee docs at localhost:4040; public reference at docs.lucee.org."
+      "notes": "Local Lucee docs at localhost:4040; public reference at docs.lucee.org. Tag reference URLs use the tag name without the cf prefix in the path (e.g. /reference/tags/query.html for cfquery)."
     }
   },
   "constructs": [
@@ -22,7 +22,7 @@
       "notes": "Passes SQL to a data source; Adobe recommends cfqueryparam for security. ACF: attribute history (e.g. returnType 2021, disableAutoGenKeys 2018); deprecated sql/provider/dbServer/dbName/connectString removed in CF11.",
       "documentation": {
         "ACF": "https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-p-q/cfquery.html",
-        "Lucee": "https://docs.lucee.org/reference/tags/cfquery.html"
+        "Lucee": "https://docs.lucee.org/reference/tags/query.html"
       },
       "vendors": {
         "ACF": {
@@ -41,7 +41,7 @@
       "notes": "CFScript block tag. Embeds script syntax in tag-based pages. Documented in both Adobe ColdFusion and Lucee CFML references.",
       "documentation": {
         "ACF": "https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-c-d/cfscript.html",
-        "Lucee": "https://docs.lucee.org/reference/tags/cfscript.html"
+        "Lucee": "https://docs.lucee.org/reference/tags/script.html"
       },
       "vendors": {
         "ACF": {
@@ -60,7 +60,7 @@
       "notes": "XML processing tag. Creates XML document object from literal or variable. Documented in Adobe CFML Reference and Lucee.",
       "documentation": {
         "ACF": "https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-u-z/cfxml.html",
-        "Lucee": "https://docs.lucee.org/reference/tags/cfxml.html"
+        "Lucee": "https://docs.lucee.org/reference/tags/xml.html"
       },
       "vendors": {
         "ACF": {
@@ -79,7 +79,7 @@
       "notes": "Groups database operations as a single transaction; supports action (begin/commit/rollback/setsavepoint), isolation, savepoint, nested. Documented in both Adobe and Lucee.",
       "documentation": {
         "ACF": "https://helpx.adobe.com/coldfusion/cfml-reference/coldfusion-tags/tags-t/cftransaction.html",
-        "Lucee": "https://docs.lucee.org/reference/tags/cftransaction.html"
+        "Lucee": "https://docs.lucee.org/reference/tags/transaction.html"
       },
       "vendors": {
         "ACF": {

@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 
-const { execSync } = require("child_process");
-const { join } = require("path");
+const { join } = require('path');
+const { spawnTreeSitter, root } = require('./tree-sitter-cli.cjs');
 
-const parsers = ["cfml", "cfhtml", "cfscript", "cfquery"];
+const parsers = ['cfml', 'cfhtml', 'cfscript', 'cfquery'];
 
 for (const dir of parsers) {
   console.log(`testing ${dir}`);
   try {
-    execSync("tree-sitter test -u", {
-      stdio: "inherit",
-      cwd: join(__dirname, "..", dir)
-    });
-  } catch(error) {
+    const r = spawnTreeSitter(['test', '-u'], { cwd: join(root, dir) });
+    if (r.status !== 0) {
+      process.exitCode |= parsers.indexOf(dir) + 1;
+    }
+  } catch (error) {
     process.exitCode |= parsers.indexOf(dir) + 1;
   }
 }

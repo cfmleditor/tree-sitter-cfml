@@ -118,21 +118,35 @@ parser.SetLanguage(sitter.NewLanguage(tree_sitter_cfml.LanguageCfquery()))
 - [tree-sitter CLI](https://tree-sitter.github.io/tree-sitter/creating-parsers#installation) (`npm install -g tree-sitter-cli`)
 - A C compiler
 
+The `tree-sitter-cli` npm package downloads a native `tree-sitter` binary (e.g. `tree-sitter.exe` on Windows) via its `install.js` script. If `npm run build` cannot find it, run `node scripts/ensure-tree-sitter-cli-binary.js` once (or reinstall); repo scripts invoke the CLI through `node node_modules/tree-sitter-cli/cli.js` so a global install is optional.
+
+### Dependency versions (tree-sitter ecosystem)
+
+This repo keeps native and tooling versions aligned with the published [`tree-sitter`](https://www.npmjs.com/package/tree-sitter) npm package and the **0.26.x** CLI line used to generate parsers. Dependencies are taken from npm as published (no vendored patches to `tree-sitter` or the CLI).
+
+| Role | Package | Version |
+|------|---------|---------|
+| Native binding (peer / dev) | `tree-sitter` | `0.25.0` (latest on npm; matches `^0.25.0` peer range) |
+| Parser generation CLI | `tree-sitter-cli` | `0.26.7` (aligned with grammar metadata `0.26.x` in `tree-sitter.json`) |
+| Native addon (this package) | `node-addon-api` | `^8.3.0` (same range as `tree-sitter@0.25.0`) |
+| Native addon (this package) | `node-gyp-build` | `^4.8.4` (same as `tree-sitter@0.25.0`) |
+| Prebuild tooling | `prebuildify` | `^6.0.1` (same as `tree-sitter@0.25.0` dev tooling) |
+| Runtime | Node.js | `>=18` and `<24` (see `engines` in `package.json`). The published `tree-sitter@0.25.0` native addon matches upstream’s MSVC `binding.gyp` (C++17). **Node 24+** currently expects C++20 in Node’s headers; use **Node 22 LTS** (see `.nvmrc`) until `tree-sitter` ships a new npm release that supports newer Node, or use `nvm`/`fnm` to match `engines`. |
+
+### Vendor alignment
+
+- **Engines:** Grammars are tested against **Lucee** as the primary reference; valid **Adobe ColdFusion** syntax that overlaps the shared language should still parse sensibly (prefer generic tags or text over hard failures for well-formed markup).
+- **Tags:** Where engines document void or self-closing tags (for example `cfqueryparam`), the scanner and grammar follow that shape; CFML attribute names are case-insensitive.
+
 ### Building
 
-Each grammar is built independently from its subdirectory:
-
-```bash
-cd cfml && make
-cd cfhtml && make
-cd cfscript && make
-```
-
-Or build all three plus the Node.js bindings:
+Generate all four parsers and refresh generated sources (from the repository root):
 
 ```bash
 npm run build
 ```
+
+On Unix, you can also use `make` in each grammar directory that ships a `Makefile` (`cfml`, `cfhtml`, `cfscript`), or run `make generate` at the repo root to run `tree-sitter generate` in `cfml`, `cfhtml`, `cfscript`, and `cfquery`.
 
 **Note on build warnings**
 When running `npm run build`, you may see tree-sitter warnings about “unnecessary conflicts” such as `binary_expression`, `call_expression`, `switch_case`, or `assignment_expression` versus `_property_name`, and hash-related conflicts for the cfquery dialect.
@@ -140,13 +154,16 @@ These conflicts are **intentionally declared** in `common/define-grammar.js` to 
 
 ### Generating the parser
 
-After editing `common/define-grammar.js`:
+After editing `common/define-grammar.js` or a dialect `grammar.js`:
 
 ```bash
 cd cfml && tree-sitter generate
 cd cfhtml && tree-sitter generate
 cd cfscript && tree-sitter generate
+cd cfquery && tree-sitter generate
 ```
+
+Or use `npm run build` or `make generate` (see **Building**).
 
 ### Testing
 
@@ -164,11 +181,12 @@ npm test
 cd cfml && tree-sitter parse path/to/file.cfc
 ```
 
-### Playground
+### Playground and docs WASM
 
-```bash
-npm run playground
-```
+- **`npm start`** — runs `tree-sitter playground` at the repository root (uses `tree-sitter.json`). Run **`npm run prestart`** first if WASM needs rebuilding.
+- **`npm run prestart`** — runs `tree-sitter build --wasm` at the repo root.
+- **`npm run playground`** — runs `tree-sitter playground` in each of `cfml/`, `cfhtml/`, `cfscript/`, and `cfquery/`.
+- **`npm run docswasm`** — writes `docs/tree-sitter-{cfml,cfhtml,cfscript,cfquery}.wasm` for the static HTML under `docs/` (e.g. GitHub Pages). Open `docs/index.html` in a browser or serve `docs/` over HTTP.
 
 ## Grammar structure
 
@@ -176,7 +194,7 @@ All four grammars share a common base defined in `common/define-grammar.js`, wit
 
 ```
 common/
-  define-grammar.js   # shared grammar rules for all three dialects
+  define-grammar.js   # shared grammar rules for all dialects
   scanner.h           # external scanner (C)
   tag.h               # HTML/CF tag type definitions
 

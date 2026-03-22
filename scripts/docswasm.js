@@ -1,14 +1,17 @@
 #!/usr/bin/env node
 
-const {execSync} = require('child_process');
-const {join} = require('path');
+const { join } = require('path');
+const { spawnTreeSitter, root } = require('./tree-sitter-cli.cjs');
 
 const parsers = ['cfml', 'cfhtml', 'cfscript', 'cfquery'];
 
 for (const dir of parsers) {
   console.log(`building ${dir}`);
-  execSync('tree-sitter build --wasm -o ../docs/tree-sitter-' + dir + '.wasm  ', {
-    stdio: 'inherit',
-    cwd: join(__dirname, '..', dir),
+  const out = join(root, 'docs', `tree-sitter-${dir}.wasm`);
+  const r = spawnTreeSitter(['build', '--wasm', '-o', out], {
+    cwd: join(root, dir),
   });
+  if (r.status !== 0) {
+    process.exit(r.status ?? 1);
+  }
 }
