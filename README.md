@@ -8,12 +8,12 @@
 
 Three grammars are provided to cover the different ways CFML is written, plus an embedded SQL dialect for `cfquery`:
 
-| Grammar  | Scope          | File types | Description |
-|----------|----------------|------------|-------------|
-| `cfml`   | `source.cfml`  | `.cfc`     | ColdFusion components — CFScript inside a `component {}` block or tag-based component files |
-| `cfhtml` | `source.cfhtml`| `.cfm`     | CFML template files — HTML with embedded CF tags and hash expressions |
-| `cfscript` | `source.cfscript` | `.cfs` | Pure CFScript files |
-| `cfquery`  | `source.cfquery`  | *(embedded)* | SQL dialect used inside `<cfquery>` bodies (and compatible with QueryExecute-style usage) with CF-style `#hash#` interpolation and CF tags in the body |
+| Grammar    | Scope             | File types   | Description                                                                                                                                            |
+| ---------- | ----------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `cfml`     | `source.cfml`     | `.cfc`       | ColdFusion components - CFScript inside a `component {}` block or tag-based component files                                                            |
+| `cfhtml`   | `source.cfhtml`   | `.cfm`       | CFML template files - HTML with embedded CF tags and hash expressions                                                                                  |
+| `cfscript` | `source.cfscript` | `.cfs`       | Pure CFScript files                                                                                                                                    |
+| `cfquery`  | `source.cfquery`  | _(embedded)_ | SQL dialect used inside `<cfquery>` bodies (and compatible with QueryExecute-style usage) with CF-style `#hash#` interpolation and CF tags in the body |
 
 ## Playground
 
@@ -28,13 +28,18 @@ npm install @cfmleditor/tree-sitter-cfml
 ```
 
 ```js
-const { cfml, cfhtml, cfscript, cfquery } = require('@cfmleditor/tree-sitter-cfml');
-const Parser = require('tree-sitter');
+const {
+  cfml,
+  cfhtml,
+  cfscript,
+  cfquery,
+} = require("@cfmleditor/tree-sitter-cfml");
+const Parser = require("tree-sitter");
 
 const parser = new Parser();
 parser.setLanguage(cfhtml.language);
 
-const tree = parser.parse('<cfif condition>#value#</cfif>');
+const tree = parser.parse("<cfif condition>#value#</cfif>");
 console.log(tree.rootNode.toString());
 ```
 
@@ -124,14 +129,14 @@ The `tree-sitter-cli` npm package downloads a native `tree-sitter` binary (e.g. 
 
 This repo keeps native and tooling versions aligned with the published [`tree-sitter`](https://www.npmjs.com/package/tree-sitter) npm package and the **0.26.x** CLI line used to generate parsers. Dependencies are taken from npm as published (no vendored patches to `tree-sitter` or the CLI).
 
-| Role | Package | Version |
-|------|---------|---------|
-| Native binding (peer / dev) | `tree-sitter` | `0.25.0` (latest on npm; matches `^0.25.0` peer range) |
-| Parser generation CLI | `tree-sitter-cli` | `0.26.7` (aligned with grammar metadata `0.26.x` in `tree-sitter.json`) |
-| Native addon (this package) | `node-addon-api` | `^8.3.0` (same range as `tree-sitter@0.25.0`) |
-| Native addon (this package) | `node-gyp-build` | `^4.8.4` (same as `tree-sitter@0.25.0`) |
-| Prebuild tooling | `prebuildify` | `^6.0.1` (same as `tree-sitter@0.25.0` dev tooling) |
-| Runtime | Node.js | `>=18` and `<24` (see `engines` in `package.json`). The published `tree-sitter@0.25.0` native addon matches upstream’s MSVC `binding.gyp` (C++17). **Node 24+** currently expects C++20 in Node’s headers; use **Node 22 LTS** (see `.nvmrc`) until `tree-sitter` ships a new npm release that supports newer Node, or use `nvm`/`fnm` to match `engines`. |
+| Role                        | Package           | Version                                                                                                                                                                                                                                                                                                                                                    |
+| --------------------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Native binding (peer / dev) | `tree-sitter`     | `0.25.0` (latest on npm; matches `^0.25.0` peer range)                                                                                                                                                                                                                                                                                                     |
+| Parser generation CLI       | `tree-sitter-cli` | `0.26.7` (aligned with grammar metadata `0.26.x` in `tree-sitter.json`)                                                                                                                                                                                                                                                                                    |
+| Native addon (this package) | `node-addon-api`  | `^8.3.0` (same range as `tree-sitter@0.25.0`)                                                                                                                                                                                                                                                                                                              |
+| Native addon (this package) | `node-gyp-build`  | `^4.8.4` (same as `tree-sitter@0.25.0`)                                                                                                                                                                                                                                                                                                                    |
+| Prebuild tooling            | `prebuildify`     | `^6.0.1` (same as `tree-sitter@0.25.0` dev tooling)                                                                                                                                                                                                                                                                                                        |
+| Runtime                     | Node.js           | `>=18` and `<24` (see `engines` in `package.json`). The published `tree-sitter@0.25.0` native addon matches upstream's MSVC `binding.gyp` (C++17). **Node 24+** currently expects C++20 in Node's headers; use **Node 22 LTS** (see `.nvmrc`) until `tree-sitter` ships a new npm release that supports newer Node, or use `nvm`/`fnm` to match `engines`. |
 
 ### Vendor alignment
 
@@ -149,7 +154,7 @@ npm run build
 On Unix, you can also use `make` in each grammar directory that ships a `Makefile` (`cfml`, `cfhtml`, `cfscript`), or run `make generate` at the repo root to run `tree-sitter generate` in `cfml`, `cfhtml`, `cfscript`, and `cfquery`.
 
 **Note on build warnings**
-When running `npm run build`, you may see tree-sitter warnings about “unnecessary conflicts” such as `binary_expression`, `call_expression`, `switch_case`, or `assignment_expression` versus `_property_name`, and hash-related conflicts for the cfquery dialect.
+When running `npm run build`, you may see tree-sitter warnings about "unnecessary conflicts" such as `binary_expression`, `call_expression`, `switch_case`, or `assignment_expression` versus `_property_name`, and hash-related conflicts for the cfquery dialect.
 These conflicts are **intentionally declared** in `common/define-grammar.js` to resolve real ambiguities in CFML/CFHTML/cfquery syntax; attempts to remove them cause `tree-sitter generate` to fail with unresolved conflicts. It is safe to **ignore** these warnings as long as the build and tests succeed.
 
 ### Generating the parser
@@ -183,10 +188,10 @@ cd cfml && tree-sitter parse path/to/file.cfc
 
 ### Playground and docs WASM
 
-- **`npm start`** — runs `tree-sitter playground` at the repository root (uses `tree-sitter.json`). Run **`npm run prestart`** first if WASM needs rebuilding.
-- **`npm run prestart`** — runs `tree-sitter build --wasm` at the repo root.
-- **`npm run playground`** — runs `tree-sitter playground` in each of `cfml/`, `cfhtml/`, `cfscript/`, and `cfquery/`.
-- **`npm run docswasm`** — writes `docs/tree-sitter-{cfml,cfhtml,cfscript,cfquery}.wasm` for the static HTML under `docs/` (e.g. GitHub Pages). Open `docs/index.html` in a browser or serve `docs/` over HTTP.
+- **`npm start`** - runs `tree-sitter playground` at the repository root (uses `tree-sitter.json`). Run **`npm run prestart`** first if WASM needs rebuilding.
+- **`npm run prestart`** - runs `tree-sitter build --wasm` at the repo root.
+- **`npm run playground`** - runs `tree-sitter playground` in each of `cfml/`, `cfhtml/`, `cfscript/`, and `cfquery/`.
+- **`npm run docswasm`** - writes `docs/tree-sitter-{cfml,cfhtml,cfscript,cfquery}.wasm` for the static HTML under `docs/` (e.g. GitHub Pages). Open `docs/index.html` in a browser or serve `docs/` over HTTP.
 
 ## Grammar structure
 
@@ -215,10 +220,10 @@ cfquery/              # cfquery SQL dialect (embedded)
 
 Each grammar ships with query files for editor integration:
 
-- `highlights.scm` — syntax highlighting captures
-- `indents.scm` — indentation rules
-- `injections.scm` — embedded language injections (e.g. SQL inside `<cfquery>`)
-- `tags.scm` — function/method definitions and call references for go-to-definition and symbol search
+- `highlights.scm` - syntax highlighting captures
+- `indents.scm` - indentation rules
+- `injections.scm` - embedded language injections (e.g. SQL inside `<cfquery>`)
+- `tags.scm` - function/method definitions and call references for go-to-definition and symbol search
 
 ## License
 
