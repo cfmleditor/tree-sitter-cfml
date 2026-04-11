@@ -1,32 +1,9 @@
-# Normalize line endings to LF for cross-platform text source files
-*.c      text eol=lf
-*.h      text eol=lf
-*.js     text eol=lf
-*.mjs    text eol=lf
-*.cjs    text eol=lf
-*.ts     text eol=lf
-*.json   text eol=lf
-*.txt    text eol=lf
-*.md     text eol=lf
-*.yml    text eol=lf
-*.yaml   text eol=lf
-*.scm    text eol=lf
-*.cmake  text eol=lf
-*.swift  text eol=lf
-*.rs     text eol=lf
-*.go     text eol=lf
-*.py     text eol=lf
-*.zig    text eol=lf
-*.gyp    text eol=lf
-*.gypi   text eol=lf
-*.toml   text eol=lf
-*.lock   text eol=lf
-*.m      text eol=lf
-*.cff?   text eol=lf
+# Normalize line endings to LF for all text files (batch/cmd override below)
+* text=auto eol=lf
 
-# Windows-specific scripts should use CRLF line endings
-*.bat    text eol=crlf
-*.cmd    text eol=crlf
+# Windows-specific scripts use CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
 
 /src/parser.c linguist-vendored
 

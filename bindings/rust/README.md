@@ -12,7 +12,7 @@ tree-sitter = "0.24"
 tree-sitter-cfml = "0.26"
 ```
 
-The grammar exposes [`LanguageFn`](https://docs.rs/tree-sitter-language/*/tree_sitter_language/struct.LanguageFn.html) values from [`tree-sitter-language`](https://crates.io/crates/tree-sitter-language) (this crate’s dependency).
+The grammar exposes [`LanguageFn`](https://docs.rs/tree-sitter-language/*/tree_sitter_language/struct.LanguageFn.html) values from [`tree-sitter-language`](https://crates.io/crates/tree-sitter-language) (this crate's dependency).
 
 ## Example
 
