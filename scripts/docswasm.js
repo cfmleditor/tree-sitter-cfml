@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const { join } = require('path');
-const { spawnTreeSitter, root } = require('./tree-sitter-cli.cjs');
+const {join} = require('path');
+const {spawnTreeSitter, root} = require('./tree-sitter-cli.cjs');
 
 const parsers = ['cfml', 'cfhtml', 'cfscript', 'cfquery'];
 

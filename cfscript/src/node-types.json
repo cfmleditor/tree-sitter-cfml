@@ -4,10 +4,6 @@
     "named": true,
     "subtypes": [
       {
-        "type": "component",
-        "named": true
-      },
-      {
         "type": "function_declaration",
         "named": true
       },

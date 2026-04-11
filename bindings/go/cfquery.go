@@ -1,9 +1,9 @@
 package tree_sitter_cfml
 
-// #cgo CPPFLAGS: -I../../cfscript/src
+// #cgo CPPFLAGS: -I../../cfquery/src
 // #cgo CFLAGS: -std=c11 -fPIC
-// #include "../../cfscript/src/parser.c"
-// #include "../../cfscript/src/scanner.c"
+// #include "../../cfquery/src/parser.c"
+// #include "../../cfquery/src/scanner.c"
 import "C"
 
 import "unsafe"

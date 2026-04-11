@@ -5,7 +5,7 @@
 *.bat text eol=crlf
 *.cmd text eol=crlf
 
-/src/parser.c linguist-vendored
+cfml/src/parser.c linguist-vendored
 
 # Zig bindings
 build.zig linguist-generated

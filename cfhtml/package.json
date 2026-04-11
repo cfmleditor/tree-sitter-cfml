@@ -2,9 +2,9 @@
   "main": "../bindings/node/cfhtml.js",
   "private": true,
   "scripts": {
-    "build": "tree-sitter generate",
-    "test": "tree-sitter test",
-    "prestart": "tree-sitter build --wasm",
-    "start": "tree-sitter playground"
+    "build": "node ../node_modules/tree-sitter-cli/cli.js generate",
+    "test": "node ../node_modules/tree-sitter-cli/cli.js test",
+    "prestart": "node ../node_modules/tree-sitter-cli/cli.js build --wasm",
+    "start": "node ../node_modules/tree-sitter-cli/cli.js playground"
   }
 }

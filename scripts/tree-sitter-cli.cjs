@@ -1,9 +1,10 @@
 const fs = require('fs');
 const path = require('path');
-const { spawnSync } = require('child_process');
+const {spawnSync} = require('child_process');
 
 const root = path.join(__dirname, '..');
 
+/** Paths to the local tree-sitter-cli package and binary. */
 function paths() {
   const cliDir = path.join(root, 'node_modules', 'tree-sitter-cli');
   return {
@@ -14,17 +15,18 @@ function paths() {
   };
 }
 
+/** Exit if CLI JS is missing; run install.js to fetch the binary when absent. */
 function ensureTreeSitterBinary() {
-  const { cliJs, exe, cliDir, installJs } = paths();
+  const {cliJs, exe, cliDir, installJs} = paths();
   if (!fs.existsSync(cliJs)) {
     console.error(
-      'tree-sitter-cli is not installed. From the repository root, run: npm install'
+      'tree-sitter-cli is not installed. From the repository root, run: npm install',
     );
     process.exit(1);
   }
   if (!fs.existsSync(exe)) {
     console.error(
-      'tree-sitter CLI binary missing; running the official install.js download step...'
+      'tree-sitter CLI binary missing; running the official install.js download step...',
     );
     const r = spawnSync(process.execPath, [installJs], {
       cwd: cliDir,
@@ -36,16 +38,20 @@ function ensureTreeSitterBinary() {
     }
     if (!fs.existsSync(exe)) {
       console.error(
-        'tree-sitter CLI binary is still missing. Check network access to GitHub releases.'
+        'tree-sitter CLI binary is still missing. Check network access to GitHub releases.',
       );
       process.exit(1);
     }
   }
 }
 
+/**
+ * @param {string[]} argv
+ * @param {import('child_process').SpawnSyncOptions} options
+ */
 function spawnTreeSitter(argv, options) {
   ensureTreeSitterBinary();
-  const { cliJs } = paths();
+  const {cliJs} = paths();
   return spawnSync(process.execPath, [cliJs, ...argv], {
     stdio: 'inherit',
     ...options,

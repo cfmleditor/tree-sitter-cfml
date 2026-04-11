@@ -5,22 +5,36 @@ on:
     branches:
       - "**"
     paths:
-      - src/scanner.c
+      - "cfml/src/scanner.c"
+      - "cfhtml/src/scanner.c"
+      - "cfscript/src/scanner.c"
+      - "cfquery/src/scanner.c"
+      - "common/scanner.h"
+      - "common/tag.h"
   push:
     branches:
       - "master"
     paths:
-      - src/scanner.c
+      - "cfml/src/scanner.c"
+      - "cfhtml/src/scanner.c"
+      - "cfscript/src/scanner.c"
+      - "cfquery/src/scanner.c"
+      - "common/scanner.h"
+      - "common/tag.h"
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Parser fuzzing
+  fuzz:
+    name: Fuzz ${{ matrix.language }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [cfml, cfhtml, cfscript, cfquery]
     steps:
       - uses: actions/checkout@v3
       - uses: vigoux/tree-sitter-fuzz-action@v1
         with:
-          language: cfml
-          external-scanner: src/scanner.c
+          language: ${{ matrix.language }}
+          external-scanner: ${{ matrix.language }}/src/scanner.c
           time: 60

@@ -68,10 +68,14 @@ jobs:
 
       - name: Setup Node
         if: env.version_changed == 'true'
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version-file: ".nvmrc"
+          cache: "npm"
           registry-url: "https://registry.npmjs.org"
+      - name: Install dependencies
+        if: env.version_changed == 'true'
+        run: npm install
       - name: Publish to NPM
         if: env.version_changed == 'true'
         env:
@@ -80,11 +84,7 @@ jobs:
 
       - name: Setup Rust
         if: env.version_changed == 'true'
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
+        uses: dtolnay/rust-toolchain@stable
       - name: Publish to Crates.io
         if: env.version_changed == 'true'
         uses: katyo/publish-crates@v2
