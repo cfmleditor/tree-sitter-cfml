@@ -1,5 +1,6 @@
 # Normalize line endings to LF for cross-platform text source files
 Makefile text eol=lf
+*.mdc    text eol=lf
 *.c      text eol=lf
 *.h      text eol=lf
 *.js     text eol=lf
