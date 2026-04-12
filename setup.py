@@ -9,10 +9,22 @@ from wheel.bdist_wheel import bdist_wheel
 
 sources = [
     "bindings/python/tree_sitter_cfml/binding.c",
-    "src/parser.c",
+    "cfml/src/parser.c",
+    "cfml/src/scanner.c",
+    "cfhtml/src/parser.c",
+    "cfhtml/src/scanner.c",
+    "cfscript/src/parser.c",
+    "cfscript/src/scanner.c",
+    "cfquery/src/parser.c",
+    "cfquery/src/scanner.c",
 ]
-if path.exists("src/scanner.c"):
-    sources.append("src/scanner.c")
+
+include_dirs = [
+    "cfml/src",
+    "cfhtml/src",
+    "cfscript/src",
+    "cfquery/src",
+]
 
 macros: list[tuple[str, str | None]] = [
     ("PY_SSIZE_T_CLEAN", None),
@@ -47,7 +59,7 @@ class EggInfo(egg_info):
     def find_sources(self):
         super().find_sources()
         self.filelist.recursive_include("queries", "*.scm")
-        self.filelist.include("src/tree_sitter/*.h")
+        self.filelist.include("cfml/src/tree_sitter/*.h")
 
 
 setup(
@@ -64,7 +76,7 @@ setup(
             sources=sources,
             extra_compile_args=cflags,
             define_macros=macros,
-            include_dirs=["src"],
+            include_dirs=include_dirs,
             py_limited_api=limited_api,
         )
     ],

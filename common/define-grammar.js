@@ -18,6 +18,7 @@ const SQL_PREC = {
 
 /**
  * Case-insensitive keyword helper for the cfquery SQL dialect.
+ *
  * @param {string} word
  */
 const ci = (word) =>
@@ -83,7 +84,7 @@ module.exports = function defineGrammar(dialect) {
       $._end_cf_script_name,
       $.cf_script_content,
 
-      $._start_cf_output_name
+      $._start_cf_output_name,
     ],
 
     supertypes: $ => [
@@ -212,14 +213,14 @@ module.exports = function defineGrammar(dialect) {
     rules: {
 
       program: $ => (
-        dialect === 'cfquery'
-          ? repeat($._node)
-          : choice(
-              repeat(
-                $._node,
-              ),
-              $.component,
-            )
+        dialect === 'cfquery' ?
+          repeat($._node) :
+          choice(
+            repeat(
+              $._node,
+            ),
+            $.component,
+          )
       ),
 
       doctype: $ => seq(
@@ -240,7 +241,7 @@ module.exports = function defineGrammar(dialect) {
 
       cf_selfclose_void_tag_end: $ => choice(
         alias($._cf_self_closing_void_tag_delimiter, '/>'),
-        alias($._close_cf_tag_delim, '>')
+        alias($._close_cf_tag_delim, '>'),
       ),
 
       cf_set_tag: $ => prec.right(3, seq(
@@ -283,9 +284,7 @@ module.exports = function defineGrammar(dialect) {
         $.html_text,
       ),
 
-      // Root content for the cfquery dialect: interleaved SQL segments
-      // and CFML content (no HTML elements). Must not be empty to satisfy
-      // tree-sitter's restriction on non-start rules.
+      // cfquery_content sketch (non-start rules cannot be empty).
       // cfquery_content: $ => seq(
       //   choice(
       //     $.cfquery_segment,
@@ -926,13 +925,13 @@ module.exports = function defineGrammar(dialect) {
 
       cfquery_single_quoted_string: $ =>
         seq(
-          "'",
+          '\'',
           repeat(choice(
-            "''",
+            '\'\'',
             alias($.unescaped_single_string_fragment, $.string_fragment),
             (dialect === 'cfhtml' ? $._hash_expression : $._hash),
           )),
-          "'",
+          '\'',
         ),
 
       cfquery_cast_expression: $ =>
@@ -1013,15 +1012,15 @@ module.exports = function defineGrammar(dialect) {
         ),
 
       function_call_args: $ =>
-        dialect === 'cfquery'
-          ? seq(
-              field('first', choice($.cfquery_expression, '*')),
-              repeat(seq(',', field('rest', choice($.cfquery_expression, '*')))),
-            )
-          : seq(
-              field('first', $.expression),
-              repeat(seq(',', field('rest', $.expression))),
-            ),
+        dialect === 'cfquery' ?
+          seq(
+            field('first', choice($.cfquery_expression, '*')),
+            repeat(seq(',', field('rest', choice($.cfquery_expression, '*')))),
+          ) :
+          seq(
+            field('first', $.expression),
+            repeat(seq(',', field('rest', $.expression))),
+          ),
 
       _cfoutput_node: $ => choice(
         $.doctype,
@@ -1178,7 +1177,7 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       cf_attribute_name: _ => /[^<>"\'/=\s\n\r\t#0-9]+/,
-        
+
       cf_tag: $ => choice(
         seq(
           $.cf_start_tag,
@@ -1310,7 +1309,6 @@ module.exports = function defineGrammar(dialect) {
         optional($.cf_if_alt),
       )),
 
-      
 
       entity: _ => /&(([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});/,
 
@@ -2504,15 +2502,4 @@ module.exports = function defineGrammar(dialect) {
   function commaSep(rule) {
     return optional(commaSep1(rule));
   }
-
-
-  function cfTagOpen(name, open, attr, close) {
-    return seq(
-      open, 
-      keyword(name),
-      attr,
-      close
-    )
-  }
-
 };

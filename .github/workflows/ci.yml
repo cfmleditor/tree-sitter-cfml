@@ -17,18 +17,22 @@ jobs:
         os: [macos-latest, ubuntu-latest]
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version-file: '.nvmrc'
+          cache: 'npm'
       - run: npm install
       - run: npm test
+      - run: npm run lint
 
   test_windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version-file: '.nvmrc'
+          cache: 'npm'
       - run: npm install
       - run: npm test
+      - run: npm run lint

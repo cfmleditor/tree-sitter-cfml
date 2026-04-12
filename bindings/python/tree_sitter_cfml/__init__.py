@@ -1,4 +1,4 @@
-"PHP grammar for tree-sitter"
+"CFML grammars for tree-sitter"
 
 from importlib.resources import files as _files
 

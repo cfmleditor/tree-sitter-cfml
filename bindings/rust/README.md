@@ -1,18 +1,16 @@
 # tree-sitter-cfml (Rust)
 
-Rust bindings for the [tree-sitter](https://tree-sitter.github.io/) CFML grammars: **cfml**, **cfhtml**, **cfscript**, and **cfquery**.
+Rust bindings for the [tree-sitter](https://tree-sitter.github.io/) grammars **cfml**, **cfhtml**, **cfscript**, and **cfquery**.
 
 ## Dependencies
 
-Add this crate and [`tree-sitter`](https://crates.io/crates/tree-sitter) to your project:
-
 ```toml
 [dependencies]
-tree-sitter = "0.24"
-tree-sitter-cfml = "0.26"
+tree-sitter = "0.25"
+tree-sitter-cfml = "0.26.2"
 ```
 
-The grammar exposes [`LanguageFn`](https://docs.rs/tree-sitter-language/*/tree_sitter_language/struct.LanguageFn.html) values from [`tree-sitter-language`](https://crates.io/crates/tree-sitter-language) (this crate's dependency).
+The crate exposes [`LanguageFn`](https://docs.rs/tree-sitter-language/*/tree_sitter_language/struct.LanguageFn.html) values via [`tree-sitter-language`](https://crates.io/crates/tree-sitter-language).
 
 ## Example
 
@@ -20,12 +18,12 @@ The grammar exposes [`LanguageFn`](https://docs.rs/tree-sitter-language/*/tree_s
 use tree_sitter_cfml::{LANGUAGE_CFHTML, LANGUAGE_CFML};
 
 let mut parser = tree_sitter::Parser::new();
-parser.set_language(&LANGUAGE_CFHTML.into()).expect("load CFHTML");
+parser.set_language(&LANGUAGE_CFHTML.into()).expect("load language");
 let tree = parser.parse(b"<cfif x>#x#</cfif>", None).expect("parse");
 ```
 
-Use `LANGUAGE_CFML` for `.cfc`, `LANGUAGE_CFSCRIPT` for `.cfs`, and `LANGUAGE_CFQUERY` for embedded SQL in `<cfquery>`.
+Use `LANGUAGE_CFML` for `.cfc`, `LANGUAGE_CFSCRIPT` for `.cfs`, `LANGUAGE_CFQUERY` for SQL inside `<cfquery>`.
 
 ## More documentation
 
-- Repository root [`README.md`](../../README.md): installation, Node/Python/Go bindings, development, and playground.
+Repository root [`README.md`](../../README.md): Node, Python, Go, development, playground.

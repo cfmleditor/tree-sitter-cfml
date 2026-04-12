@@ -380,7 +380,7 @@ module.exports = grammar({
       $.query_text,
       '"',
       repeat(seq(',', $.expression)),
-      ')'
+      ')',
     ),
 
     query_tag: ($) => seq(
@@ -519,8 +519,8 @@ module.exports = grammar({
           '(',
           optional(field('type', alias($.identifier, $.catch_type))),
           field('parameter', choice($.identifier, $._destructuring_pattern)),
-          ')'
-        )
+          ')',
+        ),
       ),
       field('body', $.statement_block),
     ),
@@ -809,7 +809,7 @@ module.exports = grammar({
       seq(
         alias($.identifier, $.attribute_label),
         ':',
-        $.component_attribute
+        $.component_attribute,
       ),
       seq(
         $.identifier,
@@ -890,7 +890,7 @@ module.exports = grammar({
       optional($._automatic_semicolon),
     )),
 
-    // _function_options: ($) => choice(  
+    // _function_options: ($) => choice(
     //   $.assignment_expression,
     //   alias($.assignment_expression2, $.assignment_expression),
     // ),
@@ -944,7 +944,7 @@ module.exports = grammar({
     _formal_parameter: ($) => seq(
       optional('required'),
       optional($.parameter_type),
-      choice($.pattern, $.assignment_pattern)
+      choice($.pattern, $.assignment_pattern),
     ),
 
     optional_chain: (_) => '?.',
@@ -1284,10 +1284,9 @@ module.exports = grammar({
     ),
 
     identifier: (_) => {
-      // eslint-disable-next-line max-len
       // @ts-ignore
       // const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
-      // eslint-disable-next-line max-len
+
       // @ts-ignore
       const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+#\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
       return token(seq(alphanumeric, repeat(alphanumeric)));
@@ -1476,25 +1475,23 @@ module.exports = grammar({
 });
 
 /**
-   * Creates a rule to match one or more of the rules separated by a comma
-   *
-   * @param {Rule} rule
-   *
-   * @return {SeqRule}
-   *
-   */
+ * Creates a rule to match one or more of the rules separated by a comma
+ *
+ * @param {Rule} rule
+ *
+ * @returns {SeqRule}
+ */
 function commaSep1(rule) {
   return seq(rule, repeat(seq(',', rule)));
 }
 
 /**
-   * Creates a rule to optionally match one or more of the rules separated by a comma
-   *
-   * @param {Rule} rule
-   *
-   * @return {ChoiceRule}
-   *
-   */
+ * Creates a rule to optionally match one or more of the rules separated by a comma
+ *
+ * @param {Rule} rule
+ *
+ * @returns {ChoiceRule}
+ */
 function commaSep(rule) {
   return optional(commaSep1(rule));
 }

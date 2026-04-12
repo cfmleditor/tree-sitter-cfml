@@ -1,5 +1,5 @@
 {
-  description = "A tree-sitter grammar for Cfml";
+  description = "Tree-sitter grammars for CFML";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -7,7 +7,7 @@
 
   outputs = { self, nixpkgs, ... }@inputs:
     let
-      version = "0.4.0";
+      version = "0.26.2";
 
       # Matches pkgs.tree-sitter
       supportedSystems = [

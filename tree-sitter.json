@@ -45,9 +45,6 @@
         "cfs"
       ],
       "highlights": "cfscript/queries/highlights.scm",
-      "injections": [
-        "cfscript/queries/injections.scm"
-      ],
       "tags": "cfscript/queries/tags.scm"
     },
     {
@@ -67,7 +64,7 @@
     "description": "CFML grammar for tree-sitter",
     "authors": [
       { "name": "Gareth Edwards", "email": "ghedwards@gmail.com" },
-      { "name": "Gavin Baumanis", "email": "gavinbaumanis@gmail.com"} 
+      { "name": "Gavin Baumanis", "email": "gavinbaumanis@gmail.com" }
     ],
     "links": {
       "repository": "https://github.com/cfmleditor/tree-sitter-cfml"
