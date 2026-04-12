@@ -299,10 +299,16 @@ module.exports = function defineGrammar(dialect) {
       //   )
       // ),
 
-      // A single SQL statement (or compound UNION) inside a cfquery body.
-      // Grouping SQL into segments makes it easier for tools to work with
-      // the SQL portions between CFML constructs.
-      cfquery_segment: $ => $._cfquery_sql_statement,
+      // SQL batch inside a cfquery body: one or more statements separated by ';'.
+      cfquery_segment: $ =>
+        prec.right(
+          0,
+          seq(
+            $._cfquery_sql_statement,
+            repeat(seq(';', $._cfquery_sql_statement)),
+            optional(';'),
+          ),
+        ),
 
       query_operator: $ => choice(
         field('operator', '>='),
@@ -327,9 +333,12 @@ module.exports = function defineGrammar(dialect) {
         $.cfquery_insert_statement,
         $.cfquery_update_statement,
         $.cfquery_delete_statement,
+        $.cfquery_truncate_statement,
+        $.cfquery_merge_statement,
+        $.cfquery_exec_statement,
       ),
 
-      cfquery_select_statement: $ =>
+      cfquery_select_core: $ =>
         seq(
           alias(ci('select'), $.keyword_select),
           optional(alias(ci('distinct'), $.keyword_distinct)),
@@ -338,18 +347,133 @@ module.exports = function defineGrammar(dialect) {
           optional($.cfquery_from_clause),
           optional($.cfquery_where_clause),
           optional($.cfquery_group_by_clause),
+          optional($.cfquery_window_clause),
           optional($.cfquery_order_by_clause),
+          optional($.cfquery_offset_fetch_clause),
           optional($.cfquery_limit_clause),
+          optional($.cfquery_for_update_clause),
+        ),
+
+      cfquery_offset_fetch_clause: $ =>
+        seq(
+          alias(ci('offset'), $.keyword_offset),
+          choice($.number, $.parameter),
+          optional(alias(ci('rows'), $.keyword_rows)),
+          alias(ci('fetch'), $.keyword_fetch),
+          alias(ci('next'), $.keyword_next),
+          choice($.number, $.parameter),
+          optional(alias(ci('rows'), $.keyword_rows)),
+          alias(ci('only'), $.keyword_only),
+        ),
+
+      cfquery_select_statement: $ =>
+        seq(
+          optional($.cfquery_with_clause),
+          $.cfquery_select_core,
         ),
 
       cfquery_union_statement: $ =>
         seq(
-          $.cfquery_select_statement,
+          optional($.cfquery_with_clause),
+          $.cfquery_select_core,
           repeat1(
             seq(
               alias(ci('union'), $.keyword_union),
               optional(alias(ci('all'), $.keyword_all)),
-              $.cfquery_select_statement,
+              $.cfquery_select_core,
+            ),
+          ),
+        ),
+
+      cfquery_with_clause: $ =>
+        seq(
+          alias(ci('with'), $.keyword_with),
+          $.cfquery_cte_list,
+        ),
+
+      cfquery_cte_list: $ =>
+        seq(
+          field('first', $.cfquery_cte),
+          repeat(seq(',', field('rest', $.cfquery_cte))),
+        ),
+
+      cfquery_cte: $ =>
+        seq(
+          field('name', $.identifier),
+          optional($.cfquery_column_list),
+          alias(ci('as'), $.keyword_as),
+          '(',
+          field('query', $.cfquery_cte_query),
+          ')',
+        ),
+
+      cfquery_cte_query: $ =>
+        choice(
+          $.cfquery_cte_union_inner,
+          $.cfquery_select_core,
+        ),
+
+      cfquery_cte_union_inner: $ =>
+        seq(
+          $.cfquery_select_core,
+          repeat1(
+            seq(
+              alias(ci('union'), $.keyword_union),
+              optional(alias(ci('all'), $.keyword_all)),
+              $.cfquery_select_core,
+            ),
+          ),
+        ),
+
+      cfquery_truncate_statement: $ =>
+        seq(
+          alias(ci('truncate'), $.keyword_truncate),
+          alias(ci('table'), $.keyword_table),
+          field('table', choice($.identifier, $.cfquery_bracket_identifier)),
+        ),
+
+      cfquery_merge_statement: $ =>
+        seq(
+          alias(ci('merge'), $.keyword_merge),
+          alias(ci('into'), $.keyword_into),
+          field('target', $.cfquery_table_reference),
+          alias(ci('using'), $.keyword_using),
+          field('source', $.cfquery_table_reference),
+          alias(ci('on'), $.keyword_on),
+          field('condition', $.cfquery_expression),
+          alias(ci('when'), $.keyword_when),
+          alias(ci('matched'), $.keyword_matched),
+          alias(ci('then'), $.keyword_then),
+          alias(ci('update'), $.keyword_update),
+          alias(ci('set'), $.keyword_set),
+          $.cfquery_assignment_list,
+          optional(
+            seq(
+              alias(ci('when'), $.keyword_when),
+              alias(ci('not'), $.keyword_not),
+              alias(ci('matched'), $.keyword_matched),
+              alias(ci('then'), $.keyword_then),
+              alias(ci('insert'), $.keyword_insert),
+              field('columns', $.cfquery_column_list),
+              alias(ci('values'), $.keyword_values),
+              field('values', $.cfquery_value_list),
+            ),
+          ),
+        ),
+
+      cfquery_exec_statement: $ =>
+        seq(
+          choice(
+            alias(ci('exec'), $.keyword_exec),
+            alias(ci('execute'), $.keyword_execute),
+            alias(ci('call'), $.keyword_call),
+          ),
+          field('name', $.cfquery_qualified_name),
+          optional(
+            seq(
+              '(',
+              optional($.function_call_args),
+              ')',
             ),
           ),
         ),
@@ -360,23 +484,23 @@ module.exports = function defineGrammar(dialect) {
           choice($.number, $.parameter),
         ),
 
+      cfquery_star: _ => '*',
+
+      cfquery_select_item: $ =>
+        choice(
+          $.cfquery_star,
+          field('expression', $.cfquery_expression),
+          seq(
+            field('expression', $.cfquery_expression),
+            alias(ci('as'), $.keyword_as),
+            field('alias', $.identifier),
+          ),
+        ),
+
       cfquery_select_list: $ =>
         seq(
-          field('first', choice(
-            '*',
-            field('column', $.cfquery_expression),
-            seq(field('column', $.cfquery_expression), alias(ci('as'), $.keyword_as), field('alias', $.identifier)),
-          )),
-          repeat(
-            seq(
-              ',',
-              choice(
-                '*',
-                field('column', $.cfquery_expression),
-                seq(field('column', $.cfquery_expression), alias(ci('as'), $.keyword_as), field('alias', $.identifier)),
-              ),
-            )
-          ),
+          field('first', $.cfquery_select_item),
+          repeat(seq(',', field('rest', $.cfquery_select_item))),
         ),
 
       cfquery_from_clause: $ =>
@@ -393,7 +517,7 @@ module.exports = function defineGrammar(dialect) {
 
       cfquery_table_reference: $ =>
         seq(
-          field('name', $.identifier),
+          field('name', choice($.identifier, $.cfquery_bracket_identifier)),
           optional(
             seq(
               optional(alias(ci('as'), $.keyword_as)),
@@ -401,6 +525,40 @@ module.exports = function defineGrammar(dialect) {
             ),
           ),
           repeat($.cfquery_join_clause),
+          optional($.cfquery_pivot_clause),
+          optional($.cfquery_unpivot_clause),
+        ),
+
+      cfquery_pivot_clause: $ =>
+        seq(
+          alias(ci('pivot'), $.keyword_pivot),
+          '(',
+          field('aggregate', $.cfquery_expression),
+          alias(ci('for'), $.keyword_for),
+          field('pivot_column', $.identifier),
+          alias(ci('in'), $.keyword_in),
+          '(',
+          $.cfquery_in_list_body,
+          ')',
+          ')',
+          optional(alias(ci('as'), $.keyword_as)),
+          field('alias', $.identifier),
+        ),
+
+      cfquery_unpivot_clause: $ =>
+        seq(
+          alias(ci('unpivot'), $.keyword_unpivot),
+          '(',
+          field('value', $.cfquery_expression),
+          alias(ci('for'), $.keyword_for),
+          field('name', $.identifier),
+          alias(ci('in'), $.keyword_in),
+          '(',
+          $.cfquery_in_list_body,
+          ')',
+          ')',
+          optional(alias(ci('as'), $.keyword_as)),
+          field('alias', $.identifier),
         ),
 
       cfquery_join_clause: $ =>
@@ -463,6 +621,33 @@ module.exports = function defineGrammar(dialect) {
           optional(choice(alias(ci('asc'), $.keyword_asc), alias(ci('desc'), $.keyword_desc))),
         ),
 
+      cfquery_window_clause: $ =>
+        seq(
+          alias(ci('window'), $.keyword_window),
+          $.cfquery_window_definition_list,
+        ),
+
+      cfquery_window_definition_list: $ =>
+        seq(
+          field('first', $.cfquery_window_definition),
+          repeat(seq(',', field('rest', $.cfquery_window_definition))),
+        ),
+
+      cfquery_window_definition: $ =>
+        seq(
+          field('name', $.identifier),
+          alias(ci('as'), $.keyword_as),
+          '(',
+          optional(
+            seq(
+              alias(seq(ci('partition'), /\s+/, ci('by')), $.keyword_partition_by),
+              $.cfquery_group_by_expression_list,
+            ),
+          ),
+          optional($.cfquery_order_by_clause),
+          ')',
+        ),
+
       cfquery_limit_clause: $ =>
         seq(
           alias(ci('limit'), $.keyword_limit),
@@ -475,11 +660,29 @@ module.exports = function defineGrammar(dialect) {
           ),
         ),
 
+      cfquery_for_update_clause: $ =>
+        seq(
+          alias(ci('for'), $.keyword_for),
+          alias(ci('update'), $.keyword_update),
+          optional(
+            seq(
+              alias(ci('of'), $.keyword_of),
+              choice($.cfquery_column_list, $.identifier),
+            ),
+          ),
+          optional(
+            seq(
+              alias(ci('skip'), $.keyword_skip),
+              alias(ci('locked'), $.keyword_locked),
+            ),
+          ),
+        ),
+
       cfquery_insert_statement: $ =>
         seq(
           alias(ci('insert'), $.keyword_insert),
           alias(ci('into'), $.keyword_into),
-          field('table', $.identifier),
+          field('table', choice($.identifier, $.cfquery_bracket_identifier)),
           optional(field('columns', $.cfquery_column_list)),
           alias(ci('values'), $.keyword_values),
           field('values', $.cfquery_value_list),
@@ -504,7 +707,7 @@ module.exports = function defineGrammar(dialect) {
       cfquery_update_statement: $ =>
         seq(
           alias(ci('update'), $.keyword_update),
-          field('table', $.identifier),
+          field('table', choice($.identifier, $.cfquery_bracket_identifier)),
           alias(ci('set'), $.keyword_set),
           $.cfquery_assignment_list,
           optional($.cfquery_where_clause),
@@ -522,7 +725,12 @@ module.exports = function defineGrammar(dialect) {
       cfquery_delete_statement: $ =>
         seq(
           alias(ci('delete'), $.keyword_delete),
-          optional(seq(alias(ci('from'), $.keyword_from), field('table', $.identifier))),
+          optional(
+            seq(
+              alias(ci('from'), $.keyword_from),
+              field('table', choice($.identifier, $.cfquery_bracket_identifier)),
+            ),
+          ),
           optional($.cfquery_where_clause),
         ),
 
@@ -534,11 +742,28 @@ module.exports = function defineGrammar(dialect) {
         choice(
           $.cfquery_exists_expression,
           $.cfquery_case_expression,
+          $.cfquery_is_null_expression,
           $.cfquery_between_expression,
           $.cfquery_in_expression,
           $.cfquery_binary_expression,
           $.cfquery_unary_expression,
           $.cfquery_primary_expression,
+        ),
+
+      cfquery_is_null_expression: $ =>
+        prec(
+          SQL_PREC.COMPARE,
+          seq(
+            field('value', $.cfquery_primary_expression),
+            alias(ci('is'), $.keyword_is),
+            choice(
+              alias(ci('null'), $.keyword_null),
+              seq(
+                alias(ci('not'), $.keyword_not),
+                alias(ci('null'), $.keyword_null),
+              ),
+            ),
+          ),
         ),
 
       cfquery_between_expression: $ =>
@@ -664,14 +889,74 @@ module.exports = function defineGrammar(dialect) {
 
       cfquery_primary_expression: $ =>
         choice(
+          $.cfquery_cast_expression,
           $.cfquery_parenthesized_expression,
-          $.function_call,
-          $.qualified_identifier,
+          $.cfquery_window_invocation,
+          $.cfquery_function_call,
+          $.cfquery_qualified_name,
+          $.cfquery_bracket_identifier,
+          $.cfquery_boolean_literal,
+          $.cfquery_double_quoted_identifier,
+          $.cfquery_single_quoted_string,
           $.identifier,
           $.number,
-          $.string,
           $.parameter,
           $.hash_param,
+        ),
+
+      cfquery_boolean_literal: $ =>
+        choice(
+          alias(ci('true'), $.keyword_true),
+          alias(ci('false'), $.keyword_false),
+          alias(ci('unknown'), $.keyword_unknown),
+        ),
+
+      cfquery_double_quoted_identifier: $ =>
+        seq(
+          '"',
+          field(
+            'name',
+            alias(
+              repeat1(choice(token.immediate(/[^"]/), '""')),
+              $.identifier,
+            ),
+          ),
+          '"',
+        ),
+
+      cfquery_single_quoted_string: $ =>
+        seq(
+          "'",
+          repeat(choice(
+            "''",
+            alias($.unescaped_single_string_fragment, $.string_fragment),
+            (dialect === 'cfhtml' ? $._hash_expression : $._hash),
+          )),
+          "'",
+        ),
+
+      cfquery_cast_expression: $ =>
+        seq(
+          alias(ci('cast'), $.keyword_cast),
+          '(',
+          field('value', $.cfquery_expression),
+          alias(ci('as'), $.keyword_as),
+          field('type', $.cfquery_type_name),
+          ')',
+        ),
+
+      cfquery_type_name: $ =>
+        choice(
+          $.identifier,
+          seq($.identifier, '(', optional($.number), ')'),
+          seq($.identifier, '(', $.number, ',', $.number, ')'),
+        ),
+
+      cfquery_bracket_identifier: $ =>
+        seq(
+          '[',
+          field('name', alias(token(/[^\]]+/), $.identifier)),
+          ']',
         ),
 
       cfquery_parenthesized_expression: $ => seq('(', $.cfquery_expression, ')'),
@@ -695,28 +980,48 @@ module.exports = function defineGrammar(dialect) {
           ),
         ),
 
-      qualified_identifier: $ =>
-        alias(
-          seq($.identifier, repeat1(seq('.', $.identifier))),
-          $.identifier,
+      cfquery_qualified_name: $ =>
+        seq(
+          field('first', $.identifier),
+          repeat1(seq('.', field('rest', $.identifier))),
         ),
 
-      function_call: $ =>
-        alias(
-          seq(
-            $.identifier,
-            '(',
-            optional($.function_call_args),
-            ')',
+      cfquery_window_invocation: $ =>
+        seq(
+          field('function', $.identifier),
+          '(',
+          optional($.function_call_args),
+          ')',
+          alias(ci('over'), $.keyword_over),
+          '(',
+          optional(
+            seq(
+              alias(seq(ci('partition'), /\s+/, ci('by')), $.keyword_partition_by),
+              $.cfquery_group_by_expression_list,
+            ),
           ),
-          $.identifier,
+          optional($.cfquery_order_by_clause),
+          ')',
+        ),
+
+      cfquery_function_call: $ =>
+        seq(
+          field('function', $.identifier),
+          '(',
+          optional($.function_call_args),
+          ')',
         ),
 
       function_call_args: $ =>
-        seq(
-          field('first', $.expression),
-          repeat(seq(',', field('rest', $.expression))),
-        ),
+        dialect === 'cfquery'
+          ? seq(
+              field('first', choice($.cfquery_expression, '*')),
+              repeat(seq(',', field('rest', choice($.cfquery_expression, '*')))),
+            )
+          : seq(
+              field('first', $.expression),
+              repeat(seq(',', field('rest', $.expression))),
+            ),
 
       _cfoutput_node: $ => choice(
         $.doctype,
@@ -1892,6 +2197,7 @@ module.exports = function defineGrammar(dialect) {
       comment: $ => choice(
         token(choice(
           seq('//', /[^\r\n\u2028\u2029]*/),
+          seq('--', /[^\r\n\u2028\u2029]*/),
           seq(
             '/*',
             /[^*]*\*+([^/*][^*]*\*+)*/,

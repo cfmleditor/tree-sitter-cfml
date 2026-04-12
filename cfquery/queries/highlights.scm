@@ -4,6 +4,17 @@
 ; Literals
 (number) @number
 (string) @string
+(cfquery_single_quoted_string) @string
+(cfquery_double_quoted_identifier
+  "\"" @punctuation.bracket
+  (identifier) @variable
+  "\"" @punctuation.bracket)
+
+(cfquery_bracket_identifier
+  "[" @punctuation.bracket
+  (identifier) @variable
+  "]" @punctuation.bracket)
+(cfquery_boolean_literal) @constant.builtin
 (comment) @comment
 
 ; Parameters and CF hash interpolation inside SQL
@@ -46,6 +57,43 @@
   (keyword_having)
   (keyword_limit)
   (keyword_offset)
+  (keyword_with)
+  (keyword_as)
+  (keyword_cast)
+  (keyword_is)
+  (keyword_null)
+  (keyword_case)
+  (keyword_when)
+  (keyword_then)
+  (keyword_else)
+  (keyword_end)
+  (keyword_exists)
+  (keyword_truncate)
+  (keyword_table)
+  (keyword_fetch)
+  (keyword_next)
+  (keyword_rows)
+  (keyword_only)
+  (keyword_asc)
+  (keyword_desc)
+  (keyword_merge)
+  (keyword_using)
+  (keyword_matched)
+  (keyword_exec)
+  (keyword_execute)
+  (keyword_call)
+  (keyword_window)
+  (keyword_partition_by)
+  (keyword_for)
+  (keyword_skip)
+  (keyword_locked)
+  (keyword_of)
+  (keyword_pivot)
+  (keyword_unpivot)
+  (keyword_true)
+  (keyword_false)
+  (keyword_unknown)
+  (keyword_over)
 ] @keyword
 
 ; Operators and punctuation
@@ -70,4 +118,8 @@
   "("
   ")"
 ] @punctuation.bracket
+
+[
+  ";"
+] @punctuation.delimiter
 
