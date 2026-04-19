@@ -3228,6 +3228,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "cf_selfclose_tag"
+        },
+        {
+          "type": "SYMBOL",
           "name": "cfquery_cast_expression"
         },
         {

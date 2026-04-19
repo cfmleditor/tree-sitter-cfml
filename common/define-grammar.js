@@ -888,6 +888,7 @@ module.exports = function defineGrammar(dialect) {
 
       cfquery_primary_expression: $ =>
         choice(
+          ...(dialect === 'cfquery' ? [$.cf_selfclose_tag] : []),
           $.cfquery_cast_expression,
           $.cfquery_parenthesized_expression,
           $.cfquery_window_invocation,

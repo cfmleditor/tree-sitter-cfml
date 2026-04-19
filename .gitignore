@@ -66,9 +66,9 @@ Thumbs.db
 .idea/
 .vscode/
 .cursor/
-
 # Archives
 *.tar.gz
 *.tgz
 *.zip
 .npmrc
+tree-sitter.exe

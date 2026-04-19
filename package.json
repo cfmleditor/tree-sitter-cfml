@@ -17,6 +17,7 @@
   ],
   "files": [
     "binding.gyp",
+    "scripts/**",
     "prebuilds/**",
     "bindings/node/*",
     "cfml/grammar.js",
@@ -58,7 +59,7 @@
   "scripts": {
     "build": "node scripts/build.js",
     "parse": "node scripts/parse.js",
-    "test": "node scripts/test.js",
+    "test": "node scripts/run-tests-msvc.cjs",
     "docswasm": "node scripts/docswasm.js",
     "install": "node-gyp-build",
     "postinstall": "node scripts/ensure-tree-sitter-cli-binary.js",

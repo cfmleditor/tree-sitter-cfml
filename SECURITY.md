@@ -1,5 +1,5 @@
 # Security
 
-Report security issues **privately** through this repository’s **Security** tab (**Report a vulnerability** / **Advisories**), not the public issue tracker.
+Report security issues via [GitHub private vulnerability reporting](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability) for this repository, if enabled, or by opening a **confidential** issue if the maintainers have published a preferred contact.
 
-See GitHub’s guide on [privately reporting a security vulnerability](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability).
+Do not post exploit details in public issues before a fix is available.

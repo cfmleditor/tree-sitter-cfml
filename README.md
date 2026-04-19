@@ -128,6 +128,8 @@ npm run lint      # ESLint
 npm run build     # regenerate parsers + rebuild native addon (after grammar edits)
 ```
 
+On **Windows**, `npm test` uses [`scripts/run-tests-msvc.cjs`](scripts/run-tests-msvc.cjs) to load MSVC (`vcvars64.bat`) and set `CC=cl` / `CXX=cl` so `tree-sitter test` compiles the parsers with `cl.exe`. On **macOS** and **Linux**, that script only runs the same tests as `node scripts/test.js` (the filename is Windows-specific).
+
 CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): `npm install`, `npm test`, `npm run lint` on Ubuntu, macOS, and Windows. It does not run `npm run build`; generated `cf*/src/` files are committed.
 
 **Tooling:** Node **>=18** **<24**; a C/C++ toolchain for `node-gyp` (MSVC with C++ on Windows, Xcode CLT on macOS, GCC/Clang on Linux). Windows: [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) with the C++ workload if the addon fails to build.

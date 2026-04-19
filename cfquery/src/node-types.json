@@ -2763,6 +2763,10 @@
       "required": true,
       "types": [
         {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
           "type": "cfquery_boolean_literal",
           "named": true
         },
