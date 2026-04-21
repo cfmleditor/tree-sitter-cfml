@@ -125,7 +125,7 @@ Use Node **>=18** and **<24** (`package.json` `engines`). Optional: [`.nvmrc`](.
 npm install
 ```
 
-That installs dependencies (including `run-script-os`, used by `npm test` to run the Unix test script vs. the Windows MSVC helper), builds the Node native addon, and runs `postinstall`, which downloads the tree-sitter CLI binary into `node_modules/tree-sitter-cli/` when needed. Repo `npm` scripts do not require a global `tree-sitter` on `PATH`.
+That installs dependencies, builds the Node native addon (`node-gyp-build`), and runs `postinstall`, which downloads the tree-sitter CLI binary into `node_modules/tree-sitter-cli/` when needed. Repo `npm` scripts do not require a global `tree-sitter` on `PATH`.
 
 ```bash
 npm test          # all four grammars
@@ -135,17 +135,25 @@ npm run build     # regenerate parsers + rebuild native addon (after grammar edi
 
 #### Windows
 
-Install **MSVC** (Visual C++ build tools). You can install just the build tools:
+Put **GCC** from **MinGW-w64** on your `PATH` (`gcc` / `g++`). This repo uses GCC for **`npm test`** (tree-sitter compile), the **Node** native binding, **Python** extension builds, and **Go** CGO — not MSVC.
+
+**Standalone toolchain (recommended):** install [WinLibs](https://winlibs.com/) with winget, then add the extracted **`mingw64\bin`** directory (contains `gcc.exe`) to your user **PATH**, open a new terminal, and verify:
 
 ```powershell
-winget install --id Microsoft.VisualStudio.2022.BuildTools --override "--passive --wait --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+gcc --version
 ```
 
-or Visual Studio with the C++ workload:
+Example package (UCRT, POSIX threads):
 
 ```powershell
-winget install --id Microsoft.VisualStudio.2022.Community --override "--passive --config DesktopDevelopmentWithCPP.vsconfig"
+winget install BrechtSanders.WinLibs.POSIX.UCRT
 ```
+
+The installer path varies by machine; locate `mingw64\bin` under the WinLibs folder (or under `%LOCALAPPDATA%\Microsoft\WinGet\Packages\` after install) and add **that `bin`** to PATH.
+
+**Alternatively:** [MSYS2](https://www.msys2.org/) with `pacman -S mingw-w64-x86_64-gcc`, then prepend **`msys64\mingw64\bin`** to PATH (or develop from an MSYS2 MinGW64 shell).
+
+If **`node-gyp`** still picks Visual Studio instead of MinGW, set `CC` / `CXX` to your MinGW **`gcc`** / **`g++`** for `npm install` / `npm rebuild`, or keep MinGW’s `bin` **before** MSVC entries on `PATH`.
 
 #### macOS
 
@@ -194,7 +202,6 @@ Pinned in `package.json` / `tree-sitter.json`; approximate roles:
 | --------------------------- | ----------------- | ------------ |
 | Native binding (peer / dev) | `tree-sitter`     | `0.25.0`     |
 | Parser CLI                  | `tree-sitter-cli` | `0.26.7`     |
-| OS-specific `npm test`      | `run-script-os`   | `^1.1.6`     |
 | Native addon                | `node-addon-api`  | `^8.3.0`     |
 | Native addon                | `node-gyp-build`  | `^4.8.4`     |
 | Prebuild                    | `prebuildify`     | `^6.0.1`     |

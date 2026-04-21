@@ -42,7 +42,6 @@
     "eslint": "^9.39.4",
     "eslint-config-treesitter": "^1.0.2",
     "prebuildify": "^6.0.1",
-    "run-script-os": "^1.1.6",
     "tree-sitter": "0.25.0",
     "tree-sitter-cli": "0.26.7"
   },
@@ -60,10 +59,7 @@
   "scripts": {
     "build": "node scripts/build.js",
     "parse": "node scripts/parse.js",
-    "test": "run-script-os",
-    "test:darwin": "node scripts/test.js",
-    "test:linux": "node scripts/test.js",
-    "test:win32": "node scripts/run-tests-msvc.cjs",
+    "test": "node scripts/test.js",
     "docswasm": "node scripts/docswasm.js",
     "install": "node-gyp-build",
     "postinstall": "node scripts/ensure-tree-sitter-cli-binary.js",
