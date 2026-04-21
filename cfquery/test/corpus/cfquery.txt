@@ -284,24 +284,25 @@ WHERE t.column_name = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.co
         (cfquery_where_clause
           (keyword_where)
           (cfquery_expression
-            (cfquery_primary_expression
-              (cfquery_qualified_name
-                (identifier)
-                (identifier))))))))
-  (ERROR)
-  (cf_selfclose_tag
-    (cf_attribute
-      (cf_attribute_name)
-      (quoted_cf_attribute_value
-        (attribute_value)))
-    (cf_attribute
-      (cf_attribute_name)
-      (quoted_cf_attribute_value
-        (hash_expression
-          (member_expression
-            (identifier)
-            (property_identifier)))))
-    (cf_selfclose_void_tag_end)))
+            (cfquery_binary_expression
+              (cfquery_primary_expression
+                (cfquery_qualified_name
+                  (identifier)
+                  (identifier)))
+              (cfquery_primary_expression
+                (cf_selfclose_tag
+                  (cf_attribute
+                    (cf_attribute_name)
+                    (quoted_cf_attribute_value
+                      (attribute_value)))
+                  (cf_attribute
+                    (cf_attribute_name)
+                    (quoted_cf_attribute_value
+                      (hash_expression
+                        (member_expression
+                          (identifier)
+                          (property_identifier)))))
+                  (cf_selfclose_void_tag_end))))))))))
 
 ===================================
 insert with values and hash param

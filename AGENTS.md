@@ -42,6 +42,8 @@
 
 Keep toolchain versions aligned with **CI** whenever possible. If a version **must** differ to achieve the goal, say so explicitly (e.g. in commit message or PR description).
 
+- **Windows:** Install **Visual Studio Build Tools** (or full VS) with the **Desktop development with C++** workload. **`npm test`** uses **`scripts/run-tests-msvc.cjs`** (`vcvars64.bat`, **`CC=cl`** / **`CXX=cl`**, temp **`.bat`** runner). Details for agents: **`.cursor/rules/tree-sitter-verify.mdc`**.
+
 ---
 
 ## Tradeoffs and handoff

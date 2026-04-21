@@ -17,6 +17,7 @@
   ],
   "files": [
     "binding.gyp",
+    "scripts/**",
     "prebuilds/**",
     "bindings/node/*",
     "cfml/grammar.js",

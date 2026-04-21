@@ -8,12 +8,12 @@
 
 There are four grammars: three for CFML in `.cfc`, `.cfm`, and `.cfs` files, and one for SQL inside `<cfquery>` (embedded dialect).
 
-| Grammar  | Scope          | File types | Description |
-|----------|----------------|------------|-------------|
-| `cfml`   | `source.cfml`  | `.cfc`     | ColdFusion components - CFScript inside a `component {}` block or tag-based component files |
-| `cfhtml` | `source.cfhtml`| `.cfm`     | CFML template files - HTML with embedded CF tags and hash expressions |
-| `cfscript` | `source.cfscript` | `.cfs` | Pure CFScript files |
-| `cfquery`  | `source.cfquery`  | *(embedded)* | SQL inside `<cfquery>` bodies (including QueryExecute-style usage), with `#hash#` interpolation and CF tags in the body |
+| Grammar    | Scope             | File types   | Description                                                                                                             |
+| ---------- | ----------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| `cfml`     | `source.cfml`     | `.cfc`       | ColdFusion components - CFScript inside a `component {}` block or tag-based component files                             |
+| `cfhtml`   | `source.cfhtml`   | `.cfm`       | CFML template files - HTML with embedded CF tags and hash expressions                                                   |
+| `cfscript` | `source.cfscript` | `.cfs`       | Pure CFScript files                                                                                                     |
+| `cfquery`  | `source.cfquery`  | _(embedded)_ | SQL inside `<cfquery>` bodies (including QueryExecute-style usage), with `#hash#` interpolation and CF tags in the body |
 
 ## Playground
 
@@ -28,13 +28,18 @@ npm install @cfmleditor/tree-sitter-cfml
 ```
 
 ```js
-const { cfml, cfhtml, cfscript, cfquery } = require('@cfmleditor/tree-sitter-cfml');
-const Parser = require('tree-sitter');
+const {
+  cfml,
+  cfhtml,
+  cfscript,
+  cfquery,
+} = require("@cfmleditor/tree-sitter-cfml");
+const Parser = require("tree-sitter");
 
 const parser = new Parser();
 parser.setLanguage(cfhtml.language);
 
-const tree = parser.parse('<cfif condition>#value#</cfif>');
+const tree = parser.parse("<cfif condition>#value#</cfif>");
 console.log(tree.rootNode.toString());
 ```
 
@@ -120,7 +125,7 @@ Use Node **>=18** and **<24** (`package.json` `engines`). Optional: [`.nvmrc`](.
 npm install
 ```
 
-That installs dependencies, builds the Node native addon, and runs `postinstall`, which downloads the tree-sitter CLI binary into `node_modules/tree-sitter-cli/` when needed. Repo `npm` scripts do not require a global `tree-sitter` on `PATH`.
+That installs dependencies, builds the Node native addon (`node-gyp-build`), and runs `postinstall`, which downloads the tree-sitter CLI binary into `node_modules/tree-sitter-cli/` when needed. Repo `npm` scripts do not require a global `tree-sitter` on `PATH`.
 
 ```bash
 npm test          # all four grammars
@@ -128,11 +133,53 @@ npm run lint      # ESLint
 npm run build     # regenerate parsers + rebuild native addon (after grammar edits)
 ```
 
+#### Windows
+
+Put **GCC** from **MinGW-w64** on your `PATH` (`gcc` / `g++`). This repo uses GCC for **`npm test`** (tree-sitter compile), the **Node** native binding, **Python** extension builds, and **Go** CGO — not MSVC.
+
+**Standalone toolchain (recommended):** install [WinLibs](https://winlibs.com/) with winget, then add the extracted **`mingw64\bin`** directory (contains `gcc.exe`) to your user **PATH**, open a new terminal, and verify:
+
+```powershell
+gcc --version
+```
+
+Example package (UCRT, POSIX threads):
+
+```powershell
+winget install BrechtSanders.WinLibs.POSIX.UCRT
+```
+
+The installer path varies by machine; locate `mingw64\bin` under the WinLibs folder (or under `%LOCALAPPDATA%\Microsoft\WinGet\Packages\` after install) and add **that `bin`** to PATH.
+
+**Alternatively:** [MSYS2](https://www.msys2.org/) with `pacman -S mingw-w64-x86_64-gcc`, then prepend **`msys64\mingw64\bin`** to PATH (or develop from an MSYS2 MinGW64 shell).
+
+If **`node-gyp`** still picks Visual Studio instead of MinGW, set `CC` / `CXX` to your MinGW **`gcc`** / **`g++`** for `npm install` / `npm rebuild`, or keep MinGW’s `bin` **before** MSVC entries on `PATH`.
+
+#### macOS
+
+Install the Xcode command-line tools:
+
+```bash
+xcode-select --install
+```
+
+##### Homebrew
+
+```bash
+brew install gcc
+```
+
+#### Linux
+
+Install a C/C++ toolchain (for example `build-essential` on Debian/Ubuntu, `gcc` / `clang` plus development headers on other distributions).
+
+#### CI
+
 CI ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)): `npm install`, `npm test`, `npm run lint` on Ubuntu, macOS, and Windows. It does not run `npm run build`; generated `cf*/src/` files are committed.
 
-**Tooling:** Node **>=18** **<24**; a C/C++ toolchain for `node-gyp` (MSVC with C++ on Windows, Xcode CLT on macOS, GCC/Clang on Linux). Windows: [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) with the C++ workload if the addon fails to build.
+#### Tree-sitter CLI
 
-**CLI:** Scripts use [`scripts/tree-sitter-cli.cjs`](scripts/tree-sitter-cli.cjs) (`node node_modules/tree-sitter-cli/cli.js`). A global `tree-sitter-cli` install is optional. If the binary is missing after install:
+Scripts use [`scripts/tree-sitter-cli.cjs`](scripts/tree-sitter-cli.cjs) (`node node_modules/tree-sitter-cli/cli.js`). A global `tree-sitter-cli` install is optional. If the binary is missing after install:
 
 ```bash
 node scripts/ensure-tree-sitter-cli-binary.js
@@ -151,14 +198,14 @@ node ../node_modules/tree-sitter-cli/cli.js parse path/to/file.cfc
 
 Pinned in `package.json` / `tree-sitter.json`; approximate roles:
 
-| Role | Package | Version |
-|------|---------|---------|
-| Native binding (peer / dev) | `tree-sitter` | `0.25.0` |
-| Parser CLI | `tree-sitter-cli` | `0.26.7` |
-| Native addon | `node-addon-api` | `^8.3.0` |
-| Native addon | `node-gyp-build` | `^4.8.4` |
-| Prebuild | `prebuildify` | `^6.0.1` |
-| Runtime | Node.js | `>=18` `<24` |
+| Role                        | Package           | Version      |
+| --------------------------- | ----------------- | ------------ |
+| Native binding (peer / dev) | `tree-sitter`     | `0.25.0`     |
+| Parser CLI                  | `tree-sitter-cli` | `0.26.7`     |
+| Native addon                | `node-addon-api`  | `^8.3.0`     |
+| Native addon                | `node-gyp-build`  | `^4.8.4`     |
+| Prebuild                    | `prebuildify`     | `^6.0.1`     |
+| Runtime                     | Node.js           | `>=18` `<24` |
 
 ### CFML engines
 
@@ -178,17 +225,17 @@ On Unix, `make generate` at the repo root works if `tree-sitter` is on your `PAT
 
 ### Testing and helpers
 
+See **[Setup](#setup)** for `npm test`, `npm run lint`, and `npm run build`.
+
 ```bash
-npm test              # all grammars
 npm run testbindings  # Node binding smoke test
-npm run lint
 ```
 
-One grammar only: run `test` via the CLI from that dialect’s directory (above), or `npm test` for all four.
+One grammar only: run `test` via the CLI from that dialect’s directory ([above](#setup)), or `npm test` for all four.
 
 **Parse a file:** from the dialect folder (e.g. `cfml` for `.cfc`), use the `parse` subcommand with the same `node ../node_modules/.../cli.js` pattern.
 
-**Playground / WASM**
+**Playground / WebAssembly (WASM)**
 
 - `npm start` — playground at repo root (`tree-sitter.json`). Run `npm run prestart` first if WASM is stale.
 - `npm run prestart` — `tree-sitter build --wasm`
@@ -206,22 +253,34 @@ common/
   tag.h
 
 cfml/          # .cfc
-cfhtml/        # .cfm
-cfscript/      # .cfs
-cfquery/       # embedded SQL
   grammar.js
   src/         # generated
+  queries/
+
+cfhtml/        # .cfm
+  grammar.js
+  src/
+  queries/
+
+cfscript/      # .cfs
+  grammar.js
+  src/
+  queries/
+
+cfquery/       # embedded SQL
+  grammar.js
+  src/
   queries/
 ```
 
 ## Queries
 
-| Grammar | Highlights | Indents | Injections | Tags |
-|---------|------------|---------|------------|------|
-| `cfml` | yes | yes | yes | yes |
-| `cfhtml` | yes | yes | yes | yes |
-| `cfscript` | yes | no | no | yes |
-| `cfquery` | yes | no | no | yes |
+| Grammar    | Highlights | Indents | Injections | Tags |
+| ---------- | ---------- | ------- | ---------- | ---- |
+| `cfml`     | yes        | yes     | yes        | yes  |
+| `cfhtml`   | yes        | yes     | yes        | yes  |
+| `cfscript` | yes        | no      | no         | yes  |
+| `cfquery`  | yes        | no      | no         | yes  |
 
 ## Contributing
 
@@ -237,4 +296,4 @@ See [`AGENTS.md`](AGENTS.md).
 
 ## License
 
-MIT
+[MIT](LICENSE)
