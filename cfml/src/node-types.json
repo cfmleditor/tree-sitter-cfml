@@ -824,10 +824,6 @@
         "required": true,
         "types": [
           {
-            "type": "expression",
-            "named": true
-          },
-          {
             "type": "hash_empty",
             "named": true
           },
@@ -837,6 +833,10 @@
           },
           {
             "type": "import",
+            "named": true
+          },
+          {
+            "type": "primary_expression",
             "named": true
           }
         ]
@@ -1446,7 +1446,7 @@
     "fields": {}
   },
   {
-    "type": "component",
+    "type": "component_body",
     "named": true,
     "fields": {},
     "children": {
@@ -2623,7 +2623,7 @@
           "named": true
         },
         {
-          "type": "component",
+          "type": "component_body",
           "named": true
         },
         {

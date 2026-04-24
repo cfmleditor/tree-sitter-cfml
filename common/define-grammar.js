@@ -96,7 +96,9 @@ module.exports = function defineGrammar(dialect) {
         $.primary_expression,
         $.pattern,
       ] : []),
-      $._cf_tags,
+      ...(dialect !== 'cfscript' ? [
+        $._cf_tags,
+      ] : []),
     ],
 
     inline: $ => [
@@ -109,7 +111,7 @@ module.exports = function defineGrammar(dialect) {
       $._lhs_expression,
     ],
 
-    precedences: $ => [
+    precedences: ($) => [
       [
         'member',
         'template_call',
@@ -134,22 +136,22 @@ module.exports = function defineGrammar(dialect) {
         $.sequence_expression,
         $.arrow_function,
       ],
+      ['unary_void', $.binary_expression],
+      ['binary_exp', $.binary_expression],
+      ['binary_times', $.binary_expression],
+      ['binary_plus', $.binary_expression],
+      ['binary_plus', $.binary_expression],
+      ['binary_relation', $.binary_expression],
+      ['binary_equality', $.binary_expression],
+      ['bitwise_and', $.binary_expression],
+      ['bitwise_xor', $.binary_expression],
+      ['bitwise_or', $.binary_expression],
+      ['logical_and', $.binary_expression],
+      ['logical_xor', $.binary_expression],
+      ['logical_or', $.binary_expression],
+      ['assign', $.primary_expression],
       ['ternary', $.ternary_expression],
       ['elvis', $.elvis_expression],
-      [$.binary_expression, 'logical_and'],
-      [$.binary_expression, 'logical_xor'],
-      [$.binary_expression, 'binary_shift'],
-      [$.binary_expression, 'bitwise_and'],
-      [$.binary_expression, 'bitwise_xor'],
-      [$.binary_expression, 'bitwise_or'],
-      [$.binary_expression, 'logical_or'],
-      [$.binary_expression, 'binary_plus'],
-      [$.binary_expression, 'binary_times'],
-      [$.binary_expression, 'binary_exp'],
-      [$.binary_expression, 'binary_relation'],
-      [$.binary_expression, 'binary_equality'],
-      ['unary_void', $.unary_expression],
-      ['assign', $.primary_expression],
       ['member', 'template_call', 'new', 'call', $.expression],
       ['declaration', 'literal'],
       [$.primary_expression, $.statement_block, 'object'],
@@ -177,7 +179,6 @@ module.exports = function defineGrammar(dialect) {
       // [$.cf_tag, $._node],
       // [$.cf_tag_body],
       [$.arrow_function, $.binary_expression],
-      [$.arrow_function, $.call_expression],
       [$.arrow_function, $.subscript_expression],
       [$.arrow_function, $.member_expression],
       [$.arrow_function, $.member_expression, $.subscript_expression],
@@ -186,7 +187,6 @@ module.exports = function defineGrammar(dialect) {
       [$.arrow_function, $.elvis_expression],
       [$.function_expression, $.primary_expression],
       [$.pair, $.binary_expression],
-      [$.call_expression, $.pair],
       [$.subscript_expression, $.pair],
       [$.member_expression, $.subscript_expression, $.pair],
       [$.member_expression, $.pair],
@@ -236,7 +236,7 @@ module.exports = function defineGrammar(dialect) {
             repeat(
               $._node,
             ),
-            $.component,
+            $.component_body,
           )
       ),
 
@@ -1154,9 +1154,6 @@ module.exports = function defineGrammar(dialect) {
         $.end_tag,
       ),
 
-      // @ts-ignore
-      hash_empty: $ => seq('#', '#'),
-
       // hash_single: $ => '#',
 
       // @ts-ignore
@@ -1968,7 +1965,7 @@ module.exports = function defineGrammar(dialect) {
 
       call_expression: $ => choice(
         prec('call', seq(
-          field('function', choice($.expression, ( dialect === 'cfhtml' ? $._hash_expression : $._hash), $.import)),
+          field('function', choice($.primary_expression, ( dialect === 'cfhtml' ? $._hash_expression : $._hash), $.import)),
           field('arguments', $.arguments),
         )),
         prec('member', seq(
@@ -2077,7 +2074,7 @@ module.exports = function defineGrammar(dialect) {
         field('alternative', $.expression),
       )),
 
-      elvis_expression: ($) => prec.right('ternary', seq(
+      elvis_expression: ($) => prec.right('elvis', seq(
         field('condition', $.expression),
         alias($._elvis_operator, '?:'),
         field('alternative', $.expression),
@@ -2370,8 +2367,10 @@ module.exports = function defineGrammar(dialect) {
         field('arguments', $.arguments),
       )),
 
-      component: $ => seq(
-        keyword('component'),
+      component_body: $ => seq(
+        ...(dialect !== 'cfscript' ? [
+          keyword('component')
+        ] : []),
         '{',
         repeat($.statement),
         '}',
@@ -2410,7 +2409,7 @@ module.exports = function defineGrammar(dialect) {
         repeat(field('decorator', $.decorator)),
         optional(choice('static', alias(token(seq('static', /\s+/, 'get', /\s*\n/)), 'static get'))),
         optional('async'),
-        // optional(choice('get', 'set', '*')),
+        optional(choice('get', 'set', '*')),
         field('name', $._property_name),
         field('parameters', $.formal_parameters),
         field('body', $.statement_block),
@@ -2469,6 +2468,9 @@ module.exports = function defineGrammar(dialect) {
         $.expression,
         '#',
       ),
+
+      // @ts-ignore
+      hash_empty: $ => seq('#', '#'),
 
       computed_property_name: $ => seq(
         '[',

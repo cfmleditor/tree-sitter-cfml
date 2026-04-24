@@ -1275,9 +1275,8 @@ FROM table_name t
     (expression
       (primary_expression
         (call_expression
-          (expression
-            (primary_expression
-              (identifier)))
+          (primary_expression
+            (identifier))
           (arguments
             (expression
               (primary_expression
@@ -1381,9 +1380,8 @@ FROM table_name t
       (expression
         (primary_expression
           (call_expression
-            (expression
-              (primary_expression
-                (identifier)))
+            (primary_expression
+              (identifier))
             (arguments
               (expression
                 (primary_expression

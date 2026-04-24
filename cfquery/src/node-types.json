@@ -570,10 +570,6 @@
         "required": true,
         "types": [
           {
-            "type": "expression",
-            "named": true
-          },
-          {
             "type": "hash_empty",
             "named": true
           },

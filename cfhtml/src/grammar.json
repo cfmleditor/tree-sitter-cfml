@@ -14,7 +14,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "component"
+          "name": "component_body"
         }
       ]
     },
@@ -4376,19 +4376,6 @@
         }
       ]
     },
-    "hash_empty": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "#"
-        },
-        {
-          "type": "STRING",
-          "value": "#"
-        }
-      ]
-    },
     "hash_value": {
       "type": "PATTERN",
       "value": "[a-zA-Z0-9_-]+"
@@ -8266,7 +8253,7 @@
                   "members": [
                     {
                       "type": "SYMBOL",
-                      "name": "expression"
+                      "name": "primary_expression"
                     },
                     {
                       "type": "SYMBOL",
@@ -8882,7 +8869,7 @@
     },
     "elvis_expression": {
       "type": "PREC_RIGHT",
-      "value": "ternary",
+      "value": "elvis",
       "content": {
         "type": "SEQ",
         "members": [
@@ -11886,7 +11873,7 @@
         ]
       }
     },
-    "component": {
+    "component_body": {
       "type": "SEQ",
       "members": [
         {
@@ -12140,6 +12127,31 @@
           ]
         },
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "get"
+                },
+                {
+                  "type": "STRING",
+                  "value": "set"
+                },
+                {
+                  "type": "STRING",
+                  "value": "*"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "FIELD",
           "name": "name",
           "content": {
@@ -12340,6 +12352,19 @@
         }
       ]
     },
+    "hash_empty": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#"
+        },
+        {
+          "type": "STRING",
+          "value": "#"
+        }
+      ]
+    },
     "computed_property_name": {
       "type": "SEQ",
       "members": [
@@ -12469,10 +12494,6 @@
     ],
     [
       "arrow_function",
-      "call_expression"
-    ],
-    [
-      "arrow_function",
       "subscript_expression"
     ],
     [
@@ -12503,10 +12524,6 @@
     [
       "pair",
       "binary_expression"
-    ],
-    [
-      "call_expression",
-      "pair"
     ],
     [
       "subscript_expression",
@@ -12640,6 +12657,146 @@
     [
       {
         "type": "STRING",
+        "value": "unary_void"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "binary_exp"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "binary_times"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "binary_plus"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "binary_plus"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "binary_relation"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "binary_equality"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "bitwise_and"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "bitwise_xor"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "bitwise_or"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "logical_and"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "logical_xor"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "logical_or"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "binary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
+        "value": "assign"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "primary_expression"
+      }
+    ],
+    [
+      {
+        "type": "STRING",
         "value": "ternary"
       },
       {
@@ -12655,146 +12812,6 @@
       {
         "type": "SYMBOL",
         "name": "elvis_expression"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "binary_expression"
-      },
-      {
-        "type": "STRING",
-        "value": "logical_and"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "binary_expression"
-      },
-      {
-        "type": "STRING",
-        "value": "logical_xor"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "binary_expression"
-      },
-      {
-        "type": "STRING",
-        "value": "binary_shift"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "binary_expression"
-      },
-      {
-        "type": "STRING",
-        "value": "bitwise_and"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "binary_expression"
-      },
-      {
-        "type": "STRING",
-        "value": "bitwise_xor"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "binary_expression"
-      },
-      {
-        "type": "STRING",
-        "value": "bitwise_or"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "binary_expression"
-      },
-      {
-        "type": "STRING",
-        "value": "logical_or"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "binary_expression"
-      },
-      {
-        "type": "STRING",
-        "value": "binary_plus"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "binary_expression"
-      },
-      {
-        "type": "STRING",
-        "value": "binary_times"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "binary_expression"
-      },
-      {
-        "type": "STRING",
-        "value": "binary_exp"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "binary_expression"
-      },
-      {
-        "type": "STRING",
-        "value": "binary_relation"
-      }
-    ],
-    [
-      {
-        "type": "SYMBOL",
-        "name": "binary_expression"
-      },
-      {
-        "type": "STRING",
-        "value": "binary_equality"
-      }
-    ],
-    [
-      {
-        "type": "STRING",
-        "value": "unary_void"
-      },
-      {
-        "type": "SYMBOL",
-        "name": "unary_expression"
-      }
-    ],
-    [
-      {
-        "type": "STRING",
-        "value": "assign"
-      },
-      {
-        "type": "SYMBOL",
-        "name": "primary_expression"
       }
     ],
     [

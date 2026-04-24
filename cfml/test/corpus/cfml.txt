@@ -1075,29 +1075,29 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
           (true)))))
   (cf_if_tag
     (binary_expression
-      (call_expression
-        (binary_expression
-          (call_expression
-            (member_expression
-              (member_expression
-                (identifier)
-                (property_identifier))
-              (property_identifier))
-            (arguments
-              (assignment_expression
-                (identifier)
-                (string
-                  (string_fragment)))))
+      (binary_expression
+        (call_expression
           (member_expression
             (member_expression
               (identifier)
               (property_identifier))
-            (property_identifier)))
-        (arguments
-          (string
-            (string_fragment))
-          (string
-            (string_fragment))))
+            (property_identifier))
+          (arguments
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))))
+        (call_expression
+          (member_expression
+            (member_expression
+              (identifier)
+              (property_identifier))
+            (property_identifier))
+          (arguments
+            (string
+              (string_fragment))
+            (string
+              (string_fragment)))))
       (number))
     (cf_if_tag
       (call_expression
@@ -1118,34 +1118,34 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
             (string_fragment))))
       (cf_if_alt
         (cf_elseif_tag
-          (call_expression
-            (binary_expression
-              (identifier)
+          (binary_expression
+            (identifier)
+            (call_expression
               (member_expression
                 (member_expression
                   (identifier)
                   (property_identifier))
-                (property_identifier)))
-            (arguments
-              (string
-                (string_fragment))
-              (string
-                (string_fragment)))))
-        (cf_if_alt
-          (cf_elseif_tag
-            (call_expression
-              (binary_expression
-                (identifier)
-                (member_expression
-                  (member_expression
-                    (identifier)
-                    (property_identifier))
-                  (property_identifier)))
+                (property_identifier))
               (arguments
                 (string
                   (string_fragment))
                 (string
-                  (string_fragment)))))))))
+                  (string_fragment))))))
+        (cf_if_alt
+          (cf_elseif_tag
+            (binary_expression
+              (identifier)
+              (call_expression
+                (member_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier))
+                  (property_identifier))
+                (arguments
+                  (string
+                    (string_fragment))
+                  (string
+                    (string_fragment))))))))))
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
@@ -1852,17 +1852,17 @@ cfoutput boolean expression with JS-style operators
   (cf_output_tag
     (hash_expression
       (binary_expression
-        (parenthesized_expression
-          (binary_expression
-            (identifier)
-            (binary_expression
-              (number)
-              (binary_expression
-                (identifier)
-                (number)))))
         (binary_expression
-          (identifier)
-          (number))))))
+          (parenthesized_expression
+            (binary_expression
+              (binary_expression
+                (binary_expression
+                  (identifier)
+                  (number))
+                (identifier))
+              (number)))
+          (identifier))
+        (number)))))
 
 ===================================
 cfloop with integers without quotes
@@ -1871,31 +1871,94 @@ cfloop with integers without quotes
 </cfloop>
 
 ---
+
 (program
-      (cf_tag
-        (cf_start_tag
-          (cf_tag_name)
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
-                (attribute_value))))
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (attribute_value)))
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
-                (hash_expression
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (attribute_value)))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (hash_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (identifier)))))))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (attribute_value))))
+    (cf_end_tag
+      (cf_tag_name))))
+
+===================================
+nested calls
+===================================
+<cfif StructKeyExists(ARGUMENTS,'orderby') AND
+		(
+			CompareNOCase(ARGUMENTS.orderby,"desc") EQ 0 OR
+			CompareNOCase(ARGUMENTS.orderby,"label") EQ 0 OR
+			CompareNOCase(ARGUMENTS.orderby,"addr_desc") EQ 0
+		)>
+			<cfset local_orderby = "a.addr_desc">
+		</cfif>
+---
+
+(program
+  (cf_if_tag
+    (binary_expression
+      (call_expression
+        (identifier)
+        (arguments
+          (identifier)
+          (string
+            (string_fragment))))
+      (parenthesized_expression
+        (binary_expression
+          (binary_expression
+            (binary_expression
+              (binary_expression
+                (binary_expression
                   (call_expression
                     (identifier)
                     (arguments
-                      (identifier)))))))
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (attribute_value))))
-        (cf_end_tag
-          (cf_tag_name))))
+                      (member_expression
+                        (identifier)
+                        (property_identifier))
+                      (string
+                        (string_fragment))))
+                  (number))
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (member_expression
+                      (identifier)
+                      (property_identifier))
+                    (string
+                      (string_fragment)))))
+              (number))
+            (call_expression
+              (identifier)
+              (arguments
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (string
+                  (string_fragment)))))
+          (number))))
+    (cf_set_tag
+      (assignment_expression
+        (identifier)
+        (string
+          (string_fragment)))
+      (cf_selfclose_void_tag_end))))
