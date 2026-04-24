@@ -29,6 +29,7 @@ const ci = (word) =>
       .join(''),
   );
 
+// @ts-ignore
 module.exports = function defineGrammar(dialect) {
   return grammar({
     name: dialect,

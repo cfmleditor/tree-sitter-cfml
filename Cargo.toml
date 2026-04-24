@@ -1,7 +1,7 @@
 [package]
 name = "tree-sitter-cfml"
 description = "cfml grammar for tree-sitter"
-version = "0.26.2"
+version = "0.26.3"
 authors = [
   "Gareth Edwards <ghedwards@gmail.com>",
   "Gavin Baumanis <gavinbaumanis@gmail.com>"
