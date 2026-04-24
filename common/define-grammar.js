@@ -88,11 +88,13 @@ module.exports = function defineGrammar(dialect) {
     ],
 
     supertypes: $ => [
-      $.statement,
-      $.declaration,
-      $.expression,
-      $.primary_expression,
-      $.pattern,
+      ...(dialect !== 'cfquery' ? [
+        $.statement,
+        $.declaration,
+        $.expression,
+        $.primary_expression,
+        $.pattern,
+      ] : []),
       $._cf_tags,
     ],
 
@@ -198,18 +200,32 @@ module.exports = function defineGrammar(dialect) {
       // [$.class_static_block, $._property_name],
 
     ]).concat(
-      dialect === 'cfml' || dialect === 'cfquery' ? [
+      dialect === 'cfml' ? [
         [$.hash_expression, $.hash_empty],
         [$.assignment_expression, $._property_name],
         [$.switch_case, $._property_name],
         [$.call_expression, $._property_name],
         [$.binary_expression, $._property_name],
+      ] : dialect === 'cfquery' ? [
+        [$.hash_expression, $.hash_empty],
+        //[$._cfquery_sql_statement, $.cfquery_select_statement],
+        // [$.cfquery_primary_expression, $.cfquery_primary_expression, $.cfquery_function_call],
+        // [$.cfquery_primary_expression, $.cfquery_window_invocation, $.cfquery_function_call],
+        [$.assignment_expression, $._property_name],
+        [$.switch_case, $._property_name],
+        [$.call_expression, $._property_name],
+        [$.binary_expression, $._property_name],
+        [$.cfquery_select_core],
+        [$.cfquery_delete_statement],
+        [$.cfquery_update_statement],
+        [$.cf_identifier_path, $.primary_expression],
+        [$.cfquery_clause, $._node],
       ] : [
         [$.hash_empty, $._hash],
         [$.hash_expression, $._hash],
         [$.hash_empty, $.hash_expression],
       ]),
-
+      
     rules: {
 
       program: $ => (
@@ -335,6 +351,7 @@ module.exports = function defineGrammar(dialect) {
         $.cfquery_truncate_statement,
         $.cfquery_merge_statement,
         $.cfquery_exec_statement,
+        $.cfquery_clause,
       ),
 
       cfquery_select_core: $ =>
@@ -344,7 +361,7 @@ module.exports = function defineGrammar(dialect) {
           optional($.cfquery_top_clause),
           field('columns', $.cfquery_select_list),
           optional($.cfquery_from_clause),
-          optional($.cfquery_where_clause),
+          optional($.cfquery_clause),
           optional($.cfquery_group_by_clause),
           optional($.cfquery_window_clause),
           optional($.cfquery_order_by_clause),
@@ -580,8 +597,15 @@ module.exports = function defineGrammar(dialect) {
           field('condition', $.cfquery_expression),
         ),
 
-      cfquery_where_clause: $ =>
-        seq(alias(ci('where'), $.keyword_where), field('condition', $.cfquery_expression)),
+      cfquery_clause: $ =>
+        seq(
+          choice(
+            alias(ci('where'), $.keyword_where),
+            alias(ci('and'), $.keyword_and),
+            alias($._hash, $.keyword_and),
+          ),
+          field('condition', $.cfquery_expression)
+        ),
 
       cfquery_group_by_clause: $ =>
         seq(
@@ -709,7 +733,7 @@ module.exports = function defineGrammar(dialect) {
           field('table', choice($.identifier, $.cfquery_bracket_identifier)),
           alias(ci('set'), $.keyword_set),
           $.cfquery_assignment_list,
-          optional($.cfquery_where_clause),
+          optional($.cfquery_clause),
         ),
 
       cfquery_assignment_list: $ =>
@@ -730,7 +754,7 @@ module.exports = function defineGrammar(dialect) {
               field('table', choice($.identifier, $.cfquery_bracket_identifier)),
             ),
           ),
-          optional($.cfquery_where_clause),
+          optional($.cfquery_clause),
         ),
 
       //
@@ -888,7 +912,12 @@ module.exports = function defineGrammar(dialect) {
 
       cfquery_primary_expression: $ =>
         choice(
-          ...(dialect === 'cfquery' ? [$.cf_selfclose_tag] : []),
+          ...(dialect === 'cfquery' ? [
+            $.cf_selfclose_tag,
+            $.cf_if_tag,
+            $.cf_set_tag,
+            $.cf_tag
+          ] : []),
           $.cfquery_cast_expression,
           $.cfquery_parenthesized_expression,
           $.cfquery_window_invocation,
@@ -975,15 +1004,15 @@ module.exports = function defineGrammar(dialect) {
           repeat(
             choice(
               seq('.', $.identifier),
-              seq('[', $.number, ']'),
+              seq('[', choice($.number, $.identifier), ']'),
             ),
           ),
         ),
 
       cfquery_qualified_name: $ =>
         seq(
-          field('first', $.identifier),
-          repeat1(seq('.', field('rest', $.identifier))),
+          field('first', choice($.identifier, $._hash)),
+          repeat1(seq('.', field('rest', choice($.identifier, $._hash)))),
         ),
 
       cfquery_window_invocation: $ =>

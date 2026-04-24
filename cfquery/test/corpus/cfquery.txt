@@ -19,7 +19,7 @@ SELECT foo FROM bar WHERE id = ?
           (cfquery_from_table_list
             (cfquery_table_reference
               (identifier))))
-        (cfquery_where_clause
+        (cfquery_clause
           (keyword_where)
           (cfquery_expression
             (cfquery_binary_expression
@@ -47,7 +47,7 @@ SELECT * FROM users WHERE created_at BETWEEN #ARGUMENTS.startDate# AND #ARGUMENT
           (cfquery_from_table_list
             (cfquery_table_reference
               (identifier))))
-        (cfquery_where_clause
+        (cfquery_clause
           (keyword_where)
           (cfquery_expression
             (cfquery_between_expression
@@ -156,7 +156,7 @@ WHERE u.id = #ARGUMENTS.userIds[1]#
                                 (cfquery_table_reference
                                   (identifier)
                                   (identifier))))
-                            (cfquery_where_clause
+                            (cfquery_clause
                               (keyword_where)
                               (cfquery_expression
                                 (cfquery_binary_expression
@@ -188,7 +188,7 @@ WHERE u.id = #ARGUMENTS.userIds[1]#
             (cfquery_table_reference
               (identifier)
               (identifier))))
-        (cfquery_where_clause
+        (cfquery_clause
           (keyword_where)
           (cfquery_expression
             (cfquery_binary_expression
@@ -239,7 +239,7 @@ SELECT * FROM users WHERE name LIKE '%foo%' LIMIT 10 OFFSET 20
           (cfquery_from_table_list
             (cfquery_table_reference
               (identifier))))
-        (cfquery_where_clause
+        (cfquery_clause
           (keyword_where)
           (cfquery_expression
             (cfquery_binary_expression
@@ -281,7 +281,7 @@ WHERE t.column_name = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.co
             (cfquery_table_reference
               (identifier)
               (identifier))))
-        (cfquery_where_clause
+        (cfquery_clause
           (keyword_where)
           (cfquery_expression
             (cfquery_binary_expression
@@ -299,9 +299,12 @@ WHERE t.column_name = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.co
                     (cf_attribute_name)
                     (quoted_cf_attribute_value
                       (hash_expression
-                        (member_expression
-                          (identifier)
-                          (property_identifier)))))
+                        (expression
+                          (primary_expression
+                            (member_expression
+                              (primary_expression
+                                (identifier))
+                              (property_identifier)))))))
                   (cf_selfclose_void_tag_end))))))))))
 
 ===================================
@@ -353,7 +356,7 @@ UPDATE users SET name = #name# WHERE id = #id#
               (hash_param
                 (cf_identifier_path
                   (identifier)))))))
-      (cfquery_where_clause
+      (cfquery_clause
         (keyword_where)
         (cfquery_expression
           (cfquery_binary_expression
@@ -376,7 +379,7 @@ DELETE FROM logs WHERE id = #request.id#
       (keyword_delete)
       (keyword_from)
       (identifier)
-      (cfquery_where_clause
+      (cfquery_clause
         (keyword_where)
         (cfquery_expression
           (cfquery_binary_expression
@@ -516,7 +519,7 @@ SELECT * FROM t WHERE a = 1 AND (b = 2 OR c = 3)
           (cfquery_from_table_list
             (cfquery_table_reference
               (identifier))))
-        (cfquery_where_clause
+        (cfquery_clause
           (keyword_where)
           (cfquery_expression
             (cfquery_binary_expression
@@ -565,7 +568,7 @@ SELECT * FROM t WHERE id IN (1, 2, 3)
           (cfquery_from_table_list
             (cfquery_table_reference
               (identifier))))
-        (cfquery_where_clause
+        (cfquery_clause
           (keyword_where)
           (cfquery_expression
             (cfquery_in_expression
@@ -663,7 +666,7 @@ SELECT * FROM active
                   (cfquery_from_table_list
                     (cfquery_table_reference
                       (identifier))))
-                (cfquery_where_clause
+                (cfquery_clause
                   (keyword_where)
                   (cfquery_expression
                     (cfquery_binary_expression
@@ -714,7 +717,7 @@ SELECT * FROM t WHERE col IS NOT NULL
           (cfquery_from_table_list
             (cfquery_table_reference
               (identifier))))
-        (cfquery_where_clause
+        (cfquery_clause
           (keyword_where)
           (cfquery_expression
             (cfquery_is_null_expression
@@ -1045,7 +1048,7 @@ SELECT TRUE, FALSE FROM t WHERE flag = UNKNOWN
           (cfquery_from_table_list
             (cfquery_table_reference
               (identifier))))
-        (cfquery_where_clause
+        (cfquery_clause
           (keyword_where)
           (cfquery_expression
             (cfquery_binary_expression
@@ -1239,3 +1242,205 @@ MERGE INTO t USING s ON t.id = s.id WHEN MATCHED THEN UPDATE SET x = 1 WHEN NOT 
           (cfquery_expression
             (cfquery_primary_expression
               (number))))))))
+
+===================================
+if statement around clause
+===================================
+SELECT t.column_name
+FROM table_name t
+<cfif StructKeyExists(ARGUMENTS,"column_name")>
+  WHERE t.column_name = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.column_name#">
+</cfif>
+---
+
+(program
+  (cfquery_segment
+    (cfquery_select_statement
+      (cfquery_select_core
+        (keyword_select)
+        (cfquery_select_list
+          (cfquery_select_item
+            (cfquery_expression
+              (cfquery_primary_expression
+                (cfquery_qualified_name
+                  (identifier)
+                  (identifier))))))
+        (cfquery_from_clause
+          (keyword_from)
+          (cfquery_from_table_list
+            (cfquery_table_reference
+              (identifier)
+              (identifier)))))))
+  (cf_if_tag
+    (expression
+      (primary_expression
+        (call_expression
+          (expression
+            (primary_expression
+              (identifier)))
+          (arguments
+            (expression
+              (primary_expression
+                (identifier)))
+            (expression
+              (primary_expression
+                (string
+                  (string_fragment))))))))
+    (cfquery_segment
+      (cfquery_clause
+        (keyword_where)
+        (cfquery_expression
+          (cfquery_binary_expression
+            (cfquery_primary_expression
+              (cfquery_qualified_name
+                (identifier)
+                (identifier)))
+            (cfquery_primary_expression
+              (cf_selfclose_tag
+                (cf_attribute
+                  (cf_attribute_name)
+                  (quoted_cf_attribute_value
+                    (attribute_value)))
+                (cf_attribute
+                  (cf_attribute_name)
+                  (quoted_cf_attribute_value
+                    (hash_expression
+                      (expression
+                        (primary_expression
+                          (member_expression
+                            (primary_expression
+                              (identifier))
+                            (property_identifier)))))))
+                (cf_selfclose_void_tag_end)))))))))
+
+===================================
+loop around clause
+===================================
+SELECT t.column_name
+FROM table_name t
+<cfset alias = "t">
+<cfset delim = "WHERE">
+<cfloop list="column1,column2" index="i">
+  <cfif StructKeyExists(ARGUMENTS,"#i#")>
+    #delim# #alias#.#i# = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS[i]#">
+    <cfset delim = "AND">
+  </cfif>
+</cfloop>
+---
+
+(program
+  (cfquery_segment
+    (cfquery_select_statement
+      (cfquery_select_core
+        (keyword_select)
+        (cfquery_select_list
+          (cfquery_select_item
+            (cfquery_expression
+              (cfquery_primary_expression
+                (cfquery_qualified_name
+                  (identifier)
+                  (identifier))))))
+        (cfquery_from_clause
+          (keyword_from)
+          (cfquery_from_table_list
+            (cfquery_table_reference
+              (identifier)
+              (identifier)))))))
+  (cf_set_tag
+    (expression
+      (assignment_expression
+        (identifier)
+        (expression
+          (primary_expression
+            (string
+              (string_fragment))))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (expression
+      (assignment_expression
+        (identifier)
+        (expression
+          (primary_expression
+            (string
+              (string_fragment))))))
+    (cf_selfclose_void_tag_end))
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value)))))
+    (cf_if_tag
+      (expression
+        (primary_expression
+          (call_expression
+            (expression
+              (primary_expression
+                (identifier)))
+            (arguments
+              (expression
+                (primary_expression
+                  (identifier)))
+              (expression
+                (primary_expression
+                  (string
+                    (hash_expression
+                      (expression
+                        (primary_expression
+                          (identifier)))))))))))
+      (cfquery_segment
+        (cfquery_clause
+          (keyword_and
+            (hash_expression
+              (expression
+                (primary_expression
+                  (identifier)))))
+          (cfquery_expression
+            (cfquery_binary_expression
+              (cfquery_primary_expression
+                (cfquery_qualified_name
+                  (hash_expression
+                    (expression
+                      (primary_expression
+                        (identifier))))
+                  (hash_expression
+                    (expression
+                      (primary_expression
+                        (identifier))))))
+              (cfquery_primary_expression
+                (cf_selfclose_tag
+                  (cf_attribute
+                    (cf_attribute_name)
+                    (quoted_cf_attribute_value
+                      (attribute_value)))
+                  (cf_attribute
+                    (cf_attribute_name)
+                    (quoted_cf_attribute_value
+                      (hash_expression
+                        (expression
+                          (primary_expression
+                            (subscript_expression
+                              (primary_expression
+                                (identifier))
+                              (expression
+                                (primary_expression
+                                  (identifier)))))))))
+                  (cf_selfclose_void_tag_end)))))))
+      (cf_set_tag
+        (expression
+          (assignment_expression
+            (identifier)
+            (expression
+              (primary_expression
+                (string
+                  (string_fragment))))))
+        (cf_selfclose_void_tag_end)))
+    (cf_end_tag
+      (cf_tag_name))))

@@ -89,7 +89,7 @@ module.exports = grammar({
   ],
 
   conflicts: ($) => [
-    [$.declaration, $.primary_expression],
+    // [$.declaration, $.primary_expression],
     [$.primary_expression, $._property_name],
     // [$.primary_expression, $._property_name, $.arrow_function],
     // [$.primary_expression, $.arrow_function],

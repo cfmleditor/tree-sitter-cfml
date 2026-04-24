@@ -6850,10 +6850,6 @@
   ],
   "conflicts": [
     [
-      "declaration",
-      "primary_expression"
-    ],
-    [
       "primary_expression",
       "_property_name"
     ],

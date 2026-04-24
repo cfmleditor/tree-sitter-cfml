@@ -355,6 +355,10 @@
         {
           "type": "SYMBOL",
           "name": "cfquery_exec_statement"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cfquery_clause"
         }
       ]
     },
@@ -424,7 +428,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "cfquery_where_clause"
+              "name": "cfquery_clause"
             },
             {
               "type": "BLANK"
@@ -1714,17 +1718,40 @@
         }
       ]
     },
-    "cfquery_where_clause": {
+    "cfquery_clause": {
       "type": "SEQ",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "PATTERN",
-            "value": "[wW][hH][eE][rR][eE]"
-          },
-          "named": true,
-          "value": "keyword_where"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "PATTERN",
+                "value": "[wW][hH][eE][rR][eE]"
+              },
+              "named": true,
+              "value": "keyword_where"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "PATTERN",
+                "value": "[aA][nN][dD]"
+              },
+              "named": true,
+              "value": "keyword_and"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "_hash"
+              },
+              "named": true,
+              "value": "keyword_and"
+            }
+          ]
         },
         {
           "type": "FIELD",
@@ -2437,7 +2464,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "cfquery_where_clause"
+              "name": "cfquery_clause"
             },
             {
               "type": "BLANK"
@@ -2560,7 +2587,7 @@
           "members": [
             {
               "type": "SYMBOL",
-              "name": "cfquery_where_clause"
+              "name": "cfquery_clause"
             },
             {
               "type": "BLANK"
@@ -3232,6 +3259,18 @@
         },
         {
           "type": "SYMBOL",
+          "name": "cf_if_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_set_tag"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_tag"
+        },
+        {
+          "type": "SYMBOL",
           "name": "cfquery_cast_expression"
         },
         {
@@ -3627,8 +3666,17 @@
                     "value": "["
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "number"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "number"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "identifier"
+                      }
+                    ]
                   },
                   {
                     "type": "STRING",
@@ -3648,8 +3696,17 @@
           "type": "FIELD",
           "name": "first",
           "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_hash"
+              }
+            ]
           }
         },
         {
@@ -3665,8 +3722,17 @@
                 "type": "FIELD",
                 "name": "rest",
                 "content": {
-                  "type": "SYMBOL",
-                  "name": "identifier"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "identifier"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_hash"
+                    }
+                  ]
                 }
               }
             ]
@@ -12478,6 +12544,23 @@
     [
       "binary_expression",
       "_property_name"
+    ],
+    [
+      "cfquery_select_core"
+    ],
+    [
+      "cfquery_delete_statement"
+    ],
+    [
+      "cfquery_update_statement"
+    ],
+    [
+      "cf_identifier_path",
+      "primary_expression"
+    ],
+    [
+      "cfquery_clause",
+      "_node"
     ]
   ],
   "precedences": [
@@ -12976,11 +13059,6 @@
     "_lhs_expression"
   ],
   "supertypes": [
-    "statement",
-    "declaration",
-    "expression",
-    "primary_expression",
-    "pattern",
     "_cf_tags"
   ],
   "reserved": {}
