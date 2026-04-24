@@ -4392,8 +4392,8 @@
           "type": "PREC_LEFT",
           "value": 1,
           "content": {
-            "type": "SYMBOL",
-            "name": "_cf_tags"
+            "type": "PATTERN",
+            "value": "[0-9]+"
           }
         },
         {
@@ -4401,15 +4401,23 @@
           "value": 2,
           "content": {
             "type": "SYMBOL",
-            "name": "_hash"
+            "name": "_cf_tags"
           }
         },
         {
           "type": "PREC_LEFT",
           "value": 3,
           "content": {
+            "type": "SYMBOL",
+            "name": "_hash"
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": 4,
+          "content": {
             "type": "PATTERN",
-            "value": "[^\"'=\\s\\n\\r\\t#]+"
+            "value": "[^\"<>'=\\s\\n\\r\\t#]+"
           }
         }
       ]

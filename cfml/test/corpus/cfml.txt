@@ -1863,3 +1863,39 @@ cfoutput boolean expression with JS-style operators
         (binary_expression
           (identifier)
           (number))))))
+
+===================================
+cfloop with integers without quotes
+===================================
+<cfloop index="i" from=1 to="#ArrayLen(fields)#" step=1>
+</cfloop>
+
+---
+(program
+      (cf_tag
+        (cf_start_tag
+          (cf_tag_name)
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (attribute_value))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (attribute_value)))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (quoted_attribute_value
+                (hash_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)))))))
+          (tag_attributes
+            (attribute
+              (attribute_name)
+              (attribute_value))))
+        (cf_end_tag
+          (cf_tag_name))))

@@ -1156,9 +1156,10 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       attribute_value: $ => choice(
-        prec.left(1, $._cf_tags),
-        prec.left(2, $._hash),
-        prec.left(3, /[^"'=\s\n\r\t#]+/),
+        prec.left(1, /[0-9]+/),
+        prec.left(2, $._cf_tags),
+        prec.left(3, $._hash),
+        prec.left(4, /[^"<>'=\s\n\r\t#]+/),
       ),
 
       cf_attribute: $ => seq(
