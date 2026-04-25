@@ -454,8 +454,6 @@ SELECT * FROM t ORDER BY created_at DESC
               (identifier))))
         (cfquery_order_by_clause
           (keyword_order_by)
-          (keyword_order_by)
-          (keyword_order_by)
           (cfquery_order_by_expression_list
             (cfquery_order_by_expression
               (cfquery_expression
@@ -489,8 +487,6 @@ SELECT a, b FROM t GROUP BY a, b
             (cfquery_table_reference
               (identifier))))
         (cfquery_group_by_clause
-          (keyword_group_by)
-          (keyword_group_by)
           (keyword_group_by)
           (cfquery_group_by_expression_list
             (cfquery_expression
@@ -802,8 +798,6 @@ SELECT * FROM t ORDER BY id OFFSET 10 ROWS FETCH NEXT 5 ROWS ONLY
               (identifier))))
         (cfquery_order_by_clause
           (keyword_order_by)
-          (keyword_order_by)
-          (keyword_order_by)
           (cfquery_order_by_expression_list
             (cfquery_order_by_expression
               (cfquery_expression
@@ -936,15 +930,11 @@ SELECT 1 FROM t WINDOW w AS (PARTITION BY id ORDER BY sort_key)
               (identifier)
               (keyword_as)
               (keyword_partition_by)
-              (keyword_partition_by)
-              (keyword_partition_by)
               (cfquery_group_by_expression_list
                 (cfquery_expression
                   (cfquery_primary_expression
                     (identifier))))
               (cfquery_order_by_clause
-                (keyword_order_by)
-                (keyword_order_by)
                 (keyword_order_by)
                 (cfquery_order_by_expression_list
                   (cfquery_order_by_expression
@@ -1004,7 +994,7 @@ SELECT * FROM sales PIVOT (SUM(amount) FOR yr IN (2023, 2024)) AS p
                   (cfquery_primary_expression
                     (cfquery_function_call
                       (identifier)
-                      (function_call_args
+                      (cfquery_function_call_args
                         (cfquery_expression
                           (cfquery_primary_expression
                             (identifier)))))))
@@ -1137,15 +1127,11 @@ SELECT ROW_NUMBER() OVER (PARTITION BY id ORDER BY sort_key) FROM t
                   (identifier)
                   (keyword_over)
                   (keyword_partition_by)
-                  (keyword_partition_by)
-                  (keyword_partition_by)
                   (cfquery_group_by_expression_list
                     (cfquery_expression
                       (cfquery_primary_expression
                         (identifier))))
                   (cfquery_order_by_clause
-                    (keyword_order_by)
-                    (keyword_order_by)
                     (keyword_order_by)
                     (cfquery_order_by_expression_list
                       (cfquery_order_by_expression
@@ -1175,10 +1161,8 @@ SELECT COUNT(*) OVER (PARTITION BY gid) FROM t
               (cfquery_primary_expression
                 (cfquery_window_invocation
                   (identifier)
-                  (function_call_args)
+                  (cfquery_function_call_args)
                   (keyword_over)
-                  (keyword_partition_by)
-                  (keyword_partition_by)
                   (keyword_partition_by)
                   (cfquery_group_by_expression_list
                     (cfquery_expression
