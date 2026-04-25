@@ -986,6 +986,13 @@ module.exports = function defineGrammar(dialect) {
         alias($._close_tag_delim, '>'),
       )),
 
+      cf_tag_attributes: $ => choice(
+        // $.style_attribute,
+        $.cf_attribute,
+        $.quoted_cf_attribute_value,
+        $._hash_always_eval,
+      ),
+
       tag_attributes: $ => choice(
         // $.style_attribute,
         $.attribute,
@@ -1114,7 +1121,7 @@ module.exports = function defineGrammar(dialect) {
         $._cf_open_tag,
         alias($._start_cf_tag_name, $.cf_tag_name),
         repeat(
-          $.tag_attributes,
+          $.cf_tag_attributes,
         ),
         $._cf_self_closing_tag_delimiter,
       )),
@@ -1122,7 +1129,7 @@ module.exports = function defineGrammar(dialect) {
       cf_start_tag: $ => seq(
         $._cf_open_tag,
         alias($._start_cf_tag_name, $.cf_tag_name),
-        repeat($.tag_attributes),
+        repeat($.cf_tag_attributes),
         alias($._close_cf_tag_delim, '>'),
       ),
 

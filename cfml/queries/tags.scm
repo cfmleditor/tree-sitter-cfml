@@ -8,14 +8,27 @@
 (method_definition
   name: (property_identifier) @name) @definition.method
 
+; cffunction tag as function definition
+(cf_tag
+  (cf_start_tag
+    (cf_tag_name) @_cffunction
+    (cf_tag_attributes
+      (cf_attribute
+        (cf_attribute_name) @_name
+        (quoted_cf_attribute_value
+          (attribute_value) @name))))
+  (#match? @_cffunction "(?i)^function$")
+  (#eq? @_name "name")) @definition.function
+
 ; Component definitions (tag-based)
 (cf_tag
   (cf_start_tag
     (cf_tag_name) @_cfcomponent
-    (tag_attributes
-      (attribute
-        (attribute_name) @_name
-        (_ (attribute_value) @name))))
+    (cf_tag_attributes
+      (cf_attribute
+        (cf_attribute_name) @_name
+        (quoted_cf_attribute_value
+          (attribute_value) @name))))
   (#match? @_cfcomponent "(?i)^component$")
   (#eq? @_name "name")) @definition.class
 
@@ -24,21 +37,9 @@
   (cf_start_tag
     (cf_tag_name) @name)) @definition.tag
 
-; CFML self-closing tags with name (e.g. <cffunction name=\"x\" />)
 (cf_tag
   (cf_start_tag_with_selfclose
     (cf_tag_name) @name)) @definition.tag
-
-; cffunction tag as function definition
-(cf_tag
-  (cf_start_tag
-    (cf_tag_name) @_cffunction
-    (tag_attributes
-      (attribute
-        (attribute_name) @_name
-        (_ (attribute_value) @name))))
-  (#match? @_cffunction "(?i)^function$")
-  (#eq? @_name "name")) @definition.function
 
 ; Function calls (script)
 (call_expression

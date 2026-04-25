@@ -11723,6 +11723,23 @@
         ]
       }
     },
+    "cf_tag_attributes": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cf_attribute"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "quoted_cf_attribute_value"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_hash_always_eval"
+        }
+      ]
+    },
     "tag_attributes": {
       "type": "CHOICE",
       "members": [
@@ -12200,7 +12217,7 @@
             "type": "REPEAT",
             "content": {
               "type": "SYMBOL",
-              "name": "tag_attributes"
+              "name": "cf_tag_attributes"
             }
           },
           {
@@ -12230,7 +12247,7 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "tag_attributes"
+            "name": "cf_tag_attributes"
           }
         },
         {

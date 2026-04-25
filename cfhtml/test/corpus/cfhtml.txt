@@ -119,10 +119,10 @@ cfhtml table, cfloop, and cf comment interaction
     (cf_tag
       (cf_start_tag
         (cf_tag_name)
-        (tag_attributes
-          (attribute
-            (attribute_name)
-            (quoted_attribute_value
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
               (attribute_value)))))
       (element
         (start_tag
