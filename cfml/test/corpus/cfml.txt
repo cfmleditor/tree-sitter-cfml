@@ -580,24 +580,19 @@ mixed cfset, cfscript, cfoutput, and complex attribute hashes
   (cf_script_tag
     (cf_script_content))
   (element
-    (start_tag
+    (self_closing_tag
       (tag_name)
       (tag_attributes
         (attribute
           (attribute_name)
           (quoted_attribute_value
-            (hash_expression)))))
-    (end_tag
-      (tag_name)))
-  (cf_output_tag
-    (hash_expression
-      (identifier)))
-  (cf_selfclose_tag
-    (cf_attribute
-      (cf_attribute_name)
-      (quoted_cf_attribute_value
-        (hash_expression)))
-    (cf_selfclose_void_tag_end
+            (hash_expression
+              (hash_expression
+                (string
+                  (string_fragment)
+                  (hash_expression
+                    (identifier))
+                  (string_fragment)))))))
       (self_closing_tag_delimiter)))
   (cf_selfclose_tag
     (cf_selfclose_void_tag_end

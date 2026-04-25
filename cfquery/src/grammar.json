@@ -4356,6 +4356,39 @@
         },
         {
           "type": "PREC_LEFT",
+          "value": "binary_relation",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[lL][eE]"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
           "value": "binary_equality",
           "content": {
             "type": "SEQ",
@@ -4834,6 +4867,39 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
+                  "type": "PATTERN",
+                  "value": "[gG][eE]"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": "binary_relation",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
                   "type": "STRING",
                   "value": ">"
                 }
@@ -5234,7 +5300,7 @@
         "value": 1,
         "content": {
           "type": "PATTERN",
-          "value": "[^\"#\\r\\n]+"
+          "value": "[^\"#]+"
         }
       }
     },
@@ -5245,7 +5311,7 @@
         "value": 1,
         "content": {
           "type": "PATTERN",
-          "value": "[^'#\\r\\n]+"
+          "value": "[^'#]+"
         }
       }
     },

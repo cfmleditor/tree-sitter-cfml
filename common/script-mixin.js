@@ -1218,10 +1218,10 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
 
     // tree-sitter/tree-sitter#1156: named token() regexp rules so string fragments appear in the CST.
     //
-    unescaped_double_string_fragment: (_) => token.immediate(prec(1, /[^"#\r\n]+/)),
+    unescaped_double_string_fragment: (_) => token.immediate(prec(1, /[^"#]+/)),
 
     // Pair: single-quoted string fragment.
-    unescaped_single_string_fragment: (_) => token.immediate(prec(1, /[^'#\r\n]+/)),
+    unescaped_single_string_fragment: (_) => token.immediate(prec(1, /[^'#]+/)),
 
     // escape_sequence: (_) => token.immediate(seq(
     //   '\\',
