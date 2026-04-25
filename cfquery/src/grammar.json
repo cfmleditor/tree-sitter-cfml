@@ -1956,6 +1956,10 @@
                           },
                           {
                             "type": "SYMBOL",
+                            "name": "cf_pair"
+                          },
+                          {
+                            "type": "SYMBOL",
                             "name": "spread_element"
                           },
                           {
@@ -2005,6 +2009,10 @@
                                 {
                                   "type": "SYMBOL",
                                   "name": "pair"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "cf_pair"
                                 },
                                 {
                                   "type": "SYMBOL",
@@ -2084,6 +2092,10 @@
                           },
                           {
                             "type": "SYMBOL",
+                            "name": "cf_pair"
+                          },
+                          {
+                            "type": "SYMBOL",
                             "name": "rest_pattern"
                           },
                           {
@@ -2133,6 +2145,10 @@
                                 {
                                   "type": "SYMBOL",
                                   "name": "pair_pattern"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "cf_pair"
                                 },
                                 {
                                   "type": "SYMBOL",
@@ -6641,6 +6657,31 @@
         {
           "type": "STRING",
           "value": ":"
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          }
+        }
+      ]
+    },
+    "cf_pair": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "key",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_property_name"
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "="
         },
         {
           "type": "FIELD",
@@ -13048,12 +13089,24 @@
       "pair"
     ],
     [
+      "binary_expression",
+      "cf_pair"
+    ],
+    [
       "member_expression",
       "pair"
     ],
     [
+      "member_expression",
+      "cf_pair"
+    ],
+    [
       "subscript_expression",
       "pair"
+    ],
+    [
+      "subscript_expression",
+      "cf_pair"
     ],
     [
       "member_expression",
@@ -13100,6 +13153,51 @@
       "expression",
       "assignment_expression",
       "_property_name"
+    ],
+    [
+      "assignment_expression",
+      "_property_name"
+    ],
+    [
+      "object_assignment_pattern",
+      "_property_name"
+    ],
+    [
+      "assignment_expression",
+      "pattern",
+      "_property_name"
+    ],
+    [
+      "object_assignment_pattern",
+      "assignment_expression",
+      "_property_name"
+    ],
+    [
+      "expression",
+      "object",
+      "object_pattern"
+    ],
+    [
+      "assignment_expression",
+      "rest_pattern",
+      "_property_name"
+    ],
+    [
+      "member_expression",
+      "subscript_expression",
+      "cf_pair"
+    ],
+    [
+      "update_expression",
+      "cf_pair"
+    ],
+    [
+      "ternary_expression",
+      "cf_pair"
+    ],
+    [
+      "elvis_expression",
+      "cf_pair"
     ],
     [
       "switch_case",

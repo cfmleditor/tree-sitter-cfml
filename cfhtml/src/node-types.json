@@ -1197,6 +1197,56 @@
     }
   },
   {
+    "type": "cf_pair",
+    "named": true,
+    "fields": {
+      "key": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "computed_property_name",
+            "named": true
+          },
+          {
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
+            "named": true
+          },
+          {
+            "type": "null",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "property_identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "cf_query_tag",
     "named": true,
     "fields": {},
@@ -2688,6 +2738,10 @@
       "required": false,
       "types": [
         {
+          "type": "cf_pair",
+          "named": true
+        },
+        {
           "type": "method_definition",
           "named": true
         },
@@ -2744,6 +2798,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "cf_pair",
+          "named": true
+        },
         {
           "type": "object_assignment_pattern",
           "named": true

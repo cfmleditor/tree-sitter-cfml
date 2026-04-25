@@ -118,9 +118,12 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       // // [$.expression, $._function_options],
       [$.expression, $.object],
       [$.binary_expression, $.pair],
+      [$.binary_expression, $.cf_pair],
       [$.member_expression, $.pair],
+      [$.member_expression, $.cf_pair],
       // // [$.call_expression, $.pair],
       [$.subscript_expression, $.pair],
+      [$.subscript_expression, $.cf_pair],
       [$.member_expression, $.subscript_expression, $.pair],
       [$.update_expression, $.pair],
       [$.ternary_expression, $.pair],
@@ -134,6 +137,16 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       [$.expression, $.return_statement],
       [$.expression, $.throw_statement],
       [$.expression, $.assignment_expression, $._property_name],
+      [$.assignment_expression, $._property_name],
+      [$.object_assignment_pattern, $._property_name],
+      [$.assignment_expression, $.pattern, $._property_name],
+      [$.object_assignment_pattern, $.assignment_expression, $._property_name],
+      [$.expression, $.object, $.object_pattern],
+      [$.assignment_expression, $.rest_pattern, $._property_name],
+      [$.member_expression, $.subscript_expression, $.cf_pair],
+      [$.update_expression, $.cf_pair],
+      [$.ternary_expression, $.cf_pair],
+      [$.elvis_expression, $.cf_pair],
       // [$.expression, $.parenthesized_expression, $.arguments],
       [$.switch_case, $.expression, $._property_name],
       [$.call_expression, $._property_name],
@@ -612,6 +625,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       '{',
       commaSep(optional(choice(
         $.pair,
+        $.cf_pair,
         $.spread_element,
         $.method_definition,
         alias(
@@ -626,6 +640,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       '{',
       commaSep(optional(choice(
         $.pair_pattern,
+        $.cf_pair,
         $.rest_pattern,
         $.object_assignment_pattern,
         alias(
@@ -1456,6 +1471,12 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
     pair: ($) => seq(
       field('key', $._property_name),
       ':',
+      field('value', $.expression),
+    ),
+
+    cf_pair: ($) => seq(
+      field('key', $._property_name),
+      '=',
       field('value', $.expression),
     ),
 

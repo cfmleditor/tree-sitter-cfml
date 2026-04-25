@@ -1885,6 +1885,10 @@ cfloop with integers without quotes
 <cfloop index="i" from=1 to="#ArrayLen(fields)#" step=1>
 </cfloop>
 
+<cfset test = {
+  test = "123",
+  test2 = "1345"
+  }>
 ---
 
 (program
@@ -1916,7 +1920,20 @@ cfloop with integers without quotes
           (cf_attribute_value
             (attribute_value)))))
     (cf_end_tag
-      (cf_tag_name))))
+      (cf_tag_name)))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (object_pattern
+        (object_assignment_pattern
+          (shorthand_property_identifier_pattern)
+          (string
+            (string_fragment)))
+        (object_assignment_pattern
+          (shorthand_property_identifier_pattern)
+          (string
+            (string_fragment)))))
+    (cf_selfclose_void_tag_end)))
 
 ===================================
 nested calls
