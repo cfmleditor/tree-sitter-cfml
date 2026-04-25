@@ -128,7 +128,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
 
       [$.expression, $.parenthesized_expression],
       [$.expression, $.expression_statement],
-      [$.expression, $.function_expression],
+      
       [$.expression, $.arguments],
       [$.expression, $.assignment_expression],
       [$.expression, $.return_statement],
@@ -139,7 +139,30 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       [$.call_expression, $._property_name],
       [$._for_header, $.expression],
       [$.expression, $.for_statement],
-      [$.expression, $._cf_tag_expression],
+
+      ...(dialect === 'cfml' ? [
+        [$._hash_dialect_eval, $._hash_always_eval],
+        [$.expression, $._cf_tag_expression],
+        [$.expression, $.function_expression],
+      ] : dialect === 'cfquery' ? [
+        [$.cfquery_select_core],
+        [$.cfquery_delete_statement],
+        [$.cfquery_update_statement],
+        [$.cf_identifier_path, $.primary_expression],
+        [$.cfquery_clause, $._node],
+        [$._hash_dialect_eval, $._hash_always_eval],
+        [$.expression, $._cf_tag_expression],
+        [$.expression, $.function_expression],
+      ] : dialect === 'cfscript' ? [
+        [$._hash_dialect_eval, $._hash_always_eval],
+        [$.parenthesized_expression, $.expression, $.arguments],
+        [$.expression, $.template_substitution],
+      ] : [
+        [$._hash_dialect_eval, $.hash_expression],
+        [$._hash_dialect_eval, $.hash_expression, $.hash_empty],
+        [$.expression, $._cf_tag_expression],
+        [$.expression, $.function_expression],
+      ]),
     ],
 
     rules: {
@@ -300,8 +323,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       $.empty_statement,
       $.labeled_statement,
 
-      // $.tag_statement,
-      // $.query_tag,
+      ...(dialect === 'cfscript' ? [$.tag_statement, $.query_tag] : []),
     ),
 
     expression_statement: ($) => seq(
@@ -552,6 +574,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       $._hash_always_eval,
       $.pair,
       $.object_pattern,
+      ...(dialect === 'cfscript' ? [$.query_expression] : []),
     ),
 
     primary_expression: ($) => choice(
@@ -564,7 +587,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       $.super,
       $.number,
       $.string,
-      // $.template_string,
+      ...(dialect === 'cfscript' ? [$.template_string] : []),
       $.regex,
       $.true,
       $.false,
@@ -573,8 +596,6 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       $.array,
       $.function_expression,
       $.arrow_function,
-      // $.generator_function,
-      // $.class,
       $.component,
       $.meta_property,
       $.call_expression,
@@ -842,24 +863,17 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
     // Type names that are also Lucee/CFML built-in functions (array, struct, query, etc.)
     // are matched via $.identifier so that e.g. array(1) and structNew() parse as calls.
     return_type: ($) => choice(
-      token('any'),
-      token('string'),
-      token('numeric'),
-      token('xml'),
-      token('binary'),
-      token('boolean'),
-      token('component'),
-      token('date'),
-      token('function'),
-      token('guid'),
-      token('void'),
-      token('array'),
-      token('uuid'),
-      token('struct'),
-      token('query'),
-      token('string'),
-      token('variablename'),
-      token('void'),
+      'any',
+      'string',
+      'numeric',
+      'xml',
+      'binary',
+      'boolean',
+      'component',
+      'date',
+      'function',
+      'guid',
+      'void',
       $.identifier,
     ),
 
@@ -1139,8 +1153,17 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       ),
     ),
 
+    // @ts-ignore
+    unary_operator: $ => choice(
+      '!',
+      '~',
+      '-',
+      '+',
+      alias(/[nN][oO][tT]/, 'not'),
+    ),
+
     unary_expression: ($) => prec.left('unary_void', seq(
-      field('operator', choice('!', '~', '-', '+', /[nN][oO][tT]/)),
+      field('operator', $.unary_operator),
       field('argument', $.expression),
     )),
 

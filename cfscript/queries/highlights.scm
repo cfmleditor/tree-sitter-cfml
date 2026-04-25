@@ -3,10 +3,14 @@
 
 (identifier) @variable
 
+; CFML scopes (variables, session, etc.)
+(cf_scope_identifier) @namespace
+
 ; Properties
 ;-----------
 
 (property_identifier) @property
+(shorthand_property_identifier) @property
 
 ; Function and method definitions
 ;--------------------------------
@@ -15,6 +19,8 @@
   name: (identifier) @function)
 (function_declaration
   name: (identifier) @function)
+(function_declaration
+  (access_type) @keyword)
 (function_declaration
   (return_type) @type)
 (method_definition
@@ -78,6 +84,7 @@
 
 (this) @variable.builtin
 (super) @variable.builtin
+(undefined) @constant.builtin
 
 [
   (true)
@@ -106,6 +113,7 @@
 [
   ";"
   (optional_chain)
+  (static_chain)
   "."
   ","
 ] @punctuation.delimiter
@@ -155,6 +163,7 @@
   "&="
   "|="
   "&&"
+  (logical_or)
   "||"
   "??"
   "&&="
@@ -200,6 +209,7 @@
   "let"
   "new"
   "of"
+  "query"
   "return"
   "set"
   "static"

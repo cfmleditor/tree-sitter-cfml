@@ -117,20 +117,7 @@ module.exports = function defineGrammar(dialect) {
 
     conflicts: ($, previous) => previous.concat(
       mixin.conflicts($),
-    ).concat(
-      dialect === 'cfml' ? [
-        [$._hash_dialect_eval, $._hash_always_eval],
-      ] : dialect === 'cfquery' ? [
-        [$.cfquery_select_core],
-        [$.cfquery_delete_statement],
-        [$.cfquery_update_statement],
-        [$.cf_identifier_path, $.primary_expression],
-        [$.cfquery_clause, $._node],
-        [$._hash_dialect_eval, $._hash_always_eval],
-      ] : [
-        [$._hash_dialect_eval, $.hash_expression],
-        [$._hash_dialect_eval, $.hash_expression, $.hash_empty],
-      ]),
+    ),
       
     rules: {
 

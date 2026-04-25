@@ -3550,24 +3550,17 @@
         "required": true,
         "types": [
           {
-            "type": "!",
-            "named": false
-          },
-          {
-            "type": "+",
-            "named": false
-          },
-          {
-            "type": "-",
-            "named": false
-          },
-          {
-            "type": "~",
-            "named": false
+            "type": "unary_operator",
+            "named": true
           }
         ]
       }
     }
+  },
+  {
+    "type": "unary_operator",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "update_expression",
@@ -3991,10 +3984,6 @@
     "named": false
   },
   {
-    "type": "array",
-    "named": false
-  },
-  {
     "type": "as",
     "named": false
   },
@@ -4197,6 +4186,10 @@
     "named": false
   },
   {
+    "type": "not",
+    "named": false
+  },
+  {
     "type": "null",
     "named": true
   },
@@ -4234,10 +4227,6 @@
   },
   {
     "type": "public",
-    "named": false
-  },
-  {
-    "type": "query",
     "named": false
   },
   {
@@ -4305,10 +4294,6 @@
     "named": true
   },
   {
-    "type": "struct",
-    "named": false
-  },
-  {
     "type": "super",
     "named": true
   },
@@ -4349,15 +4334,7 @@
     "named": true
   },
   {
-    "type": "uuid",
-    "named": false
-  },
-  {
     "type": "var",
-    "named": false
-  },
-  {
-    "type": "variablename",
     "named": false
   },
   {

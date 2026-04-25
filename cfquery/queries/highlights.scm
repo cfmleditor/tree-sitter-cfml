@@ -16,6 +16,7 @@
   "]" @punctuation.bracket)
 (cfquery_boolean_literal) @constant.builtin
 (comment) @comment
+(cf_comment) @comment
 
 ; Parameters and CF hash interpolation inside SQL
 (parameter) @variable.parameter
@@ -24,9 +25,14 @@
   (cf_identifier_path) @variable
   "#" @punctuation.special)
 
+(hash_expression
+  "#" @punctuation.special)
+(hash_empty) @punctuation.special
+
 ; Keywords
 [
   (keyword_select)
+  (keyword_distinct)
   (keyword_from)
   (keyword_where)
   (keyword_group_by)
@@ -44,6 +50,7 @@
   (keyword_not)
   (keyword_like)
   (keyword_ilike)
+  (keyword_mod)
   (keyword_union)
   (keyword_all)
   (keyword_top)

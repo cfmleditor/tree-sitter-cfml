@@ -24,6 +24,10 @@
 (cf_else_tag) @tag
 (cf_elseif_tag) @tag
 (cf_return_tag) @tag
+(cf_xml_tag) @tag
+
+(tag_name) @tag
+(cf_tag_name) @tag
 
 ; Variables
 ;----------
@@ -38,6 +42,8 @@
 
 (property_identifier) @property
 
+(shorthand_property_identifier) @property
+
 ; Function and method definitions
 ;--------------------------------
 
@@ -48,16 +54,10 @@
   name: (identifier) @function)
 
 (function_declaration
-  (access_type) @keyword)
+  (access_type) @access_type)
 
 (function_declaration
-  (return_type) @type)
-
-(generator_function
-  name: (identifier) @function)
-
-(generator_function_declaration
-  name: (identifier) @function)
+  (return_type) @return_type)
 
 (method_definition
   name: [
@@ -68,12 +68,6 @@
 (method_definition
   name: (property_identifier) @constructor
   (#eq? @constructor "constructor"))
-
-(formal_parameters
-  (type) @type)
-
-(formal_parameters
-  (required) @keyword)
 
 (pair
   key: (property_identifier) @function.method
@@ -131,6 +125,9 @@
 ((identifier) @variable.builtin
   (#eq? @variable.builtin "self"))
 
+(this) @variable.builtin
+(super) @variable.builtin
+
 (cf_var) @keyword
 
 [
@@ -140,6 +137,7 @@
 
 [
   (null)
+  (undefined)
 ] @constant.builtin
 
 [
@@ -180,6 +178,8 @@
   "."
   ","
   ":"
+  (optional_chain)
+  (static_chain)
 ] @punctuation.delimiter
 
 (binary_expression
@@ -229,6 +229,7 @@
   "&="
   "|="
   "&&"
+  (logical_or)
   "||"
   "??"
   "&&="
@@ -260,7 +261,6 @@
   "in"
   "of"
   "instanceof"
-  "async"
   "static"
   "export"
   "yield"
@@ -277,5 +277,4 @@
   "<"
   ">"
   "</"
-  "/>"
 ] @punctuation.bracket
