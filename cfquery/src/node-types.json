@@ -42,6 +42,11 @@
     ]
   },
   {
+    "type": "access_type",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "arguments",
     "named": true,
     "fields": {},
@@ -523,6 +528,10 @@
           },
           {
             "type": "|",
+            "named": false
+          },
+          {
+            "type": "||",
             "named": false
           }
         ]
@@ -1723,7 +1732,7 @@
       "required": true,
       "types": [
         {
-          "type": "function_call_args",
+          "type": "cfquery_function_call_args",
           "named": true
         },
         {
@@ -1914,10 +1923,44 @@
       "required": false,
       "types": [
         {
-          "type": "function_call_args",
+          "type": "cfquery_function_call_args",
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "cfquery_function_call_args",
+    "named": true,
+    "fields": {
+      "first": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "*",
+            "named": false
+          },
+          {
+            "type": "cfquery_expression",
+            "named": true
+          }
+        ]
+      },
+      "rest": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "*",
+            "named": false
+          },
+          {
+            "type": "cfquery_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -3383,15 +3426,15 @@
       "required": true,
       "types": [
         {
+          "type": "cfquery_function_call_args",
+          "named": true
+        },
+        {
           "type": "cfquery_group_by_expression_list",
           "named": true
         },
         {
           "type": "cfquery_order_by_clause",
-          "named": true
-        },
-        {
-          "type": "function_call_args",
           "named": true
         },
         {
@@ -4202,45 +4245,6 @@
     }
   },
   {
-    "type": "function_access",
-    "named": true,
-    "fields": {}
-  },
-  {
-    "type": "function_call_args",
-    "named": true,
-    "fields": {
-      "first": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "*",
-            "named": false
-          },
-          {
-            "type": "cfquery_expression",
-            "named": true
-          }
-        ]
-      },
-      "rest": {
-        "multiple": true,
-        "required": false,
-        "types": [
-          {
-            "type": "*",
-            "named": false
-          },
-          {
-            "type": "cfquery_expression",
-            "named": true
-          }
-        ]
-      }
-    }
-  },
-  {
     "type": "function_declaration",
     "named": true,
     "fields": {
@@ -4280,11 +4284,11 @@
       "required": false,
       "types": [
         {
-          "type": "assignment_expression",
+          "type": "access_type",
           "named": true
         },
         {
-          "type": "function_access",
+          "type": "assignment_expression",
           "named": true
         },
         {
@@ -6385,7 +6389,15 @@
     "named": false
   },
   {
+    "type": "abstract",
+    "named": false
+  },
+  {
     "type": "any",
+    "named": false
+  },
+  {
+    "type": "array",
     "named": false
   },
   {
@@ -6513,6 +6525,10 @@
   {
     "type": "false",
     "named": true
+  },
+  {
+    "type": "final",
+    "named": false
   },
   {
     "type": "finally",
@@ -6895,6 +6911,10 @@
     "named": false
   },
   {
+    "type": "query",
+    "named": false
+  },
+  {
     "type": "raw_text",
     "named": true
   },
@@ -6905,6 +6925,10 @@
   {
     "type": "regex_pattern",
     "named": true
+  },
+  {
+    "type": "remote",
+    "named": false
   },
   {
     "type": "required",
@@ -6955,6 +6979,10 @@
     "named": true
   },
   {
+    "type": "struct",
+    "named": false
+  },
+  {
     "type": "super",
     "named": true
   },
@@ -6995,7 +7023,15 @@
     "named": true
   },
   {
+    "type": "uuid",
+    "named": false
+  },
+  {
     "type": "var",
+    "named": false
+  },
+  {
+    "type": "variablename",
     "named": false
   },
   {
@@ -7028,6 +7064,10 @@
   },
   {
     "type": "|=",
+    "named": false
+  },
+  {
+    "type": "||",
     "named": false
   },
   {

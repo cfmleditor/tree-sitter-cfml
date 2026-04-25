@@ -98,6 +98,8 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       // [$.component, $.parameter_type],
       // // [$.component, $.return_type],
       [$.component, $.primary_expression],
+      [$.component, $.access_type],
+      [$.method_definition, $.access_type],
       // // [$.query_tag, $.expression],
 
       // // [$.component, $.call_expression],
@@ -827,26 +829,37 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       field('body', $.statement_block),
     )),
 
-    function_access: ($) => choice(
+    access_type: ($) => choice(
       'public',
       'private',
       'package',
+      'remote',
+      'static',
+      'final',
+      'abstract',
     ),
 
     // Type names that are also Lucee/CFML built-in functions (array, struct, query, etc.)
     // are matched via $.identifier so that e.g. array(1) and structNew() parse as calls.
     return_type: ($) => choice(
-      'any',
-      'string',
-      'numeric',
-      'xml',
-      'binary',
-      'boolean',
-      'component',
-      'date',
-      'function',
-      'guid',
-      'void',
+      token('any'),
+      token('string'),
+      token('numeric'),
+      token('xml'),
+      token('binary'),
+      token('boolean'),
+      token('component'),
+      token('date'),
+      token('function'),
+      token('guid'),
+      token('void'),
+      token('array'),
+      token('uuid'),
+      token('struct'),
+      token('query'),
+      token('string'),
+      token('variablename'),
+      token('void'),
       $.identifier,
     ),
 
@@ -868,7 +881,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
 
     function_declaration: ($) => prec.right('declaration', seq(
       // optional('async'),
-      optional($.function_access),
+      optional($.access_type),
       optional($.return_type),
       'function',
       field('name', $.identifier),
@@ -1076,7 +1089,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       ...[
         ['&&', 'logical_and'],
         [/[aA][nN][dD]/, 'logical_and'],
-        [$.logical_or, 'logical_or'],
+        [choice($.logical_or, '||'), 'logical_or'],
         [/[oO][rR]/, 'logical_or'],
         [/[xX][oO][rR]/, 'logical_xor'],
         ['>>', 'binary_shift'],

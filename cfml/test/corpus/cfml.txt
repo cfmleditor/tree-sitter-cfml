@@ -866,14 +866,14 @@ hash-empty attributes, cfif with complex call chain, and cfloop/cfset attribute 
         (attribute
           (attribute_name)
           (quoted_attribute_value
-            (hash_empty)
+            (hash_expression)
             (attribute_value))))
       (tag_attributes
         (attribute
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)
-            (hash_empty)
+            (hash_expression)
             (attribute_value)))))
     (end_tag
       (tag_name)))
@@ -890,7 +890,7 @@ hash-empty attributes, cfif with complex call chain, and cfloop/cfset attribute 
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)
-            (hash_empty)
+            (hash_expression)
             (attribute_value))))
       (tag_attributes
         (attribute
@@ -934,7 +934,8 @@ hash-empty attributes, cfif with complex call chain, and cfloop/cfset attribute 
               (identifier)
               (string
                 (string_fragment))))))
-      (cf_selfclose_void_tag_end)))
+      (cf_selfclose_void_tag_end
+        (self_closing_tag_delimiter))))
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
@@ -1871,17 +1872,17 @@ cfoutput boolean expression with JS-style operators
   (cf_output_tag
     (hash_expression
       (binary_expression
-        (binary_expression
-          (parenthesized_expression
+        (parenthesized_expression
+          (binary_expression
             (binary_expression
-              (binary_expression
-                (binary_expression
-                  (identifier)
-                  (number))
-                (identifier))
-              (number)))
-          (identifier))
-        (number)))))
+              (identifier)
+              (number))
+            (binary_expression
+              (identifier)
+              (number))))
+        (binary_expression
+          (identifier)
+          (number))))))
 
 ===================================
 cfloop with integers without quotes

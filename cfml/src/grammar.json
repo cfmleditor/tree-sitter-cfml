@@ -2610,7 +2610,7 @@
         ]
       }
     },
-    "function_access": {
+    "access_type": {
       "type": "CHOICE",
       "members": [
         {
@@ -2624,6 +2624,22 @@
         {
           "type": "STRING",
           "value": "package"
+        },
+        {
+          "type": "STRING",
+          "value": "remote"
+        },
+        {
+          "type": "STRING",
+          "value": "static"
+        },
+        {
+          "type": "STRING",
+          "value": "final"
+        },
+        {
+          "type": "STRING",
+          "value": "abstract"
         }
       ]
     },
@@ -2631,48 +2647,130 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "STRING",
-          "value": "any"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "any"
+          }
         },
         {
-          "type": "STRING",
-          "value": "string"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "string"
+          }
         },
         {
-          "type": "STRING",
-          "value": "numeric"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "numeric"
+          }
         },
         {
-          "type": "STRING",
-          "value": "xml"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "xml"
+          }
         },
         {
-          "type": "STRING",
-          "value": "binary"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "binary"
+          }
         },
         {
-          "type": "STRING",
-          "value": "boolean"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "boolean"
+          }
         },
         {
-          "type": "STRING",
-          "value": "component"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "component"
+          }
         },
         {
-          "type": "STRING",
-          "value": "date"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "date"
+          }
         },
         {
-          "type": "STRING",
-          "value": "function"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "function"
+          }
         },
         {
-          "type": "STRING",
-          "value": "guid"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "guid"
+          }
         },
         {
-          "type": "STRING",
-          "value": "void"
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "void"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "array"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "uuid"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "struct"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "query"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "string"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "variablename"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "void"
+          }
         },
         {
           "type": "SYMBOL",
@@ -2748,7 +2846,7 @@
             "members": [
               {
                 "type": "SYMBOL",
-                "name": "function_access"
+                "name": "access_type"
               },
               {
                 "type": "BLANK"
@@ -3663,8 +3761,17 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "SYMBOL",
-                  "name": "logical_or"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "logical_or"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "||"
+                    }
+                  ]
                 }
               },
               {
@@ -12018,8 +12125,15 @@
                   {
                     "type": "ALIAS",
                     "content": {
-                      "type": "PATTERN",
-                      "value": "[^'\\s\\n\\r\\t#]+"
+                      "type": "TOKEN",
+                      "content": {
+                        "type": "PREC",
+                        "value": 1,
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "[^'<\\s\\n\\r\\t#]+"
+                        }
+                      }
                     },
                     "named": true,
                     "value": "attribute_value"
@@ -12056,8 +12170,15 @@
                   {
                     "type": "ALIAS",
                     "content": {
-                      "type": "PATTERN",
-                      "value": "[^\"\\s\\n\\r\\t#]+"
+                      "type": "TOKEN",
+                      "content": {
+                        "type": "PREC",
+                        "value": 1,
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "[^\"<\\s\\n\\r\\t#]+"
+                        }
+                      }
                     },
                     "named": true,
                     "value": "attribute_value"
@@ -12164,6 +12285,14 @@
     [
       "component",
       "primary_expression"
+    ],
+    [
+      "component",
+      "access_type"
+    ],
+    [
+      "method_definition",
+      "access_type"
     ],
     [
       "expression",
