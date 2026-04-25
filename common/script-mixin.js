@@ -89,7 +89,6 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       [$.binary_expression, $._initializer],
       // // [$.class_static_block, $._property_name],
       [$.hash_expression, $.hash_empty],
-      [$._hash, $._hash_expression],
       // [$.function_expression, $.parameter_type],
       // // [$.primary_expression, $.parameter_type],
       //[$.primary_expression, $.tag_statement],
@@ -112,7 +111,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       //[$.return_type, $.tag_statement],
       // [$.primary_expression, $.parameter_type],
       //[$.tag_statement, $.expression],
-      [$.sequence_expression, $.arguments],
+      // [$.sequence_expression, $.arguments],
 
       // // [$.expression, $._function_options],
       [$.expression, $.object],
@@ -133,11 +132,12 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       [$.expression, $.return_statement],
       [$.expression, $.throw_statement],
       [$.expression, $.assignment_expression, $._property_name],
-      [$.expression, $.parenthesized_expression, $.arguments],
+      // [$.expression, $.parenthesized_expression, $.arguments],
       [$.switch_case, $.expression, $._property_name],
       [$.call_expression, $._property_name],
       [$._for_header, $.expression],
       [$.expression, $.for_statement],
+      [$.expression, $._cf_tag_expression],
     ],
 
     rules: {
@@ -206,7 +206,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       // $.generator_function_declaration,
       // $.class_declaration,
       $.lexical_declaration,
-      // $.variable_declaration,
+      $.variable_declaration,
     ),
 
     //
@@ -532,14 +532,11 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
     _expressions: ($) => choice(
       $.expression,
       $.sequence_expression,
-      ( dialect === 'cfhtml' ? $._hash_expression : $._hash),
+      $._hash_always_eval,
     ),
 
     expression: ($) => choice(
       $.primary_expression,
-      // $.glimmer_template,
-      // $._jsx_element,
-      // $.query_expression,
       $.assignment_expression,
       $.augmented_assignment_expression,
       // $.await_expression,
@@ -550,7 +547,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       $.update_expression,
       $.new_expression,
       $.yield_expression,
-      $._hash,
+      $._hash_always_eval,
       $.pair,
       $.object_pattern,
     ),
@@ -943,7 +940,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
 
     call_expression: ($) => choice(
       prec('call', seq(
-        field('function', choice($.primary_expression, ( dialect === 'cfhtml' ? $._hash_expression : $._hash), $.import)),
+        field('function', choice($.primary_expression, $._hash_always_eval, $.import)),
         field('arguments', $.arguments),
       )),
       prec('member', seq(
@@ -975,10 +972,37 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       field('arguments', optional(prec.dynamic(1, $.arguments))),
     )),
 
-    member_expression: ($) => prec('member', seq(
+    member_expression: $ => prec('member', seq(
       field('object', choice($.expression, $.primary_expression, $.import)),
       choice('.', field('optional_chain', $.optional_chain), field('static_chain', $.static_chain)),
-      field('property', alias($.identifier, $.property_identifier)),
+      field('property', choice(
+        $.private_property_identifier,
+        // Treat common CFML scopes as a distinct kind of identifier so tooling can
+        // recognize scope-qualified accesses like variables.foo or session.user.
+        alias(
+          choice(
+            $.identifier,
+            alias(
+              choice(
+                'variables',
+                'arguments',
+                'session',
+                'application',
+                'server',
+                'cgi',
+                'form',
+                'url',
+                'cookie',
+                'client',
+                'request',
+                'local',
+              ),
+              $.cf_scope_identifier,
+            ),
+          ),
+          $.property_identifier,
+        ),
+      )),
     )),
 
     subscript_expression: ($) => prec.right('member', seq(
@@ -999,7 +1023,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
     assignment_expression: ($) => prec.right('assign', seq(
       field('left', choice($.parenthesized_expression, $._lhs_expression)),
       '=',
-      field('right', choice($.expression, ( dialect === 'cfhtml' ? $._hash_expression : $._hash))),
+      field('right', choice($.expression, $._hash_always_eval)),
     )),
 
     // assignment_expression2: ($) => prec.right('assign', seq(
@@ -1130,7 +1154,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
         choice(
           // $.hash_single,
           repeat(choice(
-            ( dialect === 'cfhtml' ? $._hash_expression : $._hash),
+            $._hash_always_eval,
             '""',
             // $.escape_sequence,
             alias($.unescaped_double_string_fragment, $.string_fragment),
@@ -1145,7 +1169,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
           // $.hash_single,
           repeat(choice(
             alias($.unescaped_single_string_fragment, $.string_fragment),
-            ( dialect === 'cfhtml' ? $._hash_expression : $._hash),
+            $._hash_always_eval,
             '\'\'',
             // $.escape_sequence,
           )),
@@ -1278,24 +1302,24 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       return token(seq(alphanumeric, repeat(alphanumeric)));
     },
 
-    // private_property_identifier: (_) => {
-    //   // eslint-disable-next-line max-len
-    //   // @ts-ignore
-    //   const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@b.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
-    //   // eslint-disable-next-line max-len
-    //   // @ts-ignore
-    //   const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
-    //   return token(seq('#', alpha, repeat(alphanumeric)));
-    // },
+     private_property_identifier: _ => {
+      // @ts-ignore
+      const alpha = /[^\x00-\x1F\s\p{Zs}0-9:;`"'@#&?.,\[\]|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+
+      // @ts-ignore
+      // eslint-disable-next-line max-len
+      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#&?.,\[\]|^&<=>+\-*#/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      return token(seq('~', alpha, repeat(alphanumeric)));
+    },
 
     meta_property: (_) => choice(seq('new', '.', 'target'), seq('import', '.', 'meta')),
 
-    this: (_) => 'this',
-    super: (_) => 'super',
-    true: (_) => 'true',
-    false: (_) => 'false',
-    null: (_) => 'null',
-    undefined: (_) => 'undefined',
+    this: (_) => token('this'),
+    super: (_) => token('super'),
+    true: (_) => token('true'),
+    false: (_) => token('false'),
+    null: (_) => token('null'),
+    undefined: (_) => token('undefined'),
 
     //
     // Expression components
@@ -1303,7 +1327,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
 
     arguments: ($) => seq(
       '(',
-      commaSep(optional(choice($.expression, ( dialect === 'cfhtml' ? $._hash_expression : $._hash), $.spread_element))),
+      commaSep(optional(choice($.expression, $._hash_always_eval, $.spread_element))),
       ')',
     ),
 
@@ -1412,28 +1436,24 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       $.string,
       $.number,
       $.computed_property_name,
-      $._hash,
+      $._hash_always_eval,
     ),
 
-    _hash: ($, previous) => {
+    _hash_dialect_eval: ($, previous) => {
       const choices = [];
-      if (dialect === 'cfml' || dialect === 'cfquery' || dialect === 'cfscript') {
-        choices.push($.hash_expression);
-        choices.push($.hash_empty);
-      } else {
+      if (dialect === 'cfhtml') {
         choices.push(alias('#', $.hash_single));
+      } else {
+        choices.push($.hash_empty);
+        choices.push($.hash_expression);
       }
       return choice(...choices);
     },
 
-    _hash_expression: ($, previous) => {
+    _hash_always_eval: ($, previous) => {
       const choices = [];
-      // if (dialect === 'cfml') {
       choices.push($.hash_expression);
       choices.push($.hash_empty);
-      // } else {
-      //   choices.push(alias('#', $.hash_single));
-      // }
       return choice(...choices);
     },
 

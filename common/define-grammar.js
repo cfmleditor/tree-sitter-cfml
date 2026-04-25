@@ -112,14 +112,17 @@ module.exports = function defineGrammar(dialect) {
       mixin.conflicts($),
     ).concat(
       dialect === 'cfml' ? [
-        [$.tag_attributes, $.attribute_name],
+        [$._hash_dialect_eval, $._hash_always_eval],
       ] : dialect === 'cfquery' ? [
         [$.cfquery_select_core],
         [$.cfquery_delete_statement],
         [$.cfquery_update_statement],
         [$.cf_identifier_path, $.primary_expression],
         [$.cfquery_clause, $._node],
+        [$._hash_dialect_eval, $._hash_always_eval],
       ] : [
+        [$._hash_dialect_eval, $.hash_expression],
+        [$._hash_dialect_eval, $.hash_expression, $.hash_empty],
       ]),
       
     rules: {
@@ -161,8 +164,13 @@ module.exports = function defineGrammar(dialect) {
       cf_set_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
         $._start_cf_set_name,
-        optional(alias(/[vV][aA][rR]/, $.cf_var)),
-        $._cf_tag_expression,
+        choice(
+          seq(
+            alias(choice('var', 'VAR', 'Var', 'vAR', 'vAr', 'vaR', 'VaR', 'VAr'), $.cf_var),
+            $._cf_tag_expression,
+          ),
+          $._cf_tag_expression,
+        ),
         $.cf_selfclose_void_tag_end,
       )),
 
@@ -179,13 +187,13 @@ module.exports = function defineGrammar(dialect) {
 
       _node: $ => ( dialect === 'cfquery' ) ? choice(
         $._cf_tags,
-        $._hash,
+        $._hash_always_eval,
         $.erroneous_cf_end_tag,
         // $.text,
         $.cfquery_segment,
       ) : choice(
         $._cf_tags,
-        $._hash,
+        $._hash_dialect_eval,
         $.erroneous_end_tag,
         $.erroneous_cf_end_tag,
         $.text,
@@ -500,7 +508,7 @@ module.exports = function defineGrammar(dialect) {
           choice(
             alias(ci('where'), $.keyword_where),
             alias(ci('and'), $.keyword_and),
-            alias($._hash, $.keyword_and),
+            alias($._hash_always_eval, $.keyword_and),
           ),
           field('condition', $.cfquery_expression)
         ),
@@ -857,7 +865,7 @@ module.exports = function defineGrammar(dialect) {
           repeat(choice(
             '\'\'',
             alias($.unescaped_single_string_fragment, $.string_fragment),
-            (dialect === 'cfhtml' ? $._hash_expression : $._hash),
+            $._hash_always_eval,
           )),
           '\'',
         ),
@@ -909,8 +917,8 @@ module.exports = function defineGrammar(dialect) {
 
       cfquery_qualified_name: $ =>
         seq(
-          field('first', choice($.identifier, $._hash)),
-          repeat1(seq('.', field('rest', choice($.identifier, $._hash)))),
+          field('first', choice($.identifier, $._hash_always_eval)),
+          repeat1(seq('.', field('rest', choice($.identifier, $._hash_always_eval)))),
         ),
 
       cfquery_window_invocation: $ =>
@@ -955,7 +963,7 @@ module.exports = function defineGrammar(dialect) {
         $.entity,
         $.element,
         $._cf_tags,
-        $._hash_expression,
+        $._hash_always_eval,
         $.script_element,
         $.style_element,
         $.text,
@@ -994,7 +1002,7 @@ module.exports = function defineGrammar(dialect) {
         $.attribute,
         $.quoted_attribute_value,
         $._cf_tags,
-        $._hash,
+        $._hash_always_eval,
       ),
 
       script_start_tag: $ => seq(
@@ -1058,7 +1066,7 @@ module.exports = function defineGrammar(dialect) {
 
       _cf_tag_expression: $ => choice(
         $.expression,
-        $._hash_expression,
+        $._hash_always_eval,
       ),
 
       attribute: $ => seq(
@@ -1076,13 +1084,13 @@ module.exports = function defineGrammar(dialect) {
 
       attribute_name: $ => choice(
         /[^<>"'=\s#]+/,
-        $._hash,
+        $._hash_dialect_eval,
       ),
 
       attribute_value: $ => choice(
         prec.left(1, /[0-9]+/),
         prec.left(2, $._cf_tags),
-        prec.left(3, $._hash),
+        prec.left(3, $._hash_dialect_eval),
         prec.left(4, /[^"<>'=\s\n\r\t#]+/),
       ),
 
@@ -1098,7 +1106,7 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       cf_attribute_value: $ => choice(
-        $._hash,
+        $._hash_always_eval,
         alias(/[^'"\s\n\r\t#:;<>]+/, $.attribute_value),
       ),
 
@@ -1242,7 +1250,7 @@ module.exports = function defineGrammar(dialect) {
         seq('\'',
           repeat(
             choice(
-              $._hash_expression,
+              $._hash_always_eval,
               alias(/[^'\s\n\r\t#]+/, $.attribute_value),
             ),
           ),
@@ -1250,7 +1258,7 @@ module.exports = function defineGrammar(dialect) {
         seq('"',
           repeat(
             choice(
-              $._hash_expression,
+              $._hash_always_eval,
               '""',
               alias(/[^"\s\n\r\t#]+/, $.attribute_value),
             ),
@@ -1265,7 +1273,7 @@ module.exports = function defineGrammar(dialect) {
           repeat(
             choice(
               $._cf_tags,
-              $._hash,
+              $._hash_dialect_eval,
               alias(/[^'\s\n\r\t#]+/, $.attribute_value),
             ),
           ),
@@ -1277,7 +1285,7 @@ module.exports = function defineGrammar(dialect) {
           repeat(
             choice(
               $._cf_tags,
-              $._hash,
+              $._hash_dialect_eval,
               alias(/[^"\s\n\r\t#]+/, $.attribute_value),
             ),
           ),

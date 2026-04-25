@@ -292,6 +292,10 @@
         {
           "type": "SYMBOL",
           "name": "lexical_declaration"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "variable_declaration"
         }
       ]
     },
@@ -1739,7 +1743,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_hash"
+          "name": "_hash_always_eval"
         }
       ]
     },
@@ -1788,7 +1792,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_hash"
+          "name": "_hash_always_eval"
         },
         {
           "type": "SYMBOL",
@@ -2945,7 +2949,7 @@
                     },
                     {
                       "type": "SYMBOL",
-                      "name": "_hash"
+                      "name": "_hash_always_eval"
                     },
                     {
                       "type": "SYMBOL",
@@ -3106,13 +3110,85 @@
             "type": "FIELD",
             "name": "property",
             "content": {
-              "type": "ALIAS",
-              "content": {
-                "type": "SYMBOL",
-                "name": "identifier"
-              },
-              "named": true,
-              "value": "property_identifier"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "private_property_identifier"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "STRING",
+                              "value": "variables"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "arguments"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "session"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "application"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "server"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "cgi"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "form"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "url"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "cookie"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "client"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "request"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "local"
+                            }
+                          ]
+                        },
+                        "named": true,
+                        "value": "cf_scope_identifier"
+                      }
+                    ]
+                  },
+                  "named": true,
+                  "value": "property_identifier"
+                }
+              ]
             }
           }
         ]
@@ -3249,7 +3325,7 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "_hash"
+                  "name": "_hash_always_eval"
                 }
               ]
             }
@@ -5055,7 +5131,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "_hash"
+                        "name": "_hash_always_eval"
                       },
                       {
                         "type": "STRING",
@@ -5107,7 +5183,7 @@
                       },
                       {
                         "type": "SYMBOL",
-                        "name": "_hash"
+                        "name": "_hash_always_eval"
                       },
                       {
                         "type": "STRING",
@@ -5840,6 +5916,29 @@
         ]
       }
     },
+    "private_property_identifier": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "~"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[^\\x00-\\x1F\\s\\p{Zs}0-9:;`\"'@#&?.,\\[\\]|^&<=>+\\-*#/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "PATTERN",
+              "value": "[^\\x00-\\x1F\\s\\p{Zs}:;`\"'@#&?.,\\[\\]|^&<=>+\\-*#/\\\\%?!~()\\[\\]{}\\uFEFF\\u2060\\u200B\\u2028\\u2029]|\\\\u[0-9a-fA-F]{4}|\\\\u\\{[0-9a-fA-F]+\\}"
+            }
+          }
+        ]
+      }
+    },
     "meta_property": {
       "type": "CHOICE",
       "members": [
@@ -5880,28 +5979,46 @@
       ]
     },
     "this": {
-      "type": "STRING",
-      "value": "this"
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "this"
+      }
     },
     "super": {
-      "type": "STRING",
-      "value": "super"
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "super"
+      }
     },
     "true": {
-      "type": "STRING",
-      "value": "true"
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "true"
+      }
     },
     "false": {
-      "type": "STRING",
-      "value": "false"
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "false"
+      }
     },
     "null": {
-      "type": "STRING",
-      "value": "null"
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "null"
+      }
     },
     "undefined": {
-      "type": "STRING",
-      "value": "undefined"
+      "type": "TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "undefined"
+      }
     },
     "arguments": {
       "type": "SEQ",
@@ -5928,7 +6045,7 @@
                         },
                         {
                           "type": "SYMBOL",
-                          "name": "_hash"
+                          "name": "_hash_always_eval"
                         },
                         {
                           "type": "SYMBOL",
@@ -5962,7 +6079,7 @@
                               },
                               {
                                 "type": "SYMBOL",
-                                "name": "_hash"
+                                "name": "_hash_always_eval"
                               },
                               {
                                 "type": "SYMBOL",
@@ -6504,24 +6621,24 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_hash"
+          "name": "_hash_always_eval"
         }
       ]
     },
-    "_hash": {
+    "_hash_dialect_eval": {
       "type": "CHOICE",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "hash_expression"
+          "name": "hash_empty"
         },
         {
           "type": "SYMBOL",
-          "name": "hash_empty"
+          "name": "hash_expression"
         }
       ]
     },
-    "_hash_expression": {
+    "_hash_always_eval": {
       "type": "CHOICE",
       "members": [
         {
@@ -6739,22 +6856,61 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "ALIAS",
-                "content": {
-                  "type": "PATTERN",
-                  "value": "[vV][aA][rR]"
-                },
-                "named": true,
-                "value": "cf_var"
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "var"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "VAR"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "Var"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "vAR"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "vAr"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "vaR"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "VaR"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "VAr"
+                        }
+                      ]
+                    },
+                    "named": true,
+                    "value": "cf_var"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_cf_tag_expression"
+                  }
+                ]
               },
               {
-                "type": "BLANK"
+                "type": "SYMBOL",
+                "name": "_cf_tag_expression"
               }
             ]
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_cf_tag_expression"
           },
           {
             "type": "SYMBOL",
@@ -6809,7 +6965,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_hash"
+          "name": "_hash_dialect_eval"
         },
         {
           "type": "SYMBOL",
@@ -8396,7 +8552,7 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "_hash"
+                "name": "_hash_always_eval"
               },
               "named": true,
               "value": "keyword_and"
@@ -10057,7 +10213,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "_hash"
+                "name": "_hash_always_eval"
               }
             ]
           }
@@ -10338,7 +10494,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "_hash"
+                "name": "_hash_always_eval"
               }
             ]
           }
@@ -10364,7 +10520,7 @@
                     },
                     {
                       "type": "SYMBOL",
-                      "name": "_hash"
+                      "name": "_hash_always_eval"
                     }
                   ]
                 }
@@ -10562,7 +10718,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_hash_expression"
+          "name": "_hash_always_eval"
         },
         {
           "type": "SYMBOL",
@@ -10753,7 +10909,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_hash"
+          "name": "_hash_always_eval"
         }
       ]
     },
@@ -10998,7 +11154,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_hash_expression"
+          "name": "_hash_always_eval"
         }
       ]
     },
@@ -11050,7 +11206,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_hash"
+          "name": "_hash_dialect_eval"
         }
       ]
     },
@@ -11078,7 +11234,7 @@
           "value": 3,
           "content": {
             "type": "SYMBOL",
-            "name": "_hash"
+            "name": "_hash_dialect_eval"
           }
         },
         {
@@ -11135,7 +11291,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_hash"
+          "name": "_hash_always_eval"
         },
         {
           "type": "ALIAS",
@@ -11776,7 +11932,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_hash_expression"
+                    "name": "_hash_always_eval"
                   },
                   {
                     "type": "ALIAS",
@@ -11810,7 +11966,7 @@
                 "members": [
                   {
                     "type": "SYMBOL",
-                    "name": "_hash_expression"
+                    "name": "_hash_always_eval"
                   },
                   {
                     "type": "STRING",
@@ -11857,7 +12013,7 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "_hash"
+                    "name": "_hash_dialect_eval"
                   },
                   {
                     "type": "ALIAS",
@@ -11895,7 +12051,7 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "_hash"
+                    "name": "_hash_dialect_eval"
                   },
                   {
                     "type": "ALIAS",
@@ -12006,20 +12162,12 @@
       "hash_empty"
     ],
     [
-      "_hash",
-      "_hash_expression"
-    ],
-    [
       "component",
       "primary_expression"
     ],
     [
       "expression",
       "_property_name"
-    ],
-    [
-      "sequence_expression",
-      "arguments"
     ],
     [
       "expression",
@@ -12088,11 +12236,6 @@
       "_property_name"
     ],
     [
-      "expression",
-      "parenthesized_expression",
-      "arguments"
-    ],
-    [
       "switch_case",
       "expression",
       "_property_name"
@@ -12110,8 +12253,12 @@
       "for_statement"
     ],
     [
-      "tag_attributes",
-      "attribute_name"
+      "expression",
+      "_cf_tag_expression"
+    ],
+    [
+      "_hash_dialect_eval",
+      "_hash_always_eval"
     ]
   ],
   "precedences": [

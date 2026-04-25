@@ -52,6 +52,10 @@
       {
         "type": "lexical_declaration",
         "named": true
+      },
+      {
+        "type": "variable_declaration",
+        "named": true
       }
     ]
   },
@@ -2481,6 +2485,14 @@
         "required": true,
         "types": [
           {
+            "type": "cf_scope_identifier",
+            "named": true
+          },
+          {
+            "type": "private_property_identifier",
+            "named": true
+          },
+          {
             "type": "property_identifier",
             "named": true
           }
@@ -4016,6 +4028,10 @@
     "named": true
   },
   {
+    "type": "cf_scope_identifier",
+    "named": true
+  },
+  {
     "type": "cf_script_content",
     "named": true
   },
@@ -4191,6 +4207,10 @@
   {
     "type": "private",
     "named": false
+  },
+  {
+    "type": "private_property_identifier",
+    "named": true
   },
   {
     "type": "property_identifier",
