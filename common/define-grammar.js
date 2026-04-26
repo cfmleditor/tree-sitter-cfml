@@ -97,6 +97,10 @@ module.exports = function defineGrammar(dialect) {
       $._end_cf_script_name,
       $.cf_script_content,
 
+      $._start_cf_savecontent_name,
+      $._end_cf_savecontent_name,
+      $.cf_savecontent_content,
+
       $._start_cf_output_name,
     ],
 
@@ -1175,6 +1179,17 @@ module.exports = function defineGrammar(dialect) {
         $._end_cf_script_name,
         alias($._close_cf_tag_delim, '>'),
       )),
+      
+      cf_savecontent_tag: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        $._start_cf_savecontent_name,
+        repeat($.cf_attribute),
+        alias($._close_cf_tag_delim, '>'),
+        $.cf_savecontent_content,
+        $._cf_close_tag,
+        $._end_cf_savecontent_name,
+        alias($._close_cf_tag_delim, '>'),
+      )),
 
       cf_output_tag: $ => prec.right(3, seq(
         $._cf_open_tag,
@@ -1196,6 +1211,7 @@ module.exports = function defineGrammar(dialect) {
         $.cf_xml_tag,
         $.cf_query_tag,
         $.cf_script_tag,
+        $.cf_savecontent_tag,
         $.cf_output_tag,
       )),
 

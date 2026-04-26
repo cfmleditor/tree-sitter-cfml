@@ -884,7 +884,6 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       'xml',
       'binary',
       'boolean',
-      'component',
       'date',
       'function',
       'guid',
@@ -899,7 +898,6 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       'xml',
       'binary',
       'boolean',
-      'component',
       'date',
       'function',
       'guid',
@@ -1537,6 +1535,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       'static',
       'export',
       'let',
+      'component',
     ),
 
     // _reserved_scope: ($) => choice(

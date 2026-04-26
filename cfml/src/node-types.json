@@ -20,6 +20,10 @@
         "named": true
       },
       {
+        "type": "cf_savecontent_tag",
+        "named": true
+      },
+      {
         "type": "cf_script_tag",
         "named": true
       },
@@ -1287,6 +1291,25 @@
         },
         {
           "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_savecontent_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_content",
           "named": true
         }
       ]
@@ -4111,6 +4134,10 @@
   },
   {
     "type": "cf_query_content",
+    "named": true
+  },
+  {
+    "type": "cf_savecontent_content",
     "named": true
   },
   {

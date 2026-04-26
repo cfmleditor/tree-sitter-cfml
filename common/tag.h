@@ -40,6 +40,7 @@ typedef enum {
     CF_QUERY,
     CF_XML,
     CF_SCRIPT,
+    CF_SAVECONTENT,
 
     A,
     ABBR,
@@ -322,9 +323,9 @@ static const char *CF_VOID_TAGS[] = {
     "CONTENT", "COOKIE", "LOG", "FILE", "DIRECTORY", "SETTING", "WDDX",
     "HTMLHEAD", "HTMLBODY", "AUTHENTICATE", "NTAUTHENTICATE", "REPORTPARAM",
     "PROCPARAM", "PROCRESULT", "INVOKEARGUMENT", "SPREADSHEET", "PDFPARAM",
-    "PDFFORMPARAM", "PDFSUBFORM", "MAILPARAM", "MAILPART", "GRIDROW", "GRIDUPDATE",
-    "TREEITEM", "MENUITEM", "MAPLOCATION", "PRESENTATIONSLIDE", "PRESENTERITEM",
-    "LAYOUTAREA", "GRIDCOLUMN", "FORMITEM", NULL
+    "PDFFORMPARAM", "PDFSUBFORM", "MAILPARAM", "GRIDROW", "GRIDUPDATE",
+    "TREEITEM", "MENUITEM", "MAPLOCATION", "PRESENTERITEM",
+    "GRIDCOLUMN", NULL
 };
 
 static inline bool cf_tag_name_in(const String *name, const char **list) {
@@ -358,6 +359,8 @@ static inline Tag cf_tag_for_name(String name) {
         tag.type = CF_QUERY;
     } else if (name.size == 6 && memcmp(name.contents, "SCRIPT", 6) == 0) {
         tag.type = CF_SCRIPT;
+    } else if (name.size == 11 && memcmp(name.contents, "SAVECONTENT", 11) == 0) {
+        tag.type = CF_SAVECONTENT;
     } else if (cf_tag_name_in(&name, CF_VOID_TAGS)) {
         tag.type = CF_VOID;
     } else {
@@ -379,7 +382,7 @@ static inline Tag tag_for_name(String name) {
 }
 
 static inline void tag_free(Tag *tag) {
-    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_XML || tag->type == CF_QUERY || tag->type == CF_SCRIPT || tag->type == CF_OUTPUT || tag->type == CF_SET || tag->type == CF_RETURN || tag->type == CF_IF || tag->type == CF_ELSEIF || tag->type == CF_ELSE) {
+    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_XML || tag->type == CF_QUERY || tag->type == CF_SCRIPT || tag->type == CF_SAVECONTENT || tag->type == CF_OUTPUT || tag->type == CF_SET || tag->type == CF_RETURN || tag->type == CF_IF || tag->type == CF_ELSEIF || tag->type == CF_ELSE) {
         array_delete(&tag->tag_name);
     }
 }
@@ -394,7 +397,7 @@ static inline bool cf_tag_is_void(const Tag *self) {
 
 static inline bool tag_eq(const Tag *self, const Tag *other) {
     if (self->type != other->type) return false;
-    if (self->type == CUSTOM || self->type == CFML || self->type == CF_VOID || self->type == CF_XML || self->type == CF_QUERY || self->type == CF_SCRIPT || self->type == CF_OUTPUT || self->type == CF_SET || self->type == CF_RETURN || self->type == CF_IF || self->type == CF_ELSEIF || self->type == CF_ELSE) {
+    if (self->type == CUSTOM || self->type == CFML || self->type == CF_VOID || self->type == CF_XML || self->type == CF_QUERY || self->type == CF_SCRIPT || self->type == CF_SAVECONTENT || self->type == CF_OUTPUT || self->type == CF_SET || self->type == CF_RETURN || self->type == CF_IF || self->type == CF_ELSEIF || self->type == CF_ELSE) {
         if (self->tag_name.size != other->tag_name.size) {
             return false;
         }
