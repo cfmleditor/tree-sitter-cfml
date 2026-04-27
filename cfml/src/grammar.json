@@ -14,7 +14,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "component_body"
+          "name": "component_file"
         }
       ]
     },
@@ -6898,6 +6898,10 @@
         }
       ]
     },
+    "component_file": {
+      "type": "SYMBOL",
+      "name": "cf_component_content"
+    },
     "doctype": {
       "type": "SEQ",
       "members": [
@@ -13088,10 +13092,6 @@
       "pattern"
     ],
     [
-      "component",
-      "parameter_type"
-    ],
-    [
       "function_expression",
       "parameter_type"
     ],
@@ -13152,10 +13152,6 @@
       "primary_expression"
     ],
     [
-      "component",
-      "access_type"
-    ],
-    [
       "method_definition",
       "access_type"
     ],
@@ -13172,24 +13168,12 @@
       "pair"
     ],
     [
-      "binary_expression",
-      "cf_pair"
-    ],
-    [
       "member_expression",
       "pair"
     ],
     [
-      "member_expression",
-      "cf_pair"
-    ],
-    [
       "subscript_expression",
       "pair"
-    ],
-    [
-      "subscript_expression",
-      "cf_pair"
     ],
     [
       "member_expression",
@@ -13246,41 +13230,9 @@
       "_property_name"
     ],
     [
-      "assignment_expression",
-      "pattern",
-      "_property_name"
-    ],
-    [
       "object_assignment_pattern",
       "assignment_expression",
       "_property_name"
-    ],
-    [
-      "expression",
-      "object",
-      "object_pattern"
-    ],
-    [
-      "assignment_expression",
-      "rest_pattern",
-      "_property_name"
-    ],
-    [
-      "member_expression",
-      "subscript_expression",
-      "cf_pair"
-    ],
-    [
-      "update_expression",
-      "cf_pair"
-    ],
-    [
-      "ternary_expression",
-      "cf_pair"
-    ],
-    [
-      "elvis_expression",
-      "cf_pair"
     ],
     [
       "switch_case",
@@ -13660,6 +13612,10 @@
     {
       "type": "SYMBOL",
       "name": "_start_cf_output_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "cf_component_content"
     }
   ],
   "inline": [

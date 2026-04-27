@@ -102,6 +102,8 @@ module.exports = function defineGrammar(dialect) {
       $.cf_savecontent_content,
 
       $._start_cf_output_name,
+
+      ...(dialect === 'cfml' ? [$.cf_component_content] : []),
     ],
 
     supertypes: $ => [
@@ -132,11 +134,15 @@ module.exports = function defineGrammar(dialect) {
             repeat(
               $._node,
             ),
-            $.component_body,
+            ...(dialect === 'cfml' ? [$.component_file] : []),
           )
       ),
 
       ...mixin.rules,
+
+      ...(dialect === 'cfml' ? {
+        component_file: $ => $.cf_component_content,
+      } : {}),
 
       doctype: $ => seq(
         '<!',

@@ -1058,7 +1058,6 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
 ---
 
 (program
-  (html_text)
   (cf_if_tag
     (true)
     (cf_if_tag
@@ -2006,3 +2005,45 @@ nested calls
         (string
           (string_fragment)))
       (cf_selfclose_void_tag_end))))
+
+===================================
+component ( cfscript )
+===================================
+component {
+  private function sign( any message, any key, any algorithm ) {
+        var tmpkey = "";
+        if ( left( ARGUMENTS.algorithm, 1 ) == 'H' ) {
+            var sig = binaryDecode(
+                hmac(
+                    ARGUMENTS.message,
+                    ARGUMENTS.key,
+                    algorithmMap[ ARGUMENTS.algorithm ],
+                    'utf-8'
+                ),
+                'hex'
+            );
+        } else {
+            if ( isSimpleValue( ARGUMENTS.key ) ) {
+                tmpkey = encodingUtils.parsePEMEncodedKey( ARGUMENTS.key );
+            } else if ( isStruct( ARGUMENTS.key ) ) {
+                tmpkey = encodingUtils.parseJWK( ARGUMENTS.key );
+            } else {
+                tmpkey = ARGUMENTS.key;
+            }
+
+            var jssInstance = variables.jss.getInstance( algorithmMap[ ARGUMENTS.algorithm ] );
+            jssInstance.initSign( tmpkey );
+            jssInstance.update( charsetDecode( ARGUMENTS.message, 'utf-8' ) );
+            var sig = jssInstance.sign();
+            if ( variables.javaVersion < 11 && left( ARGUMENTS.algorithm, 1 ) == 'E' ) {
+                sig = encodingUtils.convertDERtoP1363( sig, ARGUMENTS.algorithm );
+            }
+        }
+        return sig;
+    }
+}
+---
+
+(program
+  (component_file
+    (cf_component_content)))

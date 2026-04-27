@@ -3027,10 +3027,6 @@
           "named": true
         },
         {
-          "type": "component_body",
-          "named": true
-        },
-        {
           "type": "doctype",
           "named": true
         },

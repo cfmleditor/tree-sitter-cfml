@@ -1631,6 +1631,21 @@
     }
   },
   {
+    "type": "component_file",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_component_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "computed_property_name",
     "named": true,
     "fields": {},
@@ -3043,7 +3058,7 @@
           "named": true
         },
         {
-          "type": "component_body",
+          "type": "component_file",
           "named": true
         },
         {
@@ -4147,6 +4162,10 @@
     "type": "cf_comment",
     "named": true,
     "extra": true
+  },
+  {
+    "type": "cf_component_content",
+    "named": true
   },
   {
     "type": "cf_query_content",

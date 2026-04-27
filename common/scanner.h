@@ -53,7 +53,9 @@ enum TokenType {
     CF_SAVECONTENT_END_TAG_NAME,
     CF_SAVECONTENT_CONTENT,
 
-    CF_OUTPUT_START_TAG_NAME
+    CF_OUTPUT_START_TAG_NAME,
+
+    CF_COMPONENT_CONTENT
 };
 
 typedef struct {
@@ -1204,9 +1206,61 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_con
     
 // }
 
+static bool scan_cf_component_content(TSLexer *lexer) {
+    // Skip whitespace and script-style comments (// and /* */)
+    for (;;) {
+        while (iswspace(lexer->lookahead)) skip(lexer);
+        if (lexer->lookahead == '/') {
+            skip(lexer);
+            if (lexer->lookahead == '/') {
+                skip(lexer);
+                while (lexer->lookahead != 0 && lexer->lookahead != '\n') skip(lexer);
+            } else if (lexer->lookahead == '*') {
+                skip(lexer);
+                while (lexer->lookahead != 0) {
+                    if (lexer->lookahead == '*') { skip(lexer); if (lexer->lookahead == '/') { skip(lexer); break; } }
+                    else skip(lexer);
+                }
+            } else {
+                return false;
+            }
+        } else {
+            break;
+        }
+    }
+
+    // Match 'component' case-insensitively
+    const char *kw = "component";
+    for (int i = 0; kw[i]; i++) {
+        if (towlower(lexer->lookahead) != (wint_t)kw[i]) return false;
+        skip(lexer);
+    }
+
+    // Must be followed by whitespace or '{' (not another identifier char)
+    if (iswalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
+
+    // Skip everything up to '{' (attributes etc.), fail if EOF first
+    while (lexer->lookahead != '{') {
+        if (lexer->lookahead == 0) return false;
+        skip(lexer);
+    }
+
+    // Consume the rest of the file
+    while (lexer->lookahead != 0) advance(lexer);
+    lexer->mark_end(lexer);
+    lexer->result_symbol = CF_COMPONENT_CONTENT;
+    return true;
+}
+
 static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
     // bool scanned_cfoutput = false;
+
+    if (valid_symbols[CF_COMPONENT_CONTENT]
+            && scanner->tags.size == 0 && scanner->cf_tags.size == 0
+            && scan_cf_component_content(lexer)) {
+        return true;
+    }
 
     if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] && !valid_symbols[END_TAG_NAME]) {
         return scan_raw_text(scanner, lexer);
