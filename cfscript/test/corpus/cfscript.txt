@@ -171,7 +171,7 @@ public string function doThing()
 
 (program
   (function_declaration
-    (function_access)
+    (access_type)
     (return_type)
     (identifier)
     (formal_parameters)
@@ -188,7 +188,7 @@ public string function doThing(string firstName = "blah",required string firstNa
 
 (program
   (function_declaration
-    (function_access)
+    (access_type)
     (return_type)
     (identifier)
     (formal_parameters
@@ -214,7 +214,7 @@ public function function doThing(string firstName = "blah",required function fir
 
 (program
   (function_declaration
-    (function_access)
+    (access_type)
     (return_type)
     (identifier)
     (formal_parameters
@@ -269,7 +269,7 @@ component test:displayLabel="${test} ${test}" singleton {
         (identifier))
       (component_body
         (function_declaration
-          (function_access)
+          (access_type)
           (identifier)
           (formal_parameters)
           (statement_block
@@ -448,7 +448,7 @@ component {
                 (identifier)
                 (number)))))
         (function_declaration
-          (function_access)
+          (access_type)
           (return_type)
           (identifier)
           (formal_parameters)
@@ -792,7 +792,7 @@ private function verifyPacket(required struct samlPacket){
             (true))
           (statement_block)))))
   (function_declaration
-    (function_access)
+    (access_type)
     (identifier)
     (formal_parameters
       (parameter_type
@@ -986,11 +986,13 @@ Lucee operators (NOT, XOR, MOD, CT, NCT, <>)
   (if_statement
     (parenthesized_expression
       (unary_expression
+        (unary_operator)
         (identifier)))
     (statement_block))
   (if_statement
     (parenthesized_expression
       (unary_expression
+        (unary_operator)
         (identifier)))
     (statement_block))
   (if_statement

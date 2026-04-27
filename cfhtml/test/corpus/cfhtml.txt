@@ -35,26 +35,30 @@ cfhtml embedded expressions and cfset variants
     (assignment_expression
       (identifier)
       (string
-        (hash_empty)))
-    (cf_selfclose_void_tag_end))
+        (hash_expression)))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
   (cf_set_tag
     (assignment_expression
       (identifier)
       (number))
-    (cf_selfclose_void_tag_end))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
   (cf_set_tag
     (assignment_expression
       (identifier)
       (string
         (hash_expression
           (identifier))))
-    (cf_selfclose_void_tag_end))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
   (cf_set_tag
     (assignment_expression
       (identifier)
       (hash_expression
         (identifier)))
-    (cf_selfclose_void_tag_end))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
   (cf_selfclose_tag
     (cf_attribute
       (cf_attribute_name)
@@ -115,10 +119,10 @@ cfhtml table, cfloop, and cf comment interaction
     (cf_tag
       (cf_start_tag
         (cf_tag_name)
-        (tag_attributes
-          (attribute
-            (attribute_name)
-            (quoted_attribute_value
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
               (attribute_value)))))
       (element
         (start_tag

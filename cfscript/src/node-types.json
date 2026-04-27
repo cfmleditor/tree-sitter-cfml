@@ -108,6 +108,10 @@
         "named": true
       },
       {
+        "type": "string",
+        "named": true
+      },
+      {
         "type": "subscript_expression",
         "named": true
       },
@@ -302,6 +306,11 @@
     ]
   },
   {
+    "type": "access_type",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "arguments",
     "named": true,
     "fields": {},
@@ -424,6 +433,10 @@
           },
           {
             "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "string",
             "named": true
           },
           {
@@ -697,6 +710,10 @@
             "named": false
           },
           {
+            "type": "logical_or",
+            "named": true
+          },
+          {
             "type": "|",
             "named": false
           },
@@ -745,10 +762,6 @@
           {
             "type": "arguments",
             "named": true
-          },
-          {
-            "type": "template_string",
-            "named": true
           }
         ]
       },
@@ -757,11 +770,19 @@
         "required": true,
         "types": [
           {
-            "type": "expression",
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
             "named": true
           },
           {
             "type": "import",
+            "named": true
+          },
+          {
+            "type": "primary_expression",
             "named": true
           }
         ]
@@ -812,6 +833,56 @@
         "types": [
           {
             "type": "catch_type",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "cf_pair",
+    "named": true,
+    "fields": {
+      "key": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "computed_property_name",
+            "named": true
+          },
+          {
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
+            "named": true
+          },
+          {
+            "type": "null",
+            "named": true
+          },
+          {
+            "type": "number",
+            "named": true
+          },
+          {
+            "type": "property_identifier",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
             "named": true
           }
         ]
@@ -1218,6 +1289,10 @@
             "named": true
           },
           {
+            "type": "string",
+            "named": true
+          },
+          {
             "type": "subscript_expression",
             "named": true
           },
@@ -1369,11 +1444,6 @@
     }
   },
   {
-    "type": "function_access",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "function_declaration",
     "named": true,
     "fields": {
@@ -1413,11 +1483,11 @@
       "required": false,
       "types": [
         {
-          "type": "assignment_expression",
+          "type": "access_type",
           "named": true
         },
         {
-          "type": "function_access",
+          "type": "assignment_expression",
           "named": true
         },
         {
@@ -1729,6 +1799,14 @@
         "required": true,
         "types": [
           {
+            "type": "cf_scope_identifier",
+            "named": true
+          },
+          {
+            "type": "private_property_identifier",
+            "named": true
+          },
+          {
             "type": "property_identifier",
             "named": true
           }
@@ -1909,6 +1987,10 @@
       "required": false,
       "types": [
         {
+          "type": "cf_pair",
+          "named": true
+        },
+        {
           "type": "method_definition",
           "named": true
         },
@@ -1965,6 +2047,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "cf_pair",
+          "named": true
+        },
         {
           "type": "object_assignment_pattern",
           "named": true
@@ -2250,6 +2336,10 @@
         },
         {
           "type": "null",
+          "named": true
+        },
+        {
+          "type": "string",
           "named": true
         },
         {
@@ -2702,24 +2792,17 @@
         "required": true,
         "types": [
           {
-            "type": "!",
-            "named": false
-          },
-          {
-            "type": "+",
-            "named": false
-          },
-          {
-            "type": "-",
-            "named": false
-          },
-          {
-            "type": "~",
-            "named": false
+            "type": "unary_operator",
+            "named": true
           }
         ]
       }
     }
+  },
+  {
+    "type": "unary_operator",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "update_expression",
@@ -3104,6 +3187,10 @@
     "named": false
   },
   {
+    "type": "abstract",
+    "named": false
+  },
+  {
     "type": "any",
     "named": false
   },
@@ -3137,6 +3224,10 @@
   },
   {
     "type": "catch_type",
+    "named": true
+  },
+  {
+    "type": "cf_scope_identifier",
     "named": true
   },
   {
@@ -3183,6 +3274,10 @@
   {
     "type": "false",
     "named": true
+  },
+  {
+    "type": "final",
+    "named": false
   },
   {
     "type": "finally",
@@ -3233,11 +3328,19 @@
     "named": false
   },
   {
+    "type": "logical_or",
+    "named": true
+  },
+  {
     "type": "meta",
     "named": false
   },
   {
     "type": "new",
+    "named": false
+  },
+  {
+    "type": "not",
     "named": false
   },
   {
@@ -3269,6 +3372,10 @@
     "named": false
   },
   {
+    "type": "private_property_identifier",
+    "named": true
+  },
+  {
     "type": "property_identifier",
     "named": true
   },
@@ -3295,6 +3402,10 @@
   {
     "type": "regex_pattern",
     "named": true
+  },
+  {
+    "type": "remote",
+    "named": false
   },
   {
     "type": "required",

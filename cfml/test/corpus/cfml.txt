@@ -98,10 +98,10 @@ cffunction
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value)))))
     (hash_expression
       (binary_expression
@@ -193,25 +193,25 @@ get results
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value))))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value))))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value))))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value)))))
     (cf_selfclose_tag
       (cf_attribute
@@ -333,7 +333,8 @@ get results
       (cf_selfclose_void_tag_end))
     (cf_return_tag
       (identifier)
-      (cf_selfclose_void_tag_end))
+      (cf_selfclose_void_tag_end
+        (self_closing_tag_delimiter)))
     (cf_end_tag
       (cf_tag_name))))
 
@@ -390,7 +391,7 @@ nested cfif
       (html_text))
     (hash_expression
       (identifier))
-    (hash_empty)))
+    (hash_expression)))
 
 ===================================
 / Characters used in tags and nested cfml comments
@@ -433,7 +434,8 @@ nested cfif
       (binary_expression
         (number)
         (number)))
-    (cf_selfclose_void_tag_end))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
   (cf_comment))
 
 ===================================
@@ -477,7 +479,8 @@ cfscript switch
   (cf_script_tag
     (cf_script_content))
   (cf_selfclose_tag
-    (cf_selfclose_void_tag_end)))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter))))
 
 ===================================
 cfquery with cfqueryparam in cfml
@@ -517,7 +520,8 @@ cfif with html-only branch and erroneous html end tags
     (true)
     (element
       (self_closing_tag
-        (tag_name))))
+        (tag_name)
+        (self_closing_tag_delimiter))))
   (cf_if_tag
     (binary_expression
       (identifier)
@@ -553,7 +557,8 @@ mixed cfset, cfscript, cfoutput, and complex attribute hashes
       (identifier)
       (string
         (string_fragment)))
-    (cf_selfclose_void_tag_end))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
   (cf_set_tag
     (assignment_expression
       (member_expression
@@ -570,35 +575,34 @@ mixed cfset, cfscript, cfoutput, and complex attribute hashes
           (number))
         (true)
         (false)))
-    (cf_selfclose_void_tag_end))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
   (cf_script_tag
     (cf_script_content))
   (element
-    (start_tag
+    (self_closing_tag
       (tag_name)
       (tag_attributes
         (attribute
           (attribute_name)
           (quoted_attribute_value
-            (hash_empty)))))
-    (end_tag
-      (tag_name)))
-  (cf_output_tag
-    (hash_expression
-      (identifier)))
+            (hash_expression
+              (hash_expression
+                (string
+                  (string_fragment)
+                  (hash_expression
+                    (identifier))
+                  (string_fragment)))))))
+      (self_closing_tag_delimiter)))
   (cf_selfclose_tag
-    (cf_attribute
-      (cf_attribute_name)
-      (quoted_cf_attribute_value
-        (hash_empty)))
-    (cf_selfclose_void_tag_end))
-  (cf_selfclose_tag
-    (cf_selfclose_void_tag_end))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
   (cf_set_tag
     (assignment_expression
       (identifier)
       (identifier))
-    (cf_selfclose_void_tag_end))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
   (element
     (start_tag
       (tag_name)
@@ -606,7 +610,7 @@ mixed cfset, cfscript, cfoutput, and complex attribute hashes
         (attribute
           (attribute_name)
           (quoted_attribute_value
-            (hash_empty))))
+            (hash_expression))))
       (tag_attributes
         (cf_if_tag
           (binary_expression
@@ -641,7 +645,7 @@ mixed cfset, cfscript, cfoutput, and complex attribute hashes
           (attribute
             (attribute_name)
             (quoted_attribute_value
-              (hash_empty))))
+              (hash_expression))))
         (cf_comment)
         (tag_attributes
           (attribute
@@ -724,7 +728,8 @@ mixed cfset, cfscript, cfoutput, and complex attribute hashes
                 (attribute_value)
                 (attribute_value)
                 (attribute_value)
-                (attribute_value))))))
+                (attribute_value))))
+          (self_closing_tag_delimiter)))
       (end_tag
         (tag_name)))))
 
@@ -777,21 +782,21 @@ html table with nested cfloop and cfoutput attribute
       (cf_tag
         (cf_start_tag
           (cf_tag_name)
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
+          (cf_tag_attributes
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
                 (attribute_value))))
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
+          (cf_tag_attributes
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
                 (hash_expression
                   (identifier)))))
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
+          (cf_tag_attributes
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
                 (attribute_value)))))
         (element
           (start_tag
@@ -811,7 +816,8 @@ html table with nested cfloop and cfoutput attribute
                     (attribute_value)))))
             (element
               (self_closing_tag
-                (tag_name)))
+                (tag_name)
+                (self_closing_tag_delimiter)))
             (end_tag
               (tag_name)))
           (end_tag
@@ -855,14 +861,14 @@ hash-empty attributes, cfif with complex call chain, and cfloop/cfset attribute 
         (attribute
           (attribute_name)
           (quoted_attribute_value
-            (hash_empty)
+            (hash_expression)
             (attribute_value))))
       (tag_attributes
         (attribute
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)
-            (hash_empty)
+            (hash_expression)
             (attribute_value)))))
     (end_tag
       (tag_name)))
@@ -879,7 +885,7 @@ hash-empty attributes, cfif with complex call chain, and cfloop/cfset attribute 
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)
-            (hash_empty)
+            (hash_expression)
             (attribute_value))))
       (tag_attributes
         (attribute
@@ -923,28 +929,29 @@ hash-empty attributes, cfif with complex call chain, and cfloop/cfset attribute 
               (identifier)
               (string
                 (string_fragment))))))
-      (cf_selfclose_void_tag_end)))
+      (cf_selfclose_void_tag_end
+        (self_closing_tag_delimiter))))
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value))))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (cf_attribute_value
             (hash_expression
               (call_expression
                 (identifier)
                 (arguments
                   (identifier)))))))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value)))))
     (cf_end_tag
       (cf_tag_name)))
@@ -979,7 +986,7 @@ cfoutput wrapping anchor with hash-empty and normal attributes
           (attribute
             (attribute_name)
             (quoted_attribute_value
-              (hash_empty)
+              (hash_expression)
               (attribute_value))))
         (tag_attributes
           (attribute
@@ -1051,7 +1058,6 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
 ---
 
 (program
-  (html_text)
   (cf_if_tag
     (true)
     (cf_if_tag
@@ -1075,18 +1081,18 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
           (true)))))
   (cf_if_tag
     (binary_expression
-      (binary_expression
-        (call_expression
+      (call_expression
+        (member_expression
           (member_expression
-            (member_expression
-              (identifier)
-              (property_identifier))
+            (identifier)
             (property_identifier))
-          (arguments
-            (assignment_expression
-              (identifier)
-              (string
-                (string_fragment)))))
+          (property_identifier))
+        (arguments
+          (assignment_expression
+            (identifier)
+            (string
+              (string_fragment)))))
+      (binary_expression
         (call_expression
           (member_expression
             (member_expression
@@ -1097,8 +1103,8 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
             (string
               (string_fragment))
             (string
-              (string_fragment)))))
-      (number))
+              (string_fragment))))
+        (number)))
     (cf_if_tag
       (call_expression
         (identifier)
@@ -1149,15 +1155,15 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value))))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (hash_expression
               (call_expression
                 (identifier)
@@ -1165,28 +1171,28 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
             (hash_expression
               (identifier))
             (attribute_value))))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value)))))
     (cf_tag
       (cf_start_tag
         (cf_tag_name)
-        (tag_attributes
-          (attribute
-            (attribute_name)
-            (quoted_attribute_value
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
               (attribute_value))))
-        (tag_attributes
-          (attribute
-            (attribute_name)
-            (quoted_attribute_value
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
               (attribute_value))))
-        (tag_attributes
-          (attribute
-            (attribute_name)
-            (quoted_attribute_value
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
               (hash_expression
                 (call_expression
                   (identifier)
@@ -1195,15 +1201,15 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
       (cf_tag
         (cf_start_tag
           (cf_tag_name)
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
+          (cf_tag_attributes
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
                 (attribute_value))))
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
+          (cf_tag_attributes
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
                 (hash_expression
                   (call_expression
                     (identifier)
@@ -1211,10 +1217,10 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
                       (member_expression
                         (identifier)
                         (property_identifier))))))))
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
+          (cf_tag_attributes
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
                 (attribute_value)))))
         (cf_comment)
         (cf_selfclose_tag
@@ -1245,7 +1251,8 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
             (cf_attribute_name)
             (quoted_cf_attribute_value
               (attribute_value)))
-          (cf_selfclose_void_tag_end))
+          (cf_selfclose_void_tag_end
+            (self_closing_tag_delimiter)))
         (cf_if_tag
           (binary_expression
             (call_expression
@@ -1264,16 +1271,16 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
           (cf_tag
             (cf_start_tag_with_selfclose
               (cf_tag_name)
-              (tag_attributes
-                (attribute
-                  (attribute_name)
-                  (quoted_attribute_value
+              (cf_tag_attributes
+                (cf_attribute
+                  (cf_attribute_name)
+                  (quoted_cf_attribute_value
                     (hash_expression
                       (identifier)))))
-              (tag_attributes
-                (attribute
-                  (attribute_name)
-                  (quoted_attribute_value
+              (cf_tag_attributes
+                (cf_attribute
+                  (cf_attribute_name)
+                  (quoted_cf_attribute_value
                     (hash_expression
                       (member_expression
                         (subscript_expression
@@ -1329,16 +1336,16 @@ deeply nested cfif chains and complex cfzip/cffile/cfzipparam usage
             (cf_tag
               (cf_start_tag_with_selfclose
                 (cf_tag_name)
-                (tag_attributes
-                  (attribute
-                    (attribute_name)
-                    (quoted_attribute_value
+                (cf_tag_attributes
+                  (cf_attribute
+                    (cf_attribute_name)
+                    (quoted_cf_attribute_value
                       (hash_expression
                         (identifier)))))
-                (tag_attributes
-                  (attribute
-                    (attribute_name)
-                    (quoted_attribute_value
+                (cf_tag_attributes
+                  (cf_attribute
+                    (cf_attribute_name)
+                    (quoted_cf_attribute_value
                       (hash_expression
                         (member_expression
                           (subscript_expression
@@ -1465,44 +1472,47 @@ cftransaction
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value)))))
     (cf_set_tag
       (assignment_expression
         (identifier)
         (string))
-      (cf_selfclose_void_tag_end))
+      (cf_selfclose_void_tag_end
+        (self_closing_tag_delimiter)))
     (cf_tag
       (cf_start_tag_with_selfclose
         (cf_tag_name)
-        (tag_attributes
-          (attribute
-            (attribute_name)
-            (quoted_attribute_value
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
               (attribute_value))))))
     (cf_set_tag
       (assignment_expression
         (identifier)
         (string))
-      (cf_selfclose_void_tag_end))
+      (cf_selfclose_void_tag_end
+        (self_closing_tag_delimiter)))
     (cf_if_tag
       (identifier)
       (cf_tag
         (cf_start_tag_with_selfclose
           (cf_tag_name)
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
+          (cf_tag_attributes
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
                 (attribute_value)))))))
     (cf_set_tag
       (assignment_expression
         (identifier)
         (string))
-      (cf_selfclose_void_tag_end))
+      (cf_selfclose_void_tag_end
+        (self_closing_tag_delimiter)))
     (cf_end_tag
       (cf_tag_name))))
 
@@ -1554,7 +1564,8 @@ static accessor
       (identifier)
       (static_chain)
       (property_identifier))
-    (cf_selfclose_void_tag_end))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
   (cf_set_tag
     (call_expression
       (member_expression
@@ -1589,25 +1600,25 @@ cfzip3
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value))))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value))))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value))))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value)))))
     (cf_selfclose_tag
       (cf_attribute
@@ -1622,7 +1633,8 @@ cfzip3
         (cf_attribute_name)
         (quoted_cf_attribute_value
           (attribute_value)))
-      (cf_selfclose_void_tag_end))
+      (cf_selfclose_void_tag_end
+        (self_closing_tag_delimiter)))
     (cf_if_tag
       (binary_expression
         (member_expression
@@ -1643,31 +1655,31 @@ cfzip3
         (cf_tag
           (cf_start_tag_with_selfclose
             (cf_tag_name)
-            (tag_attributes
-              (attribute
-                (attribute_name)
-                (quoted_attribute_value
+            (cf_tag_attributes
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
                   (attribute_value))))
-            (tag_attributes
-              (attribute
-                (attribute_name)
-                (quoted_attribute_value
+            (cf_tag_attributes
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
                   (hash_expression
                     (call_expression
                       (identifier)
                       (arguments))))))
-            (tag_attributes
-              (attribute
-                (attribute_name)
-                (quoted_attribute_value
+            (cf_tag_attributes
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
                   (hash_expression
                     (member_expression
                       (identifier)
                       (property_identifier))))))
-            (tag_attributes
-              (attribute
-                (attribute_name)
-                (quoted_attribute_value
+            (cf_tag_attributes
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
                   (attribute_value))))))))
     (cf_end_tag
       (cf_tag_name))))
@@ -1696,7 +1708,8 @@ cfset string-plus-hash expression and cfswitch inside cfquery
           (member_expression
             (identifier)
             (property_identifier)))))
-    (cf_selfclose_void_tag_end))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
   (cf_query_tag
     (cf_attribute
       (cf_attribute_name)
@@ -1729,10 +1742,10 @@ cfzip tag with mixed start/end/selfclose and embedded cfset
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value))))
     (cf_set_tag
       (assignment_expression
         (identifier)
@@ -1748,10 +1761,10 @@ cfzip tag with mixed start/end/selfclose and embedded cfset
   (cf_tag
     (cf_start_tag_with_selfclose
       (cf_tag_name)
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value)))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value)))))
   (cf_set_tag
     (assignment_expression
       (identifier)
@@ -1781,60 +1794,61 @@ cftransaction2
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value)))))
     (cf_tag
       (cf_start_tag
         (cf_tag_name)
-        (tag_attributes
-          (attribute
-            (attribute_name)
-            (quoted_attribute_value
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
               (attribute_value))))
-        (tag_attributes
-          (attribute
-            (attribute_name)
-            (quoted_attribute_value
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
               (attribute_value)))))
       (cf_tag
         (cf_start_tag
           (cf_tag_name)
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
+          (cf_tag_attributes
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
                 (attribute_value)))))
         (cf_end_tag
           (cf_tag_name)))
       (cf_tag
         (cf_start_tag
           (cf_tag_name)
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
+          (cf_tag_attributes
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
                 (attribute_value))))
-          (tag_attributes
-            (attribute
-              (attribute_name)
-              (quoted_attribute_value
+          (cf_tag_attributes
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
                 (attribute_value)))))
         (cf_tag
           (cf_start_tag_with_selfclose
             (cf_tag_name)
-            (tag_attributes
-              (attribute
-                (attribute_name)
-                (quoted_attribute_value
+            (cf_tag_attributes
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
                   (attribute_value))))))
         (cf_end_tag
           (cf_tag_name)))
       (cf_return_tag
         (identifier)
-        (cf_selfclose_void_tag_end))
+        (cf_selfclose_void_tag_end
+          (self_closing_tag_delimiter)))
       (cf_end_tag
         (cf_tag_name)))
     (implicit_cf_end_tag)))
@@ -1852,17 +1866,17 @@ cfoutput boolean expression with JS-style operators
   (cf_output_tag
     (hash_expression
       (binary_expression
-        (binary_expression
-          (parenthesized_expression
+        (parenthesized_expression
+          (binary_expression
             (binary_expression
-              (binary_expression
-                (binary_expression
-                  (identifier)
-                  (number))
-                (identifier))
-              (number)))
-          (identifier))
-        (number)))))
+              (identifier)
+              (number))
+            (binary_expression
+              (identifier)
+              (number))))
+        (binary_expression
+          (identifier)
+          (number))))))
 
 ===================================
 cfloop with integers without quotes
@@ -1870,36 +1884,65 @@ cfloop with integers without quotes
 <cfloop index="i" from=1 to="#ArrayLen(fields)#" step=1>
 </cfloop>
 
+<cfset test = {
+  test = "123",
+  test2 = "1345"
+  }>
+
+<cfset "args.#jj#" = "">
 ---
 
 (program
   (cf_tag
     (cf_start_tag
       (cf_tag_name)
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (attribute_value))))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (attribute_value)))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (quoted_attribute_value
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
             (hash_expression
               (call_expression
                 (identifier)
                 (arguments
                   (identifier)))))))
-      (tag_attributes
-        (attribute
-          (attribute_name)
-          (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (cf_attribute_value
+            (attribute_value)))))
     (cf_end_tag
-      (cf_tag_name))))
+      (cf_tag_name)))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (object_pattern
+        (object_assignment_pattern
+          (shorthand_property_identifier_pattern)
+          (string
+            (string_fragment)))
+        (object_assignment_pattern
+          (shorthand_property_identifier_pattern)
+          (string
+            (string_fragment)))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (string
+        (string_fragment)
+        (hash_expression
+          (identifier)))
+      (string))
+    (cf_selfclose_void_tag_end)))
 
 ===================================
 nested calls
@@ -1927,26 +1970,26 @@ nested calls
         (binary_expression
           (binary_expression
             (binary_expression
-              (binary_expression
-                (binary_expression
-                  (call_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (member_expression
                     (identifier)
-                    (arguments
-                      (member_expression
-                        (identifier)
-                        (property_identifier))
-                      (string
-                        (string_fragment))))
-                  (number))
-                (call_expression
-                  (identifier)
-                  (arguments
-                    (member_expression
-                      (identifier)
-                      (property_identifier))
-                    (string
-                      (string_fragment)))))
+                    (property_identifier))
+                  (string
+                    (string_fragment))))
               (number))
+            (binary_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (member_expression
+                    (identifier)
+                    (property_identifier))
+                  (string
+                    (string_fragment))))
+              (number)))
+          (binary_expression
             (call_expression
               (identifier)
               (arguments
@@ -1954,11 +1997,53 @@ nested calls
                   (identifier)
                   (property_identifier))
                 (string
-                  (string_fragment)))))
-          (number))))
+                  (string_fragment))))
+            (number)))))
     (cf_set_tag
       (assignment_expression
         (identifier)
         (string
           (string_fragment)))
       (cf_selfclose_void_tag_end))))
+
+===================================
+component ( cfscript )
+===================================
+component {
+  private function sign( any message, any key, any algorithm ) {
+        var tmpkey = "";
+        if ( left( ARGUMENTS.algorithm, 1 ) == 'H' ) {
+            var sig = binaryDecode(
+                hmac(
+                    ARGUMENTS.message,
+                    ARGUMENTS.key,
+                    algorithmMap[ ARGUMENTS.algorithm ],
+                    'utf-8'
+                ),
+                'hex'
+            );
+        } else {
+            if ( isSimpleValue( ARGUMENTS.key ) ) {
+                tmpkey = encodingUtils.parsePEMEncodedKey( ARGUMENTS.key );
+            } else if ( isStruct( ARGUMENTS.key ) ) {
+                tmpkey = encodingUtils.parseJWK( ARGUMENTS.key );
+            } else {
+                tmpkey = ARGUMENTS.key;
+            }
+
+            var jssInstance = variables.jss.getInstance( algorithmMap[ ARGUMENTS.algorithm ] );
+            jssInstance.initSign( tmpkey );
+            jssInstance.update( charsetDecode( ARGUMENTS.message, 'utf-8' ) );
+            var sig = jssInstance.sign();
+            if ( variables.javaVersion < 11 && left( ARGUMENTS.algorithm, 1 ) == 'E' ) {
+                sig = encodingUtils.convertDERtoP1363( sig, ARGUMENTS.algorithm );
+            }
+        }
+        return sig;
+    }
+}
+---
+
+(program
+  (component_file
+    (cf_component_content)))

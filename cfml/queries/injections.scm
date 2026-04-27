@@ -10,6 +10,10 @@
   (cf_script_content) @injection.content)
  (#set! injection.language "cfscript"))
 
+((component_file
+  (cf_component_content) @injection.content)
+ (#set! injection.language "cfscript"))
+
 ;; SQL inside cfquery bodies
 ((cf_query_tag
   (cf_query_content) @injection.content)
