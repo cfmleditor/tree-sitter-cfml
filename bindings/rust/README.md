@@ -7,7 +7,7 @@ Rust bindings for the [tree-sitter](https://tree-sitter.github.io/) grammars **c
 ```toml
 [dependencies]
 tree-sitter = "0.25"
-tree-sitter-cfml = "0.26.3"
+tree-sitter-cfml = "0.26.4"
 ```
 
 The crate exposes [`LanguageFn`](https://docs.rs/tree-sitter-language/*/tree_sitter_language/struct.LanguageFn.html) values via [`tree-sitter-language`](https://crates.io/crates/tree-sitter-language).

@@ -4,7 +4,7 @@ endif
 
 LANGUAGE_NAME := tree-sitter-cfml
 HOMEPAGE_URL := https://github.com/cfmleditor/tree-sitter-cfml
-VERSION := 0.26.3
+VERSION := 0.26.4
 
 # repository
 SRC_DIR := src
