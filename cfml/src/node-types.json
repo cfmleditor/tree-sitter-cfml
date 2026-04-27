@@ -150,6 +150,10 @@
         "named": true
       },
       {
+        "type": "string",
+        "named": true
+      },
+      {
         "type": "subscript_expression",
         "named": true
       },
@@ -459,6 +463,10 @@
           },
           {
             "type": "parenthesized_expression",
+            "named": true
+          },
+          {
+            "type": "string",
             "named": true
           },
           {
@@ -2083,6 +2091,10 @@
             "named": true
           },
           {
+            "type": "string",
+            "named": true
+          },
+          {
             "type": "subscript_expression",
             "named": true
           },
@@ -3183,6 +3195,10 @@
         },
         {
           "type": "null",
+          "named": true
+        },
+        {
+          "type": "string",
           "named": true
         },
         {

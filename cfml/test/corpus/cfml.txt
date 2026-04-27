@@ -1889,6 +1889,8 @@ cfloop with integers without quotes
   test = "123",
   test2 = "1345"
   }>
+
+<cfset "args.#jj#" = "">
 ---
 
 (program
@@ -1933,6 +1935,14 @@ cfloop with integers without quotes
           (shorthand_property_identifier_pattern)
           (string
             (string_fragment)))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (string
+        (string_fragment)
+        (hash_expression
+          (identifier)))
+      (string))
     (cf_selfclose_void_tag_end)))
 
 ===================================

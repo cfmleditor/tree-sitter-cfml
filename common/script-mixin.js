@@ -1052,6 +1052,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
     )),
 
     _lhs_expression: ($) => choice(
+      $.string,
       $.member_expression,
       $.null,
       $.subscript_expression,
@@ -1061,7 +1062,10 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
     ),
 
     assignment_expression: ($) => prec.right('assign', seq(
-      field('left', choice($.parenthesized_expression, $._lhs_expression)),
+      field('left', choice(
+        $.parenthesized_expression,
+        $._lhs_expression,
+      )),
       '=',
       field('right', choice($.expression, $._hash_always_eval)),
     )),

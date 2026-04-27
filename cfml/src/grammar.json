@@ -3281,6 +3281,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "string"
+        },
+        {
+          "type": "SYMBOL",
           "name": "member_expression"
         },
         {
