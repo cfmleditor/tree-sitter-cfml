@@ -2,9 +2,9 @@
   "main": "../bindings/node/cfml.js",
   "private": true,
   "scripts": {
-    "build": "node ../node_modules/tree-sitter-cli/cli.js generate",
-    "test": "node ../node_modules/tree-sitter-cli/cli.js test",
-    "prestart": "node ../node_modules/tree-sitter-cli/cli.js build --wasm",
-    "start": "node ../node_modules/tree-sitter-cli/cli.js playground"
+    "build": "DIALECT=cfml node ../scripts/build.js",
+    "test": "DIALECT=cfml node ../scripts/test.js",
+    "prestart": "DIALECT=cfml node ../scripts/prestart-wasm.js",
+    "start": "DIALECT=cfml node ../scripts/playground.js"
   }
 }

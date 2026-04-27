@@ -2,9 +2,9 @@
   "main": "../bindings/node/cfhtml.js",
   "private": true,
   "scripts": {
-    "build": "node ../node_modules/tree-sitter-cli/cli.js generate",
-    "test": "node ../node_modules/tree-sitter-cli/cli.js test",
-    "prestart": "node ../node_modules/tree-sitter-cli/cli.js build --wasm",
-    "start": "node ../node_modules/tree-sitter-cli/cli.js playground"
+    "build": "DIALECT=cfhtml node ../scripts/build.js",
+    "test": "DIALECT=cfhtml node ../scripts/test.js",
+    "prestart": "DIALECT=cfhtml node ../scripts/prestart-wasm.js",
+    "start": "DIALECT=cfhtml node ../scripts/playground.js"
   }
 }

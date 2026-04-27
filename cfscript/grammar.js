@@ -10,7 +10,7 @@
 const scriptMixin = require('../common/script-mixin');
 
 // @ts-ignore
-const mixin = scriptMixin(commaSep1, commaSep, 'cfscript', keyword);
+const mixin = scriptMixin('cfscript');
 
 module.exports = grammar({
   name: 'cfscript',
@@ -67,12 +67,12 @@ module.exports = grammar({
         choice(
           $.import_statement,
           $.tag_statement,
-          $.comment
-        )
+          $.comment,
+        ),
       ),
       choice(
         $.component,
-        repeat($.statement)
+        repeat($.statement),
       ),
     ),
 
@@ -121,42 +121,3 @@ module.exports = grammar({
 
   },
 });
-
-/**
- * @param {string} word
- */
-function keyword(word) {
-  return alias(reserved(caseInsensitive(word)), word);
-}
-
-/**
- * @param {string | RegExp} regex
- */
-function reserved(regex) {
-  return token(prec(1, new RegExp(regex)));
-}
-
-/**
- * @param {string} word
- */
-function caseInsensitive(word) {
-  return word.split('')
-    .map(letter => `[${letter}${letter.toUpperCase()}]`)
-    .join('');
-}
-
-/**
- * @param {Rule} rule
- * @returns {SeqRule}
- */
-function commaSep1(rule) {
-  return seq(rule, repeat(seq(',', rule)));
-}
-
-/**
- * @param {Rule} rule
- * @returns {ChoiceRule}
- */
-function commaSep(rule) {
-  return optional(commaSep1(rule));
-}

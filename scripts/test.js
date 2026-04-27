@@ -3,12 +3,13 @@
 const {join} = require('path');
 const {spawnTreeSitter, root} = require('./tree-sitter-cli.cjs');
 
-const parsers = ['cfml', 'cfhtml', 'cfscript', 'cfquery'];
+const only = process.env.DIALECT;
+const parsers = only ? [only] : ['cfml', 'cfhtml', 'cfscript', 'cfquery'];
 
 for (const dir of parsers) {
   console.log(`testing ${dir}`);
   try {
-    const r = spawnTreeSitter(['test','--update'], {cwd: join(root, dir)});
+    const r = spawnTreeSitter(['test', '--update'], {cwd: join(root, dir)});
     if (r.status !== 0) {
       process.exitCode |= parsers.indexOf(dir) + 1;
     }

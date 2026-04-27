@@ -2,9 +2,9 @@
   "main": "../bindings/node/cfquery.js",
   "private": true,
   "scripts": {
-    "build": "node ../node_modules/tree-sitter-cli/cli.js generate",
-    "test": "node ../node_modules/tree-sitter-cli/cli.js test",
-    "prestart": "node ../node_modules/tree-sitter-cli/cli.js build --wasm",
-    "start": "node ../node_modules/tree-sitter-cli/cli.js playground"
+    "build": "DIALECT=cfquery node ../scripts/build.js",
+    "test": "DIALECT=cfquery node ../scripts/test.js",
+    "prestart": "DIALECT=cfquery node ../scripts/prestart-wasm.js",
+    "start": "DIALECT=cfquery node ../scripts/playground.js"
   }
 }
