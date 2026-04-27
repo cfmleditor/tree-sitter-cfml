@@ -4,6 +4,7 @@
   "scripts": {
     "build": "DIALECT=cfquery node ../scripts/build.js",
     "test": "DIALECT=cfquery node ../scripts/test.js",
+    "docswasm": "DIALECT=cfquery node ../scripts/docswasm.js",
     "prestart": "DIALECT=cfquery node ../scripts/prestart-wasm.js",
     "start": "DIALECT=cfquery node ../scripts/playground.js"
   }

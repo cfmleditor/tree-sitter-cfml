@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const {spawnSync} = require('child_process');
+const {spawnSync, spawn} = require('child_process');
 
 const root = path.join(__dirname, '..');
 
@@ -58,9 +58,28 @@ function spawnTreeSitter(argv, options) {
   });
 }
 
+/**
+ * @param {string[]} argv
+ * @param {import('child_process').SpawnOptions} options
+ * @returns {Promise<number>}
+ */
+function spawnTreeSitterAsync(argv, options) {
+  ensureTreeSitterBinary();
+  const {cliJs} = paths();
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, [cliJs, ...argv], {
+      stdio: 'inherit',
+      ...options,
+    });
+    child.on('error', reject);
+    child.on('close', (code) => resolve(code ?? 1));
+  });
+}
+
 module.exports = {
   root,
   paths,
   ensureTreeSitterBinary,
   spawnTreeSitter,
+  spawnTreeSitterAsync,
 };

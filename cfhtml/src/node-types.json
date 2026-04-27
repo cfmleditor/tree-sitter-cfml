@@ -1,51 +1,5 @@
 [
   {
-    "type": "_cf_tags",
-    "named": true,
-    "subtypes": [
-      {
-        "type": "cf_if_tag",
-        "named": true
-      },
-      {
-        "type": "cf_output_tag",
-        "named": true
-      },
-      {
-        "type": "cf_query_tag",
-        "named": true
-      },
-      {
-        "type": "cf_return_tag",
-        "named": true
-      },
-      {
-        "type": "cf_savecontent_tag",
-        "named": true
-      },
-      {
-        "type": "cf_script_tag",
-        "named": true
-      },
-      {
-        "type": "cf_selfclose_tag",
-        "named": true
-      },
-      {
-        "type": "cf_set_tag",
-        "named": true
-      },
-      {
-        "type": "cf_tag",
-        "named": true
-      },
-      {
-        "type": "cf_xml_tag",
-        "named": true
-      }
-    ]
-  },
-  {
     "type": "declaration",
     "named": true,
     "subtypes": [
@@ -560,7 +514,43 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -1012,10 +1002,6 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tags",
-          "named": true
-        },
-        {
           "type": "cf_else_tag",
           "named": true
         },
@@ -1025,6 +1011,46 @@
         },
         {
           "type": "cf_if_alt",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -1083,11 +1109,47 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "cf_if_alt",
           "named": true
         },
         {
-          "type": "cf_if_alt",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -1150,11 +1212,47 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_attribute",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -1434,11 +1532,39 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "cf_end_tag",
           "named": true
         },
         {
-          "type": "cf_end_tag",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
           "named": true
         },
         {
@@ -1447,6 +1573,14 @@
         },
         {
           "type": "cf_start_tag_with_selfclose",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -1645,7 +1779,43 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -2951,7 +3121,43 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -3010,11 +3216,47 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "attribute_value",
           "named": true
         },
         {
-          "type": "attribute_value",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -3442,11 +3684,47 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "attribute",
           "named": true
         },
         {
-          "type": "attribute",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {

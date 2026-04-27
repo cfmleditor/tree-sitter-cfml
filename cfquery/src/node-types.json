@@ -1,46 +1,286 @@
 [
   {
-    "type": "_cf_tags",
+    "type": "declaration",
     "named": true,
     "subtypes": [
       {
-        "type": "cf_if_tag",
+        "type": "function_declaration",
         "named": true
       },
       {
-        "type": "cf_output_tag",
+        "type": "lexical_declaration",
         "named": true
       },
       {
-        "type": "cf_query_tag",
+        "type": "variable_declaration",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "expression",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "assignment_expression",
         "named": true
       },
       {
-        "type": "cf_return_tag",
+        "type": "augmented_assignment_expression",
         "named": true
       },
       {
-        "type": "cf_savecontent_tag",
+        "type": "binary_expression",
         "named": true
       },
       {
-        "type": "cf_script_tag",
+        "type": "elvis_expression",
         "named": true
       },
       {
-        "type": "cf_selfclose_tag",
+        "type": "hash_empty",
         "named": true
       },
       {
-        "type": "cf_set_tag",
+        "type": "hash_expression",
         "named": true
       },
       {
-        "type": "cf_tag",
+        "type": "new_expression",
         "named": true
       },
       {
-        "type": "cf_xml_tag",
+        "type": "object_pattern",
+        "named": true
+      },
+      {
+        "type": "pair",
+        "named": true
+      },
+      {
+        "type": "primary_expression",
+        "named": true
+      },
+      {
+        "type": "ternary_expression",
+        "named": true
+      },
+      {
+        "type": "unary_expression",
+        "named": true
+      },
+      {
+        "type": "update_expression",
+        "named": true
+      },
+      {
+        "type": "yield_expression",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "pattern",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "array_pattern",
+        "named": true
+      },
+      {
+        "type": "identifier",
+        "named": true
+      },
+      {
+        "type": "member_expression",
+        "named": true
+      },
+      {
+        "type": "null",
+        "named": true
+      },
+      {
+        "type": "rest_pattern",
+        "named": true
+      },
+      {
+        "type": "string",
+        "named": true
+      },
+      {
+        "type": "subscript_expression",
+        "named": true
+      },
+      {
+        "type": "undefined",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "primary_expression",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "array",
+        "named": true
+      },
+      {
+        "type": "arrow_function",
+        "named": true
+      },
+      {
+        "type": "call_expression",
+        "named": true
+      },
+      {
+        "type": "false",
+        "named": true
+      },
+      {
+        "type": "function_expression",
+        "named": true
+      },
+      {
+        "type": "identifier",
+        "named": true
+      },
+      {
+        "type": "member_expression",
+        "named": true
+      },
+      {
+        "type": "meta_property",
+        "named": true
+      },
+      {
+        "type": "null",
+        "named": true
+      },
+      {
+        "type": "number",
+        "named": true
+      },
+      {
+        "type": "object",
+        "named": true
+      },
+      {
+        "type": "parenthesized_expression",
+        "named": true
+      },
+      {
+        "type": "regex",
+        "named": true
+      },
+      {
+        "type": "string",
+        "named": true
+      },
+      {
+        "type": "subscript_expression",
+        "named": true
+      },
+      {
+        "type": "super",
+        "named": true
+      },
+      {
+        "type": "this",
+        "named": true
+      },
+      {
+        "type": "true",
+        "named": true
+      },
+      {
+        "type": "undefined",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "statement",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "break_statement",
+        "named": true
+      },
+      {
+        "type": "continue_statement",
+        "named": true
+      },
+      {
+        "type": "debugger_statement",
+        "named": true
+      },
+      {
+        "type": "declaration",
+        "named": true
+      },
+      {
+        "type": "do_statement",
+        "named": true
+      },
+      {
+        "type": "empty_statement",
+        "named": true
+      },
+      {
+        "type": "export_statement",
+        "named": true
+      },
+      {
+        "type": "expression_statement",
+        "named": true
+      },
+      {
+        "type": "for_in_statement",
+        "named": true
+      },
+      {
+        "type": "for_statement",
+        "named": true
+      },
+      {
+        "type": "if_statement",
+        "named": true
+      },
+      {
+        "type": "import_statement",
+        "named": true
+      },
+      {
+        "type": "labeled_statement",
+        "named": true
+      },
+      {
+        "type": "return_statement",
+        "named": true
+      },
+      {
+        "type": "statement_block",
+        "named": true
+      },
+      {
+        "type": "switch_statement",
+        "named": true
+      },
+      {
+        "type": "throw_statement",
+        "named": true
+      },
+      {
+        "type": "try_statement",
+        "named": true
+      },
+      {
+        "type": "while_statement",
+        "named": true
+      },
+      {
+        "type": "with_statement",
         "named": true
       }
     ]
@@ -60,14 +300,6 @@
       "types": [
         {
           "type": "expression",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
           "named": true
         },
         {
@@ -204,14 +436,6 @@
           {
             "type": "expression",
             "named": true
-          },
-          {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
-            "named": true
           }
         ]
       }
@@ -294,7 +518,43 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -599,15 +859,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "import",
-            "named": true
-          },
-          {
-            "type": "member_expression",
             "named": true
           },
           {
@@ -730,14 +982,6 @@
         {
           "type": "expression",
           "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
         }
       ]
     }
@@ -785,10 +1029,6 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tags",
-          "named": true
-        },
-        {
           "type": "cf_else_tag",
           "named": true
         },
@@ -798,6 +1038,46 @@
         },
         {
           "type": "cf_if_alt",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -828,11 +1108,47 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "cf_if_alt",
           "named": true
         },
         {
-          "type": "cf_if_alt",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -845,14 +1161,6 @@
         },
         {
           "type": "expression",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
           "named": true
         }
       ]
@@ -867,11 +1175,47 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "cf_attribute",
           "named": true
         },
         {
-          "type": "cf_attribute",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -1100,14 +1444,6 @@
         {
           "type": "expression",
           "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
         }
       ]
     }
@@ -1159,11 +1495,39 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "cf_end_tag",
           "named": true
         },
         {
-          "type": "cf_end_tag",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
           "named": true
         },
         {
@@ -1172,6 +1536,14 @@
         },
         {
           "type": "cf_start_tag_with_selfclose",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -3608,29 +3980,6 @@
     "fields": {}
   },
   {
-    "type": "declaration",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "function_declaration",
-          "named": true
-        },
-        {
-          "type": "lexical_declaration",
-          "named": true
-        },
-        {
-          "type": "variable_declaration",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "decorator",
     "named": true,
     "fields": {},
@@ -3693,7 +4042,43 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -3932,73 +4317,6 @@
     }
   },
   {
-    "type": "expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "assignment_expression",
-          "named": true
-        },
-        {
-          "type": "augmented_assignment_expression",
-          "named": true
-        },
-        {
-          "type": "binary_expression",
-          "named": true
-        },
-        {
-          "type": "elvis_expression",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "new_expression",
-          "named": true
-        },
-        {
-          "type": "object_pattern",
-          "named": true
-        },
-        {
-          "type": "pair",
-          "named": true
-        },
-        {
-          "type": "primary_expression",
-          "named": true
-        },
-        {
-          "type": "ternary_expression",
-          "named": true
-        },
-        {
-          "type": "unary_expression",
-          "named": true
-        },
-        {
-          "type": "update_expression",
-          "named": true
-        },
-        {
-          "type": "yield_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "expression_statement",
     "named": true,
     "fields": {},
@@ -4008,14 +4326,6 @@
       "types": [
         {
           "type": "expression",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
           "named": true
         },
         {
@@ -4134,14 +4444,6 @@
             "named": true
           },
           {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
-            "named": true
-          },
-          {
             "type": "sequence_expression",
             "named": true
           }
@@ -4190,14 +4492,6 @@
             "named": true
           },
           {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
-            "named": true
-          },
-          {
             "type": "sequence_expression",
             "named": true
           }
@@ -4209,14 +4503,6 @@
         "types": [
           {
             "type": "expression",
-            "named": true
-          },
-          {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
             "named": true
           },
           {
@@ -4235,14 +4521,6 @@
           },
           {
             "type": "expression",
-            "named": true
-          },
-          {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
             "named": true
           },
           {
@@ -4659,19 +4937,7 @@
             "named": true
           },
           {
-            "type": "identifier",
-            "named": true
-          },
-          {
             "type": "import",
-            "named": true
-          },
-          {
-            "type": "member_expression",
-            "named": true
-          },
-          {
-            "type": "primary_expression",
             "named": true
           }
         ]
@@ -5113,14 +5379,6 @@
           "named": true
         },
         {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
           "type": "sequence_expression",
           "named": true
         }
@@ -5143,136 +5401,6 @@
     }
   },
   {
-    "type": "pattern",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "array_pattern",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "member_expression",
-          "named": true
-        },
-        {
-          "type": "null",
-          "named": true
-        },
-        {
-          "type": "rest_pattern",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "subscript_expression",
-          "named": true
-        },
-        {
-          "type": "undefined",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "primary_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "array",
-          "named": true
-        },
-        {
-          "type": "arrow_function",
-          "named": true
-        },
-        {
-          "type": "call_expression",
-          "named": true
-        },
-        {
-          "type": "false",
-          "named": true
-        },
-        {
-          "type": "function_expression",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "member_expression",
-          "named": true
-        },
-        {
-          "type": "meta_property",
-          "named": true
-        },
-        {
-          "type": "null",
-          "named": true
-        },
-        {
-          "type": "number",
-          "named": true
-        },
-        {
-          "type": "object",
-          "named": true
-        },
-        {
-          "type": "parenthesized_expression",
-          "named": true
-        },
-        {
-          "type": "regex",
-          "named": true
-        },
-        {
-          "type": "string",
-          "named": true
-        },
-        {
-          "type": "subscript_expression",
-          "named": true
-        },
-        {
-          "type": "super",
-          "named": true
-        },
-        {
-          "type": "this",
-          "named": true
-        },
-        {
-          "type": "true",
-          "named": true
-        },
-        {
-          "type": "undefined",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "program",
     "named": true,
     "root": true,
@@ -5282,7 +5410,43 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -5313,11 +5477,47 @@
       "required": false,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "attribute_value",
           "named": true
         },
         {
-          "type": "attribute_value",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -5429,14 +5629,6 @@
       "types": [
         {
           "type": "expression",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
           "named": true
         },
         {
@@ -5557,97 +5749,6 @@
     }
   },
   {
-    "type": "statement",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "break_statement",
-          "named": true
-        },
-        {
-          "type": "continue_statement",
-          "named": true
-        },
-        {
-          "type": "debugger_statement",
-          "named": true
-        },
-        {
-          "type": "declaration",
-          "named": true
-        },
-        {
-          "type": "do_statement",
-          "named": true
-        },
-        {
-          "type": "empty_statement",
-          "named": true
-        },
-        {
-          "type": "export_statement",
-          "named": true
-        },
-        {
-          "type": "expression_statement",
-          "named": true
-        },
-        {
-          "type": "for_in_statement",
-          "named": true
-        },
-        {
-          "type": "for_statement",
-          "named": true
-        },
-        {
-          "type": "if_statement",
-          "named": true
-        },
-        {
-          "type": "import_statement",
-          "named": true
-        },
-        {
-          "type": "labeled_statement",
-          "named": true
-        },
-        {
-          "type": "return_statement",
-          "named": true
-        },
-        {
-          "type": "statement_block",
-          "named": true
-        },
-        {
-          "type": "switch_statement",
-          "named": true
-        },
-        {
-          "type": "throw_statement",
-          "named": true
-        },
-        {
-          "type": "try_statement",
-          "named": true
-        },
-        {
-          "type": "while_statement",
-          "named": true
-        },
-        {
-          "type": "with_statement",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "statement_block",
     "named": true,
     "fields": {},
@@ -5721,14 +5822,6 @@
             "named": true
           },
           {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
-            "named": true
-          },
-          {
             "type": "sequence_expression",
             "named": true
           }
@@ -5740,10 +5833,6 @@
         "types": [
           {
             "type": "expression",
-            "named": true
-          },
-          {
-            "type": "primary_expression",
             "named": true
           }
         ]
@@ -5799,14 +5888,6 @@
         "types": [
           {
             "type": "expression",
-            "named": true
-          },
-          {
-            "type": "hash_empty",
-            "named": true
-          },
-          {
-            "type": "hash_expression",
             "named": true
           },
           {
@@ -5868,11 +5949,47 @@
       "required": true,
       "types": [
         {
-          "type": "_cf_tags",
+          "type": "attribute",
           "named": true
         },
         {
-          "type": "attribute",
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
           "named": true
         },
         {
@@ -5936,14 +6053,6 @@
       "types": [
         {
           "type": "expression",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
           "named": true
         },
         {

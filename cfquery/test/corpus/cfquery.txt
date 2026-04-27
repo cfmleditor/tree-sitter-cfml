@@ -299,12 +299,9 @@ WHERE t.column_name = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.co
                     (cf_attribute_name)
                     (quoted_cf_attribute_value
                       (hash_expression
-                        (expression
-                          (primary_expression
-                            (member_expression
-                              (primary_expression
-                                (identifier))
-                              (property_identifier)))))))
+                        (member_expression
+                          (identifier)
+                          (property_identifier)))))
                   (cf_selfclose_void_tag_end))))))))))
 
 ===================================
@@ -1256,19 +1253,12 @@ FROM table_name t
               (identifier)
               (identifier)))))))
   (cf_if_tag
-    (expression
-      (primary_expression
-        (call_expression
-          (primary_expression
-            (identifier))
-          (arguments
-            (expression
-              (primary_expression
-                (identifier)))
-            (expression
-              (primary_expression
-                (string
-                  (string_fragment))))))))
+    (call_expression
+      (identifier)
+      (arguments
+        (identifier)
+        (string
+          (string_fragment))))
     (cfquery_segment
       (cfquery_clause
         (keyword_where)
@@ -1288,12 +1278,9 @@ FROM table_name t
                   (cf_attribute_name)
                   (quoted_cf_attribute_value
                     (hash_expression
-                      (expression
-                        (primary_expression
-                          (member_expression
-                            (primary_expression
-                              (identifier))
-                            (property_identifier)))))))
+                      (member_expression
+                        (identifier)
+                        (property_identifier)))))
                 (cf_selfclose_void_tag_end)))))))))
 
 ===================================
@@ -1330,22 +1317,16 @@ FROM table_name t
               (identifier)
               (identifier)))))))
   (cf_set_tag
-    (expression
-      (assignment_expression
-        (identifier)
-        (expression
-          (primary_expression
-            (string
-              (string_fragment))))))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
     (cf_selfclose_void_tag_end))
   (cf_set_tag
-    (expression
-      (assignment_expression
-        (identifier)
-        (expression
-          (primary_expression
-            (string
-              (string_fragment))))))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
     (cf_selfclose_void_tag_end))
   (cf_tag
     (cf_start_tag
@@ -1361,41 +1342,26 @@ FROM table_name t
           (quoted_cf_attribute_value
             (attribute_value)))))
     (cf_if_tag
-      (expression
-        (primary_expression
-          (call_expression
-            (primary_expression
-              (identifier))
-            (arguments
-              (expression
-                (primary_expression
-                  (identifier)))
-              (expression
-                (primary_expression
-                  (string
-                    (hash_expression
-                      (expression
-                        (primary_expression
-                          (identifier)))))))))))
+      (call_expression
+        (identifier)
+        (arguments
+          (identifier)
+          (string
+            (hash_expression
+              (identifier)))))
       (cfquery_segment
         (cfquery_clause
           (keyword_and
             (hash_expression
-              (expression
-                (primary_expression
-                  (identifier)))))
+              (identifier)))
           (cfquery_expression
             (cfquery_binary_expression
               (cfquery_primary_expression
                 (cfquery_qualified_name
                   (hash_expression
-                    (expression
-                      (primary_expression
-                        (identifier))))
+                    (identifier))
                   (hash_expression
-                    (expression
-                      (primary_expression
-                        (identifier))))))
+                    (identifier))))
               (cfquery_primary_expression
                 (cf_selfclose_tag
                   (cf_attribute
@@ -1406,23 +1372,15 @@ FROM table_name t
                     (cf_attribute_name)
                     (quoted_cf_attribute_value
                       (hash_expression
-                        (expression
-                          (primary_expression
-                            (subscript_expression
-                              (primary_expression
-                                (identifier))
-                              (expression
-                                (primary_expression
-                                  (identifier)))))))))
+                        (subscript_expression
+                          (identifier)
+                          (identifier)))))
                   (cf_selfclose_void_tag_end)))))))
       (cf_set_tag
-        (expression
-          (assignment_expression
-            (identifier)
-            (expression
-              (primary_expression
-                (string
-                  (string_fragment))))))
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
         (cf_selfclose_void_tag_end)))
     (cf_end_tag
       (cf_tag_name))))
