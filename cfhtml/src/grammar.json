@@ -1878,10 +1878,6 @@
         },
         {
           "type": "SYMBOL",
-          "name": "component"
-        },
-        {
-          "type": "SYMBOL",
           "name": "meta_property"
         },
         {
@@ -2505,8 +2501,17 @@
             ]
           },
           {
-            "type": "STRING",
-            "value": "component"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "component"
+              },
+              {
+                "type": "STRING",
+                "value": "interface"
+              }
+            ]
           },
           {
             "type": "REPEAT",
@@ -6355,22 +6360,6 @@
     "component_body": {
       "type": "SEQ",
       "members": [
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "TOKEN",
-            "content": {
-              "type": "PREC",
-              "value": 1,
-              "content": {
-                "type": "PATTERN",
-                "value": "[cC][oO][mM][pP][oO][nN][eE][nN][tT]"
-              }
-            }
-          },
-          "named": false,
-          "value": "component"
-        },
         {
           "type": "STRING",
           "value": "{"
@@ -13139,10 +13128,6 @@
     [
       "hash_expression",
       "hash_empty"
-    ],
-    [
-      "component",
-      "primary_expression"
     ],
     [
       "method_definition",

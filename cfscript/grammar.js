@@ -50,6 +50,7 @@ module.exports = grammar({
     [$.primary_expression, $.tag_statement],
     [$.expression, $.tag_statement],
     [$.tag_statement, $.expression],
+    [$.program, $.statement],
     [$.return_type, $.tag_statement],
     [$.primary_expression, $.tag_statement, $._property_name],
     [$.expression, $.query_tag],
@@ -61,7 +62,19 @@ module.exports = grammar({
 
   rules: {
 
-    program: ($) => repeat($.statement),
+    program: ($) => seq(
+      repeat(
+        choice(
+          $.import_statement,
+          $.tag_statement,
+          $.comment
+        )
+      ),
+      choice(
+        $.component,
+        repeat($.statement)
+      ),
+    ),
 
     ...mixin.rules,
 

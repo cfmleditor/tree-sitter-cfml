@@ -180,10 +180,6 @@
         "named": true
       },
       {
-        "type": "component",
-        "named": true
-      },
-      {
         "type": "false",
         "named": true
       },
@@ -1557,74 +1553,6 @@
         },
         {
           "type": "cf_xml_content",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "component",
-    "named": true,
-    "fields": {
-      "body": {
-        "multiple": false,
-        "required": true,
-        "types": [
-          {
-            "type": "component_body",
-            "named": true
-          }
-        ]
-      }
-    },
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "component_attribute",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "component_attribute",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_label",
-          "named": true
-        },
-        {
-          "type": "component_attribute",
-          "named": true
-        },
-        {
-          "type": "expression",
-          "named": true
-        },
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "component_body",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "statement",
           "named": true
         }
       ]
@@ -4125,10 +4053,6 @@
   {
     "type": "as",
     "named": false
-  },
-  {
-    "type": "attribute_label",
-    "named": true
   },
   {
     "type": "binary",

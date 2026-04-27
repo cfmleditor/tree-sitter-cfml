@@ -1229,20 +1229,21 @@ static bool scan_cf_component_content(TSLexer *lexer) {
         }
     }
 
-    // Match 'component' case-insensitively
-    const char *kw = "component";
-    for (int i = 0; kw[i]; i++) {
-        if (towlower(lexer->lookahead) != (wint_t)kw[i]) return false;
+    // Read the first word
+    char word[16];
+    int len = 0;
+    while (iswalpha(lexer->lookahead) && len < 15) {
+        word[len++] = towlower(lexer->lookahead);
         skip(lexer);
     }
+    word[len] = '\0';
 
-    // Must be followed by whitespace or '{' (not another identifier char)
+    // Must not be followed by another identifier char (e.g. 'componentFoo')
     if (iswalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
 
-    // Skip everything up to '{' (attributes etc.), fail if EOF first
-    while (lexer->lookahead != '{') {
-        if (lexer->lookahead == 0) return false;
-        skip(lexer);
+    if (strcmp(word, "component") != 0 && strcmp(word, "property") != 0 &&
+            strcmp(word, "interface") != 0 && strcmp(word, "import") != 0) {
+        return false;
     }
 
     // Consume the rest of the file

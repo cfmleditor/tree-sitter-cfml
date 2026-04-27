@@ -257,30 +257,29 @@ component test:displayLabel="${test} ${test}" singleton {
 ---
 
 (program
-  (expression_statement
-    (component
+  (component
+    (component_attribute
+      (attribute_label)
       (component_attribute
-        (attribute_label)
-        (component_attribute
-          (identifier)
-          (string
-            (string_fragment))))
-      (component_attribute
-        (identifier))
-      (component_body
-        (function_declaration
-          (access_type)
-          (identifier)
-          (formal_parameters)
-          (statement_block
-            (expression_statement
-              (assignment_expression
-                (subscript_expression
-                  (identifier)
-                  (string
-                    (string_fragment)))
+        (identifier)
+        (string
+          (string_fragment))))
+    (component_attribute
+      (identifier))
+    (component_body
+      (function_declaration
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (subscript_expression
+                (identifier)
                 (string
-                  (string_fragment))))))))))
+                  (string_fragment)))
+              (string
+                (string_fragment)))))))))
 
 ===================================
 component test
@@ -301,7 +300,52 @@ component {
         return tests.recordCount;
     }
 }
+---
 
+(program
+  (import_statement
+    (identifier))
+  (component
+    (component_body
+      (function_declaration
+        (return_type)
+        (identifier)
+        (formal_parameters
+          (parameter_type
+            (path
+              (identifier)
+              (identifier)
+              (identifier)))
+          (identifier))
+        (statement_block
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (query_expression
+                (query_text)
+                (object
+                  (pair
+                    (property_identifier)
+                    (object
+                      (pair
+                        (property_identifier)
+                        (string
+                          (string_fragment)))
+                      (pair
+                        (property_identifier)
+                        (call_expression
+                          (member_expression
+                            (identifier)
+                            (property_identifier))
+                          (arguments)))))))))
+          (return_statement
+            (member_expression
+              (identifier)
+              (property_identifier))))))))
+
+===================================
+try test
+===================================
 try {
 			assertTrue(isNull(null));
   
@@ -317,46 +361,6 @@ try {
 ---
 
 (program
-  (import_statement
-    (identifier))
-  (expression_statement
-    (component
-      (component_body
-        (function_declaration
-          (return_type)
-          (identifier)
-          (formal_parameters
-            (parameter_type
-              (path
-                (identifier)
-                (identifier)
-                (identifier)))
-            (identifier))
-          (statement_block
-            (variable_declaration
-              (variable_declarator
-                (identifier)
-                (query_expression
-                  (query_text)
-                  (object
-                    (pair
-                      (property_identifier)
-                      (object
-                        (pair
-                          (property_identifier)
-                          (string
-                            (string_fragment)))
-                        (pair
-                          (property_identifier)
-                          (call_expression
-                            (member_expression
-                              (identifier)
-                              (property_identifier))
-                            (arguments)))))))))
-            (return_statement
-              (member_expression
-                (identifier)
-                (property_identifier))))))))
   (try_statement
     (statement_block
       (expression_statement
@@ -437,86 +441,85 @@ component {
 ---
 
 (program
-  (expression_statement
-    (component
-      (component_body
-        (expression_statement
-          (call_expression
-            (identifier)
-            (arguments
-              (assignment_expression
-                (identifier)
-                (number)))))
-        (function_declaration
-          (access_type)
-          (return_type)
+  (component
+    (component_body
+      (expression_statement
+        (call_expression
           (identifier)
-          (formal_parameters)
-          (statement_block
-            (variable_declaration
-              (variable_declarator
-                (identifier)
-                (member_expression
-                  (call_expression
-                    (identifier)
-                    (arguments))
-                  (property_identifier))))
-            (tag_statement
+          (arguments
+            (assignment_expression
               (identifier)
-              (assignment_expression
-                (identifier)
-                (string
-                  (string_fragment)))
-              (assignment_expression
-                (identifier)
-                (true)))
-            (try_statement
+              (number)))))
+      (function_declaration
+        (access_type)
+        (return_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (member_expression
+                (call_expression
+                  (identifier)
+                  (arguments))
+                (property_identifier))))
+          (tag_statement
+            (identifier)
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))
+            (assignment_expression
+              (identifier)
+              (true)))
+          (try_statement
+            (statement_block
+              (expression_statement
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (string
+                      (string_fragment))
+                    (call_expression
+                      (identifier)
+                      (arguments
+                        (pair
+                          (null)
+                          (string
+                            (string_fragment))))))))
+              (expression_statement
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (string
+                      (string_fragment))
+                    (call_expression
+                      (identifier)
+                      (arguments
+                        (assignment_expression
+                          (null)
+                          (string
+                            (string_fragment)))))))))
+            (finally_clause
               (statement_block
-                (expression_statement
-                  (call_expression
+                (tag_statement
+                  (identifier)
+                  (assignment_expression
                     (identifier)
-                    (arguments
-                      (string
-                        (string_fragment))
-                      (call_expression
-                        (identifier)
-                        (arguments
-                          (pair
-                            (null)
-                            (string
-                              (string_fragment))))))))
-                (expression_statement
-                  (call_expression
+                    (string
+                      (string_fragment)))
+                  (assignment_expression
                     (identifier)
-                    (arguments
-                      (string
-                        (string_fragment))
-                      (call_expression
-                        (identifier)
-                        (arguments
-                          (assignment_expression
-                            (null)
-                            (string
-                              (string_fragment)))))))))
-              (finally_clause
-                (statement_block
-                  (tag_statement
-                    (identifier)
-                    (assignment_expression
-                      (identifier)
-                      (string
-                        (string_fragment)))
-                    (assignment_expression
-                      (identifier)
-                      (identifier))))))
-            (if_statement
-              (parenthesized_expression
-                (binary_expression
-                  (string
-                    (string_fragment))
-                  (string
-                    (string_fragment))))
-              (statement_block))))))))
+                    (identifier))))))
+          (if_statement
+            (parenthesized_expression
+              (binary_expression
+                (string
+                  (string_fragment))
+                (string
+                  (string_fragment))))
+            (statement_block)))))))
 
 ===================================
 scope member access

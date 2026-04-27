@@ -96,7 +96,7 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       // // [$.primary_expression, $.tag_expression, $.parameter_type],
       // [$.component, $.parameter_type],
       // // [$.component, $.return_type],
-      [$.component, $.primary_expression],
+      // [$.component, $.primary_expression],
       [$.method_definition, $.access_type],
       // // [$.query_tag, $.expression],
 
@@ -598,7 +598,6 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
       $.array,
       $.function_expression,
       $.arrow_function,
-      $.component,
       $.meta_property,
       $.call_expression,
     ),
@@ -815,7 +814,10 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
 
     component: ($) => prec('literal', seq(
       optional('static'),
-      'component',
+      choice(
+        'component',
+        'interface',
+      ),
       repeat($.component_attribute),
       field('body', $.component_body),
     )),
@@ -1403,9 +1405,6 @@ module.exports = function scriptMixin(commaSep1, commaSep, dialect, keyword) {
     )),
 
     component_body: ($) => seq(
-      ...(dialect !== 'cfscript' ? [
-        keyword('component')
-      ] : []),
       '{',
       repeat($.statement),
       '}',
