@@ -262,8 +262,6 @@
   "of"
   "instanceof"
   "static"
-  "export"
-  "yield"
   "with"
 ] @keyword
 

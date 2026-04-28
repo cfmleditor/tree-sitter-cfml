@@ -129,8 +129,8 @@ module.exports = function defineGrammar(dialect, extraRules) {
       [$.primary_expression, $.statement_block, 'object'],
       [$.meta_property, $.import],
       [$.import_statement, $.import],
-      [$.export_statement, $.primary_expression],
-      [$.lexical_declaration, $.primary_expression],
+      // [$.export_statement, $.primary_expression],
+      // [$.lexical_declaration, $.primary_expression],
     ],
 
     conflicts: ($) => [
@@ -144,7 +144,6 @@ module.exports = function defineGrammar(dialect, extraRules) {
       [$.primary_expression, $.method_definition],
       [$.primary_expression, $.rest_pattern],
       [$.primary_expression, $._for_header],
-      [$.variable_declarator, $._for_header],
       [$.array, $.array_pattern],
       [$.assignment_expression, $.object_assignment_pattern],
       [$.labeled_statement, $._property_name],
@@ -164,12 +163,14 @@ module.exports = function defineGrammar(dialect, extraRules) {
 
       [$.expression, $.parenthesized_expression],
       [$.expression, $.expression_statement],
-
       [$.expression, $.arguments],
       [$.expression, $.assignment_expression],
       [$.expression, $.return_statement],
       [$.expression, $.throw_statement],
+      [$.expression, $.for_statement],
+      [$.expression, $._cf_tag_expression],
       [$.expression, $.assignment_expression, $._property_name],
+      [$.expression, $.function_expression],
       [$.assignment_expression, $._property_name],
       [$.object_assignment_pattern, $._property_name],
       [$.object_assignment_pattern, $.assignment_expression, $._property_name],
@@ -177,9 +178,6 @@ module.exports = function defineGrammar(dialect, extraRules) {
       [$.switch_case, $.expression, $._property_name],
       [$.call_expression, $._property_name],
       [$._for_header, $.expression],
-      [$.expression, $.for_statement],
-      [$.expression, $._cf_tag_expression],
-      [$.expression, $.function_expression],
     ],
 
     rules: {
@@ -251,20 +249,6 @@ module.exports = function defineGrammar(dialect, extraRules) {
         $.html_text,
       ),
 
-      // _cfoutput_node: $ => choice(
-      //   $.doctype,
-      //   $.entity,
-      //   $.element,
-      //   $._cf_tags,
-      //   $._hash_always_eval,
-      //   $.script_element,
-      //   $.style_element,
-      //   $.text,
-      //   $.erroneous_end_tag,
-      //   $.erroneous_cf_end_tag,
-      //   $.xml_decl,
-      // ),
-
       _cf_open_tag: $ => prec.right(1, keyword('<cf')),
       _cf_close_tag: $ => prec.right(1, keyword('</cf')),
 
@@ -291,14 +275,12 @@ module.exports = function defineGrammar(dialect, extraRules) {
       )),
 
       cf_tag_attributes: $ => choice(
-        // $.style_attribute,
         $.cf_attribute,
         $.quoted_cf_attribute_value,
         $._hash_always_eval,
       ),
 
       tag_attributes: $ => choice(
-        // $.style_attribute,
         $.attribute,
         $.quoted_attribute_value,
         $._cf_tags,
@@ -358,8 +340,6 @@ module.exports = function defineGrammar(dialect, extraRules) {
         optional($.raw_text),
         $.end_tag,
       ),
-
-      // hash_single: $ => '#',
 
       // @ts-ignore
       hash_value: $ => /[a-zA-Z0-9_-]+/,
@@ -598,62 +578,10 @@ module.exports = function defineGrammar(dialect, extraRules) {
       ),
 
       ...(extra),
-
+      
       /*
         START SCRIPT BASE RULES
       */
-      // Export declarations
-      //
-
-      export_statement: ($) => choice(
-        seq(
-          'export',
-          choice(
-            seq('*', $._from_clause),
-            seq($.namespace_export, $._from_clause),
-            seq($.export_clause, $._from_clause),
-            $.export_clause,
-          ),
-          $._semicolon,
-        ),
-        seq(
-          repeat(field('decorator', $.decorator)),
-          'export',
-          choice(
-            field('declaration', $.declaration),
-            seq(
-              'default',
-              choice(
-                field('declaration', $.declaration),
-                seq(
-                  field('value', $.expression),
-                  $._semicolon,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-
-      namespace_export: ($) => seq(
-        '*', 'as', $._module_export_name,
-      ),
-
-      export_clause: ($) => seq(
-        '{',
-        commaSep($.export_specifier),
-        optional(','),
-        '}',
-      ),
-
-      export_specifier: ($) => seq(
-        field('name', $._module_export_name),
-        optional(seq(
-          'as',
-          field('alias', $._module_export_name),
-        )),
-      ),
-
       _module_export_name: ($) => choice(
         $.identifier,
         $.string,
@@ -661,9 +589,6 @@ module.exports = function defineGrammar(dialect, extraRules) {
 
       declaration: ($) => choice(
         $.function_declaration,
-        // $.generator_function_declaration,
-        // $.class_declaration,
-        $.lexical_declaration,
         $.variable_declaration,
       ),
 
@@ -733,7 +658,7 @@ module.exports = function defineGrammar(dialect, extraRules) {
       //
 
       statement: ($) => choice(
-        $.export_statement,
+        // $.export_statement,
         $.import_statement,
         $.debugger_statement,
         $.expression_statement,
@@ -764,12 +689,6 @@ module.exports = function defineGrammar(dialect, extraRules) {
 
       variable_declaration: ($) => seq(
         'var',
-        commaSep1($.variable_declarator),
-        $._semicolon,
-      ),
-
-      lexical_declaration: ($) => seq(
-        field('kind', choice('let', 'const')),
         commaSep1($.variable_declarator),
         $._semicolon,
       ),
@@ -805,7 +724,7 @@ module.exports = function defineGrammar(dialect, extraRules) {
         'for',
         '(',
         choice(
-          field('initializer', choice($.lexical_declaration, $.variable_declaration)),
+          field('initializer', $.variable_declaration),
           seq(field('initializer', $._expressions), ';'),
           field('initializer', $.empty_statement),
         ),
@@ -820,7 +739,6 @@ module.exports = function defineGrammar(dialect, extraRules) {
 
       for_in_statement: ($) => seq(
         'for',
-        // optional('await'),
         $._for_header,
         field('body', $.statement),
       ),
@@ -978,14 +896,12 @@ module.exports = function defineGrammar(dialect, extraRules) {
         $.primary_expression,
         $.assignment_expression,
         $.augmented_assignment_expression,
-        // $.await_expression,
         $.unary_expression,
         $.binary_expression,
         $.ternary_expression,
         $.elvis_expression,
         $.update_expression,
         $.new_expression,
-        $.yield_expression,
         $._hash_always_eval,
         $.pair,
         $.object_pattern,
@@ -1012,13 +928,6 @@ module.exports = function defineGrammar(dialect, extraRules) {
         $.meta_property,
         $.call_expression,
       ),
-
-      yield_expression: ($) => prec.right(seq(
-        'yield',
-        choice(
-          seq('*', $.expression),
-          optional($.expression),
-        ))),
 
       object: ($) => prec('object', seq(
         '{',
@@ -1088,30 +997,6 @@ module.exports = function defineGrammar(dialect, extraRules) {
         /[.:]/,
         field('property', alias($.identifier, $.property_identifier)),
       )),
-
-      component: ($) => prec('literal', seq(
-        optional('static'),
-        choice(
-          'component',
-          'interface',
-        ),
-        repeat($.component_attribute),
-        field('body', $.component_body),
-      )),
-
-      component_attribute: ($) => choice(
-        seq(
-          alias($.identifier, $.attribute_label),
-          ':',
-          $.component_attribute,
-        ),
-        seq(
-          $.identifier,
-          '=',
-          $.expression,
-        ),
-        $.identifier,
-      ),
 
       function_expression: ($) => prec('literal', seq(
         'function',
@@ -1582,12 +1467,6 @@ module.exports = function defineGrammar(dialect, extraRules) {
         )),
         field('arguments', $.arguments),
       )),
-
-      component_body: ($) => seq(
-        '{',
-        repeat($.statement),
-        '}',
-      ),
 
       field_definition: ($) => seq(
         repeat(field('decorator', $.decorator)),
