@@ -1270,17 +1270,17 @@ static bool scanner_in_hash_eval_context(Scanner *scanner) {
 static bool scan_cf_component_content(TSLexer *lexer) {
     // Skip whitespace and script-style comments (// and /* */)
     for (;;) {
-        while (iswspace(lexer->lookahead)) skip(lexer);
+        while (iswspace(lexer->lookahead)) advance(lexer);
         if (lexer->lookahead == '/') {
-            skip(lexer);
+            advance(lexer);
             if (lexer->lookahead == '/') {
-                skip(lexer);
-                while (lexer->lookahead != 0 && lexer->lookahead != '\n') skip(lexer);
+                advance(lexer);
+                while (lexer->lookahead != 0 && lexer->lookahead != '\n') advance(lexer);
             } else if (lexer->lookahead == '*') {
-                skip(lexer);
+                advance(lexer);
                 while (lexer->lookahead != 0) {
-                    if (lexer->lookahead == '*') { skip(lexer); if (lexer->lookahead == '/') { skip(lexer); break; } }
-                    else skip(lexer);
+                    if (lexer->lookahead == '*') { advance(lexer); if (lexer->lookahead == '/') { advance(lexer); break; } }
+                    else advance(lexer);
                 }
             } else {
                 return false;
@@ -1295,7 +1295,7 @@ static bool scan_cf_component_content(TSLexer *lexer) {
     int len = 0;
     while (iswalpha(lexer->lookahead) && len < 15) {
         word[len++] = towlower(lexer->lookahead);
-        skip(lexer);
+        advance(lexer);
     }
     word[len] = '\0';
 
