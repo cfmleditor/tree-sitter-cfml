@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.26.6]
+
+- Fix for script based cfc's
+
 ## [0.26.5]
 
 - CFHTML / CFML grammars become one — cfhtml still exists for now, but tools and parsers only need to use cfml, cfscript, and cfquery dialects

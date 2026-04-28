@@ -578,7 +578,7 @@ module.exports = function defineGrammar(dialect, extraRules) {
       ),
 
       ...(extra),
-      
+
       /*
         START SCRIPT BASE RULES
       */
