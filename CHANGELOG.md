@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.26.5]
+
+- CFHTML / CFML grammars become one — cfhtml still exists for now, but tools and parsers only need to use cfml, cfscript, and cfquery dialects
+- Cut down the cfquery grammar — implements a reduced version of the cfquery grammar that shares common rules, to be built back up over time (the full grammar caused WASM builds to exceed 10 minutes, blocking zed.dev extension builds)
+
 ## [0.26.4]
 
 - Fixes for various regressions in 0.26.3

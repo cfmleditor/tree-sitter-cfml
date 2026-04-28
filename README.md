@@ -48,7 +48,7 @@ console.log(tree.rootNode.toString());
 ```toml
 [dependencies]
 tree-sitter = "0.25"
-tree-sitter-cfml = "0.26.4"
+tree-sitter-cfml = "0.26.5"
 ```
 
 The `tree-sitter` crate should be **0.25+** so the ABI matches the generated parsers (see `LANGUAGE_VERSION` in `cf*/src/parser.c`).
