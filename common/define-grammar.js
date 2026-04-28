@@ -73,6 +73,10 @@ module.exports = function defineGrammar(dialect, extraRules) {
 
       $.cf_component_content,
 
+      $._start_hash_expression,
+      $._single_hash,
+      $._hash_empty_external,
+
     ],
 
     supertypes: $ => [
@@ -146,7 +150,7 @@ module.exports = function defineGrammar(dialect, extraRules) {
       [$.labeled_statement, $._property_name],
       [$.computed_property_name, $.array],
       [$.binary_expression, $._initializer],
-      [$.hash_expression, $.hash_empty],
+      [$._hash_expression, $._hash_empty],
       [$.method_definition, $.access_type],
       [$.expression, $._property_name],
       [$.expression, $.object],
@@ -176,23 +180,14 @@ module.exports = function defineGrammar(dialect, extraRules) {
       [$.expression, $.for_statement],
       [$.expression, $._cf_tag_expression],
       [$.expression, $.function_expression],
-
-      ...(dialect === 'cfml' ? [
-        [$._hash_dialect_eval, $._hash_always_eval],
-      ] : dialect === 'cfquery' ? [
-        [$._hash_dialect_eval, $._hash_always_eval],
-      ] : dialect === 'cfhtml' ? [
-        [$._hash_dialect_eval, $.hash_expression],
-        [$._hash_dialect_eval, $.hash_expression, $.hash_empty],
-      ] : []),
     ],
 
     rules: {
 
-      program: $ => dialect === 'cfml' ? choice(
+      program: $ => choice(
         repeat($._node),
         $.component_file,
-      ) : repeat($._node),
+      ),
 
       component_file: $ => $.cf_component_content,
 
@@ -256,19 +251,19 @@ module.exports = function defineGrammar(dialect, extraRules) {
         $.html_text,
       ),
 
-      _cfoutput_node: $ => choice(
-        $.doctype,
-        $.entity,
-        $.element,
-        $._cf_tags,
-        $._hash_always_eval,
-        $.script_element,
-        $.style_element,
-        $.text,
-        $.erroneous_end_tag,
-        $.erroneous_cf_end_tag,
-        $.xml_decl,
-      ),
+      // _cfoutput_node: $ => choice(
+      //   $.doctype,
+      //   $.entity,
+      //   $.element,
+      //   $._cf_tags,
+      //   $._hash_always_eval,
+      //   $.script_element,
+      //   $.style_element,
+      //   $.text,
+      //   $.erroneous_end_tag,
+      //   $.erroneous_cf_end_tag,
+      //   $.xml_decl,
+      // ),
 
       _cf_open_tag: $ => prec.right(1, keyword('<cf')),
       _cf_close_tag: $ => prec.right(1, keyword('</cf')),
@@ -499,7 +494,7 @@ module.exports = function defineGrammar(dialect, extraRules) {
         $._start_cf_output_name,
         repeat($.cf_attribute),
         alias($._close_cf_tag_delim, '>'),
-        repeat($._cfoutput_node),
+        repeat($._node),
         $._cf_close_tag,
         $._end_cf_tag_name,
         alias($._close_cf_tag_delim, '>'),
@@ -1667,31 +1662,28 @@ module.exports = function defineGrammar(dialect, extraRules) {
         $._hash_always_eval,
       ),
 
-      _hash_dialect_eval: ($, previous) => {
-        const choices = [];
-        if (dialect === 'cfhtml') {
-          choices.push(alias('#', $.hash_single));
-        } else {
-          choices.push($.hash_empty);
-          choices.push($.hash_expression);
-        }
-        return choice(...choices);
-      },
+      _hash_dialect_eval: ($) => choice(
+        $.hash_expression,
+        alias($._hash_empty_external, $.hash_empty),
+        alias($._single_hash, $.hash_single),
+      ),
 
-      _hash_always_eval: ($, previous) => {
-        const choices = [];
-        choices.push($.hash_expression);
-        choices.push($.hash_empty);
-        return choice(...choices);
-      },
+      _hash_always_eval: ($) => choice(
+        alias($._hash_expression, $.hash_expression),
+        alias($._hash_empty, $.hash_empty),
+      ),
 
-      hash_expression: ($) => seq(
+      _hash: ($) => '#',
+
+      hash_expression: ($) => seq($._start_hash_expression, $.expression, $._hash),
+
+      _hash_expression: ($) => seq(
         '#',
-        optional($.expression),
+        $.expression,
         '#',
       ),
 
-      hash_empty: ($) => seq('#', '#'),
+      _hash_empty: ($) => seq('#', '#'),
 
       computed_property_name: ($) => seq(
         '[',

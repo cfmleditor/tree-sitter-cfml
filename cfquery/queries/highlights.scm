@@ -325,7 +325,7 @@
 (query_semicolon) @punctuation.delimiter
 
 (bracketed_query_value
-  ["(" ")"] @punctuation.bracket)
+  ["[" "]"] @punctuation.bracket)
 
 (parenthesized_query_node
   ["(" ")"] @punctuation.bracket)

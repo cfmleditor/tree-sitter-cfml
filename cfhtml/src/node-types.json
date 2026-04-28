@@ -499,6 +499,14 @@
       "required": false,
       "types": [
         {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
           "type": "hash_single",
           "named": true
         }
@@ -551,6 +559,14 @@
         },
         {
           "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         },
         {
@@ -1074,6 +1090,14 @@
           "named": true
         },
         {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
           "type": "hash_single",
           "named": true
         },
@@ -1281,6 +1305,14 @@
         },
         {
           "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "hash_single",
+          "named": true
+        },
+        {
+          "type": "html_text",
           "named": true
         },
         {
@@ -1604,6 +1636,14 @@
           "named": true
         },
         {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
           "type": "hash_single",
           "named": true
         },
@@ -1675,6 +1715,21 @@
         },
         {
           "type": "cf_xml_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "component_file",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_component_content",
           "named": true
         }
       ]
@@ -1840,6 +1895,14 @@
         },
         {
           "type": "erroneous_end_tag",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         },
         {
@@ -2438,7 +2501,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "expression",
@@ -3161,6 +3224,10 @@
           "named": true
         },
         {
+          "type": "component_file",
+          "named": true
+        },
+        {
           "type": "doctype",
           "named": true
         },
@@ -3178,6 +3245,14 @@
         },
         {
           "type": "erroneous_end_tag",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         },
         {
@@ -3257,6 +3332,14 @@
         },
         {
           "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         },
         {
@@ -4321,6 +4404,10 @@
     "type": "cf_comment",
     "named": true,
     "extra": true
+  },
+  {
+    "type": "cf_component_content",
+    "named": true
   },
   {
     "type": "cf_query_content",

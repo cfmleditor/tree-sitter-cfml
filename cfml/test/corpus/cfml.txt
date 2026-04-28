@@ -103,10 +103,12 @@ cffunction
           (cf_attribute_name)
           (quoted_cf_attribute_value
             (attribute_value)))))
+    (html_text)
     (hash_expression
       (binary_expression
         (identifier)
         (identifier)))
+    (html_text)
     (hash_expression
       (binary_expression
         (identifier)
@@ -389,9 +391,12 @@ nested cfif
           (true)
           (true)))
       (html_text))
-    (hash_expression
-      (identifier))
-    (hash_expression)))
+    (html_text)
+    (hash_single)
+    (html_text)
+    (hash_single)
+    (html_text)
+    (hash_empty)))
 
 ===================================
 / Characters used in tags and nested cfml comments
@@ -580,19 +585,24 @@ mixed cfset, cfscript, cfoutput, and complex attribute hashes
   (cf_script_tag
     (cf_script_content))
   (element
-    (self_closing_tag
+    (start_tag
       (tag_name)
       (tag_attributes
         (attribute
           (attribute_name)
           (quoted_attribute_value
-            (hash_expression
-              (hash_expression
-                (string
-                  (string_fragment)
-                  (hash_expression
-                    (identifier))
-                  (string_fragment)))))))
+            (hash_empty)))))
+    (end_tag
+      (tag_name)))
+  (cf_output_tag
+    (hash_expression
+      (identifier)))
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (hash_empty)))
+    (cf_selfclose_void_tag_end
       (self_closing_tag_delimiter)))
   (cf_selfclose_tag
     (cf_selfclose_void_tag_end
@@ -610,7 +620,7 @@ mixed cfset, cfscript, cfoutput, and complex attribute hashes
         (attribute
           (attribute_name)
           (quoted_attribute_value
-            (hash_expression))))
+            (hash_empty))))
       (tag_attributes
         (cf_if_tag
           (binary_expression
@@ -632,8 +642,9 @@ mixed cfset, cfscript, cfoutput, and complex attribute hashes
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)
-            (hash_expression
-              (identifier))))))
+            (hash_single)
+            (attribute_value)
+            (hash_single)))))
     (html_text)
     (end_tag
       (tag_name)))
@@ -645,7 +656,7 @@ mixed cfset, cfscript, cfoutput, and complex attribute hashes
           (attribute
             (attribute_name)
             (quoted_attribute_value
-              (hash_expression))))
+              (hash_empty))))
         (cf_comment)
         (tag_attributes
           (attribute
@@ -861,14 +872,14 @@ hash-empty attributes, cfif with complex call chain, and cfloop/cfset attribute 
         (attribute
           (attribute_name)
           (quoted_attribute_value
-            (hash_expression)
+            (hash_empty)
             (attribute_value))))
       (tag_attributes
         (attribute
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)
-            (hash_expression)
+            (hash_empty)
             (attribute_value)))))
     (end_tag
       (tag_name)))
@@ -885,7 +896,7 @@ hash-empty attributes, cfif with complex call chain, and cfloop/cfset attribute 
           (attribute_name)
           (quoted_attribute_value
             (attribute_value)
-            (hash_expression)
+            (hash_empty)
             (attribute_value))))
       (tag_attributes
         (attribute
@@ -986,7 +997,7 @@ cfoutput wrapping anchor with hash-empty and normal attributes
           (attribute
             (attribute_name)
             (quoted_attribute_value
-              (hash_expression)
+              (hash_empty)
               (attribute_value))))
         (tag_attributes
           (attribute
@@ -1864,6 +1875,7 @@ cfoutput boolean expression with JS-style operators
 
 (program
   (cf_output_tag
+    (html_text)
     (hash_expression
       (binary_expression
         (parenthesized_expression
@@ -1955,6 +1967,8 @@ nested calls
 		)>
 			<cfset local_orderby = "a.addr_desc">
 		</cfif>
+
+    <a href="#test"></a>
 ---
 
 (program
@@ -2004,7 +2018,18 @@ nested calls
         (identifier)
         (string
           (string_fragment)))
-      (cf_selfclose_void_tag_end))))
+      (cf_selfclose_void_tag_end)))
+  (element
+    (start_tag
+      (tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (hash_single)
+            (attribute_value)))))
+    (end_tag
+      (tag_name))))
 
 ===================================
 component ( cfscript )

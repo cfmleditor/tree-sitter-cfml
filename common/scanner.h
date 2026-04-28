@@ -55,12 +55,19 @@ enum TokenType {
 
     CF_OUTPUT_START_TAG_NAME,
 
-    CF_COMPONENT_CONTENT
+    CF_COMPONENT_CONTENT,
+
+    START_HASH_EXPRESSION,
+    SINGLE_HASH,
+    HASH_EMPTY
 };
 
 typedef struct {
     Array(Tag) tags;
     Array(Tag) cf_tags;
+    uint16_t cfoutput_depth;
+    uint16_t cfcomponent_depth;
+    uint16_t cffunction_depth;
 } Scanner;
 
 typedef enum {
@@ -113,6 +120,14 @@ static unsigned serialize(Scanner *scanner, char *buffer) {
     unsigned size = 0;
     SERIALIZE_TAGS(scanner->tags, buffer, size);
     SERIALIZE_TAGS(scanner->cf_tags, buffer, size);
+    if (size + sizeof(scanner->cfoutput_depth) + sizeof(scanner->cfcomponent_depth) + sizeof(scanner->cffunction_depth) < TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
+        memcpy(&buffer[size], &scanner->cfoutput_depth, sizeof(scanner->cfoutput_depth));
+        size += sizeof(scanner->cfoutput_depth);
+        memcpy(&buffer[size], &scanner->cfcomponent_depth, sizeof(scanner->cfcomponent_depth));
+        size += sizeof(scanner->cfcomponent_depth);
+        memcpy(&buffer[size], &scanner->cffunction_depth, sizeof(scanner->cffunction_depth));
+        size += sizeof(scanner->cffunction_depth);
+    }
     return size;
 }
 
@@ -142,10 +157,25 @@ static unsigned serialize(Scanner *scanner, char *buffer) {
 } while(0)
 
 static void deserialize(Scanner *scanner, const char *buffer, unsigned length) {
+    scanner->cfoutput_depth = 0;
+    scanner->cfcomponent_depth = 0;
+    scanner->cffunction_depth = 0;
     if (length > 0) {
         unsigned size = 0;
         DESERIALIZE_TAGS(scanner->tags, buffer, size);
         DESERIALIZE_TAGS(scanner->cf_tags, buffer, size);
+        if (size + sizeof(scanner->cfoutput_depth) <= length) {
+            memcpy(&scanner->cfoutput_depth, &buffer[size], sizeof(scanner->cfoutput_depth));
+            size += sizeof(scanner->cfoutput_depth);
+        }
+        if (size + sizeof(scanner->cfcomponent_depth) <= length) {
+            memcpy(&scanner->cfcomponent_depth, &buffer[size], sizeof(scanner->cfcomponent_depth));
+            size += sizeof(scanner->cfcomponent_depth);
+        }
+        if (size + sizeof(scanner->cffunction_depth) <= length) {
+            memcpy(&scanner->cffunction_depth, &buffer[size], sizeof(scanner->cffunction_depth));
+            size += sizeof(scanner->cffunction_depth);
+        }
     } else {
         for (unsigned i = 0; i < scanner->tags.size; i++) tag_free(&scanner->tags.contents[i]);
         array_clear(&scanner->tags);
@@ -295,37 +325,26 @@ static bool scan_html_text(TSLexer *lexer) {
     // immediately follows a newline.
     bool at_newline = false;
 
+    bool saw_any = false;
     while (lexer->lookahead != 0 && lexer->lookahead != '<' && lexer->lookahead != '>' && lexer->lookahead != '{' &&
            lexer->lookahead != '}' && lexer->lookahead != '&' && lexer->lookahead != '#') {
         bool is_wspace = iswspace(lexer->lookahead);
         if (lexer->lookahead == '\n') {
             at_newline = true;
         } else {
-            // If at_newline is already true, and we see some whitespace, then it must stay true.
-            // Otherwise, it should be false.
-            //
-            // See the table below to determine the logic for computing `saw_text`.
-            //
-            // |------------------------------------|
-            // | at_newline | is_wspace | saw_text  |
-            // |------------|-----------|-----------|
-            // | false (0)  | false (0) | true  (1) |
-            // | false (0)  | true  (1) | true  (1) |
-            // | true  (1)  | false (0) | true  (1) |
-            // | true  (1)  | true  (1) | false (0) |
-            // |------------------------------------|
-
             at_newline &= is_wspace;
             if (!at_newline) {
                 saw_text = true;
             }
         }
-
+        saw_any = true;
         advance(lexer);
     }
 
     lexer->result_symbol = HTML_TEXT;
-    return saw_text;
+    // Emit whitespace-only content when the next char is '#' so the parser
+    // advances to a state where hash tokens become valid.
+    return saw_text || (saw_any && lexer->lookahead == '#');
 }
 
 
@@ -841,9 +860,21 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
             break;
         case CF_OUTPUT:
             lexer->result_symbol = CF_OUTPUT_START_TAG_NAME;
+            if (is_cf_context) {
+                scanner->cfoutput_depth++;
+            }
             break;
         default:
             lexer->result_symbol = is_cf_context ? CF_START_TAG_NAME : START_TAG_NAME;
+            if (is_cf_context && tag.type == CFML) {
+                if (tag.tag_name.size == 9 &&
+                    memcmp(tag.tag_name.contents, "COMPONENT", 9) == 0) {
+                    scanner->cfcomponent_depth++;
+                } else if (tag.tag_name.size == 8 &&
+                    memcmp(tag.tag_name.contents, "FUNCTION", 8) == 0) {
+                    scanner->cffunction_depth++;
+                }
+            }
             break;
     }
 
@@ -884,7 +915,20 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
 
     if ( tag_back && tag_eq(tag_back, &tag) ) {
         pop_tag(scanner, is_cf_context);
-        if (is_cf_context && tag.type == CF_XML) {
+        if (is_cf_context && tag.type == CF_OUTPUT) {
+            if (scanner->cfoutput_depth > 0) scanner->cfoutput_depth--;
+            lexer->result_symbol = CF_END_TAG_NAME;
+        } else if (is_cf_context && tag.type == CFML &&
+                   tag.tag_name.size == 9 &&
+                   memcmp(tag.tag_name.contents, "COMPONENT", 9) == 0) {
+            if (scanner->cfcomponent_depth > 0) scanner->cfcomponent_depth--;
+            lexer->result_symbol = CF_END_TAG_NAME;
+        } else if (is_cf_context && tag.type == CFML &&
+                   tag.tag_name.size == 8 &&
+                   memcmp(tag.tag_name.contents, "FUNCTION", 8) == 0) {
+            if (scanner->cffunction_depth > 0) scanner->cffunction_depth--;
+            lexer->result_symbol = CF_END_TAG_NAME;
+        } else if (is_cf_context && tag.type == CF_XML) {
             lexer->result_symbol = CF_XML_END_TAG_NAME;
         } else if (is_cf_context && tag.type == CF_QUERY) {
             lexer->result_symbol = CF_QUERY_END_TAG_NAME;
@@ -918,7 +962,20 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
 
         if (found) {
             pop_tag(scanner, is_cf_context);
-            if (is_cf_context && tag.type == CF_XML) {
+            if (is_cf_context && tag.type == CF_OUTPUT) {
+                if (scanner->cfoutput_depth > 0) scanner->cfoutput_depth--;
+                lexer->result_symbol = CF_END_TAG_NAME;
+            } else if (is_cf_context && tag.type == CFML &&
+                       tag.tag_name.size == 9 &&
+                       memcmp(tag.tag_name.contents, "COMPONENT", 9) == 0) {
+                if (scanner->cfcomponent_depth > 0) scanner->cfcomponent_depth--;
+                lexer->result_symbol = CF_END_TAG_NAME;
+            } else if (is_cf_context && tag.type == CFML &&
+                       tag.tag_name.size == 8 &&
+                       memcmp(tag.tag_name.contents, "FUNCTION", 8) == 0) {
+                if (scanner->cffunction_depth > 0) scanner->cffunction_depth--;
+                lexer->result_symbol = CF_END_TAG_NAME;
+            } else if (is_cf_context && tag.type == CF_XML) {
                 lexer->result_symbol = CF_XML_END_TAG_NAME;
             } else if (is_cf_context && tag.type == CF_QUERY) {
                 lexer->result_symbol = CF_QUERY_END_TAG_NAME;
@@ -1206,6 +1263,10 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_con
     
 // }
 
+static bool scanner_in_hash_eval_context(Scanner *scanner) {
+    return scanner->cfoutput_depth > 0 || scanner->cfcomponent_depth > 0 || scanner->cffunction_depth > 0;
+}
+
 static bool scan_cf_component_content(TSLexer *lexer) {
     // Skip whitespace and script-style comments (// and /* */)
     for (;;) {
@@ -1255,8 +1316,31 @@ static bool scan_cf_component_content(TSLexer *lexer) {
 
 static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols) {
 
-    // bool scanned_cfoutput = false;
+    if (!valid_symbols[HTML_TEXT]) {
+        while (iswspace(lexer->lookahead)) {
+            skip(lexer);
+        }
+    }
 
+    if ((valid_symbols[START_HASH_EXPRESSION] || valid_symbols[SINGLE_HASH] || valid_symbols[HASH_EMPTY])
+            && !valid_symbols[AUTOMATIC_SEMICOLON] && lexer->lookahead == '#') {
+        if (lexer->lookahead != '#') return false;
+        advance(lexer);
+        if (lexer->lookahead == '#') {
+            advance(lexer);
+            lexer->mark_end(lexer);
+            lexer->result_symbol = HASH_EMPTY;
+        } else if (scanner_in_hash_eval_context(scanner)) {
+            // lexer->mark_end(lexer);
+            lexer->result_symbol = START_HASH_EXPRESSION;
+        } else {
+            lexer->mark_end(lexer);
+            lexer->result_symbol = SINGLE_HASH;
+        }
+        return true;
+    }
+
+    // bool scanned_cfoutput = false;
     if (valid_symbols[CF_COMPONENT_CONTENT]
             && scanner->tags.size == 0 && scanner->cf_tags.size == 0
             && scan_cf_component_content(lexer)) {
@@ -1265,12 +1349,6 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
     if (valid_symbols[RAW_TEXT] && !valid_symbols[START_TAG_NAME] && !valid_symbols[END_TAG_NAME]) {
         return scan_raw_text(scanner, lexer);
-    }
-
-    if (!valid_symbols[HTML_TEXT]) {
-        while (iswspace(lexer->lookahead)) {
-            skip(lexer);
-        }
     }
 
     if (valid_symbols[CF_XML_CONTENT]) {

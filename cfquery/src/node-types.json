@@ -468,107 +468,6 @@
     }
   },
   {
-    "type": "attribute",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute_name",
-          "named": true
-        },
-        {
-          "type": "attribute_value",
-          "named": true
-        },
-        {
-          "type": "quoted_attribute_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "attribute_name",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "attribute_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return_tag",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "augmented_assignment_expression",
     "named": true,
     "fields": {
@@ -1275,6 +1174,10 @@
       "required": false,
       "types": [
         {
+          "type": "bracketed_query_value",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
@@ -1319,23 +1222,15 @@
           "named": true
         },
         {
-          "type": "doctype",
+          "type": "comment",
           "named": true
         },
         {
-          "type": "element",
-          "named": true
-        },
-        {
-          "type": "entity",
+          "type": "double_quoted_query_value",
           "named": true
         },
         {
           "type": "erroneous_cf_end_tag",
-          "named": true
-        },
-        {
-          "type": "erroneous_end_tag",
           "named": true
         },
         {
@@ -1347,19 +1242,43 @@
           "named": true
         },
         {
-          "type": "script_element",
+          "type": "null",
           "named": true
         },
         {
-          "type": "style_element",
+          "type": "parenthesized_query_node",
           "named": true
         },
         {
-          "type": "text",
+          "type": "query_alias",
           "named": true
         },
         {
-          "type": "xml_decl",
+          "type": "query_assignment_expression",
+          "named": true
+        },
+        {
+          "type": "query_comma",
+          "named": true
+        },
+        {
+          "type": "query_identifier",
+          "named": true
+        },
+        {
+          "type": "query_number",
+          "named": true
+        },
+        {
+          "type": "query_semicolon",
+          "named": true
+        },
+        {
+          "type": "query_star",
+          "named": true
+        },
+        {
+          "type": "quoted_query_value",
           "named": true
         }
       ]
@@ -1849,11 +1768,6 @@
     }
   },
   {
-    "type": "doctype",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "double_quoted_query_value",
     "named": true,
     "fields": {},
@@ -1871,137 +1785,6 @@
         },
         {
           "type": "query_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "element",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "bracketed_query_value",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return_tag",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "comment",
-          "named": true
-        },
-        {
-          "type": "double_quoted_query_value",
-          "named": true
-        },
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "erroneous_cf_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "implicit_end_tag",
-          "named": true
-        },
-        {
-          "type": "null",
-          "named": true
-        },
-        {
-          "type": "parenthesized_query_node",
-          "named": true
-        },
-        {
-          "type": "query_alias",
-          "named": true
-        },
-        {
-          "type": "query_assignment_expression",
-          "named": true
-        },
-        {
-          "type": "query_comma",
-          "named": true
-        },
-        {
-          "type": "query_identifier",
-          "named": true
-        },
-        {
-          "type": "query_number",
-          "named": true
-        },
-        {
-          "type": "query_semicolon",
-          "named": true
-        },
-        {
-          "type": "query_star",
-          "named": true
-        },
-        {
-          "type": "quoted_query_value",
-          "named": true
-        },
-        {
-          "type": "self_closing_tag",
-          "named": true
-        },
-        {
-          "type": "start_tag",
           "named": true
         }
       ]
@@ -2054,21 +1837,6 @@
     "fields": {}
   },
   {
-    "type": "end_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "tag_name",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "erroneous_cf_end_tag",
     "named": true,
     "fields": {},
@@ -2078,21 +1846,6 @@
       "types": [
         {
           "type": "erroneous_cf_end_tag_name",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "erroneous_end_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "erroneous_end_tag_name",
           "named": true
         }
       ]
@@ -2564,7 +2317,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "expression",
@@ -5510,69 +5263,6 @@
     }
   },
   {
-    "type": "quoted_attribute_value",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "attribute_value",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return_tag",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "quoted_cf_attribute_value",
     "named": true,
     "fields": {},
@@ -5718,52 +5408,6 @@
     }
   },
   {
-    "type": "script_element",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "raw_text",
-          "named": true
-        },
-        {
-          "type": "start_tag",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "self_closing_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "self_closing_tag_delimiter",
-          "named": true
-        },
-        {
-          "type": "tag_attributes",
-          "named": true
-        },
-        {
-          "type": "tag_name",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "sequence_expression",
     "named": true,
     "fields": {},
@@ -5788,25 +5432,6 @@
       "types": [
         {
           "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "start_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "tag_attributes",
-          "named": true
-        },
-        {
-          "type": "tag_name",
           "named": true
         }
       ]
@@ -5845,29 +5470,6 @@
         },
         {
           "type": "string_fragment",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "style_element",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "end_tag",
-          "named": true
-        },
-        {
-          "type": "raw_text",
-          "named": true
-        },
-        {
-          "type": "start_tag",
           "named": true
         }
       ]
@@ -6002,73 +5604,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "tag_attributes",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "attribute",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return_tag",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "quoted_attribute_value",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -6321,21 +5856,6 @@
     }
   },
   {
-    "type": "xml_decl",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "tag_attributes",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "yield_expression",
     "named": true,
     "fields": {},
@@ -6487,10 +6007,6 @@
     "named": false
   },
   {
-    "type": "<!",
-    "named": false
-  },
-  {
     "type": "</",
     "named": false
   },
@@ -6512,10 +6028,6 @@
   },
   {
     "type": "<>",
-    "named": false
-  },
-  {
-    "type": "<?",
     "named": false
   },
   {
@@ -6568,10 +6080,6 @@
   },
   {
     "type": "?:",
-    "named": false
-  },
-  {
-    "type": "?>",
     "named": false
   },
   {
@@ -6629,6 +6137,10 @@
   {
     "type": "as",
     "named": false
+  },
+  {
+    "type": "attribute_value",
+    "named": true
   },
   {
     "type": "auto_increment",
@@ -6802,10 +6314,6 @@
     "named": false
   },
   {
-    "type": "doctype",
-    "named": false
-  },
-  {
     "type": "double",
     "named": false
   },
@@ -6826,19 +6334,11 @@
     "named": false
   },
   {
-    "type": "entity",
-    "named": true
-  },
-  {
     "type": "enum",
     "named": false
   },
   {
     "type": "erroneous_cf_end_tag_name",
-    "named": true
-  },
-  {
-    "type": "erroneous_end_tag_name",
     "named": true
   },
   {
@@ -6919,10 +6419,6 @@
   },
   {
     "type": "implicit_cf_end_tag",
-    "named": true
-  },
-  {
-    "type": "implicit_end_tag",
     "named": true
   },
   {
@@ -7134,10 +6630,6 @@
     "named": true
   },
   {
-    "type": "raw_text",
-    "named": true
-  },
-  {
     "type": "real",
     "named": false
   },
@@ -7254,20 +6746,12 @@
     "named": false
   },
   {
-    "type": "tag_name",
-    "named": true
-  },
-  {
     "type": "target",
     "named": false
   },
   {
     "type": "text",
     "named": false
-  },
-  {
-    "type": "text",
-    "named": true
   },
   {
     "type": "than",
