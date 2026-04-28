@@ -222,8 +222,15 @@
       }
     },
     "text": {
-      "type": "PATTERN",
-      "value": "[^<>&\\s#\\r\\n\\u2028\\u2029]([^<>&#]*[^<>&\\s#\\r\\n\\u2028\\u2029])?"
+      "type": "TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": -1,
+        "content": {
+          "type": "PATTERN",
+          "value": "[^<>&\\s#\\r\\n\\u2028\\u2029]([^<>&#]*[^<>&\\s#\\r\\n\\u2028\\u2029])?"
+        }
+      }
     },
     "_node": {
       "type": "CHOICE",
@@ -8798,6 +8805,14 @@
       "for_statement"
     ],
     [
+      "expression",
+      "_cf_tag_expression"
+    ],
+    [
+      "expression",
+      "function_expression"
+    ],
+    [
       "_hash_dialect_eval",
       "hash_expression"
     ],
@@ -8805,14 +8820,6 @@
       "_hash_dialect_eval",
       "hash_expression",
       "hash_empty"
-    ],
-    [
-      "expression",
-      "_cf_tag_expression"
-    ],
-    [
-      "expression",
-      "function_expression"
     ]
   ],
   "precedences": [
@@ -8832,6 +8839,14 @@
       {
         "type": "STRING",
         "value": "unary_void"
+      },
+      {
+        "type": "STRING",
+        "value": "binary_is"
+      },
+      {
+        "type": "STRING",
+        "value": "binary_not"
       },
       {
         "type": "STRING",

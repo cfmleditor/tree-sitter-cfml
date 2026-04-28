@@ -1,28 +1,50 @@
-; Expose CF variables used inside SQL as symbols
-(hash_param
-  (cf_identifier_path) @variable.parameter)
+; Script function definitions
+(function_declaration
+  name: (identifier) @name) @definition.function
 
-; Capture the root scope of CF variables inside hashes (e.g. VARIABLES, ARGUMENTS, SESSION)
-((hash_param
-   (cf_identifier_path
-     (identifier) @scope.root))
- (#set! role "cf-scope"))
+(function_expression
+  name: (identifier) @name) @definition.function
 
-; Capture table aliases from FROM clause in cfquery SQL
-((cfquery_table_reference
-   name: (identifier) @type
-   alias: (identifier) @variable)
- (#set! role "table"))
+(method_definition
+  name: (property_identifier) @name) @definition.method
 
-; Capture column-like expressions in SELECT list (very loose)
-((cfquery_select_list
-   (cfquery_select_item
-     (cfquery_expression
-       (_) @variable))
-   (cfquery_select_item
-     (cfquery_expression
-       (_) @variable)))
- (#set! role "column"))
+; cffunction tag as function definition
+(cf_tag
+  (cf_start_tag
+    (cf_tag_name) @_cffunction
+    (cf_tag_attributes
+      (cf_attribute
+        (cf_attribute_name) @_name
+        (quoted_cf_attribute_value
+          (attribute_value) @name))))
+  (#match? @_cffunction "(?i)^function$")
+  (#eq? @_name "name")) @definition.function
 
-; NOTE: cfquery dialect trees do not currently contain full CF tag nodes,
-; so we do not attempt to tag cfqueryparam-style tags here.
+; Component definitions (tag-based)
+(cf_tag
+  (cf_start_tag
+    (cf_tag_name) @_cfcomponent
+    (cf_tag_attributes
+      (cf_attribute
+        (cf_attribute_name) @_name
+        (quoted_cf_attribute_value
+          (attribute_value) @name))))
+  (#match? @_cfcomponent "(?i)^component$")
+  (#eq? @_name "name")) @definition.class
+
+; CFML tags as generic definition points (outline/symbol list)
+(cf_tag
+  (cf_start_tag
+    (cf_tag_name) @name)) @definition.tag
+
+(cf_tag
+  (cf_start_tag_with_selfclose
+    (cf_tag_name) @name)) @definition.tag
+
+; Function calls (script)
+(call_expression
+  function: (identifier) @name) @reference.call
+
+(call_expression
+  function: (member_expression
+    property: (property_identifier) @name)) @reference.call

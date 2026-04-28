@@ -1020,11 +1020,9 @@ module.exports = grammar({
       seq(
         '"',
         choice(
-        // $.hash_single,
           repeat(choice(
             $._hash_always_eval,
             '""',
-            // $.escape_sequence,
             alias($.unescaped_double_string_fragment, $.string_fragment),
           )),
         ),

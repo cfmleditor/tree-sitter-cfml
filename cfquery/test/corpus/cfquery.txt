@@ -5,28 +5,12 @@ SELECT foo FROM bar WHERE id = ?
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (identifier)))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_clause
-          (keyword_where)
-          (cfquery_expression
-            (cfquery_binary_expression
-              (cfquery_primary_expression
-                (identifier))
-              (cfquery_primary_expression
-                (parameter)))))))))
+  (query_identifier)
+  (query_identifier)
+  (query_assignment_expression
+    (query_identifier)
+    (query_identifier
+      (placeholder))))
 
 ===================================
 hash parameter and between
@@ -35,36 +19,18 @@ SELECT * FROM users WHERE created_at BETWEEN #ARGUMENTS.startDate# AND #ARGUMENT
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_clause
-          (keyword_where)
-          (cfquery_expression
-            (cfquery_between_expression
-              (cfquery_primary_expression
-                (identifier))
-              (keyword_between)
-              (cfquery_primary_expression
-                (hash_param
-                  (cf_identifier_path
-                    (identifier)
-                    (identifier))))
-              (keyword_and)
-              (cfquery_primary_expression
-                (hash_param
-                  (cf_identifier_path
-                    (identifier)
-                    (identifier)))))))))))
+  (query_star
+    (star))
+  (query_identifier)
+  (query_identifier)
+  (hash_expression
+    (member_expression
+      (identifier)
+      (property_identifier)))
+  (hash_expression
+    (member_expression
+      (identifier)
+      (property_identifier))))
 
 ===================================
 top, union and limit
@@ -76,36 +42,17 @@ LIMIT 100
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_union_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_top_clause
-          (keyword_top)
-          (number))
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier)))))
-      (keyword_union)
-      (keyword_all)
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_limit_clause
-          (keyword_limit)
-          (number))))))
+  (query_identifier)
+  (query_identifier)
+  (query_star
+    (star))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_star
+    (star))
+  (query_identifier)
+  (query_identifier))
 
 ===================================
 distinct, exists, case and indexed hash
@@ -120,88 +67,44 @@ WHERE u.id = #ARGUMENTS.userIds[1]#
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (keyword_distinct)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (cfquery_qualified_name
-                  (identifier)
-                  (identifier)))))
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_case_expression
-                (keyword_case)
-                (cfquery_when_clause
-                  (keyword_when)
-                  (cfquery_expression
-                    (cfquery_exists_expression
-                      (keyword_exists)
-                      (cfquery_subquery
-                        (cfquery_select_statement
-                          (cfquery_select_core
-                            (keyword_select)
-                            (cfquery_select_list
-                              (cfquery_select_item
-                                (cfquery_expression
-                                  (cfquery_primary_expression
-                                    (number)))))
-                            (cfquery_from_clause
-                              (keyword_from)
-                              (cfquery_from_table_list
-                                (cfquery_table_reference
-                                  (identifier)
-                                  (identifier))))
-                            (cfquery_clause
-                              (keyword_where)
-                              (cfquery_expression
-                                (cfquery_binary_expression
-                                  (cfquery_primary_expression
-                                    (cfquery_qualified_name
-                                      (identifier)
-                                      (identifier)))
-                                  (cfquery_primary_expression
-                                    (cfquery_qualified_name
-                                      (identifier)
-                                      (identifier)))))))))))
-                  (keyword_then)
-                  (cfquery_expression
-                    (cfquery_primary_expression
-                      (cfquery_single_quoted_string
-                        (string_fragment)))))
-                (cfquery_else_clause
-                  (keyword_else)
-                  (cfquery_expression
-                    (cfquery_primary_expression
-                      (cfquery_single_quoted_string
-                        (string_fragment)))))
-                (keyword_end)))
-            (keyword_as)
-            (identifier)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier)
-              (identifier))))
-        (cfquery_clause
-          (keyword_where)
-          (cfquery_expression
-            (cfquery_binary_expression
-              (cfquery_primary_expression
-                (cfquery_qualified_name
-                  (identifier)
-                  (identifier)))
-              (cfquery_primary_expression
-                (hash_param
-                  (cf_identifier_path
-                    (identifier)
-                    (identifier)
-                    (number)))))))))))
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (query_comma)
+  (query_identifier)
+  (query_identifier)
+  (parenthesized_query_node
+    (query_number
+      (number))
+    (query_identifier)
+    (query_identifier)
+    (query_alias
+      (query_identifier)
+      (query_assignment_expression
+        (query_identifier)
+        (query_alias
+          (query_identifier)
+          (query_identifier)))))
+  (query_identifier)
+  (quoted_query_value
+    (query_value))
+  (query_identifier)
+  (quoted_query_value
+    (query_value))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_alias
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (hash_expression
+        (subscript_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (number))))))
 
 ===================================
 malformed select (fault tolerant)
@@ -209,16 +112,7 @@ malformed select (fault tolerant)
 SELECT FROM
 ---
 
-(program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (identifier)))))))))
+(program)
 
 ===================================
 limit offset and ilike
@@ -227,33 +121,14 @@ SELECT * FROM users WHERE name LIKE '%foo%' LIMIT 10 OFFSET 20
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_clause
-          (keyword_where)
-          (cfquery_expression
-            (cfquery_binary_expression
-              (cfquery_primary_expression
-                (identifier))
-              (keyword_like)
-              (cfquery_primary_expression
-                (cfquery_single_quoted_string
-                  (string_fragment))))))
-        (cfquery_limit_clause
-          (keyword_limit)
-          (number)
-          (keyword_offset)
-          (number))))))
+  (query_star
+    (star))
+  (query_identifier)
+  (query_identifier)
+  (quoted_query_value
+    (query_value))
+  (query_identifier)
+  (query_identifier))
 
 ===================================
 cfqueryparam with hash in attribute
@@ -264,45 +139,28 @@ WHERE t.column_name = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.co
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (cfquery_qualified_name
-                  (identifier)
-                  (identifier))))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
+  (query_alias
+    (query_identifier))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_alias
+    (query_identifier))
+  (query_assignment_expression
+    (query_identifier)
+    (cf_selfclose_tag
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (hash_expression
+            (member_expression
               (identifier)
-              (identifier))))
-        (cfquery_clause
-          (keyword_where)
-          (cfquery_expression
-            (cfquery_binary_expression
-              (cfquery_primary_expression
-                (cfquery_qualified_name
-                  (identifier)
-                  (identifier)))
-              (cfquery_primary_expression
-                (cf_selfclose_tag
-                  (cf_attribute
-                    (cf_attribute_name)
-                    (quoted_cf_attribute_value
-                      (attribute_value)))
-                  (cf_attribute
-                    (cf_attribute_name)
-                    (quoted_cf_attribute_value
-                      (hash_expression
-                        (member_expression
-                          (identifier)
-                          (property_identifier)))))
-                  (cf_selfclose_void_tag_end))))))))))
+              (property_identifier)))))
+      (cf_selfclose_void_tag_end))))
 
 ===================================
 insert with values and hash param
@@ -311,27 +169,19 @@ INSERT INTO items (a, b) VALUES (1, #ARGUMENTS.x#)
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_insert_statement
-      (keyword_insert)
-      (keyword_into)
-      (identifier)
-      (cfquery_column_list
-        (cfquery_column_list_body
-          (identifier)
-          (identifier)))
-      (keyword_values)
-      (cfquery_value_list
-        (cfquery_value_list_body
-          (cfquery_expression
-            (cfquery_primary_expression
-              (number)))
-          (cfquery_expression
-            (cfquery_primary_expression
-              (hash_param
-                (cf_identifier_path
-                  (identifier)
-                  (identifier))))))))))
+  (query_identifier)
+  (parenthesized_query_node
+    (query_identifier)
+    (query_comma)
+    (query_identifier))
+  (parenthesized_query_node
+    (query_number
+      (number))
+    (query_comma)
+    (hash_expression
+      (member_expression
+        (identifier)
+        (property_identifier)))))
 
 ===================================
 update set and where with hash params
@@ -340,29 +190,15 @@ UPDATE users SET name = #name# WHERE id = #id#
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_update_statement
-      (keyword_update)
-      (identifier)
-      (keyword_set)
-      (cfquery_assignment_list
-        (cfquery_assignment
-          (identifier)
-          (cfquery_expression
-            (cfquery_primary_expression
-              (hash_param
-                (cf_identifier_path
-                  (identifier)))))))
-      (cfquery_clause
-        (keyword_where)
-        (cfquery_expression
-          (cfquery_binary_expression
-            (cfquery_primary_expression
-              (identifier))
-            (cfquery_primary_expression
-              (hash_param
-                (cf_identifier_path
-                  (identifier))))))))))
+  (query_identifier)
+  (query_assignment_expression
+    (query_identifier)
+    (hash_expression
+      (identifier)))
+  (query_assignment_expression
+    (query_identifier)
+    (hash_expression
+      (identifier))))
 
 ===================================
 delete from with hash in where
@@ -371,22 +207,13 @@ DELETE FROM logs WHERE id = #request.id#
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_delete_statement
-      (keyword_delete)
-      (keyword_from)
-      (identifier)
-      (cfquery_clause
-        (keyword_where)
-        (cfquery_expression
-          (cfquery_binary_expression
-            (cfquery_primary_expression
-              (identifier))
-            (cfquery_primary_expression
-              (hash_param
-                (cf_identifier_path
-                  (identifier)
-                  (identifier))))))))))
+  (query_identifier)
+  (query_assignment_expression
+    (query_identifier)
+    (hash_expression
+      (member_expression
+        (identifier)
+        (property_identifier)))))
 
 ===================================
 select inner join on
@@ -395,40 +222,20 @@ SELECT u.id FROM users u INNER JOIN orders o ON u.id = o.user_id
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (cfquery_qualified_name
-                  (identifier)
-                  (identifier))))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier)
-              (identifier)
-              (cfquery_join_clause
-                (keyword_inner)
-                (keyword_join)
-                (cfquery_table_reference
-                  (identifier)
-                  (identifier))
-                (keyword_on)
-                (cfquery_expression
-                  (cfquery_binary_expression
-                    (cfquery_primary_expression
-                      (cfquery_qualified_name
-                        (identifier)
-                        (identifier)))
-                    (cfquery_primary_expression
-                      (cfquery_qualified_name
-                        (identifier)
-                        (identifier)))))))))))))
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_alias
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (query_alias
+        (query_identifier)
+        (query_identifier)))))
 
 ===================================
 select order by desc
@@ -437,26 +244,11 @@ SELECT * FROM t ORDER BY created_at DESC
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_order_by_clause
-          (keyword_order_by)
-          (cfquery_order_by_expression_list
-            (cfquery_order_by_expression
-              (cfquery_expression
-                (cfquery_primary_expression
-                  (identifier)))
-              (keyword_desc))))))))
+  (query_star
+    (star))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier))
 
 ===================================
 select group by two columns
@@ -465,33 +257,13 @@ SELECT a, b FROM t GROUP BY a, b
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (identifier))))
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (identifier)))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_group_by_clause
-          (keyword_group_by)
-          (cfquery_group_by_expression_list
-            (cfquery_expression
-              (cfquery_primary_expression
-                (identifier)))
-            (cfquery_expression
-              (cfquery_primary_expression
-                (identifier)))))))))
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_comma)
+  (query_identifier))
 
 ===================================
 where and with parenthesized or
@@ -500,47 +272,23 @@ SELECT * FROM t WHERE a = 1 AND (b = 2 OR c = 3)
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_clause
-          (keyword_where)
-          (cfquery_expression
-            (cfquery_binary_expression
-              (cfquery_expression
-                (cfquery_binary_expression
-                  (cfquery_primary_expression
-                    (identifier))
-                  (cfquery_primary_expression
-                    (number))))
-              (keyword_and)
-              (cfquery_expression
-                (cfquery_primary_expression
-                  (cfquery_parenthesized_expression
-                    (cfquery_expression
-                      (cfquery_binary_expression
-                        (cfquery_expression
-                          (cfquery_binary_expression
-                            (cfquery_primary_expression
-                              (identifier))
-                            (cfquery_primary_expression
-                              (number))))
-                        (keyword_or)
-                        (cfquery_expression
-                          (cfquery_binary_expression
-                            (cfquery_primary_expression
-                              (identifier))
-                            (cfquery_primary_expression
-                              (number))))))))))))))))
+  (query_star
+    (star))
+  (query_identifier)
+  (query_assignment_expression
+    (query_identifier)
+    (query_number
+      (number)))
+  (parenthesized_query_node
+    (query_assignment_expression
+      (query_identifier)
+      (query_number
+        (number)))
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (query_number
+        (number)))))
 
 ===================================
 where in list literals
@@ -549,36 +297,19 @@ SELECT * FROM t WHERE id IN (1, 2, 3)
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_clause
-          (keyword_where)
-          (cfquery_expression
-            (cfquery_in_expression
-              (cfquery_primary_expression
-                (identifier))
-              (keyword_in)
-              (cfquery_in_list
-                (cfquery_in_list_body
-                  (cfquery_expression
-                    (cfquery_primary_expression
-                      (number)))
-                  (cfquery_expression
-                    (cfquery_primary_expression
-                      (number)))
-                  (cfquery_expression
-                    (cfquery_primary_expression
-                      (number))))))))))))
+  (query_star
+    (star))
+  (query_identifier)
+  (query_identifier)
+  (parenthesized_query_node
+    (query_number
+      (number))
+    (query_comma)
+    (query_number
+      (number))
+    (query_comma)
+    (query_number
+      (number))))
 
 ===================================
 hash param in select list and alias
@@ -587,24 +318,10 @@ SELECT #COLUMN_NAME# AS col FROM my_table
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (hash_param
-                  (cf_identifier_path
-                    (identifier)))))
-            (keyword_as)
-            (identifier)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))))))
+  (hash_expression
+    (identifier))
+  (query_identifier)
+  (query_identifier))
 
 ===================================
 sql line comment before select
@@ -615,20 +332,8 @@ SELECT id FROM users
 
 (program
   (comment)
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (identifier)))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))))))
+  (query_identifier)
+  (query_identifier))
 
 ===================================
 with cte select
@@ -638,45 +343,18 @@ SELECT * FROM active
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_with_clause
-        (keyword_with)
-        (cfquery_cte_list
-          (cfquery_cte
-            (identifier)
-            (keyword_as)
-            (cfquery_cte_query
-              (cfquery_select_core
-                (keyword_select)
-                (cfquery_select_list
-                  (cfquery_select_item
-                    (cfquery_expression
-                      (cfquery_primary_expression
-                        (identifier)))))
-                (cfquery_from_clause
-                  (keyword_from)
-                  (cfquery_from_table_list
-                    (cfquery_table_reference
-                      (identifier))))
-                (cfquery_clause
-                  (keyword_where)
-                  (cfquery_expression
-                    (cfquery_binary_expression
-                      (cfquery_primary_expression
-                        (identifier))
-                      (cfquery_primary_expression
-                        (number))))))))))
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))))))
+  (query_identifier)
+  (query_identifier)
+  (parenthesized_query_node
+    (query_identifier)
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (query_number
+        (number))))
+  (query_star
+    (star))
+  (query_identifier))
 
 ===================================
 truncate table
@@ -685,11 +363,8 @@ TRUNCATE TABLE temp_logs
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_truncate_statement
-      (keyword_truncate)
-      (keyword_table)
-      (identifier))))
+  (query_identifier)
+  (query_identifier))
 
 ===================================
 where is not null
@@ -698,27 +373,11 @@ SELECT * FROM t WHERE col IS NOT NULL
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_clause
-          (keyword_where)
-          (cfquery_expression
-            (cfquery_is_null_expression
-              (cfquery_primary_expression
-                (identifier))
-              (keyword_is)
-              (keyword_not)
-              (keyword_null))))))))
+  (query_star
+    (star))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier))
 
 ===================================
 cast as type
@@ -727,28 +386,12 @@ SELECT CAST(id AS VARCHAR(10)) FROM t
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (cfquery_cast_expression
-                  (keyword_cast)
-                  (cfquery_expression
-                    (cfquery_primary_expression
-                      (identifier)))
-                  (keyword_as)
-                  (cfquery_type_name
-                    (identifier)
-                    (number)))))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))))))
+  (query_identifier)
+  (parenthesized_query_node
+    (query_identifier)
+    (parenthesized_query_node
+      (query_identifier)))
+  (query_identifier))
 
 ===================================
 bracket quoted identifiers
@@ -757,22 +400,10 @@ SELECT [col] FROM [tbl]
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (cfquery_bracket_identifier
-                  (identifier))))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (cfquery_bracket_identifier
-                (identifier)))))))))
+  (bracketed_query_value
+    (query_value))
+  (bracketed_query_value
+    (query_value)))
 
 ===================================
 order by offset fetch next
@@ -781,34 +412,18 @@ SELECT * FROM t ORDER BY id OFFSET 10 ROWS FETCH NEXT 5 ROWS ONLY
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_order_by_clause
-          (keyword_order_by)
-          (cfquery_order_by_expression_list
-            (cfquery_order_by_expression
-              (cfquery_expression
-                (cfquery_primary_expression
-                  (identifier))))))
-        (cfquery_offset_fetch_clause
-          (keyword_offset)
-          (number)
-          (keyword_rows)
-          (keyword_fetch)
-          (keyword_next)
-          (number)
-          (keyword_rows)
-          (keyword_only))))))
+  (query_star
+    (star))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_number
+    (number))
+  (query_identifier)
+  (query_identifier))
 
 ===================================
 semicolon two statements
@@ -818,27 +433,13 @@ SELECT 2 AS b
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (number)))
-            (keyword_as)
-            (identifier)))))
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (number)))
-            (keyword_as)
-            (identifier)))))))
+  (query_number
+    (number))
+  (query_identifier)
+  (query_semicolon)
+  (query_number
+    (number))
+  (query_identifier))
 
 ===================================
 merge matched update
@@ -847,43 +448,27 @@ MERGE INTO users AS u USING staging AS s ON u.id = s.id WHEN MATCHED THEN UPDATE
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_merge_statement
-      (keyword_merge)
-      (keyword_into)
-      (cfquery_table_reference
-        (identifier)
-        (keyword_as)
-        (identifier))
-      (keyword_using)
-      (cfquery_table_reference
-        (identifier)
-        (keyword_as)
-        (identifier))
-      (keyword_on)
-      (cfquery_expression
-        (cfquery_binary_expression
-          (cfquery_primary_expression
-            (cfquery_qualified_name
-              (identifier)
-              (identifier)))
-          (cfquery_primary_expression
-            (cfquery_qualified_name
-              (identifier)
-              (identifier)))))
-      (keyword_when)
-      (keyword_matched)
-      (keyword_then)
-      (keyword_update)
-      (keyword_set)
-      (cfquery_assignment_list
-        (cfquery_assignment
-          (identifier)
-          (cfquery_expression
-            (cfquery_primary_expression
-              (cfquery_qualified_name
-                (identifier)
-                (identifier)))))))))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_alias
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (query_alias
+        (query_identifier)
+        (query_identifier))))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_assignment_expression
+    (query_identifier)
+    (query_alias
+      (query_identifier)
+      (query_identifier))))
 
 ===================================
 exec stored procedure
@@ -892,12 +477,10 @@ EXEC dbo.refresh_cache
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_exec_statement
-      (keyword_exec)
-      (cfquery_qualified_name
-        (identifier)
-        (identifier)))))
+  (query_identifier)
+  (query_alias
+    (query_identifier)
+    (query_identifier)))
 
 ===================================
 window clause
@@ -906,38 +489,14 @@ SELECT 1 FROM t WINDOW w AS (PARTITION BY id ORDER BY sort_key)
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (number)))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_window_clause
-          (keyword_window)
-          (cfquery_window_definition_list
-            (cfquery_window_definition
-              (identifier)
-              (keyword_as)
-              (keyword_partition_by)
-              (cfquery_group_by_expression_list
-                (cfquery_expression
-                  (cfquery_primary_expression
-                    (identifier))))
-              (cfquery_order_by_clause
-                (keyword_order_by)
-                (cfquery_order_by_expression_list
-                  (cfquery_order_by_expression
-                    (cfquery_expression
-                      (cfquery_primary_expression
-                        (identifier)))))))))))))
+  (query_number
+    (number))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (parenthesized_query_node
+    (query_identifier)
+    (query_identifier)))
 
 ===================================
 for update skip locked
@@ -946,25 +505,14 @@ SELECT * FROM t FOR UPDATE OF t SKIP LOCKED
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_for_update_clause
-          (keyword_for)
-          (keyword_update)
-          (keyword_of)
-          (identifier)
-          (keyword_skip)
-          (keyword_locked))))))
+  (query_star
+    (star))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier))
 
 ===================================
 pivot clause
@@ -973,40 +521,21 @@ SELECT * FROM sales PIVOT (SUM(amount) FOR yr IN (2023, 2024)) AS p
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier)
-              (cfquery_pivot_clause
-                (keyword_pivot)
-                (cfquery_expression
-                  (cfquery_primary_expression
-                    (cfquery_function_call
-                      (identifier)
-                      (cfquery_function_call_args
-                        (cfquery_expression
-                          (cfquery_primary_expression
-                            (identifier)))))))
-                (keyword_for)
-                (identifier)
-                (keyword_in)
-                (cfquery_in_list_body
-                  (cfquery_expression
-                    (cfquery_primary_expression
-                      (number)))
-                  (cfquery_expression
-                    (cfquery_primary_expression
-                      (number))))
-                (keyword_as)
-                (identifier)))))))))
+  (query_star
+    (star))
+  (query_identifier)
+  (query_identifier)
+  (parenthesized_query_node
+    (query_identifier)
+    (parenthesized_query_node
+      (query_identifier))
+    (query_identifier)
+    (query_identifier)
+    (parenthesized_query_node
+      (query_identifier)
+      (query_comma)
+      (query_identifier)))
+  (query_identifier))
 
 ===================================
 boolean literals
@@ -1015,35 +544,11 @@ SELECT TRUE, FALSE FROM t WHERE flag = UNKNOWN
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (cfquery_boolean_literal
-                  (keyword_true)))))
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (cfquery_boolean_literal
-                  (keyword_false))))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))
-        (cfquery_clause
-          (keyword_where)
-          (cfquery_expression
-            (cfquery_binary_expression
-              (cfquery_primary_expression
-                (identifier))
-              (cfquery_primary_expression
-                (cfquery_boolean_literal
-                  (keyword_unknown))))))))))
+  (query_comma)
+  (query_identifier)
+  (query_assignment_expression
+    (query_identifier)
+    (query_identifier)))
 
 ===================================
 double quoted identifier
@@ -1052,21 +557,9 @@ SELECT "quoted_col" FROM my_table
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (cfquery_double_quoted_identifier
-                  (identifier))))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))))))
+  (double_quoted_query_value
+    (query_value))
+  (query_identifier))
 
 ===================================
 unpivot clause
@@ -1075,35 +568,19 @@ SELECT * FROM p UNPIVOT (val FOR col IN (a, b)) AS u
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_star)))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier)
-              (cfquery_unpivot_clause
-                (keyword_unpivot)
-                (cfquery_expression
-                  (cfquery_primary_expression
-                    (identifier)))
-                (keyword_for)
-                (identifier)
-                (keyword_in)
-                (cfquery_in_list_body
-                  (cfquery_expression
-                    (cfquery_primary_expression
-                      (identifier)))
-                  (cfquery_expression
-                    (cfquery_primary_expression
-                      (identifier))))
-                (keyword_as)
-                (identifier)))))))))
+  (query_star
+    (star))
+  (query_identifier)
+  (query_identifier)
+  (parenthesized_query_node
+    (query_identifier)
+    (query_identifier)
+    (query_identifier)
+    (parenthesized_query_node
+      (query_identifier)
+      (query_comma)
+      (query_identifier)))
+  (query_identifier))
 
 ===================================
 window function over
@@ -1112,34 +589,13 @@ SELECT ROW_NUMBER() OVER (PARTITION BY id ORDER BY sort_key) FROM t
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (cfquery_window_invocation
-                  (identifier)
-                  (keyword_over)
-                  (keyword_partition_by)
-                  (cfquery_group_by_expression_list
-                    (cfquery_expression
-                      (cfquery_primary_expression
-                        (identifier))))
-                  (cfquery_order_by_clause
-                    (keyword_order_by)
-                    (cfquery_order_by_expression_list
-                      (cfquery_order_by_expression
-                        (cfquery_expression
-                          (cfquery_primary_expression
-                            (identifier)))))))))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))))))
+  (query_identifier)
+  (parenthesized_query_node)
+  (query_identifier)
+  (parenthesized_query_node
+    (query_identifier)
+    (query_identifier))
+  (query_identifier))
 
 ===================================
 count star over
@@ -1148,28 +604,14 @@ SELECT COUNT(*) OVER (PARTITION BY gid) FROM t
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (cfquery_window_invocation
-                  (identifier)
-                  (cfquery_function_call_args)
-                  (keyword_over)
-                  (keyword_partition_by)
-                  (cfquery_group_by_expression_list
-                    (cfquery_expression
-                      (cfquery_primary_expression
-                        (identifier)))))))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier))))))))
+  (query_identifier)
+  (parenthesized_query_node
+    (query_star
+      (star)))
+  (query_identifier)
+  (parenthesized_query_node
+    (query_identifier))
+  (query_identifier))
 
 ===================================
 merge when not matched insert
@@ -1178,51 +620,32 @@ MERGE INTO t USING s ON t.id = s.id WHEN MATCHED THEN UPDATE SET x = 1 WHEN NOT 
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_merge_statement
-      (keyword_merge)
-      (keyword_into)
-      (cfquery_table_reference
-        (identifier))
-      (keyword_using)
-      (cfquery_table_reference
-        (identifier))
-      (keyword_on)
-      (cfquery_expression
-        (cfquery_binary_expression
-          (cfquery_primary_expression
-            (cfquery_qualified_name
-              (identifier)
-              (identifier)))
-          (cfquery_primary_expression
-            (cfquery_qualified_name
-              (identifier)
-              (identifier)))))
-      (keyword_when)
-      (keyword_matched)
-      (keyword_then)
-      (keyword_update)
-      (keyword_set)
-      (cfquery_assignment_list
-        (cfquery_assignment
-          (identifier)
-          (cfquery_expression
-            (cfquery_primary_expression
-              (number)))))
-      (keyword_when)
-      (keyword_not)
-      (keyword_matched)
-      (keyword_then)
-      (keyword_insert)
-      (cfquery_column_list
-        (cfquery_column_list_body
-          (identifier)))
-      (keyword_values)
-      (cfquery_value_list
-        (cfquery_value_list_body
-          (cfquery_expression
-            (cfquery_primary_expression
-              (number))))))))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_alias
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (query_alias
+        (query_identifier)
+        (query_identifier))))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (query_assignment_expression
+    (query_identifier)
+    (query_number
+      (number)))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (parenthesized_query_node
+    (query_identifier))
+  (parenthesized_query_node
+    (query_number
+      (number))))
 
 ===================================
 if statement around clause
@@ -1235,23 +658,11 @@ FROM table_name t
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (cfquery_qualified_name
-                  (identifier)
-                  (identifier))))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier)
-              (identifier)))))))
+  (query_alias
+    (query_identifier))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
   (cf_if_tag
     (call_expression
       (identifier)
@@ -1259,29 +670,23 @@ FROM table_name t
         (identifier)
         (string
           (string_fragment))))
-    (cfquery_segment
-      (cfquery_clause
-        (keyword_where)
-        (cfquery_expression
-          (cfquery_binary_expression
-            (cfquery_primary_expression
-              (cfquery_qualified_name
+    (query_alias
+      (query_identifier))
+    (query_assignment_expression
+      (query_identifier)
+      (cf_selfclose_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (hash_expression
+              (member_expression
                 (identifier)
-                (identifier)))
-            (cfquery_primary_expression
-              (cf_selfclose_tag
-                (cf_attribute
-                  (cf_attribute_name)
-                  (quoted_cf_attribute_value
-                    (attribute_value)))
-                (cf_attribute
-                  (cf_attribute_name)
-                  (quoted_cf_attribute_value
-                    (hash_expression
-                      (member_expression
-                        (identifier)
-                        (property_identifier)))))
-                (cf_selfclose_void_tag_end)))))))))
+                (property_identifier)))))
+        (cf_selfclose_void_tag_end)))))
 
 ===================================
 loop around clause
@@ -1299,23 +704,11 @@ FROM table_name t
 ---
 
 (program
-  (cfquery_segment
-    (cfquery_select_statement
-      (cfquery_select_core
-        (keyword_select)
-        (cfquery_select_list
-          (cfquery_select_item
-            (cfquery_expression
-              (cfquery_primary_expression
-                (cfquery_qualified_name
-                  (identifier)
-                  (identifier))))))
-        (cfquery_from_clause
-          (keyword_from)
-          (cfquery_from_table_list
-            (cfquery_table_reference
-              (identifier)
-              (identifier)))))))
+  (query_alias
+    (query_identifier))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
   (cf_set_tag
     (assignment_expression
       (identifier)
@@ -1349,33 +742,27 @@ FROM table_name t
           (string
             (hash_expression
               (identifier)))))
-      (cfquery_segment
-        (cfquery_clause
-          (keyword_and
-            (hash_expression
-              (identifier)))
-          (cfquery_expression
-            (cfquery_binary_expression
-              (cfquery_primary_expression
-                (cfquery_qualified_name
-                  (hash_expression
-                    (identifier))
-                  (hash_expression
-                    (identifier))))
-              (cfquery_primary_expression
-                (cf_selfclose_tag
-                  (cf_attribute
-                    (cf_attribute_name)
-                    (quoted_cf_attribute_value
-                      (attribute_value)))
-                  (cf_attribute
-                    (cf_attribute_name)
-                    (quoted_cf_attribute_value
-                      (hash_expression
-                        (subscript_expression
-                          (identifier)
-                          (identifier)))))
-                  (cf_selfclose_void_tag_end)))))))
+      (hash_expression
+        (identifier))
+      (query_alias
+        (hash_expression
+          (identifier))
+        (query_assignment_expression
+          (hash_expression
+            (identifier))
+          (cf_selfclose_tag
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (attribute_value)))
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (hash_expression
+                  (subscript_expression
+                    (identifier)
+                    (identifier)))))
+            (cf_selfclose_void_tag_end))))
       (cf_set_tag
         (assignment_expression
           (identifier)
