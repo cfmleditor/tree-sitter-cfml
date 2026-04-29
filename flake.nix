@@ -7,7 +7,7 @@
 
   outputs = { self, nixpkgs, ... }@inputs:
     let
-      version = "0.26.6";
+      version = "0.26.7";
 
       # Matches pkgs.tree-sitter
       supportedSystems = [

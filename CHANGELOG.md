@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.26.7]
+
+- Scanner code improvements
+
 ## [0.26.6]
 
 - Fix for script based cfc's
