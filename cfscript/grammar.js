@@ -1176,9 +1176,20 @@ module.exports = grammar({
     query_expression: ($) => seq(
       'queryExecute',
       '(',
-      '"',
-      $.query_text,
-      '"',
+      repeat(
+        seq(
+          choice(
+            seq(
+              '"',
+              $.query_text,
+              '"',
+            ),
+            $.identifier,
+            $.parenthesized_expression,
+          ),
+          optional('&'),
+        ),
+      ),
       repeat(seq(',', $.expression)),
       ')',
     ),

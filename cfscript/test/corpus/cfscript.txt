@@ -1047,3 +1047,76 @@ Lucee operators (NOT, XOR, MOD, CT, NCT, <>)
         (identifier)
         (identifier)))
     (statement_block)))
+
+===================================
+queryExecute test
+===================================
+var data = queryExecute("
+    SELECT courseId
+    FROM Courses AS c
+        JOIN Employees AS i ON c.instructorId = i.employeeId
+    WHERE c.startDate BETWEEN :startDate AND :endDate AND c.statusId < 4
+        " & sql,
+{
+    startDate   : { cfsqltype: "date", value: startDate },
+    endDate     : { cfsqltype: "date", value: endDate.add("d", 1) },
+    instructorId: { cfsqltype: "integer", value: instructorId },
+    courseDate  : { cfsqltype: "date", value: courseDate }
+});
+---
+
+(program
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (query_expression
+        (query_text)
+        (identifier)
+        (object
+          (pair
+            (property_identifier)
+            (object
+              (pair
+                (property_identifier)
+                (string
+                  (string_fragment)))
+              (pair
+                (property_identifier)
+                (identifier))))
+          (pair
+            (property_identifier)
+            (object
+              (pair
+                (property_identifier)
+                (string
+                  (string_fragment)))
+              (pair
+                (property_identifier)
+                (call_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier))
+                  (arguments
+                    (string
+                      (string_fragment))
+                    (number))))))
+          (pair
+            (property_identifier)
+            (object
+              (pair
+                (property_identifier)
+                (string
+                  (string_fragment)))
+              (pair
+                (property_identifier)
+                (identifier))))
+          (pair
+            (property_identifier)
+            (object
+              (pair
+                (property_identifier)
+                (string
+                  (string_fragment)))
+              (pair
+                (property_identifier)
+                (identifier)))))))))
