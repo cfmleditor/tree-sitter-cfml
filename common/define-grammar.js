@@ -8,9 +8,7 @@
 // @ts-check
 
 // @ts-ignore
-module.exports = function defineGrammar(dialect, extraRules) {
-  const extra = extraRules ? extraRules() : {};
-
+module.exports = function defineGrammar(dialect) {
   return grammar({
     name: dialect,
 
@@ -139,7 +137,6 @@ module.exports = function defineGrammar(dialect, extraRules) {
       [$.object, $.object_pattern],
       [$.primary_expression, $.pattern],
       [$.assignment_expression, $.pattern],
-      [$.function_expression, $.parameter_type],
       [$.primary_expression, $.path],
       [$.primary_expression, $.parameter_type],
       [$.primary_expression, $._property_name],
@@ -683,8 +680,6 @@ module.exports = function defineGrammar(dialect, extraRules) {
           '"'),
       ),
 
-      ...(extra),
-
       /*
         START SCRIPT BASE RULES
       */
@@ -1122,40 +1117,14 @@ module.exports = function defineGrammar(dialect, extraRules) {
         'abstract',
       ),
 
-      // Type names that are also Lucee/CFML built-in functions (array, struct, query, etc.)
-      // are matched via $.identifier so that e.g. array(1) and structNew() parse as calls.
-      return_type: ($) => choice(
-        'any',
-        'string',
-        'numeric',
-        'xml',
-        'binary',
-        'boolean',
-        'date',
-        'function',
-        'guid',
-        'void',
-        $.identifier,
-      ),
-
       parameter_type: ($) => choice(
-        'any',
-        'string',
-        'numeric',
-        'xml',
-        'binary',
-        'boolean',
-        'date',
-        'function',
-        'guid',
-        'void',
         $.path,
         $.identifier,
       ),
 
       function_declaration: ($) => prec.right('declaration', seq(
         optional($.access_type),
-        optional($.return_type),
+        optional(choice('function', $.path, $.identifier)),
         'function',
         field('name', $.identifier),
         $._call_signature,
@@ -1213,29 +1182,8 @@ module.exports = function defineGrammar(dialect, extraRules) {
         choice('.', field('optional_chain', $.optional_chain), field('static_chain', $.static_chain)),
         field('property', choice(
           $.private_property_identifier,
-          // Treat common CFML scopes as a distinct kind of identifier so tooling can
-          // recognize scope-qualified accesses like variables.foo or session.user.
           alias(
-            choice(
-              $.identifier,
-              alias(
-                choice(
-                  'variables',
-                  'arguments',
-                  'session',
-                  'application',
-                  'server',
-                  'cgi',
-                  'form',
-                  'url',
-                  'cookie',
-                  'client',
-                  'request',
-                  'local',
-                ),
-                $.cf_scope_identifier,
-              ),
-            ),
+            $.identifier,
             $.property_identifier,
           ),
         )),
@@ -1531,12 +1479,12 @@ module.exports = function defineGrammar(dialect, extraRules) {
 
       meta_property: (_) => choice(seq('new', '.', 'target'), seq('import', '.', 'meta')),
 
-      this: (_) => token('this'),
-      super: (_) => token('super'),
-      true: (_) => token('true'),
-      false: (_) => token('false'),
-      null: (_) => token('null'),
-      undefined: (_) => token('undefined'),
+      this: (_) => 'this',
+      super: (_) => 'super',
+      true: (_) => 'true',
+      false: (_) => 'false',
+      null: (_) => 'null',
+      undefined: (_) => 'undefined',
 
       //
       // Expression components

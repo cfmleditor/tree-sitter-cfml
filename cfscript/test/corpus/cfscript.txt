@@ -172,7 +172,7 @@ public string function doThing()
 (program
   (function_declaration
     (access_type)
-    (return_type)
+    (identifier)
     (identifier)
     (formal_parameters)
     (statement_block)))
@@ -189,7 +189,7 @@ public string function doThing(string firstName = "blah",required string firstNa
 (program
   (function_declaration
     (access_type)
-    (return_type)
+    (identifier)
     (identifier)
     (formal_parameters
       (parameter_type)
@@ -215,7 +215,6 @@ public function function doThing(string firstName = "blah",required function fir
 (program
   (function_declaration
     (access_type)
-    (return_type)
     (identifier)
     (formal_parameters
       (parameter_type)
@@ -308,7 +307,7 @@ component {
   (component
     (component_body
       (function_declaration
-        (return_type)
+        (identifier)
         (identifier)
         (formal_parameters
           (parameter_type
@@ -452,7 +451,7 @@ component {
               (number)))))
       (function_declaration
         (access_type)
-        (return_type)
+        (identifier)
         (identifier)
         (formal_parameters)
         (statement_block

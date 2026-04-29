@@ -34,9 +34,6 @@
 
 (identifier) @variable
 
-; CFML scopes (variables, session, etc.)
-(cf_scope_identifier) @namespace
-
 ; Properties
 ;-----------
 
@@ -55,9 +52,6 @@
 
 (function_declaration
   (access_type) @access_type)
-
-(function_declaration
-  (return_type) @return_type)
 
 (method_definition
   name: [

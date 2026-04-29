@@ -1362,7 +1362,11 @@
           "named": true
         },
         {
-          "type": "return_type",
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "path",
           "named": true
         }
       ]
@@ -1639,10 +1643,6 @@
         "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "cf_scope_identifier",
-            "named": true
-          },
           {
             "type": "private_property_identifier",
             "named": true
@@ -2197,21 +2197,6 @@
         },
         {
           "type": "sequence_expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "return_type",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "identifier",
           "named": true
         }
       ]
@@ -3039,10 +3024,6 @@
   },
   {
     "type": "catch_type",
-    "named": true
-  },
-  {
-    "type": "cf_scope_identifier",
     "named": true
   },
   {

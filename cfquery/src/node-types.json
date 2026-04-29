@@ -1843,7 +1843,11 @@
           "named": true
         },
         {
-          "type": "return_type",
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "path",
           "named": true
         }
       ]
@@ -2120,10 +2124,6 @@
         "multiple": false,
         "required": true,
         "types": [
-          {
-            "type": "cf_scope_identifier",
-            "named": true
-          },
           {
             "type": "private_property_identifier",
             "named": true
@@ -2483,7 +2483,7 @@
     "fields": {},
     "children": {
       "multiple": false,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "identifier",
@@ -3245,21 +3245,6 @@
     }
   },
   {
-    "type": "return_type",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": false,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "sequence_expression",
     "named": true,
     "fields": {},
@@ -3956,24 +3941,12 @@
     "named": false
   },
   {
-    "type": "any",
-    "named": false
-  },
-  {
     "type": "as",
     "named": false
   },
   {
     "type": "attribute_value",
     "named": true
-  },
-  {
-    "type": "binary",
-    "named": false
-  },
-  {
-    "type": "boolean",
-    "named": false
   },
   {
     "type": "break",
@@ -4001,10 +3974,6 @@
     "extra": true
   },
   {
-    "type": "cf_scope_identifier",
-    "named": true
-  },
-  {
     "type": "cf_tag_name",
     "named": true
   },
@@ -4027,10 +3996,6 @@
   },
   {
     "type": "continue",
-    "named": false
-  },
-  {
-    "type": "date",
     "named": false
   },
   {
@@ -4086,10 +4051,6 @@
     "named": false
   },
   {
-    "type": "guid",
-    "named": false
-  },
-  {
     "type": "identifier",
     "named": true
   },
@@ -4140,10 +4101,6 @@
   {
     "type": "number",
     "named": true
-  },
-  {
-    "type": "numeric",
-    "named": false
   },
   {
     "type": "of",
@@ -4246,10 +4203,6 @@
     "named": true
   },
   {
-    "type": "string",
-    "named": false
-  },
-  {
     "type": "string_fragment",
     "named": true
   },
@@ -4294,19 +4247,11 @@
     "named": false
   },
   {
-    "type": "void",
-    "named": false
-  },
-  {
     "type": "while",
     "named": false
   },
   {
     "type": "with",
-    "named": false
-  },
-  {
-    "type": "xml",
     "named": false
   },
   {

@@ -144,7 +144,6 @@ module.exports = grammar({
     [$.expression, $.tag_statement],
     [$.tag_statement, $.expression],
     [$.program, $.statement],
-    [$.return_type, $.tag_statement],
     [$.primary_expression, $.tag_statement, $._property_name],
     [$.expression, $.query_tag],
     [$.query_tag, $.expression],
@@ -636,22 +635,6 @@ module.exports = grammar({
       'abstract',
     ),
 
-    // Type names that are also Lucee/CFML built-in functions (array, struct, query, etc.)
-    // are matched via $.identifier so that e.g. array(1) and structNew() parse as calls.
-    return_type: ($) => choice(
-      'any',
-      'string',
-      'numeric',
-      'xml',
-      'binary',
-      'boolean',
-      'date',
-      'function',
-      'guid',
-      'void',
-      $.identifier,
-    ),
-
     parameter_type: ($) => choice(
       'any',
       'string',
@@ -669,7 +652,7 @@ module.exports = grammar({
 
     function_declaration: ($) => prec.right('declaration', seq(
       optional($.access_type),
-      optional($.return_type),
+      optional(choice('function', $.path, $.identifier)),
       'function',
       field('name', $.identifier),
       $._call_signature,
@@ -727,29 +710,8 @@ module.exports = grammar({
       choice('.', field('optional_chain', $.optional_chain), field('static_chain', $.static_chain)),
       field('property', choice(
         $.private_property_identifier,
-        // Treat common CFML scopes as a distinct kind of identifier so tooling can
-        // recognize scope-qualified accesses like variables.foo or session.user.
         alias(
-          choice(
-            $.identifier,
-            alias(
-              choice(
-                'variables',
-                'arguments',
-                'session',
-                'application',
-                'server',
-                'cgi',
-                'form',
-                'url',
-                'cookie',
-                'client',
-                'request',
-                'local',
-              ),
-              $.cf_scope_identifier,
-            ),
-          ),
+          $.identifier,
           $.property_identifier,
         ),
       )),

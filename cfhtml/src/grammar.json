@@ -3933,98 +3933,9 @@
         }
       ]
     },
-    "return_type": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "any"
-        },
-        {
-          "type": "STRING",
-          "value": "string"
-        },
-        {
-          "type": "STRING",
-          "value": "numeric"
-        },
-        {
-          "type": "STRING",
-          "value": "xml"
-        },
-        {
-          "type": "STRING",
-          "value": "binary"
-        },
-        {
-          "type": "STRING",
-          "value": "boolean"
-        },
-        {
-          "type": "STRING",
-          "value": "date"
-        },
-        {
-          "type": "STRING",
-          "value": "function"
-        },
-        {
-          "type": "STRING",
-          "value": "guid"
-        },
-        {
-          "type": "STRING",
-          "value": "void"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "identifier"
-        }
-      ]
-    },
     "parameter_type": {
       "type": "CHOICE",
       "members": [
-        {
-          "type": "STRING",
-          "value": "any"
-        },
-        {
-          "type": "STRING",
-          "value": "string"
-        },
-        {
-          "type": "STRING",
-          "value": "numeric"
-        },
-        {
-          "type": "STRING",
-          "value": "xml"
-        },
-        {
-          "type": "STRING",
-          "value": "binary"
-        },
-        {
-          "type": "STRING",
-          "value": "boolean"
-        },
-        {
-          "type": "STRING",
-          "value": "date"
-        },
-        {
-          "type": "STRING",
-          "value": "function"
-        },
-        {
-          "type": "STRING",
-          "value": "guid"
-        },
-        {
-          "type": "STRING",
-          "value": "void"
-        },
         {
           "type": "SYMBOL",
           "name": "path"
@@ -4057,8 +3968,21 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "SYMBOL",
-                "name": "return_type"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "function"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "path"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  }
+                ]
               },
               {
                 "type": "BLANK"
@@ -4417,71 +4341,8 @@
                 {
                   "type": "ALIAS",
                   "content": {
-                    "type": "CHOICE",
-                    "members": [
-                      {
-                        "type": "SYMBOL",
-                        "name": "identifier"
-                      },
-                      {
-                        "type": "ALIAS",
-                        "content": {
-                          "type": "CHOICE",
-                          "members": [
-                            {
-                              "type": "STRING",
-                              "value": "variables"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "arguments"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "session"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "application"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "server"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "cgi"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "form"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "url"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "cookie"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "client"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "request"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "local"
-                            }
-                          ]
-                        },
-                        "named": true,
-                        "value": "cf_scope_identifier"
-                      }
-                    ]
+                    "type": "SYMBOL",
+                    "name": "identifier"
                   },
                   "named": true,
                   "value": "property_identifier"
@@ -7378,46 +7239,28 @@
       ]
     },
     "this": {
-      "type": "TOKEN",
-      "content": {
-        "type": "STRING",
-        "value": "this"
-      }
+      "type": "STRING",
+      "value": "this"
     },
     "super": {
-      "type": "TOKEN",
-      "content": {
-        "type": "STRING",
-        "value": "super"
-      }
+      "type": "STRING",
+      "value": "super"
     },
     "true": {
-      "type": "TOKEN",
-      "content": {
-        "type": "STRING",
-        "value": "true"
-      }
+      "type": "STRING",
+      "value": "true"
     },
     "false": {
-      "type": "TOKEN",
-      "content": {
-        "type": "STRING",
-        "value": "false"
-      }
+      "type": "STRING",
+      "value": "false"
     },
     "null": {
-      "type": "TOKEN",
-      "content": {
-        "type": "STRING",
-        "value": "null"
-      }
+      "type": "STRING",
+      "value": "null"
     },
     "undefined": {
-      "type": "TOKEN",
-      "content": {
-        "type": "STRING",
-        "value": "undefined"
-      }
+      "type": "STRING",
+      "value": "undefined"
     },
     "arguments": {
       "type": "SEQ",
@@ -8156,10 +7999,6 @@
     [
       "assignment_expression",
       "pattern"
-    ],
-    [
-      "function_expression",
-      "parameter_type"
     ],
     [
       "primary_expression",
