@@ -120,6 +120,11 @@ static inline bool valid_cf_end_tag_name(const bool *vs) {
            vs[CF_SAVECONTENT_END_TAG_NAME] || vs[CF_IF_END_TAG_NAME];
 }
 
+static inline bool no_content_symbols(const bool *vs) {
+    return !vs[RAW_TEXT] && !vs[CF_XML_CONTENT] && !vs[CF_QUERY_CONTENT]
+        && !vs[CF_SCRIPT_CONTENT] && !vs[CF_SAVECONTENT_CONTENT];
+}
+
 static inline bool implicit_cf_end_tag_valid(const bool *vs) {
     return vs[IMPLICIT_CF_END_TAG] && !vs[CF_XML_END_TAG_NAME] &&
            !vs[CF_QUERY_END_TAG_NAME] && !vs[CF_SCRIPT_END_TAG_NAME] &&
@@ -1304,14 +1309,10 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             break;
 
         default:
-            
-            bool no_content_symbols = !valid_symbols[RAW_TEXT] && !valid_symbols[CF_XML_CONTENT]
-                && !valid_symbols[CF_QUERY_CONTENT] && !valid_symbols[CF_SCRIPT_CONTENT]
-                && !valid_symbols[CF_SAVECONTENT_CONTENT];
-            if (valid_start_tag_name(valid_symbols) && no_content_symbols) {
+            if (valid_start_tag_name(valid_symbols) && no_content_symbols(valid_symbols)) {
                 return scan_start_tag_name(scanner, lexer, valid_cf_start_tag_name(valid_symbols));
             }
-            if (valid_end_tag_name(valid_symbols) && no_content_symbols) {
+            if (valid_end_tag_name(valid_symbols) && no_content_symbols(valid_symbols)) {
                 return scan_end_tag_name(scanner, lexer, valid_cf_end_tag_name(valid_symbols));
             }
 
@@ -1339,7 +1340,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                     return true;
                 }
             }
-            
+
     }
 
     if (valid_symbols[AUTOMATIC_SEMICOLON]) {
