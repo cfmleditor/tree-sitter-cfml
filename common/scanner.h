@@ -1,10 +1,9 @@
 #include "tag.h"
 #include "tree_sitter/parser.h"
 
-#include <stddef.h>
-#include <stdlib.h>
+#include <stdint.h>
+#include <string.h>
 #include <wctype.h>
-#include <stdio.h>
 
 enum TokenType {
     AUTOMATIC_SEMICOLON,
@@ -78,16 +77,55 @@ typedef enum {
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
-/*
- * Fixed size for end_delimiter buffers. Do not replace with VLAs
- * (e.g. char buf[tag->size + 5]): MSVC requires constant expression
- * array sizes. This approach is C99-compatible and works on all platforms.
- */
 #define MAX_CF_END_DELIMITER_SIZE 256
 
 static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 
 static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
+
+static inline bool tag_has_name(TagType type) {
+    return type == CUSTOM || type == CFML || type == CF_VOID || type == CF_SET ||
+           type == CF_XML || type == CF_SCRIPT || type == CF_SAVECONTENT ||
+           type == CF_QUERY || type == CF_OUTPUT || type == CF_RETURN ||
+           type == CF_IF || type == CF_ELSEIF || type == CF_ELSE;
+}
+
+static inline bool valid_start_tag_name(const bool *vs) {
+    return vs[START_TAG_NAME] || vs[CF_START_TAG_NAME] || vs[CF_SET_START_TAG_NAME] ||
+           vs[CF_VOID_START_TAG_NAME] || vs[CF_RETURN_START_TAG_NAME] ||
+           vs[CF_XML_START_TAG_NAME] || vs[CF_QUERY_START_TAG_NAME] ||
+           vs[CF_SCRIPT_START_TAG_NAME] || vs[CF_SAVECONTENT_START_TAG_NAME] ||
+           vs[CF_OUTPUT_START_TAG_NAME] || vs[CF_IF_START_TAG_NAME] ||
+           vs[CF_ELSEIF_TAG_NAME] || vs[CF_ELSE_TAG_NAME];
+}
+
+static inline bool valid_end_tag_name(const bool *vs) {
+    return vs[END_TAG_NAME] || vs[CF_END_TAG_NAME] || vs[CF_XML_END_TAG_NAME] ||
+           vs[CF_QUERY_END_TAG_NAME] || vs[CF_SCRIPT_END_TAG_NAME] ||
+           vs[CF_SAVECONTENT_END_TAG_NAME] || vs[CF_IF_END_TAG_NAME];
+}
+
+static inline bool valid_cf_start_tag_name(const bool *vs) {
+    return vs[CF_START_TAG_NAME] || vs[CF_SET_START_TAG_NAME] ||
+           vs[CF_VOID_START_TAG_NAME] || vs[CF_RETURN_START_TAG_NAME] ||
+           vs[CF_XML_START_TAG_NAME] || vs[CF_QUERY_START_TAG_NAME] ||
+           vs[CF_SCRIPT_START_TAG_NAME] || vs[CF_SAVECONTENT_START_TAG_NAME] ||
+           vs[CF_OUTPUT_START_TAG_NAME] || vs[CF_IF_START_TAG_NAME] ||
+           vs[CF_ELSEIF_TAG_NAME] || vs[CF_ELSE_TAG_NAME];
+}
+
+static inline bool valid_cf_end_tag_name(const bool *vs) {
+    return vs[CF_END_TAG_NAME] || vs[CF_XML_END_TAG_NAME] ||
+           vs[CF_QUERY_END_TAG_NAME] || vs[CF_SCRIPT_END_TAG_NAME] ||
+           vs[CF_SAVECONTENT_END_TAG_NAME] || vs[CF_IF_END_TAG_NAME];
+}
+
+static inline bool implicit_cf_end_tag_valid(const bool *vs) {
+    return vs[IMPLICIT_CF_END_TAG] && !vs[CF_XML_END_TAG_NAME] &&
+           !vs[CF_QUERY_END_TAG_NAME] && !vs[CF_SCRIPT_END_TAG_NAME] &&
+           !vs[CF_SAVECONTENT_END_TAG_NAME] && !vs[CF_IF_END_TAG_NAME] &&
+           !vs[CF_ELSEIF_TAG_NAME] && !vs[CF_ELSE_TAG_NAME];
+}
 
 #define SERIALIZE_TAGS(tags_field, buffer, size) do { \
     uint16_t _count = (tags_field).size > UINT16_MAX ? UINT16_MAX : (tags_field).size; \
@@ -97,7 +135,7 @@ static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
     (size) += sizeof(_count); \
     for (; _serialized < _count; _serialized++) { \
         Tag _tag = (tags_field).contents[_serialized]; \
-        if (_tag.type == CUSTOM || _tag.type == CFML || _tag.type == CF_VOID || _tag.type == CF_SET || _tag.type == CF_XML || _tag.type == CF_SCRIPT || _tag.type == CF_SAVECONTENT || _tag.type == CF_QUERY || _tag.type == CF_OUTPUT || _tag.type == CF_RETURN || _tag.type == CF_IF || _tag.type == CF_ELSEIF || _tag.type == CF_ELSE) { \
+        if (tag_has_name(_tag.type)) { \
             unsigned _len = _tag.tag_name.size; \
             if (_len > UINT8_MAX) _len = UINT8_MAX; \
             if ((size) + 2 + _len + sizeof(_tag.html_depth) >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) break; \
@@ -142,7 +180,7 @@ static unsigned serialize(Scanner *scanner, char *buffer) {
     for (_iter = 0; _iter < _serialized; _iter++) { \
         Tag _tag = tag_new(); \
         _tag.type = (TagType)(unsigned char)(buffer)[(size)++]; \
-        if (_tag.type == CUSTOM || _tag.type == CFML || _tag.type == CF_VOID || _tag.type == CF_SET || _tag.type == CF_XML || _tag.type == CF_SCRIPT || _tag.type == CF_SAVECONTENT || _tag.type == CF_QUERY || _tag.type == CF_OUTPUT || _tag.type == CF_RETURN || _tag.type == CF_IF || _tag.type == CF_ELSEIF || _tag.type == CF_ELSE) { \
+        if (tag_has_name(_tag.type)) { \
             uint16_t _len = (uint8_t)(buffer)[(size)++]; \
             array_reserve(&_tag.tag_name, _len); \
             _tag.tag_name.size = _len; \
@@ -393,24 +431,10 @@ static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer) {
     
     lexer->mark_end(lexer);
 
-    char end_delimiter_stack[MAX_CF_END_DELIMITER_SIZE];
-    char *end_delimiter = end_delimiter_stack;
-    bool end_delimiter_heap = false;
-
     size_t tag_len = cf_tag->tag_name.size;
-    size_t max_payload = MAX_CF_END_DELIMITER_SIZE - 5;
+    if (tag_len > MAX_CF_END_DELIMITER_SIZE - 5) return false;
 
-    if (tag_len > max_payload) {
-        size_t alloc_size = 4 + tag_len + 1;
-        end_delimiter = (char *)malloc(alloc_size);
-        if (!end_delimiter) {
-            return false;
-        }
-        end_delimiter_heap = true;
-    } else {
-        tag_len = cf_tag->tag_name.size;
-    }
-
+    char end_delimiter[MAX_CF_END_DELIMITER_SIZE];
     memcpy(end_delimiter, "</CF", 4);
     memcpy(&end_delimiter[4], cf_tag->tag_name.contents, tag_len);
     end_delimiter[4 + tag_len] = '\0';
@@ -430,10 +454,6 @@ static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer) {
             advance(lexer);
             lexer->mark_end(lexer);
         }
-    }
-
-    if (end_delimiter_heap) {
-        free(end_delimiter);
     }
 
     lexer->result_symbol = CF_QUERY_CONTENT;
@@ -453,24 +473,10 @@ static bool scan_cfxml_content(Scanner *scanner, TSLexer *lexer) {
     
     lexer->mark_end(lexer);
 
-    char end_delimiter_stack[MAX_CF_END_DELIMITER_SIZE];
-    char *end_delimiter = end_delimiter_stack;
-    bool end_delimiter_heap = false;
-
     size_t tag_len = cf_tag->tag_name.size;
-    size_t max_payload = MAX_CF_END_DELIMITER_SIZE - 5;
+    if (tag_len > MAX_CF_END_DELIMITER_SIZE - 5) return false;
 
-    if (tag_len > max_payload) {
-        size_t alloc_size = 4 + tag_len + 1;
-        end_delimiter = (char *)malloc(alloc_size);
-        if (!end_delimiter) {
-            return false;
-        }
-        end_delimiter_heap = true;
-    } else {
-        tag_len = cf_tag->tag_name.size;
-    }
-
+    char end_delimiter[MAX_CF_END_DELIMITER_SIZE];
     memcpy(end_delimiter, "</CF", 4);
     memcpy(&end_delimiter[4], cf_tag->tag_name.contents, tag_len);
     end_delimiter[4 + tag_len] = '\0';
@@ -490,10 +496,6 @@ static bool scan_cfxml_content(Scanner *scanner, TSLexer *lexer) {
             advance(lexer);
             lexer->mark_end(lexer);
         }
-    }
-
-    if (end_delimiter_heap) {
-        free(end_delimiter);
     }
 
     lexer->result_symbol = CF_XML_CONTENT;
@@ -514,24 +516,10 @@ static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer) {
     
     lexer->mark_end(lexer);
 
-    char end_delimiter_stack[MAX_CF_END_DELIMITER_SIZE];
-    char *end_delimiter = end_delimiter_stack;
-    bool end_delimiter_heap = false;
-
     size_t tag_len = cf_tag->tag_name.size;
-    size_t max_payload = MAX_CF_END_DELIMITER_SIZE - 5;
+    if (tag_len > MAX_CF_END_DELIMITER_SIZE - 5) return false;
 
-    if (tag_len > max_payload) {
-        size_t alloc_size = 4 + tag_len + 1;
-        end_delimiter = (char *)malloc(alloc_size);
-        if (!end_delimiter) {
-            return false;
-        }
-        end_delimiter_heap = true;
-    } else {
-        tag_len = cf_tag->tag_name.size;
-    }
-
+    char end_delimiter[MAX_CF_END_DELIMITER_SIZE];
     memcpy(end_delimiter, "</CF", 4);
     memcpy(&end_delimiter[4], cf_tag->tag_name.contents, tag_len);
     end_delimiter[4 + tag_len] = '\0';
@@ -551,10 +539,6 @@ static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer) {
             advance(lexer);
             lexer->mark_end(lexer);
         }
-    }
-
-    if (end_delimiter_heap) {
-        free(end_delimiter);
     }
 
     lexer->result_symbol = CF_SCRIPT_CONTENT;
@@ -574,24 +558,10 @@ static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer) {
     
     lexer->mark_end(lexer);
 
-    char end_delimiter_stack[MAX_CF_END_DELIMITER_SIZE];
-    char *end_delimiter = end_delimiter_stack;
-    bool end_delimiter_heap = false;
-
     size_t tag_len = cf_tag->tag_name.size;
-    size_t max_payload = MAX_CF_END_DELIMITER_SIZE - 5;
+    if (tag_len > MAX_CF_END_DELIMITER_SIZE - 5) return false;
 
-    if (tag_len > max_payload) {
-        size_t alloc_size = 4 + tag_len + 1;
-        end_delimiter = (char *)malloc(alloc_size);
-        if (!end_delimiter) {
-            return false;
-        }
-        end_delimiter_heap = true;
-    } else {
-        tag_len = cf_tag->tag_name.size;
-    }
-
+    char end_delimiter[MAX_CF_END_DELIMITER_SIZE];
     memcpy(end_delimiter, "</CF", 4);
     memcpy(&end_delimiter[4], cf_tag->tag_name.contents, tag_len);
     end_delimiter[4 + tag_len] = '\0';
@@ -611,10 +581,6 @@ static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer) {
             advance(lexer);
             lexer->mark_end(lexer);
         }
-    }
-
-    if (end_delimiter_heap) {
-        free(end_delimiter);
     }
 
     lexer->result_symbol = CF_SAVECONTENT_CONTENT;
@@ -888,6 +854,35 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
     return true;
 }
 
+static void set_end_tag_symbol(Scanner *scanner, TSLexer *lexer, Tag *tag, bool is_cf_context) {
+    if (is_cf_context && tag->type == CF_OUTPUT) {
+        if (scanner->cfoutput_depth > 0) scanner->cfoutput_depth--;
+        lexer->result_symbol = CF_END_TAG_NAME;
+    } else if (is_cf_context && tag->type == CFML &&
+               tag->tag_name.size == 9 &&
+               memcmp(tag->tag_name.contents, "COMPONENT", 9) == 0) {
+        if (scanner->cfcomponent_depth > 0) scanner->cfcomponent_depth--;
+        lexer->result_symbol = CF_END_TAG_NAME;
+    } else if (is_cf_context && tag->type == CFML &&
+               tag->tag_name.size == 8 &&
+               memcmp(tag->tag_name.contents, "FUNCTION", 8) == 0) {
+        if (scanner->cffunction_depth > 0) scanner->cffunction_depth--;
+        lexer->result_symbol = CF_END_TAG_NAME;
+    } else if (is_cf_context && tag->type == CF_XML) {
+        lexer->result_symbol = CF_XML_END_TAG_NAME;
+    } else if (is_cf_context && tag->type == CF_QUERY) {
+        lexer->result_symbol = CF_QUERY_END_TAG_NAME;
+    } else if (is_cf_context && tag->type == CF_SCRIPT) {
+        lexer->result_symbol = CF_SCRIPT_END_TAG_NAME;
+    } else if (is_cf_context && tag->type == CF_SAVECONTENT) {
+        lexer->result_symbol = CF_SAVECONTENT_END_TAG_NAME;
+    } else if (is_cf_context && tag->type == CF_IF) {
+        lexer->result_symbol = CF_IF_END_TAG_NAME;
+    } else {
+        lexer->result_symbol = is_cf_context ? CF_END_TAG_NAME : END_TAG_NAME;
+    }
+}
+
 static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_context) {
     
     TagNameResult result = scan_tag_name(lexer);
@@ -915,32 +910,7 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
 
     if ( tag_back && tag_eq(tag_back, &tag) ) {
         pop_tag(scanner, is_cf_context);
-        if (is_cf_context && tag.type == CF_OUTPUT) {
-            if (scanner->cfoutput_depth > 0) scanner->cfoutput_depth--;
-            lexer->result_symbol = CF_END_TAG_NAME;
-        } else if (is_cf_context && tag.type == CFML &&
-                   tag.tag_name.size == 9 &&
-                   memcmp(tag.tag_name.contents, "COMPONENT", 9) == 0) {
-            if (scanner->cfcomponent_depth > 0) scanner->cfcomponent_depth--;
-            lexer->result_symbol = CF_END_TAG_NAME;
-        } else if (is_cf_context && tag.type == CFML &&
-                   tag.tag_name.size == 8 &&
-                   memcmp(tag.tag_name.contents, "FUNCTION", 8) == 0) {
-            if (scanner->cffunction_depth > 0) scanner->cffunction_depth--;
-            lexer->result_symbol = CF_END_TAG_NAME;
-        } else if (is_cf_context && tag.type == CF_XML) {
-            lexer->result_symbol = CF_XML_END_TAG_NAME;
-        } else if (is_cf_context && tag.type == CF_QUERY) {
-            lexer->result_symbol = CF_QUERY_END_TAG_NAME;
-        } else if (is_cf_context && tag.type == CF_SCRIPT) {
-            lexer->result_symbol = CF_SCRIPT_END_TAG_NAME;
-        } else if (is_cf_context && tag.type == CF_SAVECONTENT) {
-            lexer->result_symbol = CF_SAVECONTENT_END_TAG_NAME;
-        } else if (is_cf_context && tag.type == CF_IF) {
-            lexer->result_symbol = CF_IF_END_TAG_NAME;
-        } else {
-            lexer->result_symbol = is_cf_context ? CF_END_TAG_NAME : END_TAG_NAME;
-        }
+        set_end_tag_symbol(scanner, lexer, &tag, is_cf_context);
     } else {
         // Search deeper in the stack for a matching tag
         bool found = false;
@@ -962,32 +932,7 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
 
         if (found) {
             pop_tag(scanner, is_cf_context);
-            if (is_cf_context && tag.type == CF_OUTPUT) {
-                if (scanner->cfoutput_depth > 0) scanner->cfoutput_depth--;
-                lexer->result_symbol = CF_END_TAG_NAME;
-            } else if (is_cf_context && tag.type == CFML &&
-                       tag.tag_name.size == 9 &&
-                       memcmp(tag.tag_name.contents, "COMPONENT", 9) == 0) {
-                if (scanner->cfcomponent_depth > 0) scanner->cfcomponent_depth--;
-                lexer->result_symbol = CF_END_TAG_NAME;
-            } else if (is_cf_context && tag.type == CFML &&
-                       tag.tag_name.size == 8 &&
-                       memcmp(tag.tag_name.contents, "FUNCTION", 8) == 0) {
-                if (scanner->cffunction_depth > 0) scanner->cffunction_depth--;
-                lexer->result_symbol = CF_END_TAG_NAME;
-            } else if (is_cf_context && tag.type == CF_XML) {
-                lexer->result_symbol = CF_XML_END_TAG_NAME;
-            } else if (is_cf_context && tag.type == CF_QUERY) {
-                lexer->result_symbol = CF_QUERY_END_TAG_NAME;
-            } else if (is_cf_context && tag.type == CF_SCRIPT) {
-                lexer->result_symbol = CF_SCRIPT_END_TAG_NAME;
-            } else if (is_cf_context && tag.type == CF_SAVECONTENT) {
-                lexer->result_symbol = CF_SAVECONTENT_END_TAG_NAME;
-            } else if (is_cf_context && tag.type == CF_IF) {
-                lexer->result_symbol = CF_IF_END_TAG_NAME;
-            } else {
-                lexer->result_symbol = is_cf_context ? CF_END_TAG_NAME : END_TAG_NAME;
-            }
+            set_end_tag_symbol(scanner, lexer, &tag, is_cf_context);
         } else {
             lexer->result_symbol = is_cf_context ? ERRONEOUS_CF_END_TAG_NAME : ERRONEOUS_END_TAG_NAME;
         }
@@ -1178,67 +1123,6 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
     return false;
 }
 
-// static bool scan_open_cfoutput(Scanner *scanner, TSLexer *lexer, const bool *cf_open_valid, bool *scanned_cfoutput) {
-    
-//     if ( lexer->lookahead == 'C' || lexer->lookahead == 'c' ) {
-//         advance(lexer);
-//     }
-
-//     if ( lexer->lookahead != 'F' && lexer->lookahead != 'f' ) {
-//         return false;
-//     }
-
-//     advance(lexer);
-
-//     if ( lexer->lookahead == 'O' || lexer->lookahead == 'o' ) {
-//         String tag_name = scan_tag_name(lexer);
-//         Tag tag = tag_for_name(tag_name);
-//         if (tag.type == OUTPUT) {
-//             lexer->mark_end(lexer);
-//             lexer->result_symbol = CF_OUTPUT_TAG;
-//             *scanned_cfoutput = true;
-//             return true;
-//         }
-//     }
-
-//     if ( cf_open_valid ) {
-//         lexer->mark_end(lexer);
-//         lexer->result_symbol = CF_OPEN_TAG;
-//         return true;
-//     }
-
-//     return false;
-// }
-
-// static bool scan_open_cftag(Scanner *scanner, TSLexer *lexer) {
-    
-//     if ( lexer->lookahead != 'F' && lexer->lookahead != 'f' ) {
-//         return false;
-//     }
-
-//     advance(lexer);
-//     lexer->mark_end(lexer);
-//     lexer->result_symbol = CF_OPEN_TAG;
-    
-//     return true;
-    
-// }
-
-// static bool scan_close_cftag(Scanner *scanner, TSLexer *lexer) {
-    
-//     if ( lexer->lookahead != 'F' && lexer->lookahead != 'f' ) {
-//         return false;
-//     }
-
-//     advance(lexer);
-
-//     lexer->mark_end(lexer);
-    
-//     lexer->result_symbol = CF_CLOSE_TAG;
-
-//     return true;
-// }
-
 static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_context) {
     if ( lexer->lookahead == '>' ) {
         advance(lexer);
@@ -1249,19 +1133,6 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         return false;
     }
 }
-
-// static bool scan_hash(Scanner *scanner, TSLexer *lexer) {
-
-//     if ( lexer->lookahead == '#' ) {
-//         advance(lexer);
-//         lexer->mark_end(lexer);
-//         lexer->result_symbol = HTML_HASH;
-//         return true;
-//     } else {
-//         return false;
-//     }
-    
-// }
 
 static bool scanner_in_hash_eval_context(Scanner *scanner) {
     return scanner->cfoutput_depth > 0 || scanner->cfcomponent_depth > 0 || scanner->cffunction_depth > 0;
@@ -1384,7 +1255,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                 return scan_comment(lexer);
             }
 
-            if ( valid_symbols[IMPLICIT_CF_END_TAG] && !valid_symbols[CF_XML_END_TAG_NAME] && !valid_symbols[CF_QUERY_END_TAG_NAME] && !valid_symbols[CF_SCRIPT_END_TAG_NAME] && !valid_symbols[CF_SAVECONTENT_END_TAG_NAME] && !valid_symbols[CF_IF_END_TAG_NAME] && !valid_symbols[CF_ELSEIF_TAG_NAME] && !valid_symbols[CF_ELSE_TAG_NAME]) {
+            if (implicit_cf_end_tag_valid(valid_symbols)) {
                 return scan_implicit_end_tag(scanner, lexer, true);
             }
 
@@ -1396,7 +1267,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
         case '\0':
 
-            if ( valid_symbols[IMPLICIT_CF_END_TAG] && !valid_symbols[CF_XML_END_TAG_NAME] && !valid_symbols[CF_IF_END_TAG_NAME] && !valid_symbols[CF_ELSEIF_TAG_NAME] && !valid_symbols[CF_ELSE_TAG_NAME]) {
+            if (implicit_cf_end_tag_valid(valid_symbols)) {
                 return scan_implicit_end_tag(scanner, lexer, true);
             }
 
@@ -1434,13 +1305,14 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
         default:
             
-            if ((valid_symbols[START_TAG_NAME] || valid_symbols[END_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_VOID_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_OUTPUT_START_TAG_NAME] || valid_symbols[CF_XML_START_TAG_NAME] || valid_symbols[CF_QUERY_START_TAG_NAME] || valid_symbols[CF_SCRIPT_START_TAG_NAME] || valid_symbols[CF_SAVECONTENT_START_TAG_NAME] || valid_symbols[CF_XML_END_TAG_NAME] || valid_symbols[CF_QUERY_END_TAG_NAME] || valid_symbols[CF_SCRIPT_END_TAG_NAME] || valid_symbols[CF_SAVECONTENT_END_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME] || valid_symbols[CF_ELSE_TAG_NAME]) && !valid_symbols[RAW_TEXT] && !valid_symbols[CF_XML_CONTENT] && !valid_symbols[CF_QUERY_CONTENT] && !valid_symbols[CF_SCRIPT_CONTENT] && !valid_symbols[CF_SAVECONTENT_CONTENT]) {
-                if (valid_symbols[START_TAG_NAME] || valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_VOID_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_XML_START_TAG_NAME] || valid_symbols[CF_QUERY_START_TAG_NAME] || valid_symbols[CF_SCRIPT_START_TAG_NAME] || valid_symbols[CF_SAVECONTENT_START_TAG_NAME] || valid_symbols[CF_OUTPUT_START_TAG_NAME]|| valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]) {
-                    return scan_start_tag_name(scanner, lexer, valid_symbols[CF_START_TAG_NAME] || valid_symbols[CF_SET_START_TAG_NAME] || valid_symbols[CF_VOID_START_TAG_NAME] || valid_symbols[CF_RETURN_START_TAG_NAME] || valid_symbols[CF_XML_START_TAG_NAME] || valid_symbols[CF_QUERY_START_TAG_NAME] || valid_symbols[CF_SCRIPT_START_TAG_NAME] || valid_symbols[CF_SAVECONTENT_START_TAG_NAME] || valid_symbols[CF_OUTPUT_START_TAG_NAME] || valid_symbols[CF_IF_START_TAG_NAME] || valid_symbols[CF_ELSEIF_TAG_NAME]|| valid_symbols[CF_ELSE_TAG_NAME]);
-                }
-                if (valid_symbols[END_TAG_NAME] || valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_XML_END_TAG_NAME] || valid_symbols[CF_QUERY_END_TAG_NAME] || valid_symbols[CF_SCRIPT_END_TAG_NAME] || valid_symbols[CF_SAVECONTENT_END_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME]) {
-                    return scan_end_tag_name(scanner, lexer, valid_symbols[CF_END_TAG_NAME] || valid_symbols[CF_XML_END_TAG_NAME] || valid_symbols[CF_QUERY_END_TAG_NAME] || valid_symbols[CF_SCRIPT_END_TAG_NAME] || valid_symbols[CF_SAVECONTENT_END_TAG_NAME] || valid_symbols[CF_IF_END_TAG_NAME]);
-                }
+            bool no_content_symbols = !valid_symbols[RAW_TEXT] && !valid_symbols[CF_XML_CONTENT]
+                && !valid_symbols[CF_QUERY_CONTENT] && !valid_symbols[CF_SCRIPT_CONTENT]
+                && !valid_symbols[CF_SAVECONTENT_CONTENT];
+            if (valid_start_tag_name(valid_symbols) && no_content_symbols) {
+                return scan_start_tag_name(scanner, lexer, valid_cf_start_tag_name(valid_symbols));
+            }
+            if (valid_end_tag_name(valid_symbols) && no_content_symbols) {
+                return scan_end_tag_name(scanner, lexer, valid_cf_end_tag_name(valid_symbols));
             }
 
             if (valid_symbols[IMPLICIT_END_TAG]) {
