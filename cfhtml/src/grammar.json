@@ -197,39 +197,6 @@
         ]
       }
     },
-    "cf_return_tag": {
-      "type": "PREC_RIGHT",
-      "value": 3,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_cf_open_tag"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_start_cf_return_name"
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "expression"
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          },
-          {
-            "type": "SYMBOL",
-            "name": "cf_selfclose_void_tag_end"
-          }
-        ]
-      }
-    },
     "text": {
       "type": "TOKEN",
       "content": {
@@ -250,19 +217,23 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_hash_dialect_eval"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "erroneous_end_tag"
-        },
-        {
-          "type": "SYMBOL",
           "name": "erroneous_cf_end_tag"
         },
         {
           "type": "SYMBOL",
           "name": "text"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "html_text"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_hash_dialect_eval"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "erroneous_end_tag"
         },
         {
           "type": "SYMBOL",
@@ -287,10 +258,6 @@
         {
           "type": "SYMBOL",
           "name": "xml_decl"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "html_text"
         }
       ]
     },
@@ -333,6 +300,23 @@
         "named": false,
         "value": "</cf"
       }
+    },
+    "cf_tag_attributes": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "cf_attribute"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "quoted_cf_attribute_value"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_hash_always_eval"
+        }
+      ]
     },
     "element": {
       "type": "CHOICE",
@@ -439,23 +423,6 @@
           }
         ]
       }
-    },
-    "cf_tag_attributes": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "cf_attribute"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "quoted_cf_attribute_value"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_hash_always_eval"
-        }
-      ]
     },
     "tag_attributes": {
       "type": "CHOICE",
@@ -650,32 +617,6 @@
         ]
       }
     },
-    "erroneous_cf_end_tag": {
-      "type": "PREC_RIGHT",
-      "value": 1,
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "</"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "erroneous_cf_end_tag_name"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_cf_tag_delim"
-            },
-            "named": false,
-            "value": ">"
-          }
-        ]
-      }
-    },
     "style_element": {
       "type": "SEQ",
       "members": [
@@ -706,20 +647,102 @@
         }
       ]
     },
-    "hash_value": {
+    "entity": {
       "type": "PATTERN",
-      "value": "[a-zA-Z0-9_-]+"
+      "value": "&(([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});"
     },
-    "_cf_tag_expression": {
+    "quoted_attribute_value": {
       "type": "CHOICE",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "expression"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "'"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_cf_tags"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_hash_dialect_eval"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "TOKEN",
+                      "content": {
+                        "type": "PREC",
+                        "value": 1,
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "[^'<\\s\\n\\r\\t#]+"
+                        }
+                      }
+                    },
+                    "named": true,
+                    "value": "attribute_value"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "'"
+            }
+          ]
         },
         {
-          "type": "SYMBOL",
-          "name": "_hash_always_eval"
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "\""
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "_cf_tags"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "_hash_dialect_eval"
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "TOKEN",
+                      "content": {
+                        "type": "PREC",
+                        "value": 1,
+                        "content": {
+                          "type": "PATTERN",
+                          "value": "[^\"<\\s\\n\\r\\t#]+"
+                        }
+                      }
+                    },
+                    "named": true,
+                    "value": "attribute_value"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "STRING",
+              "value": "\""
+            }
+          ]
         }
       ]
     },
@@ -809,6 +832,89 @@
             "type": "PATTERN",
             "value": "[^\"<>'=\\s\\n\\r\\t#]+"
           }
+        }
+      ]
+    },
+    "_hash_dialect_eval": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "hash_expression"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_hash_empty_external"
+          },
+          "named": true,
+          "value": "hash_empty"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_single_hash"
+          },
+          "named": true,
+          "value": "hash_single"
+        }
+      ]
+    },
+    "hash_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_start_hash_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_hash"
+        }
+      ]
+    },
+    "erroneous_cf_end_tag": {
+      "type": "PREC_RIGHT",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "</"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "erroneous_cf_end_tag_name"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_cf_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          }
+        ]
+      }
+    },
+    "_cf_tag_expression": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_hash_always_eval"
         }
       ]
     },
@@ -1009,7 +1115,7 @@
       "type": "PATTERN",
       "value": "[a-zA-Z][a-zA-Z0-9_]*"
     },
-    "cf_xml_tag": {
+    "cf_return_tag": {
       "type": "PREC_RIGHT",
       "value": 3,
       "content": {
@@ -1021,44 +1127,23 @@
           },
           {
             "type": "SYMBOL",
-            "name": "_start_cf_xml_name"
+            "name": "_start_cf_return_name"
           },
           {
-            "type": "REPEAT",
-            "content": {
-              "type": "SYMBOL",
-              "name": "cf_attribute"
-            }
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_cf_tag_delim"
-            },
-            "named": false,
-            "value": ">"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "expression"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           },
           {
             "type": "SYMBOL",
-            "name": "cf_xml_content"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_cf_close_tag"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "_end_cf_xml_name"
-          },
-          {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_close_cf_tag_delim"
-            },
-            "named": false,
-            "value": ">"
+            "name": "cf_selfclose_void_tag_end"
           }
         ]
       }
@@ -1104,6 +1189,60 @@
           {
             "type": "SYMBOL",
             "name": "_end_cf_query_name"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_cf_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          }
+        ]
+      }
+    },
+    "cf_xml_tag": {
+      "type": "PREC_RIGHT",
+      "value": 3,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_start_cf_xml_name"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_attribute"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_cf_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_xml_content"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_close_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_end_cf_xml_name"
           },
           {
             "type": "ALIAS",
@@ -1302,19 +1441,19 @@
           },
           {
             "type": "SYMBOL",
-            "name": "cf_return_tag"
-          },
-          {
-            "type": "SYMBOL",
             "name": "cf_tag"
           },
           {
             "type": "SYMBOL",
-            "name": "cf_xml_tag"
+            "name": "cf_return_tag"
           },
           {
             "type": "SYMBOL",
             "name": "cf_query_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_xml_tag"
           },
           {
             "type": "SYMBOL",
@@ -1534,10 +1673,6 @@
         ]
       }
     },
-    "entity": {
-      "type": "PATTERN",
-      "value": "&(([xX][0-9a-fA-F]{1,6}|[0-9]{1,5})|[A-Za-z]{1,30});"
-    },
     "quoted_cf_attribute_value": {
       "type": "CHOICE",
       "members": [
@@ -1600,101 +1735,6 @@
                     "content": {
                       "type": "PATTERN",
                       "value": "[^\"\\s\\n\\r\\t#]+"
-                    },
-                    "named": true,
-                    "value": "attribute_value"
-                  }
-                ]
-              }
-            },
-            {
-              "type": "STRING",
-              "value": "\""
-            }
-          ]
-        }
-      ]
-    },
-    "quoted_attribute_value": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "'"
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_cf_tags"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "_hash_dialect_eval"
-                  },
-                  {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "TOKEN",
-                      "content": {
-                        "type": "PREC",
-                        "value": 1,
-                        "content": {
-                          "type": "PATTERN",
-                          "value": "[^'<\\s\\n\\r\\t#]+"
-                        }
-                      }
-                    },
-                    "named": true,
-                    "value": "attribute_value"
-                  }
-                ]
-              }
-            },
-            {
-              "type": "STRING",
-              "value": "'"
-            }
-          ]
-        },
-        {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "STRING",
-              "value": "\""
-            },
-            {
-              "type": "REPEAT",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_cf_tags"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "_hash_dialect_eval"
-                  },
-                  {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "TOKEN",
-                      "content": {
-                        "type": "PREC",
-                        "value": 1,
-                        "content": {
-                          "type": "PATTERN",
-                          "value": "[^\"<\\s\\n\\r\\t#]+"
-                        }
-                      }
                     },
                     "named": true,
                     "value": "attribute_value"
@@ -7973,33 +8013,6 @@
         }
       ]
     },
-    "_hash_dialect_eval": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "hash_expression"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_hash_empty_external"
-          },
-          "named": true,
-          "value": "hash_empty"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "SYMBOL",
-            "name": "_single_hash"
-          },
-          "named": true,
-          "value": "hash_single"
-        }
-      ]
-    },
     "_hash_always_eval": {
       "type": "CHOICE",
       "members": [
@@ -8026,23 +8039,6 @@
     "_hash": {
       "type": "STRING",
       "value": "#"
-    },
-    "hash_expression": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_start_hash_expression"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "expression"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_hash"
-        }
-      ]
     },
     "_hash_expression": {
       "type": "SEQ",
@@ -8509,22 +8505,6 @@
     },
     {
       "type": "SYMBOL",
-      "name": "_start_tag_name"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_script_start_tag_name"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_style_start_tag_name"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_end_tag_name"
-    },
-    {
-      "type": "SYMBOL",
       "name": "_start_cf_tag_name"
     },
     {
@@ -8533,15 +8513,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "erroneous_end_tag_name"
-    },
-    {
-      "type": "SYMBOL",
       "name": "erroneous_cf_end_tag_name"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "self_closing_tag_delimiter"
     },
     {
       "type": "SYMBOL",
@@ -8550,10 +8522,6 @@
     {
       "type": "SYMBOL",
       "name": "_cf_self_closing_void_tag_delimiter"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "implicit_end_tag"
     },
     {
       "type": "SYMBOL",
@@ -8589,10 +8557,6 @@
     },
     {
       "type": "SYMBOL",
-      "name": "_start_cf_return_name"
-    },
-    {
-      "type": "SYMBOL",
       "name": "_start_cf_if_name"
     },
     {
@@ -8606,6 +8570,50 @@
     {
       "type": "SYMBOL",
       "name": "_start_cf_else_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_script_start_tag_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_style_start_tag_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_start_tag_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_end_tag_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "erroneous_end_tag_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "self_closing_tag_delimiter"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "implicit_end_tag"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_start_hash_expression"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_single_hash"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_hash_empty_external"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_start_cf_return_name"
     },
     {
       "type": "SYMBOL",
@@ -8662,18 +8670,6 @@
     {
       "type": "SYMBOL",
       "name": "cf_component_content"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_start_hash_expression"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_single_hash"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_hash_empty_external"
     }
   ],
   "inline": [

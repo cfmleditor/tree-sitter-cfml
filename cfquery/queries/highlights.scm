@@ -8,11 +8,6 @@
 (cf_if_tag) @tag
 (cf_else_tag) @tag
 (cf_elseif_tag) @tag
-(cf_return_tag) @tag
-(cf_output_tag) @tag
-(cf_script_tag) @tag
-(cf_query_tag) @tag
-(cf_xml_tag) @tag
 (cf_start_tag) @tag
 (cf_end_tag) @tag
 (cf_tag) @tag
@@ -222,86 +217,6 @@
   "{"
   "}"
 ] @punctuation.bracket
-
-; SQL keywords
-[
-  "select"
-  "distinct"
-  "from"
-  "where"
-  "group"
-  "by"
-  "having"
-  "order"
-  "limit"
-  "offset"
-  "join"
-  "inner"
-  "outer"
-  "left"
-  "right"
-  "on"
-  "and"
-  "not"
-  "in"
-  "like"
-  "between"
-  "exists"
-  "as"
-  "insert"
-  "into"
-  "values"
-  "update"
-  "set"
-  "delete"
-  "create"
-  "table"
-  "drop"
-  "alter"
-  "add"
-  "column"
-  "primary"
-  "key"
-  "foreign"
-  "references"
-  "constraint"
-  "unique"
-  "check"
-  "default"
-  "index"
-  "fulltext"
-  "spatial"
-] @keyword
-
-; SQL data types
-[
-  "varchar"
-  "char"
-  "text"
-  "blob"
-  "int"
-  "tinyint"
-  "smallint"
-  "mediumint"
-  "bigint"
-  "float"
-  "double"
-  "real"
-  "decimal"
-  "boolean"
-  "date"
-  "datetime"
-  "timestamp"
-  "time"
-  "year"
-  "enum"
-  "auto_increment"
-  "unsigned"
-  "zerofill"
-  "collate"
-  "charset"
-  "engine"
-] @type.builtin
 
 ; SQL identifiers and values
 (query_identifier) @variable

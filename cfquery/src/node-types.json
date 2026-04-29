@@ -940,26 +940,6 @@
           "named": true
         },
         {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return_tag",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script_tag",
-          "named": true
-        },
-        {
           "type": "cf_selfclose_tag",
           "named": true
         },
@@ -969,14 +949,6 @@
         },
         {
           "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "comment",
           "named": true
         },
         {
@@ -1034,6 +1006,10 @@
         {
           "type": "quoted_query_value",
           "named": true
+        },
+        {
+          "type": "text",
+          "named": true
         }
       ]
     }
@@ -1059,26 +1035,6 @@
           "named": true
         },
         {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return_tag",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script_tag",
-          "named": true
-        },
-        {
           "type": "cf_selfclose_tag",
           "named": true
         },
@@ -1088,14 +1044,6 @@
         },
         {
           "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "comment",
           "named": true
         },
         {
@@ -1149,124 +1097,9 @@
         {
           "type": "quoted_query_value",
           "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_output_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "bracketed_query_value",
-          "named": true
         },
         {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return_tag",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "comment",
-          "named": true
-        },
-        {
-          "type": "double_quoted_query_value",
-          "named": true
-        },
-        {
-          "type": "erroneous_cf_end_tag",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "null",
-          "named": true
-        },
-        {
-          "type": "parenthesized_query_node",
-          "named": true
-        },
-        {
-          "type": "query_alias",
-          "named": true
-        },
-        {
-          "type": "query_assignment_expression",
-          "named": true
-        },
-        {
-          "type": "query_comma",
-          "named": true
-        },
-        {
-          "type": "query_identifier",
-          "named": true
-        },
-        {
-          "type": "query_number",
-          "named": true
-        },
-        {
-          "type": "query_semicolon",
-          "named": true
-        },
-        {
-          "type": "query_star",
-          "named": true
-        },
-        {
-          "type": "quoted_query_value",
+          "type": "text",
           "named": true
         }
       ]
@@ -1320,82 +1153,6 @@
           }
         ]
       }
-    }
-  },
-  {
-    "type": "cf_query_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_query_content",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_return_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_selfclose_void_tag_end",
-          "named": true
-        },
-        {
-          "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_savecontent_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_content",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_script_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_script_content",
-          "named": true
-        }
-      ]
     }
   },
   {
@@ -1514,26 +1271,6 @@
           "named": true
         },
         {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return_tag",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script_tag",
-          "named": true
-        },
-        {
           "type": "cf_selfclose_tag",
           "named": true
         },
@@ -1551,14 +1288,6 @@
         },
         {
           "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "comment",
           "named": true
         },
         {
@@ -1620,6 +1349,10 @@
         {
           "type": "quoted_query_value",
           "named": true
+        },
+        {
+          "type": "text",
+          "named": true
         }
       ]
     }
@@ -1646,25 +1379,6 @@
         },
         {
           "type": "quoted_cf_attribute_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "cf_xml_tag",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "cf_attribute",
-          "named": true
-        },
-        {
-          "type": "cf_xml_content",
           "named": true
         }
       ]
@@ -2818,26 +2532,6 @@
           "named": true
         },
         {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return_tag",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script_tag",
-          "named": true
-        },
-        {
           "type": "cf_selfclose_tag",
           "named": true
         },
@@ -2847,137 +2541,6 @@
         },
         {
           "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "double_quoted_query_value",
-          "named": true
-        },
-        {
-          "type": "hash_empty",
-          "named": true
-        },
-        {
-          "type": "hash_expression",
-          "named": true
-        },
-        {
-          "type": "null",
-          "named": true
-        },
-        {
-          "type": "parenthesized_query_node",
-          "named": true
-        },
-        {
-          "type": "query_alias",
-          "named": true
-        },
-        {
-          "type": "query_assignment_expression",
-          "named": true
-        },
-        {
-          "type": "query_comma",
-          "named": true
-        },
-        {
-          "type": "query_identifier",
-          "named": true
-        },
-        {
-          "type": "query_number",
-          "named": true
-        },
-        {
-          "type": "query_semicolon",
-          "named": true
-        },
-        {
-          "type": "query_star",
-          "named": true
-        },
-        {
-          "type": "quoted_query_value",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "path",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "identifier",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "program",
-    "named": true,
-    "root": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "bracketed_query_value",
-          "named": true
-        },
-        {
-          "type": "cf_if_tag",
-          "named": true
-        },
-        {
-          "type": "cf_output_tag",
-          "named": true
-        },
-        {
-          "type": "cf_query_tag",
-          "named": true
-        },
-        {
-          "type": "cf_return_tag",
-          "named": true
-        },
-        {
-          "type": "cf_savecontent_tag",
-          "named": true
-        },
-        {
-          "type": "cf_script_tag",
-          "named": true
-        },
-        {
-          "type": "cf_selfclose_tag",
-          "named": true
-        },
-        {
-          "type": "cf_set_tag",
-          "named": true
-        },
-        {
-          "type": "cf_tag",
-          "named": true
-        },
-        {
-          "type": "cf_xml_tag",
-          "named": true
-        },
-        {
-          "type": "comment",
           "named": true
         },
         {
@@ -3035,6 +2598,117 @@
         {
           "type": "quoted_query_value",
           "named": true
+        },
+        {
+          "type": "text",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "path",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "program",
+    "named": true,
+    "root": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "bracketed_query_value",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "double_quoted_query_value",
+          "named": true
+        },
+        {
+          "type": "erroneous_cf_end_tag",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "null",
+          "named": true
+        },
+        {
+          "type": "parenthesized_query_node",
+          "named": true
+        },
+        {
+          "type": "query_alias",
+          "named": true
+        },
+        {
+          "type": "query_assignment_expression",
+          "named": true
+        },
+        {
+          "type": "query_comma",
+          "named": true
+        },
+        {
+          "type": "query_identifier",
+          "named": true
+        },
+        {
+          "type": "query_number",
+          "named": true
+        },
+        {
+          "type": "query_semicolon",
+          "named": true
+        },
+        {
+          "type": "query_star",
+          "named": true
+        },
+        {
+          "type": "quoted_query_value",
+          "named": true
+        },
+        {
+          "type": "text",
+          "named": true
         }
       ]
     }
@@ -3048,71 +2722,11 @@
         "required": true,
         "types": [
           {
-            "type": "add",
-            "named": false
-          },
-          {
-            "type": "alter",
-            "named": false
-          },
-          {
-            "type": "and",
-            "named": false
-          },
-          {
-            "type": "as",
-            "named": false
-          },
-          {
-            "type": "auto_increment",
-            "named": false
-          },
-          {
-            "type": "between",
-            "named": false
-          },
-          {
-            "type": "bigint",
-            "named": false
-          },
-          {
-            "type": "blob",
-            "named": false
-          },
-          {
-            "type": "boolean",
-            "named": false
-          },
-          {
             "type": "bracketed_query_value",
             "named": true
           },
           {
-            "type": "by",
-            "named": false
-          },
-          {
             "type": "cf_if_tag",
-            "named": true
-          },
-          {
-            "type": "cf_output_tag",
-            "named": true
-          },
-          {
-            "type": "cf_query_tag",
-            "named": true
-          },
-          {
-            "type": "cf_return_tag",
-            "named": true
-          },
-          {
-            "type": "cf_savecontent_tag",
-            "named": true
-          },
-          {
-            "type": "cf_script_tag",
             "named": true
           },
           {
@@ -3128,124 +2742,12 @@
             "named": true
           },
           {
-            "type": "cf_xml_tag",
-            "named": true
-          },
-          {
-            "type": "char",
-            "named": false
-          },
-          {
-            "type": "charset",
-            "named": false
-          },
-          {
-            "type": "check",
-            "named": false
-          },
-          {
-            "type": "collate",
-            "named": false
-          },
-          {
-            "type": "column",
-            "named": false
-          },
-          {
-            "type": "comment",
-            "named": false
-          },
-          {
-            "type": "constraint",
-            "named": false
-          },
-          {
-            "type": "create",
-            "named": false
-          },
-          {
-            "type": "data_directory",
-            "named": false
-          },
-          {
-            "type": "date",
-            "named": false
-          },
-          {
-            "type": "datetime",
-            "named": false
-          },
-          {
-            "type": "day",
-            "named": false
-          },
-          {
-            "type": "decimal",
-            "named": false
-          },
-          {
-            "type": "default",
-            "named": false
-          },
-          {
-            "type": "delete",
-            "named": false
-          },
-          {
-            "type": "distinct",
-            "named": false
-          },
-          {
-            "type": "double",
-            "named": false
-          },
-          {
             "type": "double_quoted_query_value",
             "named": true
           },
           {
-            "type": "drop",
-            "named": false
-          },
-          {
-            "type": "each",
-            "named": false
-          },
-          {
-            "type": "engine",
-            "named": false
-          },
-          {
-            "type": "enum",
-            "named": false
-          },
-          {
-            "type": "exists",
-            "named": false
-          },
-          {
-            "type": "false",
-            "named": false
-          },
-          {
-            "type": "float",
-            "named": false
-          },
-          {
-            "type": "foreign",
-            "named": false
-          },
-          {
-            "type": "from",
-            "named": false
-          },
-          {
-            "type": "fulltext",
-            "named": false
-          },
-          {
-            "type": "group",
-            "named": false
+            "type": "erroneous_cf_end_tag",
+            "named": true
           },
           {
             "type": "hash_empty",
@@ -3256,148 +2758,12 @@
             "named": true
           },
           {
-            "type": "having",
-            "named": false
-          },
-          {
-            "type": "hour",
-            "named": false
-          },
-          {
-            "type": "in",
-            "named": false
-          },
-          {
-            "type": "index",
-            "named": false
-          },
-          {
-            "type": "index_directory",
-            "named": false
-          },
-          {
-            "type": "inner",
-            "named": false
-          },
-          {
-            "type": "insert",
-            "named": false
-          },
-          {
-            "type": "insert_method",
-            "named": false
-          },
-          {
-            "type": "int",
-            "named": false
-          },
-          {
-            "type": "interval",
-            "named": false
-          },
-          {
-            "type": "into",
-            "named": false
-          },
-          {
-            "type": "join",
-            "named": false
-          },
-          {
-            "type": "key",
-            "named": false
-          },
-          {
-            "type": "keyblocksize",
-            "named": false
-          },
-          {
-            "type": "left",
-            "named": false
-          },
-          {
-            "type": "less",
-            "named": false
-          },
-          {
-            "type": "like",
-            "named": false
-          },
-          {
-            "type": "limit",
-            "named": false
-          },
-          {
-            "type": "max_rows",
-            "named": false
-          },
-          {
-            "type": "mediumint",
-            "named": false
-          },
-          {
-            "type": "microsecond",
-            "named": false
-          },
-          {
-            "type": "min_rows",
-            "named": false
-          },
-          {
-            "type": "minute",
-            "named": false
-          },
-          {
-            "type": "month",
-            "named": false
-          },
-          {
-            "type": "not",
-            "named": false
-          },
-          {
-            "type": "null",
-            "named": false
-          },
-          {
             "type": "null",
             "named": true
-          },
-          {
-            "type": "offset",
-            "named": false
-          },
-          {
-            "type": "on",
-            "named": false
-          },
-          {
-            "type": "order",
-            "named": false
-          },
-          {
-            "type": "outer",
-            "named": false
-          },
-          {
-            "type": "pack_keys",
-            "named": false
           },
           {
             "type": "parenthesized_query_node",
             "named": true
-          },
-          {
-            "type": "partition",
-            "named": false
-          },
-          {
-            "type": "partitions",
-            "named": false
-          },
-          {
-            "type": "primary",
-            "named": false
           },
           {
             "type": "query_alias",
@@ -3432,112 +2798,8 @@
             "named": true
           },
           {
-            "type": "real",
-            "named": false
-          },
-          {
-            "type": "references",
-            "named": false
-          },
-          {
-            "type": "right",
-            "named": false
-          },
-          {
-            "type": "row_format",
-            "named": false
-          },
-          {
-            "type": "second",
-            "named": false
-          },
-          {
-            "type": "select",
-            "named": false
-          },
-          {
-            "type": "set",
-            "named": false
-          },
-          {
-            "type": "smallint",
-            "named": false
-          },
-          {
-            "type": "spatial",
-            "named": false
-          },
-          {
-            "type": "subpartition",
-            "named": false
-          },
-          {
-            "type": "subpartitions",
-            "named": false
-          },
-          {
-            "type": "table",
-            "named": false
-          },
-          {
             "type": "text",
-            "named": false
-          },
-          {
-            "type": "than",
-            "named": false
-          },
-          {
-            "type": "time",
-            "named": false
-          },
-          {
-            "type": "timestamp",
-            "named": false
-          },
-          {
-            "type": "tinyint",
-            "named": false
-          },
-          {
-            "type": "true",
-            "named": false
-          },
-          {
-            "type": "unique",
-            "named": false
-          },
-          {
-            "type": "unsigned",
-            "named": false
-          },
-          {
-            "type": "update",
-            "named": false
-          },
-          {
-            "type": "values",
-            "named": false
-          },
-          {
-            "type": "varchar",
-            "named": false
-          },
-          {
-            "type": "week",
-            "named": false
-          },
-          {
-            "type": "where",
-            "named": false
-          },
-          {
-            "type": "year",
-            "named": false
-          },
-          {
-            "type": "zerofill",
-            "named": false
+            "named": true
           }
         ]
       },
@@ -3546,71 +2808,11 @@
         "required": true,
         "types": [
           {
-            "type": "add",
-            "named": false
-          },
-          {
-            "type": "alter",
-            "named": false
-          },
-          {
-            "type": "and",
-            "named": false
-          },
-          {
-            "type": "as",
-            "named": false
-          },
-          {
-            "type": "auto_increment",
-            "named": false
-          },
-          {
-            "type": "between",
-            "named": false
-          },
-          {
-            "type": "bigint",
-            "named": false
-          },
-          {
-            "type": "blob",
-            "named": false
-          },
-          {
-            "type": "boolean",
-            "named": false
-          },
-          {
             "type": "bracketed_query_value",
             "named": true
           },
           {
-            "type": "by",
-            "named": false
-          },
-          {
             "type": "cf_if_tag",
-            "named": true
-          },
-          {
-            "type": "cf_output_tag",
-            "named": true
-          },
-          {
-            "type": "cf_query_tag",
-            "named": true
-          },
-          {
-            "type": "cf_return_tag",
-            "named": true
-          },
-          {
-            "type": "cf_savecontent_tag",
-            "named": true
-          },
-          {
-            "type": "cf_script_tag",
             "named": true
           },
           {
@@ -3626,124 +2828,12 @@
             "named": true
           },
           {
-            "type": "cf_xml_tag",
-            "named": true
-          },
-          {
-            "type": "char",
-            "named": false
-          },
-          {
-            "type": "charset",
-            "named": false
-          },
-          {
-            "type": "check",
-            "named": false
-          },
-          {
-            "type": "collate",
-            "named": false
-          },
-          {
-            "type": "column",
-            "named": false
-          },
-          {
-            "type": "comment",
-            "named": false
-          },
-          {
-            "type": "constraint",
-            "named": false
-          },
-          {
-            "type": "create",
-            "named": false
-          },
-          {
-            "type": "data_directory",
-            "named": false
-          },
-          {
-            "type": "date",
-            "named": false
-          },
-          {
-            "type": "datetime",
-            "named": false
-          },
-          {
-            "type": "day",
-            "named": false
-          },
-          {
-            "type": "decimal",
-            "named": false
-          },
-          {
-            "type": "default",
-            "named": false
-          },
-          {
-            "type": "delete",
-            "named": false
-          },
-          {
-            "type": "distinct",
-            "named": false
-          },
-          {
-            "type": "double",
-            "named": false
-          },
-          {
             "type": "double_quoted_query_value",
             "named": true
           },
           {
-            "type": "drop",
-            "named": false
-          },
-          {
-            "type": "each",
-            "named": false
-          },
-          {
-            "type": "engine",
-            "named": false
-          },
-          {
-            "type": "enum",
-            "named": false
-          },
-          {
-            "type": "exists",
-            "named": false
-          },
-          {
-            "type": "false",
-            "named": false
-          },
-          {
-            "type": "float",
-            "named": false
-          },
-          {
-            "type": "foreign",
-            "named": false
-          },
-          {
-            "type": "from",
-            "named": false
-          },
-          {
-            "type": "fulltext",
-            "named": false
-          },
-          {
-            "type": "group",
-            "named": false
+            "type": "erroneous_cf_end_tag",
+            "named": true
           },
           {
             "type": "hash_empty",
@@ -3754,148 +2844,12 @@
             "named": true
           },
           {
-            "type": "having",
-            "named": false
-          },
-          {
-            "type": "hour",
-            "named": false
-          },
-          {
-            "type": "in",
-            "named": false
-          },
-          {
-            "type": "index",
-            "named": false
-          },
-          {
-            "type": "index_directory",
-            "named": false
-          },
-          {
-            "type": "inner",
-            "named": false
-          },
-          {
-            "type": "insert",
-            "named": false
-          },
-          {
-            "type": "insert_method",
-            "named": false
-          },
-          {
-            "type": "int",
-            "named": false
-          },
-          {
-            "type": "interval",
-            "named": false
-          },
-          {
-            "type": "into",
-            "named": false
-          },
-          {
-            "type": "join",
-            "named": false
-          },
-          {
-            "type": "key",
-            "named": false
-          },
-          {
-            "type": "keyblocksize",
-            "named": false
-          },
-          {
-            "type": "left",
-            "named": false
-          },
-          {
-            "type": "less",
-            "named": false
-          },
-          {
-            "type": "like",
-            "named": false
-          },
-          {
-            "type": "limit",
-            "named": false
-          },
-          {
-            "type": "max_rows",
-            "named": false
-          },
-          {
-            "type": "mediumint",
-            "named": false
-          },
-          {
-            "type": "microsecond",
-            "named": false
-          },
-          {
-            "type": "min_rows",
-            "named": false
-          },
-          {
-            "type": "minute",
-            "named": false
-          },
-          {
-            "type": "month",
-            "named": false
-          },
-          {
-            "type": "not",
-            "named": false
-          },
-          {
-            "type": "null",
-            "named": false
-          },
-          {
             "type": "null",
             "named": true
-          },
-          {
-            "type": "offset",
-            "named": false
-          },
-          {
-            "type": "on",
-            "named": false
-          },
-          {
-            "type": "order",
-            "named": false
-          },
-          {
-            "type": "outer",
-            "named": false
-          },
-          {
-            "type": "pack_keys",
-            "named": false
           },
           {
             "type": "parenthesized_query_node",
             "named": true
-          },
-          {
-            "type": "partition",
-            "named": false
-          },
-          {
-            "type": "partitions",
-            "named": false
-          },
-          {
-            "type": "primary",
-            "named": false
           },
           {
             "type": "query_alias",
@@ -3930,112 +2884,8 @@
             "named": true
           },
           {
-            "type": "real",
-            "named": false
-          },
-          {
-            "type": "references",
-            "named": false
-          },
-          {
-            "type": "right",
-            "named": false
-          },
-          {
-            "type": "row_format",
-            "named": false
-          },
-          {
-            "type": "second",
-            "named": false
-          },
-          {
-            "type": "select",
-            "named": false
-          },
-          {
-            "type": "set",
-            "named": false
-          },
-          {
-            "type": "smallint",
-            "named": false
-          },
-          {
-            "type": "spatial",
-            "named": false
-          },
-          {
-            "type": "subpartition",
-            "named": false
-          },
-          {
-            "type": "subpartitions",
-            "named": false
-          },
-          {
-            "type": "table",
-            "named": false
-          },
-          {
             "type": "text",
-            "named": false
-          },
-          {
-            "type": "than",
-            "named": false
-          },
-          {
-            "type": "time",
-            "named": false
-          },
-          {
-            "type": "timestamp",
-            "named": false
-          },
-          {
-            "type": "tinyint",
-            "named": false
-          },
-          {
-            "type": "true",
-            "named": false
-          },
-          {
-            "type": "unique",
-            "named": false
-          },
-          {
-            "type": "unsigned",
-            "named": false
-          },
-          {
-            "type": "update",
-            "named": false
-          },
-          {
-            "type": "values",
-            "named": false
-          },
-          {
-            "type": "varchar",
-            "named": false
-          },
-          {
-            "type": "week",
-            "named": false
-          },
-          {
-            "type": "where",
-            "named": false
-          },
-          {
-            "type": "year",
-            "named": false
-          },
-          {
-            "type": "zerofill",
-            "named": false
+            "named": true
           }
         ]
       }
@@ -4050,71 +2900,11 @@
         "required": true,
         "types": [
           {
-            "type": "add",
-            "named": false
-          },
-          {
-            "type": "alter",
-            "named": false
-          },
-          {
-            "type": "and",
-            "named": false
-          },
-          {
-            "type": "as",
-            "named": false
-          },
-          {
-            "type": "auto_increment",
-            "named": false
-          },
-          {
-            "type": "between",
-            "named": false
-          },
-          {
-            "type": "bigint",
-            "named": false
-          },
-          {
-            "type": "blob",
-            "named": false
-          },
-          {
-            "type": "boolean",
-            "named": false
-          },
-          {
             "type": "bracketed_query_value",
             "named": true
           },
           {
-            "type": "by",
-            "named": false
-          },
-          {
             "type": "cf_if_tag",
-            "named": true
-          },
-          {
-            "type": "cf_output_tag",
-            "named": true
-          },
-          {
-            "type": "cf_query_tag",
-            "named": true
-          },
-          {
-            "type": "cf_return_tag",
-            "named": true
-          },
-          {
-            "type": "cf_savecontent_tag",
-            "named": true
-          },
-          {
-            "type": "cf_script_tag",
             "named": true
           },
           {
@@ -4130,124 +2920,12 @@
             "named": true
           },
           {
-            "type": "cf_xml_tag",
-            "named": true
-          },
-          {
-            "type": "char",
-            "named": false
-          },
-          {
-            "type": "charset",
-            "named": false
-          },
-          {
-            "type": "check",
-            "named": false
-          },
-          {
-            "type": "collate",
-            "named": false
-          },
-          {
-            "type": "column",
-            "named": false
-          },
-          {
-            "type": "comment",
-            "named": false
-          },
-          {
-            "type": "constraint",
-            "named": false
-          },
-          {
-            "type": "create",
-            "named": false
-          },
-          {
-            "type": "data_directory",
-            "named": false
-          },
-          {
-            "type": "date",
-            "named": false
-          },
-          {
-            "type": "datetime",
-            "named": false
-          },
-          {
-            "type": "day",
-            "named": false
-          },
-          {
-            "type": "decimal",
-            "named": false
-          },
-          {
-            "type": "default",
-            "named": false
-          },
-          {
-            "type": "delete",
-            "named": false
-          },
-          {
-            "type": "distinct",
-            "named": false
-          },
-          {
-            "type": "double",
-            "named": false
-          },
-          {
             "type": "double_quoted_query_value",
             "named": true
           },
           {
-            "type": "drop",
-            "named": false
-          },
-          {
-            "type": "each",
-            "named": false
-          },
-          {
-            "type": "engine",
-            "named": false
-          },
-          {
-            "type": "enum",
-            "named": false
-          },
-          {
-            "type": "exists",
-            "named": false
-          },
-          {
-            "type": "false",
-            "named": false
-          },
-          {
-            "type": "float",
-            "named": false
-          },
-          {
-            "type": "foreign",
-            "named": false
-          },
-          {
-            "type": "from",
-            "named": false
-          },
-          {
-            "type": "fulltext",
-            "named": false
-          },
-          {
-            "type": "group",
-            "named": false
+            "type": "erroneous_cf_end_tag",
+            "named": true
           },
           {
             "type": "hash_empty",
@@ -4258,148 +2936,12 @@
             "named": true
           },
           {
-            "type": "having",
-            "named": false
-          },
-          {
-            "type": "hour",
-            "named": false
-          },
-          {
-            "type": "in",
-            "named": false
-          },
-          {
-            "type": "index",
-            "named": false
-          },
-          {
-            "type": "index_directory",
-            "named": false
-          },
-          {
-            "type": "inner",
-            "named": false
-          },
-          {
-            "type": "insert",
-            "named": false
-          },
-          {
-            "type": "insert_method",
-            "named": false
-          },
-          {
-            "type": "int",
-            "named": false
-          },
-          {
-            "type": "interval",
-            "named": false
-          },
-          {
-            "type": "into",
-            "named": false
-          },
-          {
-            "type": "join",
-            "named": false
-          },
-          {
-            "type": "key",
-            "named": false
-          },
-          {
-            "type": "keyblocksize",
-            "named": false
-          },
-          {
-            "type": "left",
-            "named": false
-          },
-          {
-            "type": "less",
-            "named": false
-          },
-          {
-            "type": "like",
-            "named": false
-          },
-          {
-            "type": "limit",
-            "named": false
-          },
-          {
-            "type": "max_rows",
-            "named": false
-          },
-          {
-            "type": "mediumint",
-            "named": false
-          },
-          {
-            "type": "microsecond",
-            "named": false
-          },
-          {
-            "type": "min_rows",
-            "named": false
-          },
-          {
-            "type": "minute",
-            "named": false
-          },
-          {
-            "type": "month",
-            "named": false
-          },
-          {
-            "type": "not",
-            "named": false
-          },
-          {
-            "type": "null",
-            "named": false
-          },
-          {
             "type": "null",
             "named": true
-          },
-          {
-            "type": "offset",
-            "named": false
-          },
-          {
-            "type": "on",
-            "named": false
-          },
-          {
-            "type": "order",
-            "named": false
-          },
-          {
-            "type": "outer",
-            "named": false
-          },
-          {
-            "type": "pack_keys",
-            "named": false
           },
           {
             "type": "parenthesized_query_node",
             "named": true
-          },
-          {
-            "type": "partition",
-            "named": false
-          },
-          {
-            "type": "partitions",
-            "named": false
-          },
-          {
-            "type": "primary",
-            "named": false
           },
           {
             "type": "query_alias",
@@ -4434,112 +2976,8 @@
             "named": true
           },
           {
-            "type": "real",
-            "named": false
-          },
-          {
-            "type": "references",
-            "named": false
-          },
-          {
-            "type": "right",
-            "named": false
-          },
-          {
-            "type": "row_format",
-            "named": false
-          },
-          {
-            "type": "second",
-            "named": false
-          },
-          {
-            "type": "select",
-            "named": false
-          },
-          {
-            "type": "set",
-            "named": false
-          },
-          {
-            "type": "smallint",
-            "named": false
-          },
-          {
-            "type": "spatial",
-            "named": false
-          },
-          {
-            "type": "subpartition",
-            "named": false
-          },
-          {
-            "type": "subpartitions",
-            "named": false
-          },
-          {
-            "type": "table",
-            "named": false
-          },
-          {
             "type": "text",
-            "named": false
-          },
-          {
-            "type": "than",
-            "named": false
-          },
-          {
-            "type": "time",
-            "named": false
-          },
-          {
-            "type": "timestamp",
-            "named": false
-          },
-          {
-            "type": "tinyint",
-            "named": false
-          },
-          {
-            "type": "true",
-            "named": false
-          },
-          {
-            "type": "unique",
-            "named": false
-          },
-          {
-            "type": "unsigned",
-            "named": false
-          },
-          {
-            "type": "update",
-            "named": false
-          },
-          {
-            "type": "values",
-            "named": false
-          },
-          {
-            "type": "varchar",
-            "named": false
-          },
-          {
-            "type": "week",
-            "named": false
-          },
-          {
-            "type": "where",
-            "named": false
-          },
-          {
-            "type": "year",
-            "named": false
-          },
-          {
-            "type": "zerofill",
-            "named": false
+            "named": true
           }
         ]
       },
@@ -4548,71 +2986,11 @@
         "required": true,
         "types": [
           {
-            "type": "add",
-            "named": false
-          },
-          {
-            "type": "alter",
-            "named": false
-          },
-          {
-            "type": "and",
-            "named": false
-          },
-          {
-            "type": "as",
-            "named": false
-          },
-          {
-            "type": "auto_increment",
-            "named": false
-          },
-          {
-            "type": "between",
-            "named": false
-          },
-          {
-            "type": "bigint",
-            "named": false
-          },
-          {
-            "type": "blob",
-            "named": false
-          },
-          {
-            "type": "boolean",
-            "named": false
-          },
-          {
             "type": "bracketed_query_value",
             "named": true
           },
           {
-            "type": "by",
-            "named": false
-          },
-          {
             "type": "cf_if_tag",
-            "named": true
-          },
-          {
-            "type": "cf_output_tag",
-            "named": true
-          },
-          {
-            "type": "cf_query_tag",
-            "named": true
-          },
-          {
-            "type": "cf_return_tag",
-            "named": true
-          },
-          {
-            "type": "cf_savecontent_tag",
-            "named": true
-          },
-          {
-            "type": "cf_script_tag",
             "named": true
           },
           {
@@ -4628,124 +3006,12 @@
             "named": true
           },
           {
-            "type": "cf_xml_tag",
-            "named": true
-          },
-          {
-            "type": "char",
-            "named": false
-          },
-          {
-            "type": "charset",
-            "named": false
-          },
-          {
-            "type": "check",
-            "named": false
-          },
-          {
-            "type": "collate",
-            "named": false
-          },
-          {
-            "type": "column",
-            "named": false
-          },
-          {
-            "type": "comment",
-            "named": false
-          },
-          {
-            "type": "constraint",
-            "named": false
-          },
-          {
-            "type": "create",
-            "named": false
-          },
-          {
-            "type": "data_directory",
-            "named": false
-          },
-          {
-            "type": "date",
-            "named": false
-          },
-          {
-            "type": "datetime",
-            "named": false
-          },
-          {
-            "type": "day",
-            "named": false
-          },
-          {
-            "type": "decimal",
-            "named": false
-          },
-          {
-            "type": "default",
-            "named": false
-          },
-          {
-            "type": "delete",
-            "named": false
-          },
-          {
-            "type": "distinct",
-            "named": false
-          },
-          {
-            "type": "double",
-            "named": false
-          },
-          {
             "type": "double_quoted_query_value",
             "named": true
           },
           {
-            "type": "drop",
-            "named": false
-          },
-          {
-            "type": "each",
-            "named": false
-          },
-          {
-            "type": "engine",
-            "named": false
-          },
-          {
-            "type": "enum",
-            "named": false
-          },
-          {
-            "type": "exists",
-            "named": false
-          },
-          {
-            "type": "false",
-            "named": false
-          },
-          {
-            "type": "float",
-            "named": false
-          },
-          {
-            "type": "foreign",
-            "named": false
-          },
-          {
-            "type": "from",
-            "named": false
-          },
-          {
-            "type": "fulltext",
-            "named": false
-          },
-          {
-            "type": "group",
-            "named": false
+            "type": "erroneous_cf_end_tag",
+            "named": true
           },
           {
             "type": "hash_empty",
@@ -4756,148 +3022,12 @@
             "named": true
           },
           {
-            "type": "having",
-            "named": false
-          },
-          {
-            "type": "hour",
-            "named": false
-          },
-          {
-            "type": "in",
-            "named": false
-          },
-          {
-            "type": "index",
-            "named": false
-          },
-          {
-            "type": "index_directory",
-            "named": false
-          },
-          {
-            "type": "inner",
-            "named": false
-          },
-          {
-            "type": "insert",
-            "named": false
-          },
-          {
-            "type": "insert_method",
-            "named": false
-          },
-          {
-            "type": "int",
-            "named": false
-          },
-          {
-            "type": "interval",
-            "named": false
-          },
-          {
-            "type": "into",
-            "named": false
-          },
-          {
-            "type": "join",
-            "named": false
-          },
-          {
-            "type": "key",
-            "named": false
-          },
-          {
-            "type": "keyblocksize",
-            "named": false
-          },
-          {
-            "type": "left",
-            "named": false
-          },
-          {
-            "type": "less",
-            "named": false
-          },
-          {
-            "type": "like",
-            "named": false
-          },
-          {
-            "type": "limit",
-            "named": false
-          },
-          {
-            "type": "max_rows",
-            "named": false
-          },
-          {
-            "type": "mediumint",
-            "named": false
-          },
-          {
-            "type": "microsecond",
-            "named": false
-          },
-          {
-            "type": "min_rows",
-            "named": false
-          },
-          {
-            "type": "minute",
-            "named": false
-          },
-          {
-            "type": "month",
-            "named": false
-          },
-          {
-            "type": "not",
-            "named": false
-          },
-          {
-            "type": "null",
-            "named": false
-          },
-          {
             "type": "null",
             "named": true
-          },
-          {
-            "type": "offset",
-            "named": false
-          },
-          {
-            "type": "on",
-            "named": false
-          },
-          {
-            "type": "order",
-            "named": false
-          },
-          {
-            "type": "outer",
-            "named": false
-          },
-          {
-            "type": "pack_keys",
-            "named": false
           },
           {
             "type": "parenthesized_query_node",
             "named": true
-          },
-          {
-            "type": "partition",
-            "named": false
-          },
-          {
-            "type": "partitions",
-            "named": false
-          },
-          {
-            "type": "primary",
-            "named": false
           },
           {
             "type": "query_alias",
@@ -4932,112 +3062,8 @@
             "named": true
           },
           {
-            "type": "real",
-            "named": false
-          },
-          {
-            "type": "references",
-            "named": false
-          },
-          {
-            "type": "right",
-            "named": false
-          },
-          {
-            "type": "row_format",
-            "named": false
-          },
-          {
-            "type": "second",
-            "named": false
-          },
-          {
-            "type": "select",
-            "named": false
-          },
-          {
-            "type": "set",
-            "named": false
-          },
-          {
-            "type": "smallint",
-            "named": false
-          },
-          {
-            "type": "spatial",
-            "named": false
-          },
-          {
-            "type": "subpartition",
-            "named": false
-          },
-          {
-            "type": "subpartitions",
-            "named": false
-          },
-          {
-            "type": "table",
-            "named": false
-          },
-          {
             "type": "text",
-            "named": false
-          },
-          {
-            "type": "than",
-            "named": false
-          },
-          {
-            "type": "time",
-            "named": false
-          },
-          {
-            "type": "timestamp",
-            "named": false
-          },
-          {
-            "type": "tinyint",
-            "named": false
-          },
-          {
-            "type": "true",
-            "named": false
-          },
-          {
-            "type": "unique",
-            "named": false
-          },
-          {
-            "type": "unsigned",
-            "named": false
-          },
-          {
-            "type": "update",
-            "named": false
-          },
-          {
-            "type": "values",
-            "named": false
-          },
-          {
-            "type": "varchar",
-            "named": false
-          },
-          {
-            "type": "week",
-            "named": false
-          },
-          {
-            "type": "where",
-            "named": false
-          },
-          {
-            "type": "year",
-            "named": false
-          },
-          {
-            "type": "zerofill",
-            "named": false
+            "named": true
           }
         ]
       }
@@ -5930,18 +3956,6 @@
     "named": false
   },
   {
-    "type": "add",
-    "named": false
-  },
-  {
-    "type": "alter",
-    "named": false
-  },
-  {
-    "type": "and",
-    "named": false
-  },
-  {
     "type": "any",
     "named": false
   },
@@ -5954,23 +3968,7 @@
     "named": true
   },
   {
-    "type": "auto_increment",
-    "named": false
-  },
-  {
-    "type": "between",
-    "named": false
-  },
-  {
-    "type": "bigint",
-    "named": false
-  },
-  {
     "type": "binary",
-    "named": false
-  },
-  {
-    "type": "blob",
     "named": false
   },
   {
@@ -5979,10 +3977,6 @@
   },
   {
     "type": "break",
-    "named": false
-  },
-  {
-    "type": "by",
     "named": false
   },
   {
@@ -6007,19 +4001,7 @@
     "extra": true
   },
   {
-    "type": "cf_query_content",
-    "named": true
-  },
-  {
-    "type": "cf_savecontent_content",
-    "named": true
-  },
-  {
     "type": "cf_scope_identifier",
-    "named": true
-  },
-  {
-    "type": "cf_script_content",
     "named": true
   },
   {
@@ -6029,35 +4011,6 @@
   {
     "type": "cf_var",
     "named": true
-  },
-  {
-    "type": "cf_xml_content",
-    "named": true
-  },
-  {
-    "type": "char",
-    "named": false
-  },
-  {
-    "type": "charset",
-    "named": false
-  },
-  {
-    "type": "check",
-    "named": false
-  },
-  {
-    "type": "collate",
-    "named": false
-  },
-  {
-    "type": "column",
-    "named": false
-  },
-  {
-    "type": "comment",
-    "named": false,
-    "extra": true
   },
   {
     "type": "comment",
@@ -6073,19 +4026,7 @@
     "named": false
   },
   {
-    "type": "constraint",
-    "named": false
-  },
-  {
     "type": "continue",
-    "named": false
-  },
-  {
-    "type": "create",
-    "named": false
-  },
-  {
-    "type": "data_directory",
     "named": false
   },
   {
@@ -6093,19 +4034,7 @@
     "named": false
   },
   {
-    "type": "datetime",
-    "named": false
-  },
-  {
-    "type": "day",
-    "named": false
-  },
-  {
     "type": "debugger",
-    "named": false
-  },
-  {
-    "type": "decimal",
     "named": false
   },
   {
@@ -6113,27 +4042,7 @@
     "named": false
   },
   {
-    "type": "delete",
-    "named": false
-  },
-  {
-    "type": "distinct",
-    "named": false
-  },
-  {
     "type": "do",
-    "named": false
-  },
-  {
-    "type": "double",
-    "named": false
-  },
-  {
-    "type": "drop",
-    "named": false
-  },
-  {
-    "type": "each",
     "named": false
   },
   {
@@ -6141,27 +4050,11 @@
     "named": false
   },
   {
-    "type": "engine",
-    "named": false
-  },
-  {
-    "type": "enum",
-    "named": false
-  },
-  {
     "type": "erroneous_cf_end_tag_name",
     "named": true
   },
   {
-    "type": "exists",
-    "named": false
-  },
-  {
     "type": "export",
-    "named": false
-  },
-  {
-    "type": "false",
     "named": false
   },
   {
@@ -6177,23 +4070,11 @@
     "named": false
   },
   {
-    "type": "float",
-    "named": false
-  },
-  {
     "type": "for",
     "named": false
   },
   {
-    "type": "foreign",
-    "named": false
-  },
-  {
     "type": "from",
-    "named": false
-  },
-  {
-    "type": "fulltext",
     "named": false
   },
   {
@@ -6205,19 +4086,7 @@
     "named": false
   },
   {
-    "type": "group",
-    "named": false
-  },
-  {
     "type": "guid",
-    "named": false
-  },
-  {
-    "type": "having",
-    "named": false
-  },
-  {
-    "type": "hour",
     "named": false
   },
   {
@@ -6241,59 +4110,7 @@
     "named": false
   },
   {
-    "type": "index",
-    "named": false
-  },
-  {
-    "type": "index_directory",
-    "named": false
-  },
-  {
-    "type": "inner",
-    "named": false
-  },
-  {
-    "type": "insert",
-    "named": false
-  },
-  {
-    "type": "insert_method",
-    "named": false
-  },
-  {
     "type": "instanceof",
-    "named": false
-  },
-  {
-    "type": "int",
-    "named": false
-  },
-  {
-    "type": "interval",
-    "named": false
-  },
-  {
-    "type": "into",
-    "named": false
-  },
-  {
-    "type": "join",
-    "named": false
-  },
-  {
-    "type": "key",
-    "named": false
-  },
-  {
-    "type": "keyblocksize",
-    "named": false
-  },
-  {
-    "type": "left",
-    "named": false
-  },
-  {
-    "type": "less",
     "named": false
   },
   {
@@ -6301,43 +4118,11 @@
     "named": false
   },
   {
-    "type": "like",
-    "named": false
-  },
-  {
-    "type": "limit",
-    "named": false
-  },
-  {
     "type": "logical_or",
     "named": true
   },
   {
-    "type": "max_rows",
-    "named": false
-  },
-  {
-    "type": "mediumint",
-    "named": false
-  },
-  {
     "type": "meta",
-    "named": false
-  },
-  {
-    "type": "microsecond",
-    "named": false
-  },
-  {
-    "type": "min_rows",
-    "named": false
-  },
-  {
-    "type": "minute",
-    "named": false
-  },
-  {
-    "type": "month",
     "named": false
   },
   {
@@ -6346,10 +4131,6 @@
   },
   {
     "type": "not",
-    "named": false
-  },
-  {
-    "type": "null",
     "named": false
   },
   {
@@ -6369,48 +4150,16 @@
     "named": false
   },
   {
-    "type": "offset",
-    "named": false
-  },
-  {
-    "type": "on",
-    "named": false
-  },
-  {
     "type": "optional_chain",
     "named": true
-  },
-  {
-    "type": "order",
-    "named": false
-  },
-  {
-    "type": "outer",
-    "named": false
-  },
-  {
-    "type": "pack_keys",
-    "named": false
   },
   {
     "type": "package",
     "named": false
   },
   {
-    "type": "partition",
-    "named": false
-  },
-  {
-    "type": "partitions",
-    "named": false
-  },
-  {
     "type": "placeholder",
     "named": true
-  },
-  {
-    "type": "primary",
-    "named": false
   },
   {
     "type": "private",
@@ -6441,14 +4190,6 @@
     "named": true
   },
   {
-    "type": "real",
-    "named": false
-  },
-  {
-    "type": "references",
-    "named": false
-  },
-  {
     "type": "regex_flags",
     "named": true
   },
@@ -6469,22 +4210,6 @@
     "named": false
   },
   {
-    "type": "right",
-    "named": false
-  },
-  {
-    "type": "row_format",
-    "named": false
-  },
-  {
-    "type": "second",
-    "named": false
-  },
-  {
-    "type": "select",
-    "named": false
-  },
-  {
     "type": "self_closing_tag_delimiter",
     "named": true
   },
@@ -6499,14 +4224,6 @@
   {
     "type": "shorthand_property_identifier_pattern",
     "named": true
-  },
-  {
-    "type": "smallint",
-    "named": false
-  },
-  {
-    "type": "spatial",
-    "named": false
   },
   {
     "type": "star",
@@ -6537,14 +4254,6 @@
     "named": true
   },
   {
-    "type": "subpartition",
-    "named": false
-  },
-  {
-    "type": "subpartitions",
-    "named": false
-  },
-  {
     "type": "super",
     "named": true
   },
@@ -6553,20 +4262,12 @@
     "named": false
   },
   {
-    "type": "table",
-    "named": false
-  },
-  {
     "type": "target",
     "named": false
   },
   {
     "type": "text",
-    "named": false
-  },
-  {
-    "type": "than",
-    "named": false
+    "named": true
   },
   {
     "type": "this",
@@ -6574,22 +4275,6 @@
   },
   {
     "type": "throw",
-    "named": false
-  },
-  {
-    "type": "time",
-    "named": false
-  },
-  {
-    "type": "timestamp",
-    "named": false
-  },
-  {
-    "type": "tinyint",
-    "named": false
-  },
-  {
-    "type": "true",
     "named": false
   },
   {
@@ -6605,39 +4290,11 @@
     "named": true
   },
   {
-    "type": "unique",
-    "named": false
-  },
-  {
-    "type": "unsigned",
-    "named": false
-  },
-  {
-    "type": "update",
-    "named": false
-  },
-  {
-    "type": "values",
-    "named": false
-  },
-  {
     "type": "var",
     "named": false
   },
   {
-    "type": "varchar",
-    "named": false
-  },
-  {
     "type": "void",
-    "named": false
-  },
-  {
-    "type": "week",
-    "named": false
-  },
-  {
-    "type": "where",
     "named": false
   },
   {
@@ -6650,14 +4307,6 @@
   },
   {
     "type": "xml",
-    "named": false
-  },
-  {
-    "type": "year",
-    "named": false
-  },
-  {
-    "type": "zerofill",
     "named": false
   },
   {

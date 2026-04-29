@@ -6,17 +6,17 @@ void *tree_sitter_cfhtml_external_scanner_create() {
 }
 
 bool tree_sitter_cfhtml_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
-    return external_scanner_scan(payload, lexer, valid_symbols);
+    return external_scanner_scan(payload, lexer, valid_symbols, SYMBOL_COUNT, true);
 }
 
 unsigned tree_sitter_cfhtml_external_scanner_serialize(void *payload, char *buffer) {
     Scanner *scanner = (Scanner *)payload;
-    return serialize(scanner, buffer);
+    return serialize(scanner, buffer, true);
 }
 
 void tree_sitter_cfhtml_external_scanner_deserialize(void *payload, const char *buffer, unsigned length) {
     Scanner *scanner = (Scanner *)payload;
-    deserialize(scanner, buffer, length);
+    deserialize(scanner, buffer, length, true);
 }
 
 void tree_sitter_cfhtml_external_scanner_destroy(void *payload) {
