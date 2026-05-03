@@ -288,6 +288,7 @@ static bool scan_comment(TSLexer *lexer, bool is_cfquery_context) {
                 ++dashes;
                 if ( direction == 1 && dashes >= 2 ) {
                     ++nesting;
+                    direction = -1;
                     dashes = 0;
                 }
                 break;
@@ -299,21 +300,30 @@ static bool scan_comment(TSLexer *lexer, bool is_cfquery_context) {
                     lexer->mark_end(lexer);
                     if ( nesting == 0 ) {
                         return true;
-                    } else {
-                        break;
                     }
+                    dashes = 0;
+                    direction = -1;
+                    continue;
                 }
+                direction = -1;
+                dashes = 0;
+                break;
             case '<':
                 direction = 0;
+                dashes = 0;
                 break;
             case '!':
                 if ( direction == 0 ) {
                     direction = 1;
                     break;
                 }
+                direction = -1;
+                dashes = 0;
+                break;
             default:
                 direction = -1;
                 dashes = 0;
+                break;
         }
         advance(lexer);
     }
@@ -647,7 +657,6 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
     bool is_closing_tag = false;
     if (lexer->lookahead == '/') {
         is_closing_tag = true;
-        lexer->mark_end(lexer);
         advance(lexer);
     } else {
         // Void tag processing

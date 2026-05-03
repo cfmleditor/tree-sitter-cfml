@@ -754,7 +754,7 @@ html table with nested cfloop and cfoutput attribute
 				<tr>
 					<td align="middle" width="10">
 						<control:textinput />
-						
+
 					</td>
 				</tr>
 			</cfloop>
@@ -1603,7 +1603,7 @@ cfzip3
 			<cfzip action="unzip" destination="#getTempDirectory()#" file="#ARGUMENTS.zipFilePath#" overwrite="true" />
 
     </cfif>
-		
+
 	</cffunction>
 ---
 
@@ -1798,7 +1798,7 @@ cftransaction2
   <cfreturn result />
 
   </cffunction>
-  
+
 ---
 
 (program
@@ -1870,7 +1870,7 @@ cfoutput boolean expression with JS-style operators
 <cfoutput>
   #(x > 0 && y <= 10) || z == 5#
 </cfoutput>
-  
+
 ---
 
 (program
@@ -2072,3 +2072,17 @@ component {
 (program
   (component_file
     (cf_component_content)))
+
+===================================
+nested comments
+===================================
+
+<!---
+<!--- --->
+<!--- --->
+--->
+
+---
+
+(program
+  (cf_comment))

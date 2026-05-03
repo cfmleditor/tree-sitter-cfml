@@ -1375,9 +1375,9 @@ module.exports = function defineGrammar(dialect) {
       unescaped_single_string_fragment: (_) => token.immediate(prec(1, /[^'#]+/)),
 
       // http://stackoverflow.com/questions/13014947/regex-to-match-a-c-style-multiline-comment/36328890#36328890
-      comment: (_) => token(choice(
+      comment: (_) => choice(
         seq('//', /[^\r\n\u2028\u2029]*/),
-        ...(dialect !== 'cfquery' ? [
+        ...(dialect === 'cfquery' ? [
           seq('--', /[^\r\n\u2028\u2029]*/),
         ] : []),
         seq(
@@ -1385,7 +1385,7 @@ module.exports = function defineGrammar(dialect) {
           /[^*]*\*+([^/*][^*]*\*+)*/,
           '/',
         ),
-      )),
+      ),
 
       template_substitution: ($) => seq(
         '${',
