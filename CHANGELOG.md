@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.26.8]
+
+- Fixes for nested comments
+- Fixes for # expressions on the left side of an assignment
+- Fixes for implicit self close tags within <cfelse> / <cfelseif> tags
+
 ## [0.26.7]
 
 - Scanner code improvements

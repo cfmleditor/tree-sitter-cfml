@@ -2134,3 +2134,495 @@ implicit close tag with <cfelse>
       (implicit_cf_end_tag))
     (cf_if_alt
       (cf_else_tag))))
+
+===================================
+obscure test 1
+===================================
+
+<cfif ARGUMENTS.step GT 1>
+
+	<cfset tempPreviousRoute = URLDecode(getToken(previousRoute,ARGUMENTS.step, '|')) />
+	<cfset tempHash = URLDecode(ListRest(tempPreviousRoute,'##')) />
+
+	<cfif Len(Trim(tempPreviousRoute)) GT 0>
+
+		<cfset result = "#ListFirst(tempPreviousRoute,'##')#" />
+
+		<cfif ListLen(tempPreviousRoute,'|') GT ARGUMENTS.step>
+
+			<cfset tempNewPreviousRoute = "" />
+			<cfset tempNewPreviousCriteria = "" />
+
+			<cfloop from="#ARGUMENTS.step#" to="#ListLen(tempPreviousRoute,'|')#" index="j">
+				<cfset tempNewPreviousRoute = ListAppend(getToken(previousRoute, j, '|'),'|') />
+				<cfset tempNewPreviousCriteria = ListAppend(getToken(previousCriteria, j, '|'),'|') />
+			</cfloop>
+
+			<cfif FindNoCase(".cfm",ListFirst(tempPreviousRoute,'##')) GT 0
+			AND findNoCase("?", ListFirst(tempPreviousRoute,'##')) LTE 0>
+				<cfset result = "#result#?previousRoute=#ReplaceList(tempNewPreviousRoute,'&,##,=,?,|','%26,%23,%3D,%3F,%7C')#&previousCriteria=#ReplaceList(tempNewPreviousCriteria,'&,##,=,|','%26,%23,%3D,%7C')#" />
+			<cfelse>
+				<cfset result = "#result#&previousRoute=#ReplaceList(tempNewPreviousRoute,'&,##,=,?,|','%26,%23,%3D,%3F,%7C')#&previousCriteria=#ReplaceList(tempNewPreviousCriteria,'&,##,=,|','%26,%23,%3D,%7C')#" />
+			</cfif>
+
+		</cfif>
+
+	</cfif>
+
+<cfelseif ListLen(previousRoute,"|") GT 1>
+
+	<cfset tempPreviousRoute = URLDecode(ListFirst(previousRoute,'|')) />
+	<cfset tempHash = URLDecode(ListRest(tempPreviousRoute,'##')) />
+	<cfif FindNoCase(".cfm",ListFirst(tempPreviousRoute,'##')) GT 0
+	AND findNoCase("?", ListFirst(tempPreviousRoute,'##')) LTE 0>
+		<cfset result = "#ListFirst(tempPreviousRoute,'##')#?previousRoute=#ReplaceList(ListRest(previousRoute,'|'),'&,##,=,?,|','%26,%23,%3D,%3F,%7C')#&previousCriteria=#ReplaceList(ListRest(previousCriteria,'|'),'&,##,=,|','%26,%23,%3D,%7C')#" />
+	<cfelse>
+		<cfset result = "#ListFirst(tempPreviousRoute,'##')#&previousRoute=#ReplaceList(ListRest(previousRoute,'|'),'&,##,=,?,|','%26,%23,%3D,%3F,%7C')#&previousCriteria=#ReplaceList(ListRest(previousCriteria,'|'),'&,##,=,|','%26,%23,%3D,%7C')#" />
+	</cfif>
+
+<cfelse>
+
+	<cfset previousRoute = URLDecode(previousRoute) />
+	<cfif FindNoCase(".cfm",previousRoute) GT 0
+	AND findNoCase("?", previousRoute) LTE 0>
+		<cfset previousRoute = previousRoute & "?" />
+	</cfif>
+	<cfset result = ListFirst(previousRoute,'##') />
+	<cfset tempHash = ListRest(previousRoute,'##') />
+
+</cfif>
+---
+
+(program
+  (cf_if_tag
+    (binary_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (number))
+    (cf_set_tag
+      (assignment_expression
+        (identifier)
+        (call_expression
+          (identifier)
+          (arguments
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier)
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (string
+                  (string_fragment)))))))
+      (cf_selfclose_void_tag_end
+        (self_closing_tag_delimiter)))
+    (cf_set_tag
+      (assignment_expression
+        (identifier)
+        (call_expression
+          (identifier)
+          (arguments
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier)
+                (string
+                  (hash_empty)))))))
+      (cf_selfclose_void_tag_end
+        (self_closing_tag_delimiter)))
+    (cf_if_tag
+      (binary_expression
+        (call_expression
+          (identifier)
+          (arguments
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier)))))
+        (number))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (string
+            (hash_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (identifier)
+                  (string
+                    (hash_empty)))))))
+        (cf_selfclose_void_tag_end
+          (self_closing_tag_delimiter)))
+      (cf_if_tag
+        (binary_expression
+          (call_expression
+            (identifier)
+            (arguments
+              (identifier)
+              (string
+                (string_fragment))))
+          (member_expression
+            (identifier)
+            (property_identifier)))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (string))
+          (cf_selfclose_void_tag_end
+            (self_closing_tag_delimiter)))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (string))
+          (cf_selfclose_void_tag_end
+            (self_closing_tag_delimiter)))
+        (cf_tag
+          (cf_start_tag
+            (cf_tag_name)
+            (cf_tag_attributes
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
+                  (hash_expression
+                    (member_expression
+                      (identifier)
+                      (property_identifier))))))
+            (cf_tag_attributes
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
+                  (hash_expression
+                    (call_expression
+                      (identifier)
+                      (arguments
+                        (identifier)
+                        (string
+                          (string_fragment))))))))
+            (cf_tag_attributes
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
+                  (attribute_value)))))
+          (cf_set_tag
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (identifier)
+                (arguments
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)
+                      (identifier)
+                      (string
+                        (string_fragment))))
+                  (string
+                    (string_fragment)))))
+            (cf_selfclose_void_tag_end
+              (self_closing_tag_delimiter)))
+          (cf_set_tag
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (identifier)
+                (arguments
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)
+                      (identifier)
+                      (string
+                        (string_fragment))))
+                  (string
+                    (string_fragment)))))
+            (cf_selfclose_void_tag_end
+              (self_closing_tag_delimiter)))
+          (cf_end_tag
+            (cf_tag_name)))
+        (cf_if_tag
+          (binary_expression
+            (call_expression
+              (identifier)
+              (arguments
+                (string
+                  (string_fragment))
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (identifier)
+                    (string
+                      (hash_expression
+                        (hash_expression
+                          (string
+                            (string_fragment)))))))))
+            (number))
+          (cf_set_tag
+            (assignment_expression
+              (identifier)
+              (string
+                (hash_expression
+                  (identifier))
+                (string_fragment)
+                (hash_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)
+                      (string
+                        (string_fragment)
+                        (hash_empty)
+                        (string_fragment))
+                      (string
+                        (string_fragment)))))
+                (string_fragment)
+                (hash_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)
+                      (string
+                        (string_fragment)
+                        (hash_empty)
+                        (string_fragment))
+                      (string
+                        (string_fragment)))))))
+            (cf_selfclose_void_tag_end
+              (self_closing_tag_delimiter)))
+          (cf_if_alt
+            (cf_else_tag)
+            (cf_set_tag
+              (assignment_expression
+                (identifier)
+                (string
+                  (hash_expression
+                    (identifier))
+                  (string_fragment)
+                  (hash_expression
+                    (call_expression
+                      (identifier)
+                      (arguments
+                        (identifier)
+                        (string
+                          (string_fragment)
+                          (hash_empty)
+                          (string_fragment))
+                        (string
+                          (string_fragment)))))
+                  (string_fragment)
+                  (hash_expression
+                    (call_expression
+                      (identifier)
+                      (arguments
+                        (identifier)
+                        (string
+                          (string_fragment)
+                          (hash_empty)
+                          (string_fragment))
+                        (string
+                          (string_fragment)))))))
+              (cf_selfclose_void_tag_end
+                (self_closing_tag_delimiter)))))))
+    (cf_if_alt
+      (cf_elseif_tag
+        (binary_expression
+          (call_expression
+            (identifier)
+            (arguments
+              (identifier)
+              (string
+                (string_fragment))))
+          (number)))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments
+              (call_expression
+                (identifier)
+                (arguments
+                  (identifier)
+                  (string
+                    (string_fragment)))))))
+        (cf_selfclose_void_tag_end
+          (self_closing_tag_delimiter)))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments
+              (call_expression
+                (identifier)
+                (arguments
+                  (identifier)
+                  (string
+                    (hash_empty)))))))
+        (cf_selfclose_void_tag_end
+          (self_closing_tag_delimiter)))
+      (cf_if_tag
+        (binary_expression
+          (call_expression
+            (identifier)
+            (arguments
+              (string
+                (string_fragment))
+              (call_expression
+                (identifier)
+                (arguments
+                  (identifier)
+                  (string
+                    (hash_expression
+                      (hash_expression
+                        (string
+                          (string_fragment)))))))))
+          (number))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (string
+              (hash_expression
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (identifier)
+                    (string
+                      (hash_empty)))))
+              (string_fragment)
+              (hash_expression
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (call_expression
+                      (identifier)
+                      (arguments
+                        (identifier)
+                        (string
+                          (string_fragment))))
+                    (string
+                      (string_fragment)
+                      (hash_empty)
+                      (string_fragment))
+                    (string
+                      (string_fragment)))))
+              (string_fragment)
+              (hash_expression
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (call_expression
+                      (identifier)
+                      (arguments
+                        (identifier)
+                        (string
+                          (string_fragment))))
+                    (string
+                      (string_fragment)
+                      (hash_empty)
+                      (string_fragment))
+                    (string
+                      (string_fragment)))))))
+          (cf_selfclose_void_tag_end
+            (self_closing_tag_delimiter)))
+        (cf_if_alt
+          (cf_else_tag)
+          (cf_set_tag
+            (assignment_expression
+              (identifier)
+              (string
+                (hash_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)
+                      (string
+                        (hash_empty)))))
+                (string_fragment)
+                (hash_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (call_expression
+                        (identifier)
+                        (arguments
+                          (identifier)
+                          (string
+                            (string_fragment))))
+                      (string
+                        (string_fragment)
+                        (hash_empty)
+                        (string_fragment))
+                      (string
+                        (string_fragment)))))
+                (string_fragment)
+                (hash_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (call_expression
+                        (identifier)
+                        (arguments
+                          (identifier)
+                          (string
+                            (string_fragment))))
+                      (string
+                        (string_fragment)
+                        (hash_empty)
+                        (string_fragment))
+                      (string
+                        (string_fragment)))))))
+            (cf_selfclose_void_tag_end
+              (self_closing_tag_delimiter)))))
+      (cf_if_alt
+        (cf_else_tag)
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier))))
+          (cf_selfclose_void_tag_end
+            (self_closing_tag_delimiter)))
+        (cf_if_tag
+          (binary_expression
+            (binary_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (string
+                    (string_fragment))
+                  (identifier)))
+              (number))
+            (binary_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (string
+                    (string_fragment))
+                  (identifier)))
+              (number)))
+          (cf_set_tag
+            (assignment_expression
+              (identifier)
+              (binary_expression
+                (identifier)
+                (string
+                  (string_fragment))))
+            (cf_selfclose_void_tag_end
+              (self_closing_tag_delimiter))))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier)
+                (string
+                  (hash_expression
+                    (hash_expression
+                      (string
+                        (string_fragment))))))))
+          (cf_selfclose_void_tag_end
+            (self_closing_tag_delimiter)))))))

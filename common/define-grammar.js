@@ -149,6 +149,7 @@ module.exports = function defineGrammar(dialect) {
       [$.computed_property_name, $.array],
       [$.binary_expression, $._initializer],
       [$._hash_expression, $._hash_empty],
+      [$.assignment_expression, $._hash_always_eval],
       [$.method_definition, $.access_type],
       [$.expression, $._property_name],
       [$.expression, $.object],
@@ -1209,6 +1210,7 @@ module.exports = function defineGrammar(dialect) {
         field('left', choice(
           $.parenthesized_expression,
           $._lhs_expression,
+          alias($._hash_expression, $.hash_expression),
         )),
         '=',
         field('right', choice($.expression, $._hash_always_eval)),

@@ -48,7 +48,7 @@ console.log(tree.rootNode.toString());
 ```toml
 [dependencies]
 tree-sitter = "0.25"
-tree-sitter-cfml = "0.26.7"
+tree-sitter-cfml = "0.26.8"
 ```
 
 The `tree-sitter` crate should be **0.25+** so the ABI matches the generated parsers (see `LANGUAGE_VERSION` in `cf*/src/parser.c`).
@@ -201,7 +201,7 @@ Pinned in `package.json` / `tree-sitter.json`; approximate roles:
 | Role                        | Package           | Version      |
 | --------------------------- | ----------------- | ------------ |
 | Native binding (peer / dev) | `tree-sitter`     | `0.25.0`     |
-| Parser CLI                  | `tree-sitter-cli` | `0.26.7`     |
+| Parser CLI                  | `tree-sitter-cli` | `0.26.8`     |
 | Native addon                | `node-addon-api`  | `^8.3.0`     |
 | Native addon                | `node-gyp-build`  | `^4.8.4`     |
 | Prebuild                    | `prebuildify`     | `^6.0.1`     |

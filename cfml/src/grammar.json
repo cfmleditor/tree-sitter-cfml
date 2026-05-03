@@ -4468,6 +4468,15 @@
                 {
                   "type": "SYMBOL",
                   "name": "_lhs_expression"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "_hash_expression"
+                  },
+                  "named": true,
+                  "value": "hash_expression"
                 }
               ]
             }
@@ -8031,6 +8040,10 @@
     [
       "_hash_expression",
       "_hash_empty"
+    ],
+    [
+      "assignment_expression",
+      "_hash_always_eval"
     ],
     [
       "method_definition",
