@@ -32,7 +32,7 @@ jobs:
       matrix:
         language: [cfml, cfhtml, cfscript, cfquery]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
       - uses: vigoux/tree-sitter-fuzz-action@v1
         with:
           language: ${{ matrix.language }}

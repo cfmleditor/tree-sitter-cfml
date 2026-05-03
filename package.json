@@ -41,6 +41,7 @@
   "devDependencies": {
     "eslint": "^9.39.4",
     "eslint-config-treesitter": "^1.0.2",
+    "globals": "^17.6.0",
     "prebuildify": "^6.0.1",
     "tree-sitter": "0.25.0",
     "tree-sitter-cli": "0.26.8"
@@ -54,7 +55,7 @@
     }
   },
   "engines": {
-    "node": ">=18 <24"
+    "node": ">=18 <=24"
   },
   "scripts": {
     "build": "node scripts/build.js",
