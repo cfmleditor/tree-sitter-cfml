@@ -735,21 +735,20 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
     }
 
 
-    // For CF tags scanned with full name (e.g. CFTEST), strip CF prefix to match
-    // tags pushed without prefix (after _cf_open_tag consumed '<cf')
-    String *name = &result.tag_name;
-    if (result.is_cf_tag && name->size > 2) {
-        // shift contents left by 2 to remove 'CF' prefix
-        memmove(name->contents, name->contents + 2, name->size - 2);
-        name->size -= 2;
-    }
-
     Tag next_tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name); 
 
     if (is_closing_tag) {
         // The tag correctly closes the topmost element on the stack
         if (is_cf_context ? (scanner->cf_tags.size > 0 && tag_eq(array_back(&scanner->cf_tags), &next_tag))
                           : (scanner->tags.size > 0 && tag_eq(array_back(&scanner->tags), &next_tag))) {
+            // Before accepting the CF close, check if HTML tags opened inside
+            // this CF tag need implicit closing (e.g. <cfloop><span></cfloop>)
+            if (is_cf_context && scanner->tags.size > array_back(&scanner->cf_tags)->html_depth) {
+                pop_tag(scanner, false);
+                lexer->result_symbol = IMPLICIT_END_TAG;
+                tag_free(&next_tag);
+                return true;
+            }
             tag_free(&next_tag);
             return false;
         }
@@ -785,7 +784,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         }
     } else {
 
-        if (is_cf_context && parent && tag_eq(parent, &next_tag)) {
+        if (is_cf_context && !result.is_cf_tag && parent && tag_eq(parent, &next_tag)) {
             pop_tag(scanner, true);
             lexer->result_symbol = IMPLICIT_CF_END_TAG;
             tag_free(&next_tag);
