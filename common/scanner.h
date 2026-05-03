@@ -35,11 +35,11 @@ enum TokenType {
     ERRONEOUS_END_TAG_NAME,
     SELF_CLOSING_TAG_DELIMITER,
     IMPLICIT_END_TAG,
-    
+
     START_HASH_EXPRESSION,
     SINGLE_HASH,
     HASH_EMPTY,
-    
+
     CF_RETURN_START_TAG_NAME,
     CF_XML_START_TAG_NAME,
     CF_XML_END_TAG_NAME,
@@ -60,8 +60,6 @@ enum TokenType {
     CF_OUTPUT_START_TAG_NAME,
 
     CF_COMPONENT_CONTENT,
-
-    SYMBOL_COUNT
 };
 
 typedef struct {
@@ -263,7 +261,7 @@ static TagNameResult scan_tag_name(TSLexer *lexer, bool is_cfquery_context) {
 
     result.tag_name = tag_name;
     result.is_cf_tag = is_cf_tag;
-    
+
     return result;
 }
 
@@ -451,7 +449,7 @@ static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer, bool is_cfque
     if (cf_tag->type != CF_QUERY) {
         return false;
     }
-    
+
     lexer->mark_end(lexer);
 
     size_t tag_len = cf_tag->tag_name.size;
@@ -493,7 +491,7 @@ static bool scan_cfxml_content(Scanner *scanner, TSLexer *lexer, bool is_cfquery
     if (cf_tag->type != CF_XML) {
         return false;
     }
-    
+
     lexer->mark_end(lexer);
 
     size_t tag_len = cf_tag->tag_name.size;
@@ -536,7 +534,7 @@ static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer, bool is_cfqu
     if (cf_tag->type != CF_SCRIPT) {
         return false;
     }
-    
+
     lexer->mark_end(lexer);
 
     size_t tag_len = cf_tag->tag_name.size;
@@ -578,7 +576,7 @@ static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer, bool is
     if (cf_tag->type != CF_SAVECONTENT) {
         return false;
     }
-    
+
     lexer->mark_end(lexer);
 
     size_t tag_len = cf_tag->tag_name.size;
@@ -649,7 +647,7 @@ static void pop_tag(Scanner *scanner, bool is_cf_context) {
 }
 
 static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_context, bool is_cfquery_context) {
-    
+
     Tag *parent = is_cf_context
         ? (scanner->cf_tags.size == 0 ? NULL : array_back(&scanner->cf_tags))
         : (scanner->tags.size == 0 ? NULL : array_back(&scanner->tags));
@@ -735,7 +733,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
     }
 
 
-    Tag next_tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name); 
+    Tag next_tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
 
     if (is_closing_tag) {
         // The tag correctly closes the topmost element on the stack
@@ -829,7 +827,7 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         array_delete(&result.tag_name);
         return false;
     }
-    
+
     // bool is_cf = result.is_cf_tag || is_cf_context;
     Tag tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
 
@@ -899,7 +897,7 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
     } else {
         array_push(&scanner->tags, tag);
     }
-    
+
     return true;
 }
 
@@ -933,7 +931,7 @@ static void set_end_tag_symbol(Scanner *scanner, TSLexer *lexer, Tag *tag, bool 
 }
 
 static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_context, bool is_cfquery_context) {
-    
+
     TagNameResult result = scan_tag_name(lexer, is_cfquery_context);
 
     if (result.tag_name.size == 0) {
@@ -949,9 +947,9 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
     // printf("scan_end_tag_name: tag=%.*s, is_cf_context=%d, tags.size=%d, cf_tags.size=%d\n",
     // (int)result.tag_name.size, result.tag_name.contents, is_cf_context,
     // scanner->tags.size, scanner->cf_tags.size);
-    
+
     // bool is_cf = result.is_cf_tag || is_cf_context;
-    
+
     Tag tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
 
     Tag *tag_back = (is_cf_context) ? ( scanner->cf_tags.size > 0 ? array_back(&scanner->cf_tags) : NULL )
@@ -1082,7 +1080,7 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
         case '&':
         case '/':
             return false;
-        
+
         // Insert a semicolon before decimals literals but not otherwise.
         case '.':
             skip(lexer);
@@ -1152,7 +1150,7 @@ static bool scan_ternary_qmark(TSLexer *lexer, bool is_cfquery_context) {
             lexer->result_symbol = ELVIS_OPERATOR;
 
             return true;
-        
+
         } else if (lexer->lookahead == '?') {
             return false;
         }
