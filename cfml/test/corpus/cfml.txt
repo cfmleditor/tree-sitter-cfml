@@ -2197,6 +2197,12 @@ obscure test 1
 		<container:lockactionitem table_ID="arrExisting[j].table_id" record_ID="#arrExisting[j].record_id#">
 	</cfloop>
 </container:lockaction>
+
+<div>
+	<cfloop>
+		<span>
+	</cfloop>
+</div>
 ---
 
 (program
@@ -2572,6 +2578,20 @@ obscure test 1
                 (hash_single)
                 (attribute_value)
                 (hash_single)))))
+        (implicit_end_tag))
+      (cf_end_tag
+        (cf_tag_name)))
+    (end_tag
+      (tag_name)))
+  (element
+    (start_tag
+      (tag_name))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name))
+      (element
+        (start_tag
+          (tag_name))
         (implicit_end_tag))
       (cf_end_tag
         (cf_tag_name)))
