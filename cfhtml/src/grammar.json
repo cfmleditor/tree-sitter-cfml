@@ -4449,6 +4449,33 @@
         }
       ]
     },
+    "_hashed_lhs_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "#"
+          },
+          "named": true,
+          "value": "hash"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_lhs_expression"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "#"
+          },
+          "named": true,
+          "value": "hash"
+        }
+      ]
+    },
     "assignment_expression": {
       "type": "PREC_RIGHT",
       "value": "assign",
@@ -4464,6 +4491,10 @@
                 {
                   "type": "SYMBOL",
                   "name": "parenthesized_expression"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_hashed_lhs_expression"
                 },
                 {
                   "type": "SYMBOL",
@@ -8029,10 +8060,6 @@
       "_initializer"
     ],
     [
-      "_hash_expression",
-      "_hash_empty"
-    ],
-    [
       "method_definition",
       "access_type"
     ],
@@ -8139,6 +8166,15 @@
     [
       "_for_header",
       "expression"
+    ],
+    [
+      "_hashed_lhs_expression",
+      "primary_expression"
+    ],
+    [
+      "_hashed_lhs_expression",
+      "_hash_expression",
+      "_hash_empty"
     ]
   ],
   "precedences": [

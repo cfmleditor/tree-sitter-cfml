@@ -380,11 +380,15 @@
     "named": true,
     "fields": {
       "left": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
             "type": "array_pattern",
+            "named": true
+          },
+          {
+            "type": "hash",
             "named": true
           },
           {
@@ -4306,6 +4310,10 @@
   {
     "type": "get",
     "named": false
+  },
+  {
+    "type": "hash",
+    "named": true
   },
   {
     "type": "hash_single",

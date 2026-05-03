@@ -679,6 +679,34 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         return false;
     }
 
+    if (result.is_cf_tag && !is_closing_tag &&
+        ((result.tag_name.size == 4 && memcmp(result.tag_name.contents, "ELSE", 4) == 0) ||
+         (result.tag_name.size == 6 && memcmp(result.tag_name.contents, "ELSEIF", 6) == 0))) {
+        array_delete(&result.tag_name);
+        if (is_cf_context && parent &&
+            parent->type != CF_IF && parent->type != CF_ELSEIF && parent->type != CF_ELSE) {
+            pop_tag(scanner, true);
+            lexer->result_symbol = IMPLICIT_CF_END_TAG;
+            return true;
+        }
+        if (!is_cf_context && scanner->tags.size > 0) {
+            // Check if there's a CF_IF on the cf_tags stack whose html_depth
+            // is less than current tags.size (meaning HTML tags opened inside cfif)
+            for (unsigned i = scanner->cf_tags.size; i > 0; i--) {
+                Tag *ct = &scanner->cf_tags.contents[i - 1];
+                if (ct->type == CF_IF || ct->type == CF_ELSEIF || ct->type == CF_ELSE) {
+                    if (scanner->tags.size > ct->html_depth) {
+                        pop_tag(scanner, false);
+                        lexer->result_symbol = IMPLICIT_END_TAG;
+                        return true;
+                    }
+                    break;
+                }
+            }
+        }
+        return false;
+    }
+
     if (result.is_cf_tag && !is_cf_context && is_closing_tag) {
         // A CF closing tag in HTML context: only implicitly close HTML tags
         // that were opened inside this CF tag (i.e. tags.size > cf html_depth)
