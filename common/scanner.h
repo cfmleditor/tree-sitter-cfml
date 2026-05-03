@@ -28,6 +28,7 @@ enum TokenType {
     CF_ELSEIF_TAG_NAME,
     CF_ELSE_TAG_NAME,
 
+    // Rules below this point at not included by the cfquery dialect
     SCRIPT_START_TAG_NAME,
     STYLE_START_TAG_NAME,
     START_TAG_NAME,
@@ -60,6 +61,7 @@ enum TokenType {
     CF_OUTPUT_START_TAG_NAME,
 
     CF_COMPONENT_CONTENT,
+    SYMBOL_COUNT
 };
 
 typedef struct {

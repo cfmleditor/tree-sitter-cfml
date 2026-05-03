@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.26.9]
+
+- Fixes for Go bindings
+
 ## [0.26.8]
 
 - Fixes for nested comments
