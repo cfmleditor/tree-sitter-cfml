@@ -1,6 +1,6 @@
 {
   "name": "@cfmleditor/tree-sitter-cfml",
-  "version": "0.26.9",
+  "version": "0.26.10",
   "description": "CFML grammar for tree-sitter",
   "repository": "github:cfmleditor/tree-sitter-cfml",
   "license": "MIT",

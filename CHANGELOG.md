@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.26.10]
+
+- Fix for erroneous end tags crossing boundary
+- Fix escaped hashes
+
 ## [0.26.9]
 
 - Fixes for Go bindings
