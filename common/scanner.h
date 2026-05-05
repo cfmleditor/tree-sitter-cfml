@@ -801,7 +801,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         if (
             parent &&
             (
-                ((parent->type == HTML || parent->type == HEAD || parent->type == BODY) && lexer->eof(lexer))
+                (lexer->eof(lexer))
                 || (is_cf_context && lexer->eof(lexer))
             )
         ) {
@@ -954,8 +954,15 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
 
     Tag tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
 
+    // Determine the minimum HTML stack index we can search to.
+    // CF control-flow tags record html_depth when pushed; don't search below that.
+    unsigned html_floor = 0;
+    if (!is_cf_context && scanner->cf_tags.size > 0) {
+        html_floor = array_back(&scanner->cf_tags)->html_depth;
+    }
+
     Tag *tag_back = (is_cf_context) ? ( scanner->cf_tags.size > 0 ? array_back(&scanner->cf_tags) : NULL )
-                   : ( scanner->tags.size > 0) ? array_back(&scanner->tags) : NULL;
+                   : ( scanner->tags.size > html_floor) ? array_back(&scanner->tags) : NULL;
 
     if ( tag_back && tag_eq(tag_back, &tag) ) {
         pop_tag(scanner, is_cf_context);
@@ -971,7 +978,7 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
                 }
             }
         } else {
-            for (unsigned i = scanner->tags.size; i > 0; i--) {
+            for (unsigned i = scanner->tags.size; i > html_floor; i--) {
                 if (tag_eq(&scanner->tags.contents[i - 1], &tag)) {
                     found = true;
                     break;

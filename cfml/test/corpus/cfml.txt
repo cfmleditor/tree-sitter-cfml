@@ -2232,128 +2232,15 @@ obscure test 1
     (cf_set_tag
       (assignment_expression
         (identifier)
-        (binary_expression
-          (binary_expression
+        (call_expression
+          (identifier)
+          (arguments
             (call_expression
               (identifier)
               (arguments
-                (call_expression
-                  (identifier)
-                  (arguments
-                    (identifier)
-                    (string
-                      (hash_expression
-                        (hash_expression
-                          (binary_expression
-                            (binary_expression
-                              (binary_expression
-                                (binary_expression
-                                  (binary_expression
-                                    (string
-                                      (string_fragment)
-                                      (hash_expression
-                                        (call_expression
-                                          (identifier)
-                                          (arguments
-                                            (identifier)
-                                            (string
-                                              (hash_empty)))))
-                                      (string_fragment))
-                                    (string
-                                      (string_fragment)
-                                      (hash_expression
-                                        (member_expression
-                                          (identifier)
-                                          (property_identifier)))
-                                      (string_fragment)
-                                      (hash_expression
-                                        (call_expression
-                                          (identifier)
-                                          (arguments
-                                            (identifier)
-                                            (string
-                                              (string_fragment)))))
-                                      (string_fragment)))
-                                  (string
-                                    (string_fragment)))
-                                (string
-                                  (string_fragment)))
-                              (string
-                                (string_fragment)))
-                            (string
-                              (string_fragment))))))))))
-            (number))
-          (call_expression
-            (identifier)
-            (arguments
-              (string
-                (string_fragment))
-              (call_expression
                 (identifier)
-                (arguments
-                  (identifier)
-                  (string
-                    (hash_expression
-                      (hash_expression
-                        (binary_expression
-                          (string
-                            (string_fragment)
-                            (hash_expression
-                              (identifier))
-                            (string_fragment)
-                            (hash_expression
-                              (call_expression
-                                (identifier)
-                                (arguments
-                                  (identifier)
-                                  (string
-                                    (string_fragment)
-                                    (hash_empty)
-                                    (string_fragment))
-                                  (string
-                                    (string_fragment)))))
-                            (string_fragment)
-                            (hash_expression
-                              (call_expression
-                                (identifier)
-                                (arguments
-                                  (identifier)
-                                  (string
-                                    (string_fragment)
-                                    (hash_empty)
-                                    (string_fragment))
-                                  (string
-                                    (string_fragment)))))
-                            (string_fragment)
-                            (hash_expression
-                              (identifier))
-                            (string_fragment)
-                            (hash_expression
-                              (call_expression
-                                (identifier)
-                                (arguments
-                                  (identifier)
-                                  (string
-                                    (string_fragment)
-                                    (hash_empty)
-                                    (string_fragment))
-                                  (string
-                                    (string_fragment)))))
-                            (string_fragment)
-                            (hash_expression
-                              (call_expression
-                                (identifier)
-                                (arguments
-                                  (identifier)
-                                  (string
-                                    (string_fragment)
-                                    (hash_empty)
-                                    (string_fragment))
-                                  (string
-                                    (string_fragment)))))
-                            (string_fragment))
-                          (string
-                            (string_fragment))))))))))))
+                (string
+                  (hash_empty)))))))
       (cf_selfclose_void_tag_end
         (self_closing_tag_delimiter)))
     (cf_if_tag
@@ -2361,17 +2248,10 @@ obscure test 1
         (call_expression
           (identifier)
           (arguments
-            (string
-              (string_fragment))
             (call_expression
               (identifier)
               (arguments
-                (identifier)
-                (string
-                  (hash_expression
-                    (hash_expression
-                      (string
-                        (string_fragment)))))))))
+                (identifier)))))
         (number))
       (cf_set_tag
         (assignment_expression
@@ -2383,9 +2263,62 @@ obscure test 1
                 (arguments
                   (identifier)
                   (string
-                    (hash_empty)))))
-            (string_fragment)
-            (hash_expression
+                    (hash_empty)))))))
+        (cf_selfclose_void_tag_end
+          (self_closing_tag_delimiter)))
+      (cf_if_tag
+        (binary_expression
+          (call_expression
+            (identifier)
+            (arguments
+              (identifier)
+              (string
+                (string_fragment))))
+          (member_expression
+            (identifier)
+            (property_identifier)))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (string))
+          (cf_selfclose_void_tag_end
+            (self_closing_tag_delimiter)))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (string))
+          (cf_selfclose_void_tag_end
+            (self_closing_tag_delimiter)))
+        (cf_tag
+          (cf_start_tag
+            (cf_tag_name)
+            (cf_tag_attributes
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
+                  (hash_expression
+                    (member_expression
+                      (identifier)
+                      (property_identifier))))))
+            (cf_tag_attributes
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
+                  (hash_expression
+                    (call_expression
+                      (identifier)
+                      (arguments
+                        (identifier)
+                        (string
+                          (string_fragment))))))))
+            (cf_tag_attributes
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
+                  (attribute_value)))))
+          (cf_set_tag
+            (assignment_expression
+              (identifier)
               (call_expression
                 (identifier)
                 (arguments
@@ -2393,16 +2326,16 @@ obscure test 1
                     (identifier)
                     (arguments
                       (identifier)
+                      (identifier)
                       (string
                         (string_fragment))))
-                  (string
-                    (string_fragment)
-                    (hash_empty)
-                    (string_fragment))
                   (string
                     (string_fragment)))))
-            (string_fragment)
-            (hash_expression
+            (cf_selfclose_void_tag_end
+              (self_closing_tag_delimiter)))
+          (cf_set_tag
+            (assignment_expression
+              (identifier)
               (call_expression
                 (identifier)
                 (arguments
@@ -2410,18 +2343,175 @@ obscure test 1
                     (identifier)
                     (arguments
                       (identifier)
+                      (identifier)
                       (string
                         (string_fragment))))
                   (string
-                    (string_fragment)
-                    (hash_empty)
+                    (string_fragment)))))
+            (cf_selfclose_void_tag_end
+              (self_closing_tag_delimiter)))
+          (cf_end_tag
+            (cf_tag_name)))
+        (cf_if_tag
+          (binary_expression
+            (binary_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (string
                     (string_fragment))
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)
+                      (string
+                        (hash_empty))))))
+              (number))
+            (binary_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (string
+                    (string_fragment))
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)
+                      (string
+                        (hash_empty))))))
+              (number)))
+          (cf_set_tag
+            (assignment_expression
+              (identifier)
+              (string
+                (hash_expression
+                  (identifier))
+                (string_fragment)
+                (hash_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)
+                      (string
+                        (string_fragment)
+                        (hash_empty)
+                        (string_fragment))
+                      (string
+                        (string_fragment)))))
+                (string_fragment)
+                (hash_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)
+                      (string
+                        (string_fragment)
+                        (hash_empty)
+                        (string_fragment))
+                      (string
+                        (string_fragment)))))))
+            (cf_selfclose_void_tag_end
+              (self_closing_tag_delimiter)))
+          (cf_if_alt
+            (cf_else_tag)
+            (cf_set_tag
+              (assignment_expression
+                (identifier)
+                (string
+                  (hash_expression
+                    (identifier))
+                  (string_fragment)
+                  (hash_expression
+                    (call_expression
+                      (identifier)
+                      (arguments
+                        (identifier)
+                        (string
+                          (string_fragment)
+                          (hash_empty)
+                          (string_fragment))
+                        (string
+                          (string_fragment)))))
+                  (string_fragment)
+                  (hash_expression
+                    (call_expression
+                      (identifier)
+                      (arguments
+                        (identifier)
+                        (string
+                          (string_fragment)
+                          (hash_empty)
+                          (string_fragment))
+                        (string
+                          (string_fragment)))))))
+              (cf_selfclose_void_tag_end
+                (self_closing_tag_delimiter)))))))
+    (cf_if_alt
+      (cf_elseif_tag
+        (binary_expression
+          (call_expression
+            (identifier)
+            (arguments
+              (identifier)
+              (string
+                (string_fragment))))
+          (number)))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments
+              (call_expression
+                (identifier)
+                (arguments
+                  (identifier)
                   (string
                     (string_fragment)))))))
         (cf_selfclose_void_tag_end
           (self_closing_tag_delimiter)))
-      (cf_if_alt
-        (cf_else_tag)
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments
+              (call_expression
+                (identifier)
+                (arguments
+                  (identifier)
+                  (string
+                    (hash_empty)))))))
+        (cf_selfclose_void_tag_end
+          (self_closing_tag_delimiter)))
+      (cf_if_tag
+        (binary_expression
+          (binary_expression
+            (call_expression
+              (identifier)
+              (arguments
+                (string
+                  (string_fragment))
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (identifier)
+                    (string
+                      (hash_empty))))))
+            (number))
+          (binary_expression
+            (call_expression
+              (identifier)
+              (arguments
+                (string
+                  (string_fragment))
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (identifier)
+                    (string
+                      (hash_empty))))))
+            (number)))
         (cf_set_tag
           (assignment_expression
             (identifier)
@@ -2468,59 +2558,116 @@ obscure test 1
                     (string
                       (string_fragment)))))))
           (cf_selfclose_void_tag_end
-            (self_closing_tag_delimiter)))))
-    (cf_if_alt
-      (cf_else_tag)
-      (cf_set_tag
-        (assignment_expression
-          (identifier)
-          (call_expression
-            (identifier)
-            (arguments
-              (identifier))))
-        (cf_selfclose_void_tag_end
-          (self_closing_tag_delimiter)))
-      (cf_if_tag
-        (binary_expression
-          (binary_expression
-            (call_expression
-              (identifier)
-              (arguments
-                (string
-                  (string_fragment))
-                (identifier)))
-            (number))
-          (binary_expression
-            (call_expression
-              (identifier)
-              (arguments
-                (string
-                  (string_fragment))
-                (identifier)))
-            (number)))
-        (cf_set_tag
-          (assignment_expression
-            (identifier)
-            (binary_expression
-              (identifier)
-              (string
-                (string_fragment))))
-          (cf_selfclose_void_tag_end
-            (self_closing_tag_delimiter))))
-      (cf_set_tag
-        (assignment_expression
-          (identifier)
-          (call_expression
-            (identifier)
-            (arguments
+            (self_closing_tag_delimiter)))
+        (cf_if_alt
+          (cf_else_tag)
+          (cf_set_tag
+            (assignment_expression
               (identifier)
               (string
                 (hash_expression
-                  (hash_expression
-                    (string
-                      (string_fragment))))))))
-        (cf_selfclose_void_tag_end
-          (self_closing_tag_delimiter)))))
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (identifier)
+                      (string
+                        (hash_empty)))))
+                (string_fragment)
+                (hash_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (call_expression
+                        (identifier)
+                        (arguments
+                          (identifier)
+                          (string
+                            (string_fragment))))
+                      (string
+                        (string_fragment)
+                        (hash_empty)
+                        (string_fragment))
+                      (string
+                        (string_fragment)))))
+                (string_fragment)
+                (hash_expression
+                  (call_expression
+                    (identifier)
+                    (arguments
+                      (call_expression
+                        (identifier)
+                        (arguments
+                          (identifier)
+                          (string
+                            (string_fragment))))
+                      (string
+                        (string_fragment)
+                        (hash_empty)
+                        (string_fragment))
+                      (string
+                        (string_fragment)))))))
+            (cf_selfclose_void_tag_end
+              (self_closing_tag_delimiter)))))
+      (cf_if_alt
+        (cf_else_tag)
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier))))
+          (cf_selfclose_void_tag_end
+            (self_closing_tag_delimiter)))
+        (cf_if_tag
+          (binary_expression
+            (binary_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (string
+                    (string_fragment))
+                  (identifier)))
+              (number))
+            (binary_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (string
+                    (string_fragment))
+                  (identifier)))
+              (number)))
+          (cf_set_tag
+            (assignment_expression
+              (identifier)
+              (binary_expression
+                (identifier)
+                (string
+                  (string_fragment))))
+            (cf_selfclose_void_tag_end
+              (self_closing_tag_delimiter))))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier)
+                (string
+                  (hash_empty)))))
+          (cf_selfclose_void_tag_end
+            (self_closing_tag_delimiter)))
+        (cf_set_tag
+          (assignment_expression
+            (identifier)
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier)
+                (string
+                  (hash_empty)))))
+          (cf_selfclose_void_tag_end
+            (self_closing_tag_delimiter))))))
   (element
     (start_tag
       (tag_name)
@@ -2597,3 +2744,90 @@ obscure test 1
         (cf_tag_name)))
     (end_tag
       (tag_name))))
+
+===================================
+cfif with erroneous end tags crossing boundary
+===================================
+	<table width="100%" class="dataEntry" cellpadding="2" border="0" cellspacing="2">
+		<cfif listContains(URL.security,"V") GT 0>
+			<tr>
+				<td colspan="4" align="center" class="Rowspace"></td>
+			</tr>
+			</table>
+		<cfelse>
+			</table>
+		</cfif>
+---
+
+(program
+  (element
+    (start_tag
+      (tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value)))))
+    (cf_if_tag
+      (binary_expression
+        (call_expression
+          (identifier)
+          (arguments
+            (member_expression
+              (identifier)
+              (property_identifier))
+            (string
+              (string_fragment))))
+        (number))
+      (element
+        (start_tag
+          (tag_name))
+        (element
+          (start_tag
+            (tag_name)
+            (tag_attributes
+              (attribute
+                (attribute_name)
+                (quoted_attribute_value
+                  (attribute_value))))
+            (tag_attributes
+              (attribute
+                (attribute_name)
+                (quoted_attribute_value
+                  (attribute_value))))
+            (tag_attributes
+              (attribute
+                (attribute_name)
+                (quoted_attribute_value
+                  (attribute_value)))))
+          (end_tag
+            (tag_name)))
+        (end_tag
+          (tag_name)))
+      (erroneous_end_tag
+        (erroneous_end_tag_name))
+      (cf_if_alt
+        (cf_else_tag)
+        (erroneous_end_tag
+          (erroneous_end_tag_name))))
+    (implicit_end_tag)))
