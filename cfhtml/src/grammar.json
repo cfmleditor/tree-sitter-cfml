@@ -7901,8 +7901,11 @@
           "value": "#"
         },
         {
-          "type": "STRING",
-          "value": "#"
+          "type": "IMMEDIATE_TOKEN",
+          "content": {
+            "type": "STRING",
+            "value": "#"
+          }
         }
       ]
     },
@@ -8036,10 +8039,6 @@
     [
       "binary_expression",
       "_initializer"
-    ],
-    [
-      "_hash_expression",
-      "_hash_empty"
     ],
     [
       "assignment_expression",

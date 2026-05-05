@@ -148,7 +148,6 @@ module.exports = function defineGrammar(dialect) {
       [$.labeled_statement, $._property_name],
       [$.computed_property_name, $.array],
       [$.binary_expression, $._initializer],
-      [$._hash_expression, $._hash_empty],
       [$.assignment_expression, $._hash_always_eval],
       [$.method_definition, $.access_type],
       [$.expression, $._property_name],
@@ -1612,7 +1611,7 @@ module.exports = function defineGrammar(dialect) {
         '#',
       ),
 
-      _hash_empty: ($) => seq('#', '#'),
+      _hash_empty: ($) => seq('#', token.immediate('#')),
 
       computed_property_name: ($) => seq(
         '[',
