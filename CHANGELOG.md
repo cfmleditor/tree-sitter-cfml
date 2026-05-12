@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.26.11]
+
+- `cfcomponent` tags are now optional siblings ( not parents )
+- `cffunction` tags are now specific tag definitions
+- Support `script` tags inside `cfcontent` tags
+
 ## [0.26.10]
 
 - Fix for erroneous end tags crossing boundary
