@@ -176,3 +176,64 @@ cfhtml table, cfloop, and cf comment interaction
         (cf_tag_name)))
     (end_tag
       (tag_name))))
+
+===================================
+cfsavecontent with script element
+===================================
+<cfsavecontent variable="html">
+some text
+<script>var x = 1;</script>
+more text
+</cfsavecontent>
+
+---
+
+(program
+  (cf_savecontent_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_savecontent_content)
+    (script_element
+      (start_tag
+        (tag_name))
+      (raw_text)
+      (end_tag
+        (tag_name)))
+    (cf_savecontent_content)))
+
+===================================
+cfsavecontent with only script element
+===================================
+<cfsavecontent variable="html"><script>alert('hi');</script></cfsavecontent>
+
+---
+
+(program
+  (cf_savecontent_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (script_element
+      (start_tag
+        (tag_name))
+      (raw_text)
+      (end_tag
+        (tag_name)))))
+
+===================================
+cfsavecontent without script element
+===================================
+<cfsavecontent variable="html">just plain text content</cfsavecontent>
+
+---
+
+(program
+  (cf_savecontent_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_savecontent_content)))

@@ -1341,8 +1341,20 @@
             "value": ">"
           },
           {
-            "type": "SYMBOL",
-            "name": "cf_savecontent_content"
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "cf_savecontent_content"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "script_element"
+                }
+              ]
+            }
           },
           {
             "type": "SYMBOL",

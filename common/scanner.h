@@ -96,7 +96,8 @@ static inline bool tag_has_name(TagType type, bool is_cfquery_context) {
 }
 
 static inline bool valid_start_tag_name(const bool *vs, unsigned count) {
-    return VS(vs, START_TAG_NAME, count) || VS(vs, CF_START_TAG_NAME, count) ||
+    return VS(vs, START_TAG_NAME, count) || VS(vs, SCRIPT_START_TAG_NAME, count) ||
+           VS(vs, CF_START_TAG_NAME, count) ||
            VS(vs, CF_SET_START_TAG_NAME, count) || VS(vs, CF_VOID_START_TAG_NAME, count) ||
            VS(vs, CF_RETURN_START_TAG_NAME, count) || VS(vs, CF_XML_START_TAG_NAME, count) ||
            VS(vs, CF_QUERY_START_TAG_NAME, count) || VS(vs, CF_SCRIPT_START_TAG_NAME, count) ||
@@ -589,25 +590,73 @@ static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer, bool is
     memcpy(&end_delimiter[4], cf_tag->tag_name.contents, tag_len);
     end_delimiter[4 + tag_len] = '\0';
 
-    size_t delimiter_index = 0;
     size_t end_delim_len = 4 + tag_len;
+    bool has_content = false;
 
     while (lexer->lookahead) {
-        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
-            delimiter_index++;
-            if (delimiter_index == end_delim_len) {
-                break;
-            }
+        if (lexer->lookahead == '<') {
+            // Mark end before '<' so we don't consume it
+            lexer->mark_end(lexer);
             advance(lexer);
+
+            // Check for </cfsavecontent>
+            if (towupper(lexer->lookahead) == end_delimiter[1]) {
+                size_t i = 1;
+                bool matched = true;
+                while (i < end_delim_len) {
+                    if (towupper(lexer->lookahead) != end_delimiter[i]) {
+                        matched = false;
+                        break;
+                    }
+                    i++;
+                    if (i < end_delim_len) advance(lexer);
+                }
+                if (matched) {
+                    // Found end delimiter, stop before '<'
+                    lexer->result_symbol = CF_SAVECONTENT_CONTENT;
+                    return has_content;
+                }
+            }
+
+            // Check for <script (case-insensitive)
+            const char *script_rest = "SCRIPT";
+            size_t script_rest_len = 6;
+            if (towupper(lexer->lookahead) == 'S') {
+                size_t i = 0;
+                bool matched = true;
+                while (i < script_rest_len) {
+                    if (towupper(lexer->lookahead) != script_rest[i]) {
+                        matched = false;
+                        break;
+                    }
+                    i++;
+                    if (i < script_rest_len) advance(lexer);
+                }
+                if (matched) {
+                    // Check next char is whitespace or '>' to confirm it's a tag
+                    advance(lexer);
+                    if (lexer->lookahead == '>' || lexer->lookahead == ' ' ||
+                        lexer->lookahead == '\t' || lexer->lookahead == '\n' ||
+                        lexer->lookahead == '\r' || lexer->lookahead == '/') {
+                        // Found <script, stop before '<'
+                        lexer->result_symbol = CF_SAVECONTENT_CONTENT;
+                        return has_content;
+                    }
+                }
+            }
+
+            // Not a match, the '<' is part of content
+            has_content = true;
+            lexer->mark_end(lexer);
         } else {
-            delimiter_index = 0;
+            has_content = true;
             advance(lexer);
             lexer->mark_end(lexer);
         }
     }
 
     lexer->result_symbol = CF_SAVECONTENT_CONTENT;
-    return true;
+    return has_content;
 }
 
 static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context) {

@@ -1420,7 +1420,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": true,
+      "required": false,
       "types": [
         {
           "type": "cf_attribute",
@@ -1428,6 +1428,10 @@
         },
         {
           "type": "cf_savecontent_content",
+          "named": true
+        },
+        {
+          "type": "script_element",
           "named": true
         }
       ]

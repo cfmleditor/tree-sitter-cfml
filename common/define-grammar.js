@@ -587,7 +587,7 @@ module.exports = function defineGrammar(dialect) {
           $._start_cf_savecontent_name,
           repeat($.cf_attribute),
           alias($._close_cf_tag_delim, '>'),
-          $.cf_savecontent_content,
+          repeat(choice($.cf_savecontent_content, $.script_element)),
           $._cf_close_tag,
           $._end_cf_savecontent_name,
           alias($._close_cf_tag_delim, '>'),
