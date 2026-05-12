@@ -967,6 +967,30 @@
     }
   },
   {
+    "type": "cf_component_close_tag",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "cf_component_open_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_selfclose_void_tag_end",
+          "named": true
+        },
+        {
+          "type": "cf_tag_attributes",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_else_tag",
     "named": true,
     "fields": {}
@@ -3023,6 +3047,14 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "cf_component_close_tag",
+          "named": true
+        },
+        {
+          "type": "cf_component_open_tag",
+          "named": true
+        },
         {
           "type": "cf_if_tag",
           "named": true

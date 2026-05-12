@@ -74,6 +74,8 @@ module.exports = function defineGrammar(dialect) {
         $._end_cf_savecontent_name,
         $.cf_savecontent_content,
         $._start_cf_output_name,
+        $._start_cf_component_name,
+        $._end_cf_component_name,
         $.cf_component_content,
       ] : []),
 
@@ -182,7 +184,7 @@ module.exports = function defineGrammar(dialect) {
     rules: {
 
       program: $ => choice(
-        repeat($._node),
+        repeat(choice($._node, ...(dialect !== 'cfquery' ? [$.cf_component_open_tag, $.cf_component_close_tag] : []))),
         ...(dialect !== 'cfquery' ? [
           $.component_file,
         ] : []),
@@ -603,6 +605,19 @@ module.exports = function defineGrammar(dialect) {
           $._end_cf_tag_name,
           alias($._close_cf_tag_delim, '>'),
         )),
+
+        cf_component_open_tag: $ => prec.right(4, seq(
+          $._cf_open_tag,
+          $._start_cf_component_name,
+          repeat($.cf_tag_attributes),
+          $.cf_selfclose_void_tag_end,
+        )),
+
+        cf_component_close_tag: $ => seq(
+          $._cf_close_tag,
+          $._end_cf_component_name,
+          alias($._close_cf_tag_delim, '>'),
+        ),
       } : {}),
 
       _cf_tags: $ => prec.right(3, choice(

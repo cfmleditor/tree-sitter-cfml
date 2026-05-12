@@ -60,6 +60,9 @@ enum TokenType {
 
     CF_OUTPUT_START_TAG_NAME,
 
+    CF_COMPONENT_START_TAG_NAME,
+    CF_COMPONENT_END_TAG_NAME,
+
     CF_COMPONENT_CONTENT,
     SYMBOL_COUNT
 };
@@ -102,6 +105,7 @@ static inline bool valid_start_tag_name(const bool *vs, unsigned count) {
            VS(vs, CF_RETURN_START_TAG_NAME, count) || VS(vs, CF_XML_START_TAG_NAME, count) ||
            VS(vs, CF_QUERY_START_TAG_NAME, count) || VS(vs, CF_SCRIPT_START_TAG_NAME, count) ||
            VS(vs, CF_SAVECONTENT_START_TAG_NAME, count) || VS(vs, CF_OUTPUT_START_TAG_NAME, count) ||
+           VS(vs, CF_COMPONENT_START_TAG_NAME, count) ||
            VS(vs, CF_IF_START_TAG_NAME, count) || VS(vs, CF_ELSEIF_TAG_NAME, count) ||
            VS(vs, CF_ELSE_TAG_NAME, count);
 }
@@ -118,8 +122,9 @@ static inline bool valid_cf_start_tag_name(const bool *vs, unsigned count) {
            VS(vs, CF_VOID_START_TAG_NAME, count) || VS(vs, CF_RETURN_START_TAG_NAME, count) ||
            VS(vs, CF_XML_START_TAG_NAME, count) || VS(vs, CF_QUERY_START_TAG_NAME, count) ||
            VS(vs, CF_SCRIPT_START_TAG_NAME, count) || VS(vs, CF_SAVECONTENT_START_TAG_NAME, count) ||
-           VS(vs, CF_OUTPUT_START_TAG_NAME, count) || VS(vs, CF_IF_START_TAG_NAME, count) ||
-           VS(vs, CF_ELSEIF_TAG_NAME, count) || VS(vs, CF_ELSE_TAG_NAME, count);
+           VS(vs, CF_OUTPUT_START_TAG_NAME, count) || VS(vs, CF_COMPONENT_START_TAG_NAME, count) ||
+           VS(vs, CF_IF_START_TAG_NAME, count) || VS(vs, CF_ELSEIF_TAG_NAME, count) ||
+           VS(vs, CF_ELSE_TAG_NAME, count);
 }
 
 static inline bool valid_cf_end_tag_name(const bool *vs, unsigned count) {
@@ -893,7 +898,14 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
             lexer->result_symbol = STYLE_START_TAG_NAME;
             break;
         case CF_VOID:
-            lexer->result_symbol = CF_VOID_START_TAG_NAME;
+            if (is_cf_context && tag.tag_name.size == 9 &&
+                memcmp(tag.tag_name.contents, "COMPONENT", 9) == 0) {
+                scanner->cfcomponent_depth++;
+                lexer->result_symbol = CF_COMPONENT_START_TAG_NAME;
+            } else {
+                lexer->result_symbol = CF_VOID_START_TAG_NAME;
+            }
+            tag_free(&tag);
             return true;
         case CF_SET:
             lexer->result_symbol = CF_SET_START_TAG_NAME;
@@ -931,10 +943,7 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         default:
             lexer->result_symbol = is_cf_context ? CF_START_TAG_NAME : START_TAG_NAME;
             if (is_cf_context && tag.type == CFML) {
-                if (tag.tag_name.size == 9 &&
-                    memcmp(tag.tag_name.contents, "COMPONENT", 9) == 0) {
-                    scanner->cfcomponent_depth++;
-                } else if (tag.tag_name.size == 8 &&
+                if (tag.tag_name.size == 8 &&
                     memcmp(tag.tag_name.contents, "FUNCTION", 8) == 0) {
                     scanner->cffunction_depth++;
                 }
@@ -955,11 +964,6 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
 static void set_end_tag_symbol(Scanner *scanner, TSLexer *lexer, Tag *tag, bool is_cf_context, bool is_cfquery_context) {
     if (is_cf_context && tag->type == CF_OUTPUT) {
         if (scanner->cfoutput_depth > 0) scanner->cfoutput_depth--;
-        lexer->result_symbol = CF_END_TAG_NAME;
-    } else if (is_cf_context && tag->type == CFML &&
-               tag->tag_name.size == 9 &&
-               memcmp(tag->tag_name.contents, "COMPONENT", 9) == 0) {
-        if (scanner->cfcomponent_depth > 0) scanner->cfcomponent_depth--;
         lexer->result_symbol = CF_END_TAG_NAME;
     } else if (is_cf_context && tag->type == CFML &&
                tag->tag_name.size == 8 &&
@@ -1002,6 +1006,15 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
     // bool is_cf = result.is_cf_tag || is_cf_context;
 
     Tag tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
+
+    // cfcomponent is a void tag (never pushed); just decrement depth
+    if (is_cf_context && tag.type == CF_VOID &&
+        tag.tag_name.size == 9 && memcmp(tag.tag_name.contents, "COMPONENT", 9) == 0) {
+        if (scanner->cfcomponent_depth > 0) scanner->cfcomponent_depth--;
+        lexer->result_symbol = CF_COMPONENT_END_TAG_NAME;
+        tag_free(&tag);
+        return true;
+    }
 
     // Determine the minimum HTML stack index we can search to.
     // CF control-flow tags record html_depth when pushed; don't search below that.
@@ -1422,6 +1435,10 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             if (VS(valid_symbols, ERRONEOUS_END_TAG_NAME, count)) {
                 return scan_end_tag_name(scanner, lexer, false, is_cfquery_context);
             } else if (VS(valid_symbols, ERRONEOUS_CF_END_TAG_NAME, count)) {
+                return scan_end_tag_name(scanner, lexer, true, is_cfquery_context);
+            }
+
+            if (VS(valid_symbols, CF_COMPONENT_END_TAG_NAME, count)) {
                 return scan_end_tag_name(scanner, lexer, true, is_cfquery_context);
             }
 
