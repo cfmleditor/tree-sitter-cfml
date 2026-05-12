@@ -95,14 +95,11 @@ cffunction
 ---
 
 (program
-  (cf_tag
-    (cf_start_tag
-      (cf_tag_name)
-      (cf_tag_attributes
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value)))))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
     (html_text)
     (hash_expression
       (binary_expression
@@ -151,9 +148,7 @@ cffunction
             (arguments
               (identifier)))
           (identifier)))
-      (cf_selfclose_void_tag_end))
-    (cf_end_tag
-      (cf_tag_name))))
+      (cf_selfclose_void_tag_end))))
 
 ===================================
 get results
@@ -192,29 +187,23 @@ get results
 ---
 
 (program
-  (cf_tag
-    (cf_start_tag
-      (cf_tag_name)
-      (cf_tag_attributes
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value))))
-      (cf_tag_attributes
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value))))
-      (cf_tag_attributes
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value))))
-      (cf_tag_attributes
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value)))))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
     (cf_selfclose_tag
       (cf_attribute
         (cf_attribute_name)
@@ -336,9 +325,7 @@ get results
     (cf_return_tag
       (identifier)
       (cf_selfclose_void_tag_end
-        (self_closing_tag_delimiter)))
-    (cf_end_tag
-      (cf_tag_name))))
+        (self_closing_tag_delimiter)))))
 
 ===================================
 cfscript
@@ -1608,29 +1595,23 @@ cfzip3
 ---
 
 (program
-  (cf_tag
-    (cf_start_tag
-      (cf_tag_name)
-      (cf_tag_attributes
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value))))
-      (cf_tag_attributes
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value))))
-      (cf_tag_attributes
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value))))
-      (cf_tag_attributes
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value)))))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
     (cf_selfclose_tag
       (cf_attribute
         (cf_attribute_name)
@@ -1691,9 +1672,7 @@ cfzip3
               (cf_attribute
                 (cf_attribute_name)
                 (quoted_cf_attribute_value
-                  (attribute_value))))))))
-    (cf_end_tag
-      (cf_tag_name))))
+                  (attribute_value))))))))))
 
 ===================================
 cfset string-plus-hash expression and cfswitch inside cfquery
@@ -1802,14 +1781,11 @@ cftransaction2
 ---
 
 (program
-  (cf_tag
-    (cf_start_tag
-      (cf_tag_name)
-      (cf_tag_attributes
-        (cf_attribute
-          (cf_attribute_name)
-          (quoted_cf_attribute_value
-            (attribute_value)))))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
     (cf_tag
       (cf_start_tag
         (cf_tag_name)
@@ -1860,9 +1836,7 @@ cftransaction2
         (identifier)
         (cf_selfclose_void_tag_end
           (self_closing_tag_delimiter)))
-      (implicit_cf_end_tag))
-    (cf_end_tag
-      (cf_tag_name))))
+      (implicit_cf_end_tag))))
 
 ===================================
 cfoutput boolean expression with JS-style operators

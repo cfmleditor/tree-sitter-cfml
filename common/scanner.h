@@ -60,6 +60,9 @@ enum TokenType {
 
     CF_OUTPUT_START_TAG_NAME,
 
+    CF_FUNCTION_START_TAG_NAME,
+    CF_FUNCTION_END_TAG_NAME,
+
     CF_COMPONENT_START_TAG_NAME,
     CF_COMPONENT_END_TAG_NAME,
 
@@ -94,7 +97,7 @@ static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 static inline bool tag_has_name(TagType type, bool is_cfquery_context) {
     return type == CUSTOM || type == CFML || type == CF_VOID || type == CF_SET ||
            type == CF_XML || type == CF_SCRIPT || type == CF_SAVECONTENT ||
-           type == CF_QUERY || type == CF_OUTPUT || type == CF_RETURN ||
+           type == CF_QUERY || type == CF_OUTPUT || type == CF_FUNCTION || type == CF_RETURN ||
            type == CF_IF || type == CF_ELSEIF || type == CF_ELSE;
 }
 
@@ -105,6 +108,7 @@ static inline bool valid_start_tag_name(const bool *vs, unsigned count) {
            VS(vs, CF_RETURN_START_TAG_NAME, count) || VS(vs, CF_XML_START_TAG_NAME, count) ||
            VS(vs, CF_QUERY_START_TAG_NAME, count) || VS(vs, CF_SCRIPT_START_TAG_NAME, count) ||
            VS(vs, CF_SAVECONTENT_START_TAG_NAME, count) || VS(vs, CF_OUTPUT_START_TAG_NAME, count) ||
+           VS(vs, CF_FUNCTION_START_TAG_NAME, count) ||
            VS(vs, CF_COMPONENT_START_TAG_NAME, count) ||
            VS(vs, CF_IF_START_TAG_NAME, count) || VS(vs, CF_ELSEIF_TAG_NAME, count) ||
            VS(vs, CF_ELSE_TAG_NAME, count);
@@ -114,6 +118,7 @@ static inline bool valid_end_tag_name(const bool *vs, unsigned count) {
     return VS(vs, END_TAG_NAME, count) || VS(vs, CF_END_TAG_NAME, count) ||
            VS(vs, CF_XML_END_TAG_NAME, count) || VS(vs, CF_QUERY_END_TAG_NAME, count) ||
            VS(vs, CF_SCRIPT_END_TAG_NAME, count) || VS(vs, CF_SAVECONTENT_END_TAG_NAME, count) ||
+           VS(vs, CF_FUNCTION_END_TAG_NAME, count) ||
            VS(vs, CF_IF_END_TAG_NAME, count);
 }
 
@@ -122,7 +127,8 @@ static inline bool valid_cf_start_tag_name(const bool *vs, unsigned count) {
            VS(vs, CF_VOID_START_TAG_NAME, count) || VS(vs, CF_RETURN_START_TAG_NAME, count) ||
            VS(vs, CF_XML_START_TAG_NAME, count) || VS(vs, CF_QUERY_START_TAG_NAME, count) ||
            VS(vs, CF_SCRIPT_START_TAG_NAME, count) || VS(vs, CF_SAVECONTENT_START_TAG_NAME, count) ||
-           VS(vs, CF_OUTPUT_START_TAG_NAME, count) || VS(vs, CF_COMPONENT_START_TAG_NAME, count) ||
+           VS(vs, CF_OUTPUT_START_TAG_NAME, count) || VS(vs, CF_FUNCTION_START_TAG_NAME, count) ||
+           VS(vs, CF_COMPONENT_START_TAG_NAME, count) ||
            VS(vs, CF_IF_START_TAG_NAME, count) || VS(vs, CF_ELSEIF_TAG_NAME, count) ||
            VS(vs, CF_ELSE_TAG_NAME, count);
 }
@@ -130,7 +136,8 @@ static inline bool valid_cf_start_tag_name(const bool *vs, unsigned count) {
 static inline bool valid_cf_end_tag_name(const bool *vs, unsigned count) {
     return VS(vs, CF_END_TAG_NAME, count) || VS(vs, CF_XML_END_TAG_NAME, count) ||
            VS(vs, CF_QUERY_END_TAG_NAME, count) || VS(vs, CF_SCRIPT_END_TAG_NAME, count) ||
-           VS(vs, CF_SAVECONTENT_END_TAG_NAME, count) || VS(vs, CF_IF_END_TAG_NAME, count);
+           VS(vs, CF_SAVECONTENT_END_TAG_NAME, count) || VS(vs, CF_FUNCTION_END_TAG_NAME, count) ||
+           VS(vs, CF_IF_END_TAG_NAME, count);
 }
 
 static inline bool no_content_symbols(const bool *vs, unsigned count) {
@@ -142,7 +149,8 @@ static inline bool no_content_symbols(const bool *vs, unsigned count) {
 static inline bool implicit_cf_end_tag_valid(const bool *vs, unsigned count) {
     return VS(vs, IMPLICIT_CF_END_TAG, count) && !VS(vs, CF_XML_END_TAG_NAME, count) &&
            !VS(vs, CF_QUERY_END_TAG_NAME, count) && !VS(vs, CF_SCRIPT_END_TAG_NAME, count) &&
-           !VS(vs, CF_SAVECONTENT_END_TAG_NAME, count) && !VS(vs, CF_IF_END_TAG_NAME, count) &&
+           !VS(vs, CF_SAVECONTENT_END_TAG_NAME, count) && !VS(vs, CF_FUNCTION_END_TAG_NAME, count) &&
+           !VS(vs, CF_IF_END_TAG_NAME, count) &&
            !VS(vs, CF_ELSEIF_TAG_NAME, count) && !VS(vs, CF_ELSE_TAG_NAME, count);
 }
 
@@ -940,14 +948,14 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
                 scanner->cfoutput_depth++;
             }
             break;
+        case CF_FUNCTION:
+            lexer->result_symbol = CF_FUNCTION_START_TAG_NAME;
+            if (is_cf_context) {
+                scanner->cffunction_depth++;
+            }
+            break;
         default:
             lexer->result_symbol = is_cf_context ? CF_START_TAG_NAME : START_TAG_NAME;
-            if (is_cf_context && tag.type == CFML) {
-                if (tag.tag_name.size == 8 &&
-                    memcmp(tag.tag_name.contents, "FUNCTION", 8) == 0) {
-                    scanner->cffunction_depth++;
-                }
-            }
             break;
     }
 
@@ -965,11 +973,9 @@ static void set_end_tag_symbol(Scanner *scanner, TSLexer *lexer, Tag *tag, bool 
     if (is_cf_context && tag->type == CF_OUTPUT) {
         if (scanner->cfoutput_depth > 0) scanner->cfoutput_depth--;
         lexer->result_symbol = CF_END_TAG_NAME;
-    } else if (is_cf_context && tag->type == CFML &&
-               tag->tag_name.size == 8 &&
-               memcmp(tag->tag_name.contents, "FUNCTION", 8) == 0) {
+    } else if (is_cf_context && tag->type == CF_FUNCTION) {
         if (scanner->cffunction_depth > 0) scanner->cffunction_depth--;
-        lexer->result_symbol = CF_END_TAG_NAME;
+        lexer->result_symbol = CF_FUNCTION_END_TAG_NAME;
     } else if (is_cf_context && tag->type == CF_XML) {
         lexer->result_symbol = CF_XML_END_TAG_NAME;
     } else if (is_cf_context && tag->type == CF_QUERY) {

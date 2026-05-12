@@ -16,6 +16,7 @@
 (cf_selfclose_tag) @tag
 (cf_start_tag_with_selfclose) @tag
 (cf_output_tag) @tag
+(cf_function_tag) @tag
 (cf_script_tag) @tag
 (cf_start_tag) @tag
 (cf_end_tag) @tag

@@ -1446,6 +1446,63 @@
         ]
       }
     },
+    "cf_function_tag": {
+      "type": "PREC_RIGHT",
+      "value": 3,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_cf_open_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_start_cf_function_name"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "cf_attribute"
+            }
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_cf_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_node"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_cf_close_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_end_cf_function_name"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_close_cf_tag_delim"
+            },
+            "named": false,
+            "value": ">"
+          }
+        ]
+      }
+    },
     "cf_component_open_tag": {
       "type": "PREC_RIGHT",
       "value": 4,
@@ -1541,6 +1598,10 @@
           {
             "type": "SYMBOL",
             "name": "cf_output_tag"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "cf_function_tag"
           }
         ]
       }
@@ -8576,6 +8637,14 @@
     {
       "type": "SYMBOL",
       "name": "_start_cf_output_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_start_cf_function_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_end_cf_function_name"
     },
     {
       "type": "SYMBOL",
