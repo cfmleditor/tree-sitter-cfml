@@ -67,7 +67,7 @@ enum TokenType {
     CF_COMPONENT_END_TAG_NAME,
 
     CF_COMPONENT_CONTENT,
-    SYMBOL_COUNT
+    SCANNER_SYMBOL_COUNT
 };
 
 typedef struct {

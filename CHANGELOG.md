@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.26.12]
+
+- Fix `SYMBOL_COUNT` conflict
+
 ## [0.26.11]
 
 - `cfcomponent` tags are now optional siblings ( not parents )

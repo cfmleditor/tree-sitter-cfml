@@ -6,7 +6,7 @@ void *tree_sitter_cfhtml_external_scanner_create() {
 }
 
 bool tree_sitter_cfhtml_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
-    return external_scanner_scan(payload, lexer, valid_symbols, SYMBOL_COUNT, true);
+    return external_scanner_scan(payload, lexer, valid_symbols, SCANNER_SYMBOL_COUNT, true);
 }
 
 unsigned tree_sitter_cfhtml_external_scanner_serialize(void *payload, char *buffer) {
