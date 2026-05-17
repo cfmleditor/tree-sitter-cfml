@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.26.15]
+
+- Further Updates to cfquery grammar and associated highlights.scm
+- Removal of CFHTML grammar ( covered by CFML grammar )
+
 ## [0.26.14]
 
 - Updates to cfquery grammar and associated highlights.scm
