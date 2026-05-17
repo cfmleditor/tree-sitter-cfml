@@ -483,7 +483,7 @@ module.exports = function defineGrammar(dialect) {
 
         query_number: ($) => alias(/-?[0-9]+/, $.number),
 
-        query_keyword: ($) => token(prec(1, choice(
+        query_keyword: ($) => token(choice(
           /[sS][eE][lL][eE][cC][tT]/,
           /[fF][rR][oO][mM]/,
           /[wW][hH][eE][rR][eE]/,
@@ -545,7 +545,7 @@ module.exports = function defineGrammar(dialect) {
           /[tT][aA][bB][lL][eE]/,
           /[eE][xX][eE][cC]/,
           /[wW][iI][nN][dD][oO][wW]/,
-        ))),
+        )),
 
         query_identifier: ($) => {
           // @ts-ignore

@@ -97,7 +97,6 @@ WHERE u.id = #ARGUMENTS.userIds[1]#
       (query_number
         (number))
       (query_keyword)
-      (query_keyword)
       (query_identifier)
       (query_identifier)
       (query_keyword)
@@ -179,7 +178,6 @@ WHERE t.column_name = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.co
   (query_alias
     (query_identifier)
     (query_identifier))
-  (query_keyword)
   (query_keyword)
   (query_identifier)
   (query_identifier)
@@ -280,7 +278,6 @@ SELECT u.id FROM users u INNER JOIN orders o ON u.id = o.user_id
   (query_keyword)
   (query_identifier)
   (query_identifier)
-  (query_keyword)
   (query_keyword)
   (query_keyword)
   (query_identifier)
@@ -837,7 +834,6 @@ FROM table_name t
     (query_identifier)
     (query_identifier))
   (query_keyword)
-  (query_keyword)
   (query_identifier)
   (query_identifier)
   (cf_if_tag
@@ -886,7 +882,6 @@ FROM table_name t
   (query_alias
     (query_identifier)
     (query_identifier))
-  (query_keyword)
   (query_keyword)
   (query_identifier)
   (query_identifier)
