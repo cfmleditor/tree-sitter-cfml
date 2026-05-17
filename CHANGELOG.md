@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.26.14]
+
+- Updates to cfquery grammar and associated highlights.scm
+- highlights.scm replace `lua-match` with `match`, fixes #27 thanks @chapmandu
+
 ## [0.26.12]
 
 - Fix `SYMBOL_COUNT` conflict

@@ -5,11 +5,11 @@ SELECT foo FROM bar WHERE id = ?
 ---
 
 (program
+  (query_keyword)
   (query_identifier)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_assignment_expression
     (query_identifier)
     (query_identifier
@@ -22,19 +22,19 @@ SELECT * FROM users WHERE created_at BETWEEN #ARGUMENTS.startDate# AND #ARGUMENT
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_star
     (star))
+  (query_keyword)
   (query_identifier)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (hash_expression
     (member_expression
       (identifier)
       (property_identifier)))
-  (query_identifier)
+  (query_keyword)
   (hash_expression
     (member_expression
       (identifier)
@@ -50,22 +50,24 @@ LIMIT 100
 ---
 
 (program
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_number
+    (number))
   (query_star
     (star))
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
   (query_star
     (star))
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier))
+  (query_keyword)
+  (query_number
+    (number)))
 
 ===================================
 distinct, exists, case and indexed hash
@@ -80,43 +82,45 @@ WHERE u.id = #ARGUMENTS.userIds[1]#
 ---
 
 (program
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
+  (query_keyword)
   (query_alias
     (query_identifier)
     (query_identifier))
   (query_comma)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (parenthesized_query_node
-    (query_identifier)
-    (query_number
-      (number))
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (query_alias
+  (query_keyword)
+  (query_keyword)
+  (query_function
+    (query_keyword)
+    (parenthesized_query_node
+      (query_keyword)
+      (query_number
+        (number))
+      (query_keyword)
+      (query_keyword)
       (query_identifier)
-      (query_assignment_expression
+      (query_identifier)
+      (query_keyword)
+      (query_alias
         (query_identifier)
-        (query_alias
+        (query_assignment_expression
           (query_identifier)
-          (query_identifier)))))
-  (query_identifier)
+          (query_alias
+            (query_identifier)
+            (query_identifier))))))
+  (query_keyword)
   (quoted_query_value
     (query_value))
-  (query_identifier)
+  (query_keyword)
   (quoted_query_value
     (query_value))
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
   (query_identifier)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_alias
     (query_identifier)
     (query_assignment_expression
@@ -135,8 +139,8 @@ SELECT FROM
 ---
 
 (program
-  (query_identifier)
-  (query_identifier))
+  (query_keyword)
+  (query_keyword))
 
 ===================================
 limit offset and ilike
@@ -145,20 +149,22 @@ SELECT * FROM users WHERE name LIKE '%foo%' LIMIT 10 OFFSET 20
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_star
     (star))
+  (query_keyword)
   (query_identifier)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (quoted_query_value
     (query_value))
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier))
+  (query_keyword)
+  (query_number
+    (number))
+  (query_keyword)
+  (query_number
+    (number)))
 
 ===================================
 cfqueryparam with hash in attribute
@@ -169,14 +175,15 @@ WHERE t.column_name = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.co
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_alias
     (query_identifier)
     (query_identifier))
+  (query_keyword)
+  (query_keyword)
   (query_identifier)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_alias
     (query_identifier)
     (query_assignment_expression
@@ -202,22 +209,24 @@ INSERT INTO items (a, b) VALUES (1, #ARGUMENTS.x#)
 ---
 
 (program
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (parenthesized_query_node
+  (query_keyword)
+  (query_keyword)
+  (query_function
     (query_identifier)
-    (query_comma)
-    (query_identifier))
-  (query_identifier)
-  (parenthesized_query_node
-    (query_number
-      (number))
-    (query_comma)
-    (hash_expression
-      (member_expression
-        (identifier)
-        (property_identifier)))))
+    (parenthesized_query_node
+      (query_identifier)
+      (query_comma)
+      (query_identifier)))
+  (query_function
+    (query_keyword)
+    (parenthesized_query_node
+      (query_number
+        (number))
+      (query_comma)
+      (hash_expression
+        (member_expression
+          (identifier)
+          (property_identifier))))))
 
 ===================================
 update set and where with hash params
@@ -226,14 +235,14 @@ UPDATE users SET name = #name# WHERE id = #id#
 ---
 
 (program
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_assignment_expression
     (query_identifier)
     (hash_expression
       (identifier)))
-  (query_identifier)
+  (query_keyword)
   (query_assignment_expression
     (query_identifier)
     (hash_expression
@@ -246,10 +255,10 @@ DELETE FROM logs WHERE id = #request.id#
 ---
 
 (program
+  (query_keyword)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_assignment_expression
     (query_identifier)
     (hash_expression
@@ -264,18 +273,19 @@ SELECT u.id FROM users u INNER JOIN orders o ON u.id = o.user_id
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_alias
     (query_identifier)
     (query_identifier))
+  (query_keyword)
   (query_identifier)
   (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
   (query_identifier)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_alias
     (query_identifier)
     (query_assignment_expression
@@ -291,15 +301,15 @@ SELECT * FROM t ORDER BY created_at DESC
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_star
     (star))
+  (query_keyword)
   (query_identifier)
+  (query_keyword)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier))
+  (query_keyword))
 
 ===================================
 select group by two columns
@@ -308,14 +318,14 @@ SELECT a, b FROM t GROUP BY a, b
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_identifier)
   (query_comma)
   (query_identifier)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
+  (query_keyword)
   (query_identifier)
   (query_comma)
   (query_identifier))
@@ -327,27 +337,28 @@ SELECT * FROM t WHERE a = 1 AND (b = 2 OR c = 3)
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_star
     (star))
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_assignment_expression
     (query_identifier)
     (query_number
       (number)))
-  (query_identifier)
-  (parenthesized_query_node
-    (query_assignment_expression
-      (query_identifier)
-      (query_number
-        (number)))
-    (query_identifier)
-    (query_assignment_expression
-      (query_identifier)
-      (query_number
-        (number)))))
+  (query_function
+    (query_keyword)
+    (parenthesized_query_node
+      (query_assignment_expression
+        (query_identifier)
+        (query_number
+          (number)))
+      (query_keyword)
+      (query_assignment_expression
+        (query_identifier)
+        (query_number
+          (number))))))
 
 ===================================
 where in list literals
@@ -356,23 +367,24 @@ SELECT * FROM t WHERE id IN (1, 2, 3)
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_star
     (star))
+  (query_keyword)
   (query_identifier)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (parenthesized_query_node
-    (query_number
-      (number))
-    (query_comma)
-    (query_number
-      (number))
-    (query_comma)
-    (query_number
-      (number))))
+  (query_function
+    (query_keyword)
+    (parenthesized_query_node
+      (query_number
+        (number))
+      (query_comma)
+      (query_number
+        (number))
+      (query_comma)
+      (query_number
+        (number)))))
 
 ===================================
 hash param in select list and alias
@@ -381,12 +393,12 @@ SELECT #COLUMN_NAME# AS col FROM my_table
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (hash_expression
     (identifier))
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_identifier))
 
 ===================================
@@ -398,9 +410,9 @@ SELECT id FROM users
 
 (program
   (comment)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_identifier))
 
 ===================================
@@ -411,23 +423,24 @@ SELECT * FROM active
 ---
 
 (program
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (parenthesized_query_node
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (query_assignment_expression
+  (query_function
+    (query_keyword)
+    (parenthesized_query_node
+      (query_keyword)
       (query_identifier)
-      (query_number
-        (number))))
-  (query_identifier)
+      (query_keyword)
+      (query_identifier)
+      (query_keyword)
+      (query_assignment_expression
+        (query_identifier)
+        (query_number
+          (number)))))
+  (query_keyword)
   (query_star
     (star))
-  (query_identifier)
+  (query_keyword)
   (query_identifier))
 
 ===================================
@@ -437,8 +450,8 @@ TRUNCATE TABLE temp_logs
 ---
 
 (program
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
+  (query_keyword)
   (query_identifier))
 
 ===================================
@@ -448,15 +461,15 @@ SELECT * FROM t WHERE col IS NOT NULL
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_star
     (star))
+  (query_keyword)
   (query_identifier)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
+  (query_keyword)
   (query_identifier))
 
 ===================================
@@ -466,15 +479,18 @@ SELECT CAST(id AS VARCHAR(10)) FROM t
 ---
 
 (program
-  (query_identifier)
-  (query_identifier)
-  (parenthesized_query_node
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
+  (query_keyword)
+  (query_function
+    (query_keyword)
     (parenthesized_query_node
-      (query_identifier)))
-  (query_identifier)
+      (query_identifier)
+      (query_keyword)
+      (query_function
+        (query_identifier)
+        (parenthesized_query_node
+          (query_number
+            (number))))))
+  (query_keyword)
   (query_identifier))
 
 ===================================
@@ -484,10 +500,10 @@ SELECT [col] FROM [tbl]
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (bracketed_query_value
     (query_value))
-  (query_identifier)
+  (query_keyword)
   (bracketed_query_value
     (query_value)))
 
@@ -498,23 +514,24 @@ SELECT * FROM t ORDER BY id OFFSET 10 ROWS FETCH NEXT 5 ROWS ONLY
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_star
     (star))
+  (query_keyword)
   (query_identifier)
+  (query_keyword)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_number
     (number))
-  (query_identifier)
-  (query_identifier))
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
+  (query_number
+    (number))
+  (query_keyword)
+  (query_keyword))
 
 ===================================
 semicolon two statements
@@ -524,16 +541,16 @@ SELECT 2 AS b
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_number
     (number))
-  (query_identifier)
+  (query_keyword)
   (query_identifier)
   (query_semicolon)
-  (query_identifier)
+  (query_keyword)
   (query_number
     (number))
-  (query_identifier)
+  (query_keyword)
   (query_identifier))
 
 ===================================
@@ -543,16 +560,16 @@ MERGE INTO users AS u USING staging AS s ON u.id = s.id WHEN MATCHED THEN UPDATE
 ---
 
 (program
+  (query_keyword)
+  (query_keyword)
   (query_identifier)
+  (query_keyword)
   (query_identifier)
+  (query_keyword)
   (query_identifier)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_alias
     (query_identifier)
     (query_assignment_expression
@@ -560,11 +577,11 @@ MERGE INTO users AS u USING staging AS s ON u.id = s.id WHEN MATCHED THEN UPDATE
       (query_alias
         (query_identifier)
         (query_identifier))))
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
   (query_assignment_expression
     (query_identifier)
     (query_alias
@@ -578,7 +595,7 @@ EXEC dbo.refresh_cache
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_alias
     (query_identifier)
     (query_identifier)))
@@ -590,21 +607,22 @@ SELECT 1 FROM t WINDOW w AS (PARTITION BY id ORDER BY sort_key)
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_number
     (number))
+  (query_keyword)
   (query_identifier)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (parenthesized_query_node
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)))
+  (query_function
+    (query_keyword)
+    (parenthesized_query_node
+      (query_keyword)
+      (query_keyword)
+      (query_identifier)
+      (query_keyword)
+      (query_keyword)
+      (query_identifier))))
 
 ===================================
 for update skip locked
@@ -613,13 +631,13 @@ SELECT * FROM t FOR UPDATE OF t SKIP LOCKED
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_star
     (star))
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
+  (query_keyword)
   (query_identifier)
   (query_identifier)
   (query_identifier)
@@ -632,24 +650,29 @@ SELECT * FROM sales PIVOT (SUM(amount) FOR yr IN (2023, 2024)) AS p
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_star
     (star))
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (parenthesized_query_node
-    (query_identifier)
+  (query_function
+    (query_keyword)
     (parenthesized_query_node
-      (query_identifier))
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (parenthesized_query_node
+      (query_function
+        (query_identifier)
+        (parenthesized_query_node
+          (query_identifier)))
+      (query_keyword)
       (query_identifier)
-      (query_comma)
-      (query_identifier)))
-  (query_identifier)
+      (query_function
+        (query_keyword)
+        (parenthesized_query_node
+          (query_number
+            (number))
+          (query_comma)
+          (query_number
+            (number))))))
+  (query_keyword)
   (query_identifier))
 
 ===================================
@@ -659,13 +682,13 @@ SELECT TRUE, FALSE FROM t WHERE flag = UNKNOWN
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_identifier)
   (query_comma)
   (query_identifier)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_assignment_expression
     (query_identifier)
     (query_identifier)))
@@ -677,10 +700,10 @@ SELECT "quoted_col" FROM my_table
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (double_quoted_query_value
     (query_value))
-  (query_identifier)
+  (query_keyword)
   (query_identifier))
 
 ===================================
@@ -690,22 +713,24 @@ SELECT * FROM p UNPIVOT (val FOR col IN (a, b)) AS u
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_star
     (star))
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (parenthesized_query_node
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
+  (query_function
+    (query_keyword)
     (parenthesized_query_node
       (query_identifier)
-      (query_comma)
-      (query_identifier)))
-  (query_identifier)
+      (query_keyword)
+      (query_identifier)
+      (query_function
+        (query_keyword)
+        (parenthesized_query_node
+          (query_identifier)
+          (query_comma)
+          (query_identifier)))))
+  (query_keyword)
   (query_identifier))
 
 ===================================
@@ -715,18 +740,20 @@ SELECT ROW_NUMBER() OVER (PARTITION BY id ORDER BY sort_key) FROM t
 ---
 
 (program
-  (query_identifier)
-  (query_identifier)
-  (parenthesized_query_node)
-  (query_identifier)
-  (parenthesized_query_node
+  (query_keyword)
+  (query_function
     (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (query_identifier)
-    (query_identifier))
-  (query_identifier)
+    (parenthesized_query_node))
+  (query_function
+    (query_keyword)
+    (parenthesized_query_node
+      (query_keyword)
+      (query_keyword)
+      (query_identifier)
+      (query_keyword)
+      (query_keyword)
+      (query_identifier)))
+  (query_keyword)
   (query_identifier))
 
 ===================================
@@ -736,17 +763,19 @@ SELECT COUNT(*) OVER (PARTITION BY gid) FROM t
 ---
 
 (program
-  (query_identifier)
-  (query_identifier)
-  (parenthesized_query_node
-    (query_star
-      (star)))
-  (query_identifier)
-  (parenthesized_query_node
+  (query_keyword)
+  (query_function
     (query_identifier)
-    (query_identifier)
-    (query_identifier))
-  (query_identifier)
+    (parenthesized_query_node
+      (query_star
+        (star))))
+  (query_function
+    (query_keyword)
+    (parenthesized_query_node
+      (query_keyword)
+      (query_keyword)
+      (query_identifier)))
+  (query_keyword)
   (query_identifier))
 
 ===================================
@@ -756,12 +785,12 @@ MERGE INTO t USING s ON t.id = s.id WHEN MATCHED THEN UPDATE SET x = 1 WHEN NOT 
 ---
 
 (program
+  (query_keyword)
+  (query_keyword)
   (query_identifier)
+  (query_keyword)
   (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
   (query_alias
     (query_identifier)
     (query_assignment_expression
@@ -769,26 +798,28 @@ MERGE INTO t USING s ON t.id = s.id WHEN MATCHED THEN UPDATE SET x = 1 WHEN NOT 
       (query_alias
         (query_identifier)
         (query_identifier))))
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
   (query_assignment_expression
     (query_identifier)
     (query_number
       (number)))
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (query_identifier)
-  (parenthesized_query_node
-    (query_identifier))
-  (query_identifier)
-  (parenthesized_query_node
-    (query_number
-      (number))))
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
+  (query_function
+    (query_keyword)
+    (parenthesized_query_node
+      (query_identifier)))
+  (query_function
+    (query_keyword)
+    (parenthesized_query_node
+      (query_number
+        (number)))))
 
 ===================================
 if statement around clause
@@ -801,11 +832,12 @@ FROM table_name t
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_alias
     (query_identifier)
     (query_identifier))
-  (query_identifier)
+  (query_keyword)
+  (query_keyword)
   (query_identifier)
   (query_identifier)
   (cf_if_tag
@@ -815,7 +847,7 @@ FROM table_name t
         (identifier)
         (string
           (string_fragment))))
-    (query_identifier)
+    (query_keyword)
     (query_alias
       (query_identifier)
       (query_assignment_expression
@@ -850,11 +882,12 @@ FROM table_name t
 ---
 
 (program
-  (query_identifier)
+  (query_keyword)
   (query_alias
     (query_identifier)
     (query_identifier))
-  (query_identifier)
+  (query_keyword)
+  (query_keyword)
   (query_identifier)
   (query_identifier)
   (cf_set_tag
@@ -919,3 +952,212 @@ FROM table_name t
         (cf_selfclose_void_tag_end)))
     (cf_end_tag
       (cf_tag_name))))
+
+===================================
+select with math expression
+===================================
+SELECT s.test+1 as test
+FROM test s
+---
+
+(program
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_math_expression
+      (query_identifier)
+      (query_number
+        (number))))
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (query_identifier))
+
+===================================
+select with case when and cfqueryparam
+===================================
+SELECT col_a, col_b, col_c, col_d, (CASE col_d
+				WHEN -5 THEN p.val_a
+				WHEN -4 THEN p.val_b
+				WHEN -3 THEN p.val_c
+				WHEN -2 THEN p.val_d
+				WHEN -1 THEN p.val_e
+				WHEN 0 THEN p.val_f
+				ELSE
+				cast(col_d as char(2))
+				END) AS col_alias
+				, col_e
+				, col_f
+			FROM tbl_a s, tbl_b p
+			WHERE s.col_a =	<cfqueryparam cfsqltype="cf_sql_char" value="#variables.val#">
+			AND s.col_b != <cfqueryparam cfsqltype="cf_sql_char" value="T">
+			AND s.col_c = <cfqueryparam cfsqltype="cf_sql_char" value="Y">
+			AND p.col_a = <cfqueryparam cfsqltype="cf_sql_char" value="#variables.val#">
+			ORDER BY s.col_b, s.col_c, col_alias, s.col_e, s.col_f
+---
+
+(program
+  (query_keyword)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_comma)
+  (parenthesized_query_node
+    (query_keyword)
+    (query_identifier)
+    (query_keyword)
+    (query_number
+      (number))
+    (query_keyword)
+    (query_alias
+      (query_identifier)
+      (query_identifier))
+    (query_keyword)
+    (query_number
+      (number))
+    (query_keyword)
+    (query_alias
+      (query_identifier)
+      (query_identifier))
+    (query_keyword)
+    (query_number
+      (number))
+    (query_keyword)
+    (query_alias
+      (query_identifier)
+      (query_identifier))
+    (query_keyword)
+    (query_number
+      (number))
+    (query_keyword)
+    (query_alias
+      (query_identifier)
+      (query_identifier))
+    (query_keyword)
+    (query_number
+      (number))
+    (query_keyword)
+    (query_alias
+      (query_identifier)
+      (query_identifier))
+    (query_keyword)
+    (query_number
+      (number))
+    (query_keyword)
+    (query_alias
+      (query_identifier)
+      (query_identifier))
+    (query_keyword)
+    (query_function
+      (query_keyword)
+      (parenthesized_query_node
+        (query_identifier)
+        (query_keyword)
+        (query_function
+          (query_identifier)
+          (parenthesized_query_node
+            (query_number
+              (number))))))
+    (query_keyword))
+  (query_keyword)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_identifier)
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (cf_selfclose_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (hash_expression
+              (member_expression
+                (identifier)
+                (property_identifier)))))
+        (cf_selfclose_void_tag_end))))
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (text)
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_selfclose_void_tag_end))
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (cf_selfclose_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_selfclose_void_tag_end))))
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (cf_selfclose_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (hash_expression
+              (member_expression
+                (identifier)
+                (property_identifier)))))
+        (cf_selfclose_void_tag_end))))
+  (query_keyword)
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (query_comma)
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (query_comma)
+  (query_identifier)
+  (query_comma)
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (query_comma)
+  (query_alias
+    (query_identifier)
+    (query_identifier)))

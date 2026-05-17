@@ -214,7 +214,12 @@
   "}"
 ] @punctuation.bracket
 
-; SQL identifiers and values
+; SQL keywords and identifiers
+(query_keyword) @keyword
+
+(query_function
+  name: _ @function.call)
+
 (query_identifier) @variable
 (query_alias
   right: _ @variable)
@@ -224,6 +229,9 @@
 
 (query_number
   (number) @number)
+
+(query_math_expression
+  operator: _ @operator)
 
 (quoted_query_value
   (query_value) @string)

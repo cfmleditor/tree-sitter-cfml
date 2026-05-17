@@ -399,12 +399,15 @@ module.exports = function defineGrammar(dialect) {
       } : {
 
         _query_node: ($) => choice(
+          $.query_keyword,
           $.query_identifier,
           $.quoted_query_value,
           $.double_quoted_query_value,
           $.bracketed_query_value,
           $.query_star,
+          $.query_function,
           $.query_alias,
+          $.query_math_expression,
           $.query_assignment_expression,
           $.parenthesized_query_node,
           $.query_number,
@@ -419,6 +422,11 @@ module.exports = function defineGrammar(dialect) {
           ')',
         ),
 
+        query_function: ($) => prec(1, seq(
+          field('name', choice($.query_keyword, $.query_identifier)),
+          field('arguments', $.parenthesized_query_node),
+        )),
+
         query_alias: ($) => prec.right('assign', seq(
           field('left', $._node),
           '.',
@@ -432,6 +440,12 @@ module.exports = function defineGrammar(dialect) {
         query_assignment_expression: ($) => prec.right('assign', seq(
           field('left', $._node),
           '=',
+          field('right', $._node),
+        )),
+
+        query_math_expression: ($) => prec.left('binary_plus', seq(
+          field('left', $._node),
+          field('operator', choice('+', '-', '/', '%')),
           field('right', $._node),
         )),
 
@@ -467,7 +481,71 @@ module.exports = function defineGrammar(dialect) {
 
         query_star: ($) => alias(/\*/, $.star),
 
-        query_number: ($) => alias(/[0-9]/, $.number),
+        query_number: ($) => alias(/-?[0-9]+/, $.number),
+
+        query_keyword: ($) => token(prec(1, choice(
+          /[sS][eE][lL][eE][cC][tT]/,
+          /[fF][rR][oO][mM]/,
+          /[wW][hH][eE][rR][eE]/,
+          /[aA][nN][dD]/,
+          /[oO][rR]/,
+          /[nN][oO][tT]/,
+          /[iI][nN]/,
+          /[iI][sS]/,
+          /[aA][sS]/,
+          /[oO][nN]/,
+          /[bB][yY]/,
+          /[jJ][oO][iI][nN]/,
+          /[iI][nN][nN][eE][rR]/,
+          /[lL][eE][fF][tT]/,
+          /[rR][iI][gG][hH][tT]/,
+          /[oO][uU][tT][eE][rR]/,
+          /[cC][rR][oO][sS][sS]/,
+          /[fF][uU][lL][lL]/,
+          /[oO][rR][dD][eE][rR]/,
+          /[gG][rR][oO][uU][pP]/,
+          /[hH][aA][vV][iI][nN][gG]/,
+          /[lL][iI][mM][iI][tT]/,
+          /[oO][fF][fF][sS][eE][tT]/,
+          /[uU][nN][iI][oO][nN]/,
+          /[aA][lL][lL]/,
+          /[dD][iI][sS][tT][iI][nN][cC][tT]/,
+          /[iI][nN][sS][eE][rR][tT]/,
+          /[iI][nN][tT][oO]/,
+          /[vV][aA][lL][uU][eE][sS]/,
+          /[uU][pP][dD][aA][tT][eE]/,
+          /[dD][eE][lL][eE][tT][eE]/,
+          /[sS][eE][tT]/,
+          /[cC][aA][sS][eE]/,
+          /[wW][hH][eE][nN]/,
+          /[tT][hH][eE][nN]/,
+          /[eE][lL][sS][eE]/,
+          /[eE][nN][dD]/,
+          /[eE][xX][iI][sS][tT][sS]/,
+          /[bB][eE][tT][wW][eE][eE][nN]/,
+          /[lL][iI][kK][eE]/,
+          /[tT][oO][pP]/,
+          /[dD][eE][sS][cC]/,
+          /[aA][sS][cC]/,
+          /[cC][aA][sS][tT]/,
+          /[oO][vV][eE][rR]/,
+          /[pP][aA][rR][tT][iI][tT][iI][oO][nN]/,
+          /[wW][iI][tT][hH]/,
+          /[mM][eE][rR][gG][eE]/,
+          /[uU][sS][iI][nN][gG]/,
+          /[mM][aA][tT][cC][hH][eE][dD]/,
+          /[pP][iI][vV][oO][tT]/,
+          /[uU][nN][pP][iI][vV][oO][tT]/,
+          /[fF][eE][tT][cC][hH]/,
+          /[nN][eE][xX][tT]/,
+          /[oO][nN][lL][yY]/,
+          /[rR][oO][wW][sS]/,
+          /[fF][oO][rR]/,
+          /[tT][rR][uU][nN][cC][aA][tT][eE]/,
+          /[tT][aA][bB][lL][eE]/,
+          /[eE][xX][eE][cC]/,
+          /[wW][iI][nN][dD][oO][wW]/,
+        ))),
 
         query_identifier: ($) => {
           // @ts-ignore
