@@ -406,6 +406,7 @@ module.exports = function defineGrammar(dialect) {
           $.bracketed_query_value,
           $.query_star,
           $.query_function,
+          $.query_function_name,
           $.query_alias,
           $.query_math_expression,
           $.query_comparison_expression,

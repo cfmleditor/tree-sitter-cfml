@@ -249,6 +249,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "query_function_name"
+        },
+        {
+          "type": "SYMBOL",
           "name": "query_alias"
         },
         {
