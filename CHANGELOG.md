@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.26.16]
+
+- SQL types should be classed as functions
+- Add additional SQL functions
+
 ## [0.26.15]
 
 - Further Updates to cfquery grammar and associated highlights.scm

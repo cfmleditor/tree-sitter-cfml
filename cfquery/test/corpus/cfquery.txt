@@ -477,10 +477,11 @@ SELECT CAST(id AS VARCHAR(10)) FROM t
     (parenthesized_query_node
       (query_identifier)
       (query_keyword)
-      (query_identifier)
-      (parenthesized_query_node
-        (query_number
-          (number)))))
+      (query_function
+        (query_function_name)
+        (parenthesized_query_node
+          (query_number
+            (number))))))
   (query_keyword)
   (query_identifier))
 
@@ -1038,10 +1039,11 @@ SELECT col_a, col_b, col_c, col_d, (CASE col_d
       (parenthesized_query_node
         (query_identifier)
         (query_keyword)
-        (query_identifier)
-        (parenthesized_query_node
-          (query_number
-            (number)))))
+        (query_function
+          (query_function_name)
+          (parenthesized_query_node
+            (query_number
+              (number))))))
     (query_keyword))
   (query_keyword)
   (query_identifier)
