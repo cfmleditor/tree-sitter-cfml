@@ -1076,18 +1076,18 @@ SELECT col_a, col_b, col_c, col_d, (CASE col_d
   (query_keyword)
   (query_alias
     (query_identifier)
-    (query_identifier))
-  (text)
-  (cf_selfclose_tag
-    (cf_attribute
-      (cf_attribute_name)
-      (quoted_cf_attribute_value
-        (attribute_value)))
-    (cf_attribute
-      (cf_attribute_name)
-      (quoted_cf_attribute_value
-        (attribute_value)))
-    (cf_selfclose_void_tag_end))
+    (query_comparison_expression
+      (query_identifier)
+      (cf_selfclose_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_selfclose_void_tag_end))))
   (query_keyword)
   (query_alias
     (query_identifier)
@@ -1140,3 +1140,155 @@ SELECT col_a, col_b, col_c, col_d, (CASE col_d
   (query_alias
     (query_identifier)
     (query_identifier)))
+
+===================================
+comparison operators with join and cfqueryparam
+===================================
+SELECT
+a.col1 AS alias1
+, b.col2
+FROM tbl1 a
+LEFT OUTER JOIN tbl2 b ON (b.col3 = a.col3 AND b.col4 = a.col4
+AND (b.col5 < <cfqueryparam cfsqltype="cf_sql_smallint" value="#arguments.param1#">
+OR b.col5 = <cfqueryparam cfsqltype="cf_sql_smallint" value="#arguments.param1#">
+AND b.col6 <= <cfqueryparam cfsqltype="cf_sql_smallint" value="#arguments.param2#">))
+WHERE a.col3 = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.param3#">
+<cfif StructKeyExists(ARGUMENTS,"param4")>
+AND a.col4 = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.param4#">
+</cfif>
+---
+
+(program
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (query_keyword)
+  (query_identifier)
+  (query_comma)
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (query_keyword)
+  (query_identifier)
+  (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (query_identifier)
+  (query_keyword)
+  (parenthesized_query_node
+    (query_alias
+      (query_identifier)
+      (query_assignment_expression
+        (query_identifier)
+        (query_alias
+          (query_identifier)
+          (query_identifier))))
+    (query_keyword)
+    (query_alias
+      (query_identifier)
+      (query_assignment_expression
+        (query_identifier)
+        (query_alias
+          (query_identifier)
+          (query_identifier))))
+    (query_keyword)
+    (parenthesized_query_node
+      (query_alias
+        (query_identifier)
+        (query_comparison_expression
+          (query_identifier)
+          (cf_selfclose_tag
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (attribute_value)))
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (hash_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier)))))
+            (cf_selfclose_void_tag_end))))
+      (query_keyword)
+      (query_alias
+        (query_identifier)
+        (query_assignment_expression
+          (query_identifier)
+          (cf_selfclose_tag
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (attribute_value)))
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (hash_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier)))))
+            (cf_selfclose_void_tag_end))))
+      (query_keyword)
+      (query_alias
+        (query_identifier)
+        (query_comparison_expression
+          (query_identifier)
+          (cf_selfclose_tag
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (attribute_value)))
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (hash_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier)))))
+            (cf_selfclose_void_tag_end))))))
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (cf_selfclose_tag
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (hash_expression
+              (member_expression
+                (identifier)
+                (property_identifier)))))
+        (cf_selfclose_void_tag_end))))
+  (cf_if_tag
+    (call_expression
+      (identifier)
+      (arguments
+        (identifier)
+        (string
+          (string_fragment))))
+    (query_keyword)
+    (query_alias
+      (query_identifier)
+      (query_assignment_expression
+        (query_identifier)
+        (cf_selfclose_tag
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (hash_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier)))))
+          (cf_selfclose_void_tag_end))))))

@@ -408,6 +408,7 @@ module.exports = function defineGrammar(dialect) {
           $.query_function,
           $.query_alias,
           $.query_math_expression,
+          $.query_comparison_expression,
           $.query_assignment_expression,
           $.parenthesized_query_node,
           $.query_number,
@@ -440,6 +441,12 @@ module.exports = function defineGrammar(dialect) {
         query_assignment_expression: ($) => prec.right('assign', seq(
           field('left', $._node),
           '=',
+          field('right', $._node),
+        )),
+
+        query_comparison_expression: ($) => prec.left('binary_compare', seq(
+          field('left', $._node),
+          field('operator', choice('<=', '>=', '<>', '!=', '<', '>')),
           field('right', $._node),
         )),
 

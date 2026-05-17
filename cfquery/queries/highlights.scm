@@ -233,6 +233,9 @@
 (query_math_expression
   operator: _ @operator)
 
+(query_comparison_expression
+  operator: _ @operator)
+
 (quoted_query_value
   (query_value) @string)
 (double_quoted_query_value

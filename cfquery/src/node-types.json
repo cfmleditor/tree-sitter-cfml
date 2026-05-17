@@ -992,6 +992,10 @@
           "named": true
         },
         {
+          "type": "query_comparison_expression",
+          "named": true
+        },
+        {
           "type": "query_function",
           "named": true
         },
@@ -1092,6 +1096,10 @@
         },
         {
           "type": "query_comma",
+          "named": true
+        },
+        {
+          "type": "query_comparison_expression",
           "named": true
         },
         {
@@ -1356,6 +1364,10 @@
         },
         {
           "type": "query_comma",
+          "named": true
+        },
+        {
+          "type": "query_comparison_expression",
           "named": true
         },
         {
@@ -2626,6 +2638,10 @@
           "named": true
         },
         {
+          "type": "query_comparison_expression",
+          "named": true
+        },
+        {
           "type": "query_function",
           "named": true
         },
@@ -2745,6 +2761,10 @@
           "named": true
         },
         {
+          "type": "query_comparison_expression",
+          "named": true
+        },
+        {
           "type": "query_function",
           "named": true
         },
@@ -2848,6 +2868,10 @@
             "named": true
           },
           {
+            "type": "query_comparison_expression",
+            "named": true
+          },
+          {
             "type": "query_function",
             "named": true
           },
@@ -2943,6 +2967,10 @@
           },
           {
             "type": "query_comma",
+            "named": true
+          },
+          {
+            "type": "query_comparison_expression",
             "named": true
           },
           {
@@ -3050,6 +3078,10 @@
             "named": true
           },
           {
+            "type": "query_comparison_expression",
+            "named": true
+          },
+          {
             "type": "query_function",
             "named": true
           },
@@ -3145,6 +3177,250 @@
           },
           {
             "type": "query_comma",
+            "named": true
+          },
+          {
+            "type": "query_comparison_expression",
+            "named": true
+          },
+          {
+            "type": "query_function",
+            "named": true
+          },
+          {
+            "type": "query_identifier",
+            "named": true
+          },
+          {
+            "type": "query_keyword",
+            "named": true
+          },
+          {
+            "type": "query_math_expression",
+            "named": true
+          },
+          {
+            "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_semicolon",
+            "named": true
+          },
+          {
+            "type": "query_star",
+            "named": true
+          },
+          {
+            "type": "quoted_query_value",
+            "named": true
+          },
+          {
+            "type": "text",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "query_comparison_expression",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "bracketed_query_value",
+            "named": true
+          },
+          {
+            "type": "cf_if_tag",
+            "named": true
+          },
+          {
+            "type": "cf_selfclose_tag",
+            "named": true
+          },
+          {
+            "type": "cf_set_tag",
+            "named": true
+          },
+          {
+            "type": "cf_tag",
+            "named": true
+          },
+          {
+            "type": "double_quoted_query_value",
+            "named": true
+          },
+          {
+            "type": "erroneous_cf_end_tag",
+            "named": true
+          },
+          {
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
+            "named": true
+          },
+          {
+            "type": "null",
+            "named": true
+          },
+          {
+            "type": "parenthesized_query_node",
+            "named": true
+          },
+          {
+            "type": "query_alias",
+            "named": true
+          },
+          {
+            "type": "query_assignment_expression",
+            "named": true
+          },
+          {
+            "type": "query_comma",
+            "named": true
+          },
+          {
+            "type": "query_comparison_expression",
+            "named": true
+          },
+          {
+            "type": "query_function",
+            "named": true
+          },
+          {
+            "type": "query_identifier",
+            "named": true
+          },
+          {
+            "type": "query_keyword",
+            "named": true
+          },
+          {
+            "type": "query_math_expression",
+            "named": true
+          },
+          {
+            "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_semicolon",
+            "named": true
+          },
+          {
+            "type": "query_star",
+            "named": true
+          },
+          {
+            "type": "quoted_query_value",
+            "named": true
+          },
+          {
+            "type": "text",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "!=",
+            "named": false
+          },
+          {
+            "type": "<",
+            "named": false
+          },
+          {
+            "type": "<=",
+            "named": false
+          },
+          {
+            "type": "<>",
+            "named": false
+          },
+          {
+            "type": ">",
+            "named": false
+          },
+          {
+            "type": ">=",
+            "named": false
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "bracketed_query_value",
+            "named": true
+          },
+          {
+            "type": "cf_if_tag",
+            "named": true
+          },
+          {
+            "type": "cf_selfclose_tag",
+            "named": true
+          },
+          {
+            "type": "cf_set_tag",
+            "named": true
+          },
+          {
+            "type": "cf_tag",
+            "named": true
+          },
+          {
+            "type": "double_quoted_query_value",
+            "named": true
+          },
+          {
+            "type": "erroneous_cf_end_tag",
+            "named": true
+          },
+          {
+            "type": "hash_empty",
+            "named": true
+          },
+          {
+            "type": "hash_expression",
+            "named": true
+          },
+          {
+            "type": "null",
+            "named": true
+          },
+          {
+            "type": "parenthesized_query_node",
+            "named": true
+          },
+          {
+            "type": "query_alias",
+            "named": true
+          },
+          {
+            "type": "query_assignment_expression",
+            "named": true
+          },
+          {
+            "type": "query_comma",
+            "named": true
+          },
+          {
+            "type": "query_comparison_expression",
             "named": true
           },
           {
@@ -3293,6 +3569,10 @@
             "named": true
           },
           {
+            "type": "query_comparison_expression",
+            "named": true
+          },
+          {
             "type": "query_function",
             "named": true
           },
@@ -3410,6 +3690,10 @@
           },
           {
             "type": "query_comma",
+            "named": true
+          },
+          {
+            "type": "query_comparison_expression",
             "named": true
           },
           {
