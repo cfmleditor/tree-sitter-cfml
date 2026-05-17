@@ -93,7 +93,7 @@
 ] @comment @spell
 
 ((comment) @comment.documentation
-  (#lua-match? @comment.documentation "^/[*][*][^*].*[*]/$"))
+  (#match? @comment.documentation "^/[*][*][^*].*[*]/$"))
 
 (string) @string
 (hash_empty) @punctuation.special

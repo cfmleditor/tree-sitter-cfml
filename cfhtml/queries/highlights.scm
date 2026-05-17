@@ -142,7 +142,7 @@
 ] @comment @spell
 
 ((comment) @comment.documentation
-  (#lua-match? @comment.documentation "^/[*][*][^*].*[*]/$"))
+  (#match? @comment.documentation "^/[*][*][^*].*[*]/$"))
 
 ((string_fragment) @keyword.directive
   (#eq? @keyword.directive "use strict"))
