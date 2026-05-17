@@ -6,14 +6,13 @@
 
 [Tree-sitter](https://tree-sitter.github.io/) grammars for [ColdFusion Markup Language (CFML)](https://en.wikipedia.org/wiki/ColdFusion_Markup_Language).
 
-There are four grammars: three for CFML in `.cfc`, `.cfm`, and `.cfs` files, and one for SQL inside `<cfquery>` (embedded dialect).
+There are three grammars: two for CFML in `.cfc`/`.cfm` and `.cfs` files, and one for SQL inside `<cfquery>` (embedded dialect).
 
-| Grammar    | Scope             | File types   | Description                                                                                                             |
-| ---------- | ----------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------- |
-| `cfml`     | `source.cfml`     | `.cfc`       | ColdFusion components - CFScript inside a `component {}` block or tag-based component files                             |
-| `cfhtml`   | `source.cfhtml`   | `.cfm`       | CFML template files - HTML with embedded CF tags and hash expressions                                                   |
-| `cfscript` | `source.cfscript` | `.cfs`       | Pure CFScript files                                                                                                     |
-| `cfquery`  | `source.cfquery`  | _(embedded)_ | SQL inside `<cfquery>` bodies (including QueryExecute-style usage), with `#hash#` interpolation and CF tags in the body |
+| Grammar    | Scope             | File types     | Description                                                                                                             |
+| ---------- | ----------------- | -------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `cfml`     | `source.cfml`     | `.cfc`, `.cfm` | ColdFusion components and template files - CFScript, tag-based components, and HTML with embedded CF tags                |
+| `cfscript` | `source.cfscript` | `.cfs`         | Pure CFScript files                                                                                                     |
+| `cfquery`  | `source.cfquery`  | _(embedded)_   | SQL inside `<cfquery>` bodies (including QueryExecute-style usage), with `#hash#` interpolation and CF tags in the body |
 
 ## Playground
 
@@ -30,14 +29,13 @@ npm install @cfmleditor/tree-sitter-cfml
 ```js
 const {
   cfml,
-  cfhtml,
   cfscript,
   cfquery,
 } = require("@cfmleditor/tree-sitter-cfml");
 const Parser = require("tree-sitter");
 
 const parser = new Parser();
-parser.setLanguage(cfhtml.language);
+parser.setLanguage(cfml.language);
 
 const tree = parser.parse("<cfif condition>#value#</cfif>");
 console.log(tree.rootNode.toString());
@@ -59,7 +57,7 @@ use tree_sitter_cfml::LANGUAGE_CFML;
 let mut parser = tree_sitter::Parser::new();
 parser.set_language(&LANGUAGE_CFML.into())
     .expect("Error loading CFML grammar");
-// LANGUAGE_CFHTML, LANGUAGE_CFSCRIPT, LANGUAGE_CFQUERY load the same way.
+// LANGUAGE_CFSCRIPT, LANGUAGE_CFQUERY load the same way.
 ```
 
 ### Python
@@ -72,12 +70,9 @@ pip install tree-sitter-cfml
 import tree_sitter_cfml as ts_cfml
 from tree_sitter import Language, Parser
 
-# cfhtml for .cfm template files
-parser = Parser(Language(ts_cfml.language_cfhtml()))
-tree = parser.parse(b'<cfif x GT 0>#x#</cfif>')
-
-# cfml for .cfc component files
+# cfml for .cfc and .cfm files
 parser = Parser(Language(ts_cfml.language_cfml()))
+tree = parser.parse(b'<cfif x GT 0>#x#</cfif>')
 
 # cfscript for .cfs pure script files
 parser = Parser(Language(ts_cfml.language_cfscript()))
@@ -94,12 +89,9 @@ import (
     sitter "github.com/tree-sitter/go-tree-sitter"
 )
 
-// cfml for .cfc component files
+// cfml for .cfc and .cfm files
 parser := sitter.NewParser()
 parser.SetLanguage(sitter.NewLanguage(tree_sitter_cfml.LanguageCfml()))
-
-// cfhtml for .cfm template files
-parser.SetLanguage(sitter.NewLanguage(tree_sitter_cfml.LanguageCfhtml()))
 
 // cfscript for .cfs pure script files
 parser.SetLanguage(sitter.NewLanguage(tree_sitter_cfml.LanguageCfscript()))
@@ -128,7 +120,7 @@ npm install
 That installs dependencies, builds the Node native addon (`node-gyp-build`), and runs `postinstall`, which downloads the tree-sitter CLI binary into `node_modules/tree-sitter-cli/` when needed. Repo `npm` scripts do not require a global `tree-sitter` on `PATH`.
 
 ```bash
-npm test          # all four grammars
+npm test          # all three grammars
 npm run lint      # ESLint
 npm run build     # regenerate parsers + rebuild native addon (after grammar edits)
 ```
@@ -231,7 +223,7 @@ See **[Setup](#setup)** for `npm test`, `npm run lint`, and `npm run build`.
 npm run testbindings  # Node binding smoke test
 ```
 
-One grammar only: run `test` via the CLI from that dialect’s directory ([above](#setup)), or `npm test` for all four.
+One grammar only: run `test` via the CLI from that dialect’s directory ([above](#setup)), or `npm test` for all three.
 
 **Parse a file:** from the dialect folder (e.g. `cfml` for `.cfc`), use the `parse` subcommand with the same `node ../node_modules/.../cli.js` pattern.
 
@@ -239,8 +231,8 @@ One grammar only: run `test` via the CLI from that dialect’s directory ([above
 
 - `npm start` — playground at repo root (`tree-sitter.json`). Run `npm run prestart` first if WASM is stale.
 - `npm run prestart` — `tree-sitter build --wasm`
-- `npm run playground` — playground in each of `cfml/`, `cfhtml/`, `cfscript/`, `cfquery/`
-- `npm run docswasm` — writes `docs/tree-sitter-{cfml,cfhtml,cfscript,cfquery}.wasm` for `docs/` (e.g. GitHub Pages)
+- `npm run playground` — playground in each of `cfml/`, `cfscript/`, `cfquery/`
+- `npm run docswasm` — writes `docs/tree-sitter-{cfml,cfscript,cfquery}.wasm` for `docs/` (e.g. GitHub Pages)
 
 ## Grammar structure
 
@@ -252,14 +244,9 @@ common/
   scanner.h
   tag.h
 
-cfml/          # .cfc
+cfml/          # .cfc, .cfm
   grammar.js
   src/         # generated
-  queries/
-
-cfhtml/        # .cfm
-  grammar.js
-  src/
   queries/
 
 cfscript/      # .cfs
@@ -278,7 +265,6 @@ cfquery/       # embedded SQL
 | Grammar    | Highlights | Indents | Injections | Tags |
 | ---------- | ---------- | ------- | ---------- | ---- |
 | `cfml`     | yes        | yes     | yes        | yes  |
-| `cfhtml`   | yes        | yes     | yes        | yes  |
 | `cfscript` | yes        | no      | no         | yes  |
 | `cfquery`  | yes        | no      | no         | yes  |
 

@@ -20,8 +20,6 @@ include = [
   "bindings/rust",
   "cfml/grammar.js",
   "cfml/src",
-  "cfhtml/grammar.js",
-  "cfhtml/src",
   "cfscript/grammar.js",
   "cfscript/src",
   "cfquery/grammar.js",

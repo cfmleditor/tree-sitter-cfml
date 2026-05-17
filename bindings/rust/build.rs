@@ -11,7 +11,6 @@ fn main() {
 
     for (name, dir_name) in &[
         ("tree-sitter-cfml", "cfml"),
-        ("tree-sitter-cfhtml", "cfhtml"),
         ("tree-sitter-cfscript", "cfscript"),
         ("tree-sitter-cfquery", "cfquery"),
     ] {

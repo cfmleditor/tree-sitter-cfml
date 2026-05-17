@@ -1,6 +1,6 @@
 # tree-sitter-cfml (Rust)
 
-Rust bindings for the [tree-sitter](https://tree-sitter.github.io/) grammars **cfml**, **cfhtml**, **cfscript**, and **cfquery**.
+Rust bindings for the [tree-sitter](https://tree-sitter.github.io/) grammars **cfml**, **cfscript**, and **cfquery**.
 
 ## Dependencies
 
@@ -15,14 +15,14 @@ The crate exposes [`LanguageFn`](https://docs.rs/tree-sitter-language/*/tree_sit
 ## Example
 
 ```rust
-use tree_sitter_cfml::{LANGUAGE_CFHTML, LANGUAGE_CFML};
+use tree_sitter_cfml::LANGUAGE_CFML;
 
 let mut parser = tree_sitter::Parser::new();
-parser.set_language(&LANGUAGE_CFHTML.into()).expect("load language");
+parser.set_language(&LANGUAGE_CFML.into()).expect("load language");
 let tree = parser.parse(b"<cfif x>#x#</cfif>", None).expect("parse");
 ```
 
-Use `LANGUAGE_CFML` for `.cfc`, `LANGUAGE_CFSCRIPT` for `.cfs`, `LANGUAGE_CFQUERY` for SQL inside `<cfquery>`.
+Use `LANGUAGE_CFML` for `.cfc` and `.cfm`, `LANGUAGE_CFSCRIPT` for `.cfs`, `LANGUAGE_CFQUERY` for SQL inside `<cfquery>`.
 
 ## More documentation
 

@@ -4,7 +4,6 @@ use tree_sitter_language::LanguageFn;
 
 extern "C" {
     fn tree_sitter_cfml() -> *const ();
-    fn tree_sitter_cfhtml() -> *const ();
     fn tree_sitter_cfscript() -> *const ();
     fn tree_sitter_cfquery() -> *const ();
 }
@@ -13,11 +12,6 @@ extern "C" {
 ///
 /// [LanguageFn]: https://docs.rs/tree-sitter-language/*/tree_sitter_language/struct.LanguageFn.html
 pub const LANGUAGE_CFML: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_cfml) };
-
-/// The tree-sitter [`LanguageFn`] for CFHTML.
-///
-/// [LanguageFn]: https://docs.rs/tree-sitter-language/*/tree_sitter_language/struct.LanguageFn.html
-pub const LANGUAGE_CFHTML: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitter_cfhtml) };
 
 /// The tree-sitter [`LanguageFn`] for CFSCRIPT.
 ///
@@ -33,7 +27,6 @@ pub const LANGUAGE_CFQUERY: LanguageFn = unsafe { LanguageFn::from_raw(tree_sitt
 ///
 /// [`node-types.json`]: https://tree-sitter.github.io/tree-sitter/using-parsers#static-node-types
 pub const CFML_NODE_TYPES: &str = include_str!("../../cfml/src/node-types.json");
-pub const CFHTML_NODE_TYPES: &str = include_str!("../../cfhtml/src/node-types.json");
 pub const CFSCRIPT_NODE_TYPES: &str = include_str!("../../cfscript/src/node-types.json");
 pub const CFQUERY_NODE_TYPES: &str = include_str!("../../cfquery/src/node-types.json");
 
@@ -54,14 +47,6 @@ mod tests {
         parser
             .set_language(&super::LANGUAGE_CFML.into())
             .expect("Error loading CFML parser");
-    }
-
-    #[test]
-    fn test_can_load_cfhtml_grammar() {
-        let mut parser = tree_sitter::Parser::new();
-        parser
-            .set_language(&super::LANGUAGE_CFHTML.into())
-            .expect("Error loading CFHTML parser");
     }
 
     #[test]

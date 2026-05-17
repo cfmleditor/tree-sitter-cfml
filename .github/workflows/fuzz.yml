@@ -6,7 +6,6 @@ on:
       - "**"
     paths:
       - "cfml/src/scanner.c"
-      - "cfhtml/src/scanner.c"
       - "cfscript/src/scanner.c"
       - "cfquery/src/scanner.c"
       - "common/scanner.h"
@@ -16,7 +15,6 @@ on:
       - "master"
     paths:
       - "cfml/src/scanner.c"
-      - "cfhtml/src/scanner.c"
       - "cfscript/src/scanner.c"
       - "cfquery/src/scanner.c"
       - "common/scanner.h"
@@ -30,7 +28,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [cfml, cfhtml, cfscript, cfquery]
+        language: [cfml, cfscript, cfquery]
     steps:
       - uses: actions/checkout@v5
       - uses: vigoux/tree-sitter-fuzz-action@v1

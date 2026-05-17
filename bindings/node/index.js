@@ -11,10 +11,6 @@ try {
 } catch { }
 
 try {
-  module.exports.cfhtml.nodeTypeInfo = require('../../cfhtml/src/node-types.json');
-} catch { }
-
-try {
   module.exports.cfscript.nodeTypeInfo = require('../../cfscript/src/node-types.json');
 } catch { }
 

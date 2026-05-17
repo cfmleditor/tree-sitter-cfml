@@ -4,7 +4,7 @@ const {join} = require('path');
 const {spawnTreeSitter, spawnTreeSitterAsync, root} = require('./tree-sitter-cli.cjs');
 
 const only = process.env.DIALECT;
-const dirs = only ? [only] : ['cfml', 'cfhtml', 'cfscript', 'cfquery'];
+const dirs = only ? [only] : ['cfml', 'cfscript', 'cfquery'];
 
 if (dirs.length === 1) {
   console.log(`building ${dirs[0]}`);

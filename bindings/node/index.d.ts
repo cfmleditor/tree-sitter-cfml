@@ -25,7 +25,6 @@ type Language = {
 };
 
 declare const cfml: Language;
-declare const cfhtml: Language;
 declare const cfscript: Language;
 declare const cfquery: Language;
-export = {cfml, cfhtml, cfscript, cfquery}
+export = {cfml, cfscript, cfquery}

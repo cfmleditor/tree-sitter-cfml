@@ -11,8 +11,6 @@ sources = [
     "bindings/python/tree_sitter_cfml/binding.c",
     "cfml/src/parser.c",
     "cfml/src/scanner.c",
-    "cfhtml/src/parser.c",
-    "cfhtml/src/scanner.c",
     "cfscript/src/parser.c",
     "cfscript/src/scanner.c",
     "cfquery/src/parser.c",
@@ -21,7 +19,6 @@ sources = [
 
 include_dirs = [
     "cfml/src",
-    "cfhtml/src",
     "cfscript/src",
     "cfquery/src",
 ]

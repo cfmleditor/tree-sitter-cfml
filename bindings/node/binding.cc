@@ -3,7 +3,6 @@
 typedef struct TSLanguage TSLanguage;
 
 extern "C" TSLanguage *tree_sitter_cfml();
-extern "C" TSLanguage *tree_sitter_cfhtml();
 extern "C" TSLanguage *tree_sitter_cfscript();
 extern "C" TSLanguage *tree_sitter_cfquery();
 
@@ -19,12 +18,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     cfml_language.TypeTag(&LANGUAGE_TYPE_TAG);
     cfml["language"] = cfml_language;
 
-    auto cfhtml = Napi::Object::New(env);
-    cfhtml["name"] = Napi::String::New(env, "cfhtml");
-    auto cfhtml_language = Napi::External<TSLanguage>::New(env, tree_sitter_cfhtml());
-    cfhtml_language.TypeTag(&LANGUAGE_TYPE_TAG);
-    cfhtml["language"] = cfhtml_language;
-
     auto cfscript = Napi::Object::New(env);
     cfscript["name"] = Napi::String::New(env, "cfscript");
     auto cfscript_language = Napi::External<TSLanguage>::New(env, tree_sitter_cfscript());
@@ -38,7 +31,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
     cfquery["language"] = cfquery_language;
 
     exports["cfml"] = cfml;
-    exports["cfhtml"] = cfhtml;
     exports["cfscript"] = cfscript;
     exports["cfquery"] = cfquery;
 

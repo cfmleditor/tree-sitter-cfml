@@ -14,13 +14,6 @@ func TestCanLoadCfmlGrammar(t *testing.T) {
 	}
 }
 
-func TestCanLoadCfhtmlGrammar(t *testing.T) {
-	language := tree_sitter.NewLanguage(tree_sitter_cfml.LanguageCfhtml())
-	if language == nil {
-		t.Errorf("Error loading CFHTML grammar")
-	}
-}
-
 func TestCanLoadCfscriptGrammar(t *testing.T) {
 	language := tree_sitter.NewLanguage(tree_sitter_cfml.LanguageCfscript())
 	if language == nil {

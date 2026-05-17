@@ -2,7 +2,7 @@
 
 from importlib.resources import files as _files
 
-from ._binding import language_cfml, language_cfhtml, language_cfscript, language_cfquery
+from ._binding import language_cfml, language_cfscript, language_cfquery
 
 
 def _get_query(name, file):
@@ -24,7 +24,6 @@ def __getattr__(name):
 
 __all__ = [
     "language_cfml",
-    "language_cfhtml",
     "language_cfscript",
     "language_cfquery",
     "HIGHLIGHTS_QUERY",

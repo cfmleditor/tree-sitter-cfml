@@ -3,16 +3,11 @@
 typedef struct TSLanguage TSLanguage;
 
 TSLanguage *tree_sitter_cfml(void);
-TSLanguage *tree_sitter_cfhtml(void);
 TSLanguage *tree_sitter_cfscript(void);
 TSLanguage *tree_sitter_cfquery(void);
 
 static PyObject* _binding_language_cfml(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args)) {
     return PyCapsule_New(tree_sitter_cfml(), "tree_sitter.Language", NULL);
-}
-
-static PyObject* _binding_language_cfhtml(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args)) {
-    return PyCapsule_New(tree_sitter_cfhtml(), "tree_sitter.Language", NULL);
 }
 
 static PyObject* _binding_language_cfscript(PyObject *Py_UNUSED(self), PyObject *Py_UNUSED(args)) {
@@ -33,8 +28,6 @@ static struct PyModuleDef_Slot slots[] = {
 static PyMethodDef methods[] = {
     {"language_cfml", _binding_language_cfml, METH_NOARGS,
      "Get the tree-sitter language for CFML."},
-    {"language_cfhtml", _binding_language_cfhtml, METH_NOARGS,
-     "Get the tree-sitter language for CFHTML."},
     {"language_cfscript", _binding_language_cfscript, METH_NOARGS,
      "Get the tree-sitter language for CFSCRIPT."},
     {"language_cfquery", _binding_language_cfquery, METH_NOARGS,
