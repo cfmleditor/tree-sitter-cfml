@@ -220,6 +220,8 @@
 (query_function
   name: (query_function_name) @function.call)
 
+(query_function_name) @variable
+
 (query_identifier) @variable
 (query_alias
   right: _ @variable)
