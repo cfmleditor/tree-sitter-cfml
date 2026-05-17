@@ -91,7 +91,7 @@ WHERE u.id = #ARGUMENTS.userIds[1]#
   (query_keyword)
   (query_keyword)
   (query_function
-    (query_keyword)
+    (query_function_name)
     (parenthesized_query_node
       (query_keyword)
       (query_number
@@ -209,22 +209,20 @@ INSERT INTO items (a, b) VALUES (1, #ARGUMENTS.x#)
 (program
   (query_keyword)
   (query_keyword)
-  (query_function
+  (query_identifier)
+  (parenthesized_query_node
     (query_identifier)
-    (parenthesized_query_node
-      (query_identifier)
-      (query_comma)
-      (query_identifier)))
-  (query_function
-    (query_keyword)
-    (parenthesized_query_node
-      (query_number
-        (number))
-      (query_comma)
-      (hash_expression
-        (member_expression
-          (identifier)
-          (property_identifier))))))
+    (query_comma)
+    (query_identifier))
+  (query_keyword)
+  (parenthesized_query_node
+    (query_number
+      (number))
+    (query_comma)
+    (hash_expression
+      (member_expression
+        (identifier)
+        (property_identifier)))))
 
 ===================================
 update set and where with hash params
@@ -344,18 +342,17 @@ SELECT * FROM t WHERE a = 1 AND (b = 2 OR c = 3)
     (query_identifier)
     (query_number
       (number)))
-  (query_function
+  (query_keyword)
+  (parenthesized_query_node
+    (query_assignment_expression
+      (query_identifier)
+      (query_number
+        (number)))
     (query_keyword)
-    (parenthesized_query_node
-      (query_assignment_expression
-        (query_identifier)
-        (query_number
-          (number)))
-      (query_keyword)
-      (query_assignment_expression
-        (query_identifier)
-        (query_number
-          (number))))))
+    (query_assignment_expression
+      (query_identifier)
+      (query_number
+        (number)))))
 
 ===================================
 where in list literals
@@ -371,17 +368,16 @@ SELECT * FROM t WHERE id IN (1, 2, 3)
   (query_identifier)
   (query_keyword)
   (query_identifier)
-  (query_function
-    (query_keyword)
-    (parenthesized_query_node
-      (query_number
-        (number))
-      (query_comma)
-      (query_number
-        (number))
-      (query_comma)
-      (query_number
-        (number)))))
+  (query_keyword)
+  (parenthesized_query_node
+    (query_number
+      (number))
+    (query_comma)
+    (query_number
+      (number))
+    (query_comma)
+    (query_number
+      (number))))
 
 ===================================
 hash param in select list and alias
@@ -422,18 +418,17 @@ SELECT * FROM active
 (program
   (query_keyword)
   (query_identifier)
-  (query_function
+  (query_keyword)
+  (parenthesized_query_node
     (query_keyword)
-    (parenthesized_query_node
-      (query_keyword)
+    (query_identifier)
+    (query_keyword)
+    (query_identifier)
+    (query_keyword)
+    (query_assignment_expression
       (query_identifier)
-      (query_keyword)
-      (query_identifier)
-      (query_keyword)
-      (query_assignment_expression
-        (query_identifier)
-        (query_number
-          (number)))))
+      (query_number
+        (number))))
   (query_keyword)
   (query_star
     (star))
@@ -478,15 +473,14 @@ SELECT CAST(id AS VARCHAR(10)) FROM t
 (program
   (query_keyword)
   (query_function
-    (query_keyword)
+    (query_function_name)
     (parenthesized_query_node
       (query_identifier)
       (query_keyword)
-      (query_function
-        (query_identifier)
-        (parenthesized_query_node
-          (query_number
-            (number))))))
+      (query_identifier)
+      (parenthesized_query_node
+        (query_number
+          (number)))))
   (query_keyword)
   (query_identifier))
 
@@ -611,15 +605,14 @@ SELECT 1 FROM t WINDOW w AS (PARTITION BY id ORDER BY sort_key)
   (query_identifier)
   (query_keyword)
   (query_identifier)
-  (query_function
+  (query_keyword)
+  (parenthesized_query_node
     (query_keyword)
-    (parenthesized_query_node
-      (query_keyword)
-      (query_keyword)
-      (query_identifier)
-      (query_keyword)
-      (query_keyword)
-      (query_identifier))))
+    (query_keyword)
+    (query_identifier)
+    (query_keyword)
+    (query_keyword)
+    (query_identifier)))
 
 ===================================
 for update skip locked
@@ -652,23 +645,21 @@ SELECT * FROM sales PIVOT (SUM(amount) FOR yr IN (2023, 2024)) AS p
     (star))
   (query_keyword)
   (query_identifier)
-  (query_function
+  (query_keyword)
+  (parenthesized_query_node
+    (query_function
+      (query_function_name)
+      (parenthesized_query_node
+        (query_identifier)))
+    (query_keyword)
+    (query_identifier)
     (query_keyword)
     (parenthesized_query_node
-      (query_function
-        (query_identifier)
-        (parenthesized_query_node
-          (query_identifier)))
-      (query_keyword)
-      (query_identifier)
-      (query_function
-        (query_keyword)
-        (parenthesized_query_node
-          (query_number
-            (number))
-          (query_comma)
-          (query_number
-            (number))))))
+      (query_number
+        (number))
+      (query_comma)
+      (query_number
+        (number))))
   (query_keyword)
   (query_identifier))
 
@@ -715,18 +706,16 @@ SELECT * FROM p UNPIVOT (val FOR col IN (a, b)) AS u
     (star))
   (query_keyword)
   (query_identifier)
-  (query_function
+  (query_keyword)
+  (parenthesized_query_node
+    (query_identifier)
+    (query_keyword)
+    (query_identifier)
     (query_keyword)
     (parenthesized_query_node
       (query_identifier)
-      (query_keyword)
-      (query_identifier)
-      (query_function
-        (query_keyword)
-        (parenthesized_query_node
-          (query_identifier)
-          (query_comma)
-          (query_identifier)))))
+      (query_comma)
+      (query_identifier)))
   (query_keyword)
   (query_identifier))
 
@@ -739,17 +728,16 @@ SELECT ROW_NUMBER() OVER (PARTITION BY id ORDER BY sort_key) FROM t
 (program
   (query_keyword)
   (query_function
-    (query_identifier)
+    (query_function_name)
     (parenthesized_query_node))
-  (query_function
+  (query_keyword)
+  (parenthesized_query_node
     (query_keyword)
-    (parenthesized_query_node
-      (query_keyword)
-      (query_keyword)
-      (query_identifier)
-      (query_keyword)
-      (query_keyword)
-      (query_identifier)))
+    (query_keyword)
+    (query_identifier)
+    (query_keyword)
+    (query_keyword)
+    (query_identifier))
   (query_keyword)
   (query_identifier))
 
@@ -762,16 +750,15 @@ SELECT COUNT(*) OVER (PARTITION BY gid) FROM t
 (program
   (query_keyword)
   (query_function
-    (query_identifier)
+    (query_function_name)
     (parenthesized_query_node
       (query_star
         (star))))
-  (query_function
+  (query_keyword)
+  (parenthesized_query_node
     (query_keyword)
-    (parenthesized_query_node
-      (query_keyword)
-      (query_keyword)
-      (query_identifier)))
+    (query_keyword)
+    (query_identifier))
   (query_keyword)
   (query_identifier))
 
@@ -808,15 +795,13 @@ MERGE INTO t USING s ON t.id = s.id WHEN MATCHED THEN UPDATE SET x = 1 WHEN NOT 
   (query_keyword)
   (query_keyword)
   (query_keyword)
-  (query_function
-    (query_keyword)
-    (parenthesized_query_node
-      (query_identifier)))
-  (query_function
-    (query_keyword)
-    (parenthesized_query_node
-      (query_number
-        (number)))))
+  (query_keyword)
+  (parenthesized_query_node
+    (query_identifier))
+  (query_keyword)
+  (parenthesized_query_node
+    (query_number
+      (number))))
 
 ===================================
 if statement around clause
@@ -1049,15 +1034,14 @@ SELECT col_a, col_b, col_c, col_d, (CASE col_d
       (query_identifier))
     (query_keyword)
     (query_function
-      (query_keyword)
+      (query_function_name)
       (parenthesized_query_node
         (query_identifier)
         (query_keyword)
-        (query_function
-          (query_identifier)
-          (parenthesized_query_node
-            (query_number
-              (number))))))
+        (query_identifier)
+        (parenthesized_query_node
+          (query_number
+            (number)))))
     (query_keyword))
   (query_keyword)
   (query_identifier)

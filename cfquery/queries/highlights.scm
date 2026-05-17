@@ -218,7 +218,7 @@
 (query_keyword) @keyword
 
 (query_function
-  name: _ @function.call)
+  name: (query_function_name) @function.call)
 
 (query_identifier) @variable
 (query_alias

@@ -3206,11 +3206,7 @@
         "required": true,
         "types": [
           {
-            "type": "query_identifier",
-            "named": true
-          },
-          {
-            "type": "query_keyword",
+            "type": "query_function_name",
             "named": true
           }
         ]
@@ -4511,6 +4507,10 @@
   },
   {
     "type": "query_comma",
+    "named": true
+  },
+  {
+    "type": "query_function_name",
     "named": true
   },
   {
