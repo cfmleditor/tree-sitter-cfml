@@ -1294,3 +1294,77 @@ AND a.col4 = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.param4#">
                   (identifier)
                   (property_identifier)))))
           (cf_selfclose_void_tag_end))))))
+
+===================================
+cfif elseif with incomplete operator fragments
+===================================
+<cfif ( ARGUMENTS.includeA IS true
+AND ARGUMENTS.includeB IS NOT true )>
+AND 0 <
+<cfelseif ( ARGUMENTS.includeA IS NOT true
+AND ARGUMENTS.includeB IS true )>
+AND 0 =
+</cfif>
+( SELECT count(*)
+FROM tbl1 t
+WHERE t.col1 = s.col1 )
+---
+
+(program
+  (cf_if_tag
+    (parenthesized_expression
+      (binary_expression
+        left: (binary_expression
+          left: (member_expression
+            object: (identifier)
+            property: (property_identifier))
+          right: (true))
+        right: (binary_expression
+          left: (member_expression
+            object: (identifier)
+            property: (property_identifier))
+          right: (unary_expression
+            operator: (unary_operator)
+            argument: (true)))))
+    (query_keyword)
+    (query_number
+      (number))
+    (query_operator)
+    (cf_if_alt
+      (cf_elseif_tag
+        (parenthesized_expression
+          (binary_expression
+            left: (binary_expression
+              left: (member_expression
+                object: (identifier)
+                property: (property_identifier))
+              right: (unary_expression
+                operator: (unary_operator)
+                argument: (true)))
+            right: (binary_expression
+              left: (member_expression
+                object: (identifier)
+                property: (property_identifier))
+              right: (true)))))
+      (query_keyword)
+      (query_number
+        (number))
+      (query_operator)))
+  (parenthesized_query_node
+    (query_keyword)
+    (query_function
+      name: (query_function_name)
+      arguments: (parenthesized_query_node
+        (query_star
+          (star))))
+    (query_keyword)
+    (query_identifier)
+    (query_identifier)
+    (query_keyword)
+    (query_alias
+      left: (query_identifier)
+      right: (query_assignment_expression
+        left: (query_identifier)
+        right: (query_alias
+          left: (query_identifier)
+          right: (query_identifier))))))

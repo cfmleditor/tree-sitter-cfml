@@ -1020,6 +1020,10 @@
           "named": true
         },
         {
+          "type": "query_operator",
+          "named": true
+        },
+        {
           "type": "query_semicolon",
           "named": true
         },
@@ -1128,6 +1132,10 @@
         },
         {
           "type": "query_number",
+          "named": true
+        },
+        {
+          "type": "query_operator",
           "named": true
         },
         {
@@ -1400,6 +1408,10 @@
         },
         {
           "type": "query_number",
+          "named": true
+        },
+        {
+          "type": "query_operator",
           "named": true
         },
         {
@@ -2678,6 +2690,10 @@
           "named": true
         },
         {
+          "type": "query_operator",
+          "named": true
+        },
+        {
           "type": "query_semicolon",
           "named": true
         },
@@ -2805,6 +2821,10 @@
           "named": true
         },
         {
+          "type": "query_operator",
+          "named": true
+        },
+        {
           "type": "query_semicolon",
           "named": true
         },
@@ -2916,6 +2936,10 @@
             "named": true
           },
           {
+            "type": "query_operator",
+            "named": true
+          },
+          {
             "type": "query_semicolon",
             "named": true
           },
@@ -3019,6 +3043,10 @@
           },
           {
             "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_operator",
             "named": true
           },
           {
@@ -3134,6 +3162,10 @@
             "named": true
           },
           {
+            "type": "query_operator",
+            "named": true
+          },
+          {
             "type": "query_semicolon",
             "named": true
           },
@@ -3237,6 +3269,10 @@
           },
           {
             "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_operator",
             "named": true
           },
           {
@@ -3349,6 +3385,10 @@
           },
           {
             "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_operator",
             "named": true
           },
           {
@@ -3485,6 +3525,10 @@
           },
           {
             "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_operator",
             "named": true
           },
           {
@@ -3641,6 +3685,10 @@
             "named": true
           },
           {
+            "type": "query_operator",
+            "named": true
+          },
+          {
             "type": "query_semicolon",
             "named": true
           },
@@ -3769,6 +3817,10 @@
             "named": true
           },
           {
+            "type": "query_operator",
+            "named": true
+          },
+          {
             "type": "query_semicolon",
             "named": true
           },
@@ -3802,6 +3854,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "query_operator",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "query_star",

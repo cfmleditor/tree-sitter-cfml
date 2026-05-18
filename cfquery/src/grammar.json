@@ -8,13 +8,12 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "_node"
-              }
-            ]
+            "type": "PREC",
+            "value": "query_repeat",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_node"
+            }
           }
         }
       ]
@@ -286,6 +285,10 @@
         {
           "type": "SYMBOL",
           "name": "query_semicolon"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "query_operator"
         }
       ]
     },
@@ -299,8 +302,12 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "SYMBOL",
-            "name": "_node"
+            "type": "PREC",
+            "value": "query_repeat",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_node"
+            }
           }
         },
         {
@@ -370,6 +377,43 @@
     "query_semicolon": {
       "type": "PATTERN",
       "value": "[;]"
+    },
+    "query_operator": {
+      "type": "PREC",
+      "value": -1,
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "<="
+          },
+          {
+            "type": "STRING",
+            "value": ">="
+          },
+          {
+            "type": "STRING",
+            "value": "<>"
+          },
+          {
+            "type": "STRING",
+            "value": "!="
+          },
+          {
+            "type": "STRING",
+            "value": "<"
+          },
+          {
+            "type": "STRING",
+            "value": ">"
+          },
+          {
+            "type": "STRING",
+            "value": "="
+          }
+        ]
+      }
     },
     "query_assignment_expression": {
       "type": "PREC_RIGHT",
@@ -1509,8 +1553,12 @@
             {
               "type": "REPEAT",
               "content": {
-                "type": "SYMBOL",
-                "name": "_node"
+                "type": "PREC",
+                "value": "query_repeat",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_node"
+                }
               }
             },
             {
@@ -8351,6 +8399,14 @@
     [
       "_for_header",
       "expression"
+    ],
+    [
+      "cf_if_tag",
+      "query_comparison_expression"
+    ],
+    [
+      "cf_if_tag",
+      "query_assignment_expression"
     ]
   ],
   "precedences": [
@@ -8446,6 +8502,10 @@
       {
         "type": "SYMBOL",
         "name": "arrow_function"
+      },
+      {
+        "type": "STRING",
+        "value": "query_repeat"
       }
     ],
     [
@@ -8456,6 +8516,10 @@
       {
         "type": "SYMBOL",
         "name": "primary_expression"
+      },
+      {
+        "type": "STRING",
+        "value": "query_repeat"
       }
     ],
     [

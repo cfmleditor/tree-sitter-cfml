@@ -126,8 +126,9 @@ module.exports = function defineGrammar(dialect) {
         'elvis',
         $.sequence_expression,
         $.arrow_function,
+        ...(dialect === 'cfquery' ? ['query_repeat'] : []),
       ],
-      ['assign', $.primary_expression],
+      ['assign', $.primary_expression, ...(dialect === 'cfquery' ? ['query_repeat'] : [])],
       ['member', 'new', 'call', $.expression],
       ['declaration', 'literal'],
       [$.primary_expression, $.statement_block, 'object'],
@@ -181,12 +182,18 @@ module.exports = function defineGrammar(dialect) {
       [$.switch_case, $.expression, $._property_name],
       [$.call_expression, $._property_name],
       [$._for_header, $.expression],
+      ...(dialect === 'cfquery' ? [
+        [$.cf_if_tag, $.query_comparison_expression],
+        [$.cf_if_tag, $.query_assignment_expression],
+      ] : []),
     ],
 
     rules: {
 
       program: $ => choice(
-        repeat(choice($._node, ...(dialect !== 'cfquery' ? [$.cf_component_open_tag, $.cf_component_close_tag] : []))),
+        ...(dialect === 'cfquery'
+          ? [repeat(prec('query_repeat', $._node))]
+          : [repeat(choice($._node, $.cf_component_open_tag, $.cf_component_close_tag))]),
         ...(dialect !== 'cfquery' ? [
           $.component_file,
         ] : []),
@@ -418,11 +425,12 @@ module.exports = function defineGrammar(dialect) {
           $.null,
           $.query_comma,
           $.query_semicolon,
+          $.query_operator,
         ),
 
         parenthesized_query_node: ($) => seq(
           '(',
-          repeat($._node),
+          repeat(prec('query_repeat', $._node)),
           ')',
         ),
 
@@ -440,6 +448,8 @@ module.exports = function defineGrammar(dialect) {
         query_comma: ($) => /[,]/,
 
         query_semicolon: ($) => /[;]/,
+
+        query_operator: ($) => prec(-1, choice('<=', '>=', '<>', '!=', '<', '>', '=')),
 
         query_assignment_expression: ($) => prec.right('assign', seq(
           field('left', $._node),
@@ -719,7 +729,7 @@ module.exports = function defineGrammar(dialect) {
       cf_tag: $ => choice(
         seq(
           $.cf_start_tag,
-          repeat($._node),
+          repeat(dialect === 'cfquery' ? prec('query_repeat', $._node) : $._node),
           choice($.cf_end_tag, $.implicit_cf_end_tag),
         ),
         $.cf_start_tag_with_selfclose,

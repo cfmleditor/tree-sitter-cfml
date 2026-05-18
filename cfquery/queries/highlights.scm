@@ -254,3 +254,5 @@
 
 (query_assignment_expression
   "=" @operator)
+
+(query_operator) @operator
