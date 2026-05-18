@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Add `target/` to eslint ignores
+- Add JSDoc comments to `scripts/release.js`
+
 ## [0.26.18]
 
 - Fixes for standaone query parens
