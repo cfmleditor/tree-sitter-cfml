@@ -66,7 +66,8 @@
     "playground": "node scripts/playground.js",
     "testbindings": "node --test bindings/node/*_test.js",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "release": "node scripts/release.js"
   },
   "publishConfig": {
     "access": "public"

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.26.18]
+
+- Fixes for standaone query parens
+- Security fix for scanner
+
 ## [0.26.17]
 
 - Fixes for standalone query operators
