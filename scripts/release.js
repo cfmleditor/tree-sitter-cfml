@@ -69,6 +69,7 @@ async function release() {
   const cargoPath = join(root, 'Cargo.toml');
   const cargo = readFileSync(cargoPath, 'utf8');
   writeFileSync(cargoPath, cargo.replace(/^version = ".*"/m, `version = "${version}"`));
+  run('cargo check');
 
   // 3. Build
   console.log('==> Building');
@@ -100,8 +101,12 @@ async function release() {
   await confirm('==> Publish to crates.io?');
   run('cargo publish --allow-dirty');
 
+  // 10. Push
+  await confirm('==> Push commit and tag?');
+  run('git push');
+  run(`git push origin "v${version}"`);
+
   console.log(`\n==> Done! v${version} released.`);
-  console.log('    Don\'t forget to: git push && git push --tags');
 }
 
 release();

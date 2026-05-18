@@ -234,6 +234,26 @@ One grammar only: run `test` via the CLI from that dialect’s directory ([above
 - `npm run playground` — playground in each of `cfml/`, `cfscript/`, `cfquery/`
 - `npm run docswasm` — writes `docs/tree-sitter-{cfml,cfscript,cfquery}.wasm` for `docs/` (e.g. GitHub Pages)
 
+### Releasing
+
+```bash
+npm run release -- 0.26.18
+```
+
+The release script (`scripts/release.js`) will:
+
+1. Verify `CHANGELOG.md` has a `## [<version>]` entry with notes
+2. Ensure the working tree is clean
+3. Update the version in `package.json` and `Cargo.toml`
+4. Run `npm run build` (regenerate parsers)
+5. Run `npm test` (all three grammars)
+6. Run `npm run docswasm` (rebuild playground WASM)
+7. Run `npm run install` (rebuild native addon)
+8. Commit all changes and create a `v<version>` tag (prompted)
+9. Publish to npm (prompted)
+10. Publish to crates.io (prompted)
+11. Push commit and tag (prompted)
+
 ## Grammar structure
 
 Shared rules: `common/define-grammar.js`. External scanner: `common/scanner.h` (implicit end tags, CF tag names, hash expressions, raw text).
