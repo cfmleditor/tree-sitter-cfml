@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.26.17]
+
+- Fixes for standalone query operators
+
 ## [0.26.16]
 
 - SQL types should be classed as functions
