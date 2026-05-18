@@ -1298,73 +1298,202 @@ AND a.col4 = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.param4#">
 ===================================
 cfif elseif with incomplete operator fragments
 ===================================
-<cfif ( ARGUMENTS.includeA IS true
-AND ARGUMENTS.includeB IS NOT true )>
-AND 0 <
-<cfelseif ( ARGUMENTS.includeA IS NOT true
-AND ARGUMENTS.includeB IS true )>
-AND 0 =
-</cfif>
-( SELECT count(*)
-FROM tbl1 t
-WHERE t.col1 = s.col1 )
+
+	SELECT *
+	FROM test
+	WHERE 1 = 1
+	<cfif ARGUMENTS.flagA IS true
+		AND ARGUMENTS.flagB IS NOT true>
+			OR 1 >
+	<cfelseif ARGUMENTS.flagA IS NOT true
+		AND ARGUMENTS.flagB IS true>
+		OR 1 =
+	</cfif>
+
+	ORDER BY test
 ---
 
 (program
+  (query_keyword)
+  (query_star
+    (star))
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_assignment_expression
+    left: (query_number
+      (number))
+    right: (query_number
+      (number)))
   (cf_if_tag
-    (parenthesized_expression
-      (binary_expression
-        left: (binary_expression
-          left: (member_expression
-            object: (identifier)
-            property: (property_identifier))
-          right: (true))
-        right: (binary_expression
-          left: (member_expression
-            object: (identifier)
-            property: (property_identifier))
-          right: (unary_expression
-            operator: (unary_operator)
-            argument: (true)))))
+    (binary_expression
+      left: (binary_expression
+        left: (member_expression
+          object: (identifier)
+          property: (property_identifier))
+        right: (true))
+      right: (binary_expression
+        left: (member_expression
+          object: (identifier)
+          property: (property_identifier))
+        right: (unary_expression
+          operator: (unary_operator)
+          argument: (true))))
     (query_keyword)
     (query_number
       (number))
     (query_operator)
     (cf_if_alt
       (cf_elseif_tag
-        (parenthesized_expression
-          (binary_expression
-            left: (binary_expression
-              left: (member_expression
-                object: (identifier)
-                property: (property_identifier))
-              right: (unary_expression
-                operator: (unary_operator)
-                argument: (true)))
-            right: (binary_expression
-              left: (member_expression
-                object: (identifier)
-                property: (property_identifier))
-              right: (true)))))
+        (binary_expression
+          left: (binary_expression
+            left: (member_expression
+              object: (identifier)
+              property: (property_identifier))
+            right: (unary_expression
+              operator: (unary_operator)
+              argument: (true)))
+          right: (binary_expression
+            left: (member_expression
+              object: (identifier)
+              property: (property_identifier))
+            right: (true))))
       (query_keyword)
       (query_number
         (number))
       (query_operator)))
-  (parenthesized_query_node
-    (query_keyword)
-    (query_function
-      name: (query_function_name)
-      arguments: (parenthesized_query_node
-        (query_star
-          (star))))
-    (query_keyword)
-    (query_identifier)
-    (query_identifier)
-    (query_keyword)
-    (query_alias
-      left: (query_identifier)
-      right: (query_assignment_expression
+  (query_keyword)
+  (query_keyword)
+  (query_identifier))
+
+===================================
+cfif with standalone unmatched parens
+===================================
+SELECT
+<cfif StructKeyExists(ARGUMENTS,"col1") AND Len(Trim(ARGUMENTS.col1)) GT 0>
+<cfif ARGUMENTS.checkFlag IS true>
+AND (a.flg = <cfqueryparam cfsqltype="cf_sql_char" value="Y">
+OR (1=1
+</cfif>
+<cfif ListLen(ARGUMENTS.col1) GT 1>
+AND a.col1 IN (<cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.col1#" list="true">)
+<cfelse>
+AND a.col1 = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.col1#">
+</cfif>
+<cfif ARGUMENTS.checkFlag IS true>
+)
+)
+</cfif>
+</cfif>
+---
+
+(program
+  (query_keyword)
+  (cf_if_tag
+    (binary_expression
+      left: (call_expression
+        function: (identifier)
+        arguments: (arguments
+          (identifier)
+          (string
+            (string_fragment))))
+      right: (binary_expression
+        left: (call_expression
+          function: (identifier)
+          arguments: (arguments
+            (call_expression
+              function: (identifier)
+              arguments: (arguments
+                (member_expression
+                  object: (identifier)
+                  property: (property_identifier))))))
+        right: (number)))
+    (cf_if_tag
+      (binary_expression
+        left: (member_expression
+          object: (identifier)
+          property: (property_identifier))
+        right: (true))
+      (query_keyword)
+      (query_open_paren)
+      (query_alias
         left: (query_identifier)
-        right: (query_alias
+        right: (query_assignment_expression
           left: (query_identifier)
-          right: (query_identifier))))))
+          right: (cf_selfclose_tag
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (attribute_value)))
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (attribute_value)))
+            (cf_selfclose_void_tag_end))))
+      (query_keyword)
+      (query_open_paren)
+      (query_assignment_expression
+        left: (query_number
+          (number))
+        right: (query_number
+          (number))))
+    (cf_if_tag
+      (binary_expression
+        left: (call_expression
+          function: (identifier)
+          arguments: (arguments
+            (member_expression
+              object: (identifier)
+              property: (property_identifier))))
+        right: (number))
+      (query_keyword)
+      (query_alias
+        left: (query_identifier)
+        right: (query_identifier))
+      (query_keyword)
+      (parenthesized_query_node
+        (cf_selfclose_tag
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (hash_expression
+                (member_expression
+                  object: (identifier)
+                  property: (property_identifier)))))
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))
+          (cf_selfclose_void_tag_end)))
+      (cf_if_alt
+        (cf_else_tag)
+        (query_keyword)
+        (query_alias
+          left: (query_identifier)
+          right: (query_assignment_expression
+            left: (query_identifier)
+            right: (cf_selfclose_tag
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
+                  (attribute_value)))
+              (cf_attribute
+                (cf_attribute_name)
+                (quoted_cf_attribute_value
+                  (hash_expression
+                    (member_expression
+                      object: (identifier)
+                      property: (property_identifier)))))
+              (cf_selfclose_void_tag_end))))))
+    (cf_if_tag
+      (binary_expression
+        left: (member_expression
+          object: (identifier)
+          property: (property_identifier))
+        right: (true))
+      (query_close_paren)
+      (query_close_paren))))

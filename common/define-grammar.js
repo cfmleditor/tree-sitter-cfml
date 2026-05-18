@@ -185,6 +185,7 @@ module.exports = function defineGrammar(dialect) {
       ...(dialect === 'cfquery' ? [
         [$.cf_if_tag, $.query_comparison_expression],
         [$.cf_if_tag, $.query_assignment_expression],
+        [$.parenthesized_query_node, $.query_open_paren],
       ] : []),
     ],
 
@@ -426,6 +427,8 @@ module.exports = function defineGrammar(dialect) {
           $.query_comma,
           $.query_semicolon,
           $.query_operator,
+          $.query_open_paren,
+          $.query_close_paren,
         ),
 
         parenthesized_query_node: ($) => seq(
@@ -450,6 +453,9 @@ module.exports = function defineGrammar(dialect) {
         query_semicolon: ($) => /[;]/,
 
         query_operator: ($) => prec(-1, choice('<=', '>=', '<>', '!=', '<', '>', '=')),
+
+        query_open_paren: ($) => '(',
+        query_close_paren: ($) => prec(-1, ')'),
 
         query_assignment_expression: ($) => prec.right('assign', seq(
           field('left', $._node),

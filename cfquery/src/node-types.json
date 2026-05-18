@@ -988,6 +988,10 @@
           "named": true
         },
         {
+          "type": "query_close_paren",
+          "named": true
+        },
+        {
           "type": "query_comma",
           "named": true
         },
@@ -1017,6 +1021,10 @@
         },
         {
           "type": "query_number",
+          "named": true
+        },
+        {
+          "type": "query_open_paren",
           "named": true
         },
         {
@@ -1103,6 +1111,10 @@
           "named": true
         },
         {
+          "type": "query_close_paren",
+          "named": true
+        },
+        {
           "type": "query_comma",
           "named": true
         },
@@ -1132,6 +1144,10 @@
         },
         {
           "type": "query_number",
+          "named": true
+        },
+        {
+          "type": "query_open_paren",
           "named": true
         },
         {
@@ -1379,6 +1395,10 @@
           "named": true
         },
         {
+          "type": "query_close_paren",
+          "named": true
+        },
+        {
           "type": "query_comma",
           "named": true
         },
@@ -1408,6 +1428,10 @@
         },
         {
           "type": "query_number",
+          "named": true
+        },
+        {
+          "type": "query_open_paren",
           "named": true
         },
         {
@@ -2658,6 +2682,10 @@
           "named": true
         },
         {
+          "type": "query_close_paren",
+          "named": true
+        },
+        {
           "type": "query_comma",
           "named": true
         },
@@ -2687,6 +2715,10 @@
         },
         {
           "type": "query_number",
+          "named": true
+        },
+        {
+          "type": "query_open_paren",
           "named": true
         },
         {
@@ -2789,6 +2821,10 @@
           "named": true
         },
         {
+          "type": "query_close_paren",
+          "named": true
+        },
+        {
           "type": "query_comma",
           "named": true
         },
@@ -2818,6 +2854,10 @@
         },
         {
           "type": "query_number",
+          "named": true
+        },
+        {
+          "type": "query_open_paren",
           "named": true
         },
         {
@@ -2904,6 +2944,10 @@
             "named": true
           },
           {
+            "type": "query_close_paren",
+            "named": true
+          },
+          {
             "type": "query_comma",
             "named": true
           },
@@ -2933,6 +2977,10 @@
           },
           {
             "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_open_paren",
             "named": true
           },
           {
@@ -3014,6 +3062,10 @@
             "named": true
           },
           {
+            "type": "query_close_paren",
+            "named": true
+          },
+          {
             "type": "query_comma",
             "named": true
           },
@@ -3043,6 +3095,10 @@
           },
           {
             "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_open_paren",
             "named": true
           },
           {
@@ -3130,6 +3186,10 @@
             "named": true
           },
           {
+            "type": "query_close_paren",
+            "named": true
+          },
+          {
             "type": "query_comma",
             "named": true
           },
@@ -3159,6 +3219,10 @@
           },
           {
             "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_open_paren",
             "named": true
           },
           {
@@ -3240,6 +3304,10 @@
             "named": true
           },
           {
+            "type": "query_close_paren",
+            "named": true
+          },
+          {
             "type": "query_comma",
             "named": true
           },
@@ -3272,6 +3340,10 @@
             "named": true
           },
           {
+            "type": "query_open_paren",
+            "named": true
+          },
+          {
             "type": "query_operator",
             "named": true
           },
@@ -3294,6 +3366,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "query_close_paren",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "query_comparison_expression",
@@ -3356,6 +3433,10 @@
             "named": true
           },
           {
+            "type": "query_close_paren",
+            "named": true
+          },
+          {
             "type": "query_comma",
             "named": true
           },
@@ -3385,6 +3466,10 @@
           },
           {
             "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_open_paren",
             "named": true
           },
           {
@@ -3496,6 +3581,10 @@
             "named": true
           },
           {
+            "type": "query_close_paren",
+            "named": true
+          },
+          {
             "type": "query_comma",
             "named": true
           },
@@ -3525,6 +3614,10 @@
           },
           {
             "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_open_paren",
             "named": true
           },
           {
@@ -3653,6 +3746,10 @@
             "named": true
           },
           {
+            "type": "query_close_paren",
+            "named": true
+          },
+          {
             "type": "query_comma",
             "named": true
           },
@@ -3682,6 +3779,10 @@
           },
           {
             "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_open_paren",
             "named": true
           },
           {
@@ -3785,6 +3886,10 @@
             "named": true
           },
           {
+            "type": "query_close_paren",
+            "named": true
+          },
+          {
             "type": "query_comma",
             "named": true
           },
@@ -3814,6 +3919,10 @@
           },
           {
             "type": "query_number",
+            "named": true
+          },
+          {
+            "type": "query_open_paren",
             "named": true
           },
           {
@@ -3854,6 +3963,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "query_open_paren",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "query_operator",

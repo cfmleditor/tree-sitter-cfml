@@ -289,6 +289,14 @@
         {
           "type": "SYMBOL",
           "name": "query_operator"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "query_open_paren"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "query_close_paren"
         }
       ]
     },
@@ -413,6 +421,18 @@
             "value": "="
           }
         ]
+      }
+    },
+    "query_open_paren": {
+      "type": "STRING",
+      "value": "("
+    },
+    "query_close_paren": {
+      "type": "PREC",
+      "value": -1,
+      "content": {
+        "type": "STRING",
+        "value": ")"
       }
     },
     "query_assignment_expression": {
@@ -8407,6 +8427,10 @@
     [
       "cf_if_tag",
       "query_assignment_expression"
+    ],
+    [
+      "parenthesized_query_node",
+      "query_open_paren"
     ]
   ],
   "precedences": [
