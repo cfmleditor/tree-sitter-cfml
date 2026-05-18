@@ -26,10 +26,11 @@ function run(cmd, opts) {
   execSync(cmd, {stdio: 'inherit', cwd: root, ...opts});
 }
 
-const version = process.argv[2];
+const dryRun = process.argv.includes('--dry-run');
+const version = process.argv.filter((a) => a !== '--dry-run')[2];
 if (!version || !/^\d+\.\d+\.\d+$/.test(version)) {
-  console.error('Usage: npm run release -- <version>');
-  console.error('Example: npm run release -- 0.26.18');
+  console.error('Usage: npm run release -- <version> [--dry-run]');
+  console.error('Example: npm run release -- 0.26.18 --dry-run');
   process.exit(1);
 }
 
@@ -66,6 +67,13 @@ if (behind !== '0') {
 }
 
 async function release() {
+  if (dryRun) {
+    console.log('[DRY RUN] No changes will be made.\n');
+  } else {
+    await confirm(
+      '\n⚠️  WARNING: This is a LIVE release. Files will be modified, a commit and tag will be created, and changes may be pushed to remote.\n   Continue?',
+    );
+  }
   console.log(`\n==> Releasing v${version}\n`);
 
   // 0. Verify changelog has an entry for this version (or [Unreleased] to rename)
@@ -82,8 +90,10 @@ async function release() {
         console.error('Error: CHANGELOG.md [Unreleased] section is empty. Add change notes.');
         process.exit(1);
       }
-      changelog = changelog.replace(unreleasedRe, `## [${version}]`);
-      writeFileSync(changelogPath, changelog);
+      if (!dryRun) {
+        changelog = changelog.replace(unreleasedRe, `## [${version}]`);
+        writeFileSync(changelogPath, changelog);
+      }
       console.log(`==> CHANGELOG.md [Unreleased] renamed to [${version}]`);
     } else {
       console.error(`Error: CHANGELOG.md has no "${heading}" or [Unreleased] section.`);
@@ -100,16 +110,21 @@ async function release() {
     console.log('==> CHANGELOG.md verified');
   }
 
-  // 1. Update package.json
-  console.log('==> Updating package.json');
-  run(`npm version ${version} --no-git-tag-version`);
+  if (dryRun) {
+    console.log('==> Would update package.json');
+    console.log('==> Would update Cargo.toml');
+  } else {
+    // 1. Update package.json
+    console.log('==> Updating package.json');
+    run(`npm version ${version} --no-git-tag-version`);
 
-  // 2. Update Cargo.toml
-  console.log('==> Updating Cargo.toml');
-  const cargoPath = join(root, 'Cargo.toml');
-  const cargo = readFileSync(cargoPath, 'utf8');
-  writeFileSync(cargoPath, cargo.replace(/^version = ".*"/m, `version = "${version}"`));
-  run('cargo check');
+    // 2. Update Cargo.toml
+    console.log('==> Updating Cargo.toml');
+    const cargoPath = join(root, 'Cargo.toml');
+    const cargo = readFileSync(cargoPath, 'utf8');
+    writeFileSync(cargoPath, cargo.replace(/^version = ".*"/m, `version = "${version}"`));
+    run('cargo check');
+  }
 
   // 3. Build
   console.log('==> Building');
@@ -123,13 +138,20 @@ async function release() {
   console.log('==> Testing');
   run('npm test');
 
-  // 5. Docs WASM
+  // 6. Docs WASM
   console.log('==> Building docs WASM');
   run('npm run docswasm');
 
-  // 6. Install (rebuild native addon)
+  // 7. Install (rebuild native addon)
   console.log('==> Rebuilding native addon');
   run('npm run install');
+
+  if (dryRun) {
+    console.log(`\n==> Would commit and tag v${version}`);
+    console.log('==> Would push commit and tag');
+    console.log('\n==> Dry run complete. All checks passed.');
+    return;
+  }
 
   // 7. Commit and tag
   await confirm(`\n==> Commit and tag v${version}?`);

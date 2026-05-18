@@ -242,17 +242,20 @@ npm run release -- 0.26.18
 
 The release script (`scripts/release.js`) will:
 
-1. Verify `CHANGELOG.md` has a `## [<version>]` entry with notes
-2. Ensure the working tree is clean
-3. Update the version in `package.json` and `Cargo.toml`
-4. Run `npm run build` (regenerate parsers)
-5. Run `npm test` (all three grammars)
-6. Run `npm run docswasm` (rebuild playground WASM)
-7. Run `npm run install` (rebuild native addon)
-8. Commit all changes and create a `v<version>` tag (prompted)
-9. Publish to npm (prompted)
-10. Publish to crates.io (prompted)
-11. Push commit and tag (prompted)
+1. Validate version format and ensure it's greater than current
+2. Ensure the working tree is clean and local branch is not behind remote
+3. Verify tag `v<version>` doesn't already exist
+4. Verify `CHANGELOG.md` has a `## [<version>]` or `## [Unreleased]` entry with notes
+5. Update the version in `package.json` and `Cargo.toml`
+6. Run `npm run build` (regenerate parsers)
+7. Run `npm run lint` (ESLint)
+8. Run `npm test` (all three grammars)
+9. Run `npm run docswasm` (rebuild playground WASM)
+10. Run `npm run install` (rebuild native addon)
+11. Commit all changes and create a `v<version>` tag (prompted)
+12. Push commit and tag (prompted)
+
+Once the tag is pushed, the GitHub Release workflow (`.github/workflows/release.yml`) will automatically publish to npm, crates.io, and create a GitHub Release with the changelog notes.
 
 ## Grammar structure
 
