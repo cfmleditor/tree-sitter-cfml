@@ -158,6 +158,7 @@ static inline bool implicit_cf_end_tag_valid(const bool *vs, unsigned count) {
     uint16_t _count = (tags_field).size > UINT16_MAX ? UINT16_MAX : (tags_field).size; \
     uint16_t _serialized = 0; \
     unsigned _count_offset = (size); \
+    if ((size) + sizeof(_count) + sizeof(_count) > TREE_SITTER_SERIALIZATION_BUFFER_SIZE) break; \
     (size) += sizeof(_count); \
     (size) += sizeof(_count); \
     for (; _serialized < _count; _serialized++) { \
