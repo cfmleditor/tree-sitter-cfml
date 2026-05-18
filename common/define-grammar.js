@@ -274,7 +274,7 @@ module.exports = function defineGrammar(dialect) {
 
         script_element: $ => seq(
           alias($.script_start_tag, $.start_tag),
-          optional($.raw_text),
+          repeat(choice(alias($.raw_text, $.script_text), $._cf_tags, $._hash_dialect_eval)),
           $.end_tag,
         ),
 
@@ -336,7 +336,7 @@ module.exports = function defineGrammar(dialect) {
 
         style_element: $ => seq(
           alias($.style_start_tag, $.start_tag),
-          optional($.raw_text),
+          repeat(choice(alias($.raw_text, $.style_text), $._cf_tags, $._hash_dialect_eval)),
           $.end_tag,
         ),
 
@@ -349,6 +349,7 @@ module.exports = function defineGrammar(dialect) {
                 $._cf_tags,
                 $._hash_dialect_eval,
                 alias(token(prec(1, /[^'<\s\n\r\t#]+/)), $.attribute_value),
+                alias(token(prec(-1, '<')), $.attribute_value),
               ),
             ),
             '\''),
@@ -358,6 +359,7 @@ module.exports = function defineGrammar(dialect) {
                 $._cf_tags,
                 $._hash_dialect_eval,
                 alias(token(prec(1, /[^"<\s\n\r\t#]+/)), $.attribute_value),
+                alias(token(prec(-1, '<')), $.attribute_value),
               ),
             ),
             '"'),

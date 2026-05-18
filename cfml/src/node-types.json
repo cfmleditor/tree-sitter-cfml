@@ -3480,11 +3480,67 @@
       "required": true,
       "types": [
         {
+          "type": "cf_function_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
           "type": "end_tag",
           "named": true
         },
         {
-          "type": "raw_text",
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "hash_single",
+          "named": true
+        },
+        {
+          "type": "script_text",
           "named": true
         },
         {
@@ -3613,15 +3669,71 @@
       "required": true,
       "types": [
         {
+          "type": "cf_function_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
           "type": "end_tag",
           "named": true
         },
         {
-          "type": "raw_text",
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "hash_single",
           "named": true
         },
         {
           "type": "start_tag",
+          "named": true
+        },
+        {
+          "type": "style_text",
           "named": true
         }
       ]
@@ -4587,10 +4699,6 @@
     "named": false
   },
   {
-    "type": "raw_text",
-    "named": true
-  },
-  {
     "type": "regex_flags",
     "named": true
   },
@@ -4609,6 +4717,10 @@
   {
     "type": "return",
     "named": false
+  },
+  {
+    "type": "script_text",
+    "named": true
   },
   {
     "type": "self_closing_tag_delimiter",
@@ -4644,6 +4756,10 @@
   },
   {
     "type": "string_fragment",
+    "named": true
+  },
+  {
+    "type": "style_text",
     "named": true
   },
   {

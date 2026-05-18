@@ -9,7 +9,8 @@
 (attribute_name) @attribute
 (cf_attribute_name) @attribute
 (attribute_value) @string
-(raw_text) @embedded
+(script_text) @embedded
+(style_text) @embedded
 (start_tag) @tag
 (end_tag) @tag
 (self_closing_tag) @tag

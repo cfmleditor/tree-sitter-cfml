@@ -392,7 +392,16 @@ static WhitespaceResult scan_whitespace_and_comments(TSLexer *lexer, bool *scann
 }
 
 
-static bool scan_html_text(TSLexer *lexer, bool is_cfquery_context) {
+static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context) {
+    // Check if we're inside a script/style tag
+    bool in_script_style = false;
+    if (scanner->tags.size > 0) {
+        TagType type = array_back(&scanner->tags)->type;
+        if (type == SCRIPT || type == STYLE) {
+            in_script_style = true;
+        }
+    }
+
     // saw_text will be true if we see any non-whitespace content, or any whitespace content that is not a newline and
     // does not immediately follow a newline.
     bool saw_text = false;
@@ -401,6 +410,57 @@ static bool scan_html_text(TSLexer *lexer, bool is_cfquery_context) {
     bool at_newline = false;
 
     bool saw_any = false;
+
+    if (in_script_style) {
+        // Inside script/style: consume until #, <cf, </cf, or </script|</style
+        lexer->mark_end(lexer);
+        while (lexer->lookahead != 0 && lexer->lookahead != '#') {
+            if (lexer->lookahead == '<') {
+                // Peek for <cf or </cf or </script|</style
+                advance(lexer);
+                if (towupper(lexer->lookahead) == 'C') {
+                    advance(lexer);
+                    if (towupper(lexer->lookahead) == 'F') {
+                        break;
+                    }
+                    lexer->mark_end(lexer);
+                    saw_text = true;
+                    saw_any = true;
+                    continue;
+                } else if (lexer->lookahead == '/') {
+                    advance(lexer);
+                    if (towupper(lexer->lookahead) == 'C') {
+                        advance(lexer);
+                        if (towupper(lexer->lookahead) == 'F') {
+                            break;
+                        }
+                        lexer->mark_end(lexer);
+                        saw_text = true;
+                        saw_any = true;
+                        continue;
+                    } else if (towupper(lexer->lookahead) == 'S') {
+                        // Potential </script or </style - stop
+                        break;
+                    }
+                    lexer->mark_end(lexer);
+                    saw_text = true;
+                    saw_any = true;
+                    continue;
+                }
+                lexer->mark_end(lexer);
+                saw_text = true;
+                saw_any = true;
+                continue;
+            }
+            saw_text = true;
+            saw_any = true;
+            advance(lexer);
+            lexer->mark_end(lexer);
+        }
+        lexer->result_symbol = HTML_TEXT;
+        return saw_text || (saw_any && lexer->lookahead == '#');
+    }
+
     while (lexer->lookahead != 0 && lexer->lookahead != '<' && lexer->lookahead != '>' && lexer->lookahead != '{' &&
            lexer->lookahead != '}' && lexer->lookahead != '&' && lexer->lookahead != '#') {
         bool is_wspace = iswspace(lexer->lookahead);
@@ -681,8 +741,56 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_cont
 
     const char *end_delimiter = array_back(&scanner->tags)->type == SCRIPT ? "</SCRIPT" : "</STYLE";
 
+    bool stop_at_cfml = !is_cfquery_context &&
+        (array_back(&scanner->tags)->type == SCRIPT || array_back(&scanner->tags)->type == STYLE);
+
+    bool has_content = false;
     unsigned delimiter_index = 0;
     while (lexer->lookahead) {
+        // CFML boundary checks (only when not mid-delimiter match)
+        if (stop_at_cfml && delimiter_index == 0) {
+            if (lexer->lookahead == '#') {
+                break;
+            }
+            if (lexer->lookahead == '<') {
+                advance(lexer);
+                if (towupper(lexer->lookahead) == 'C') {
+                    advance(lexer);
+                    if (towupper(lexer->lookahead) == 'F') {
+                        // Stop before <cf
+                        break;
+                    }
+                    lexer->mark_end(lexer);
+                    has_content = true;
+                    continue;
+                } else if (lexer->lookahead == '/') {
+                    advance(lexer);
+                    if (towupper(lexer->lookahead) == 'C') {
+                        advance(lexer);
+                        if (towupper(lexer->lookahead) == 'F') {
+                            // Stop before </cf
+                            break;
+                        }
+                        lexer->mark_end(lexer);
+                        has_content = true;
+                        continue;
+                    } else if (towupper(lexer->lookahead) == end_delimiter[2]) {
+                        // Potential </script or </style
+                        delimiter_index = 3;
+                        advance(lexer);
+                        continue;
+                    }
+                    lexer->mark_end(lexer);
+                    has_content = true;
+                    continue;
+                } else {
+                    lexer->mark_end(lexer);
+                    has_content = true;
+                    continue;
+                }
+            }
+        }
+
         if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
             delimiter_index++;
             if (delimiter_index == strlen(end_delimiter)) {
@@ -693,7 +801,12 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_cont
             delimiter_index = 0;
             advance(lexer);
             lexer->mark_end(lexer);
+            has_content = true;
         }
+    }
+
+    if (!has_content) {
+        return false;
     }
 
     lexer->result_symbol = RAW_TEXT;
@@ -1259,7 +1372,17 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_con
 }
 
 static bool scanner_in_hash_eval_context(Scanner *scanner, bool is_cfquery_context) {
-    return scanner->cfoutput_depth > 0 || scanner->cfcomponent_depth > 0 || scanner->cffunction_depth > 0;
+    if (scanner->cfoutput_depth > 0 || scanner->cfcomponent_depth > 0 || scanner->cffunction_depth > 0) {
+        return true;
+    }
+    // Inside <script> or <style> tags, hashes are always evaluated
+    if (scanner->tags.size > 0) {
+        TagType type = array_back(&scanner->tags)->type;
+        if (type == SCRIPT || type == STYLE) {
+            return true;
+        }
+    }
+    return false;
 }
 
 static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
@@ -1311,7 +1434,7 @@ static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
 
 static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols, unsigned count, bool is_cfquery_context) {
 
-    if (!VS(valid_symbols, HTML_TEXT, count)) {
+    if (!VS(valid_symbols, HTML_TEXT, count) && !VS(valid_symbols, RAW_TEXT, count)) {
         while (iswspace(lexer->lookahead)) {
             skip(lexer);
         }
@@ -1340,7 +1463,9 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
     }
 
     if (VS(valid_symbols, RAW_TEXT, count) && !VS(valid_symbols, START_TAG_NAME, count) && !VS(valid_symbols, END_TAG_NAME, count)) {
-        return scan_raw_text(scanner, lexer, is_cfquery_context);
+        if (scan_raw_text(scanner, lexer, is_cfquery_context)) {
+            return true;
+        }
     }
 
     if (VS(valid_symbols, CF_XML_CONTENT, count)) {
@@ -1359,7 +1484,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
         return scan_cfsavecontent_content(scanner, lexer, is_cfquery_context);
     }
 
-    if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(lexer, is_cfquery_context)) {
+    if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(scanner, lexer, is_cfquery_context)) {
         return true;
     }
 

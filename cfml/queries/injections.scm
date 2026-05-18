@@ -1,9 +1,21 @@
 ((script_element
-  (raw_text) @injection.content)
+  (script_text) @injection.content)
+ (#set! injection.language "javascript"))
+
+;; JS content inside CF tags within script elements
+((script_element
+  (_
+    (html_text) @injection.content))
  (#set! injection.language "javascript"))
 
 ((style_element
-  (raw_text) @injection.content)
+  (style_text) @injection.content)
+ (#set! injection.language "css"))
+
+;; CSS content inside CF tags within style elements
+((style_element
+  (_
+    (html_text) @injection.content))
  (#set! injection.language "css"))
 
 ((cf_script_tag

@@ -198,7 +198,7 @@ more text
     (script_element
       (start_tag
         (tag_name))
-      (raw_text)
+      (script_text)
       (end_tag
         (tag_name)))
     (cf_savecontent_content)))
@@ -219,7 +219,7 @@ cfsavecontent with only script element
     (script_element
       (start_tag
         (tag_name))
-      (raw_text)
+      (script_text)
       (end_tag
         (tag_name)))))
 
@@ -237,3 +237,59 @@ cfsavecontent without script element
       (quoted_cf_attribute_value
         (attribute_value)))
     (cf_savecontent_content)))
+
+===================================
+inline JavaScript with less-than operator in attribute value
+===================================
+<input type="submit" onClick="if (x <= 3) return false;">
+
+---
+
+(program
+  (element
+    (start_tag
+      (tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value)
+            (attribute_value)
+            (attribute_value)
+            (attribute_value)
+            (attribute_value)
+            (attribute_value)
+            (attribute_value)))))
+    (implicit_end_tag)))
+
+===================================
+script element with CFML hash expressions and cf tags
+===================================
+<script>
+var x = '#myVar#';
+<cfif isAdmin>
+var admin = true;
+</cfif>
+</script>
+
+---
+
+(program
+  (script_element
+    (start_tag
+      (tag_name))
+    (script_text)
+    (hash_expression
+      (identifier))
+    (script_text)
+    (cf_if_tag
+      (identifier)
+      (html_text))
+    (script_text)
+    (end_tag
+      (tag_name))))
