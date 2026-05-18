@@ -192,9 +192,9 @@ module.exports = function defineGrammar(dialect) {
     rules: {
 
       program: $ => choice(
-        ...(dialect === 'cfquery'
-          ? [repeat(prec('query_repeat', $._node))]
-          : [repeat(choice($._node, $.cf_component_open_tag, $.cf_component_close_tag))]),
+        ...(dialect === 'cfquery' ?
+          [repeat(prec('query_repeat', $._node))] :
+          [repeat(choice($._node, $.cf_component_open_tag, $.cf_component_close_tag))]),
         ...(dialect !== 'cfquery' ? [
           $.component_file,
         ] : []),

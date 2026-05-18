@@ -9,6 +9,7 @@ export default [
       'docs/**',
       '.cursor/**',
       'examples/**',
+      'target/**',
     ],
   },
   ...treesitter,

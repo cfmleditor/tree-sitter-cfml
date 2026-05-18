@@ -7,6 +7,7 @@ const readline = require('readline');
 
 const root = join(__dirname, '..');
 
+/** @param {string} message - Prompt to display */
 function confirm(message) {
   const rl = readline.createInterface({input: process.stdin, output: process.stdout});
   return new Promise((resolve) => {
@@ -21,6 +22,10 @@ function confirm(message) {
   });
 }
 
+/**
+ * @param {string} cmd - Command to execute
+ * @param {import('child_process').ExecSyncOptions} [opts] - execSync options
+ */
 function run(cmd, opts) {
   console.log(`  $ ${cmd}`);
   execSync(cmd, {stdio: 'inherit', cwd: root, ...opts});
@@ -66,6 +71,7 @@ if (behind !== '0') {
   process.exit(1);
 }
 
+/** Runs the full release workflow. */
 async function release() {
   if (dryRun) {
     console.log('[DRY RUN] No changes will be made.\n');
