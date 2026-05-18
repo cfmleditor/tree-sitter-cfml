@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.19]
 
 - Add `target/` to eslint ignores
 - Add JSDoc comments to `scripts/release.js`
