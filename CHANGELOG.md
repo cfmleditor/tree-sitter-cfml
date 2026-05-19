@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix for abstract keyword for script component definitions #30
+
 ## [0.26.19]
 
 - Add `target/` to eslint ignores

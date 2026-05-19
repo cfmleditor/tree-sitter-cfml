@@ -594,7 +594,7 @@ module.exports = grammar({
     )),
 
     component: ($) => prec('literal', seq(
-      optional('static'),
+      optional(choice('static', 'abstract')),
       choice(
         'component',
         'interface',

@@ -1120,3 +1120,67 @@ var data = queryExecute("
               (pair
                 (property_identifier)
                 (identifier)))))))))
+
+===================================
+abstract component
+===================================
+abstract component {
+  public function test() { }
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (function_declaration
+        (access_type)
+        name: (identifier)
+        parameters: (formal_parameters)
+        body: (statement_block)))))
+
+===================================
+abstract component with attributes
+===================================
+abstract component accessors="true" {
+}
+---
+
+(program
+  (component
+    (component_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    body: (component_body)))
+
+===================================
+component with attributes
+===================================
+component singleton="true" {
+}
+---
+
+(program
+  (component
+    (component_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    body: (component_body)))
+
+===================================
+static component
+===================================
+static component {
+  public function test() { }
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (function_declaration
+        (access_type)
+        name: (identifier)
+        parameters: (formal_parameters)
+        body: (statement_block)))))

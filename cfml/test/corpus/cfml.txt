@@ -2048,6 +2048,30 @@ component {
     (cf_component_content)))
 
 ===================================
+abstract component ( cfscript )
+===================================
+abstract component {
+  public function test() { }
+}
+---
+
+(program
+  (component_file
+    (cf_component_content)))
+
+===================================
+static component ( cfscript )
+===================================
+static component {
+  public function test() { }
+}
+---
+
+(program
+  (component_file
+    (cf_component_content)))
+
+===================================
 nested comments
 ===================================
 

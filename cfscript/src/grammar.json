@@ -2172,8 +2172,17 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": "static"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "static"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "abstract"
+                  }
+                ]
               },
               {
                 "type": "BLANK"

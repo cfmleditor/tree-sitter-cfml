@@ -1421,6 +1421,18 @@ static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
     // Must not be followed by another identifier char (e.g. 'componentFoo')
     if (iswalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
 
+    // If the first word is a modifier, skip whitespace and read the next word
+    if (strcmp(word, "abstract") == 0 || strcmp(word, "static") == 0) {
+        while (iswspace(lexer->lookahead)) advance(lexer);
+        len = 0;
+        while (iswalpha(lexer->lookahead) && len < 15) {
+            word[len++] = towlower(lexer->lookahead);
+            advance(lexer);
+        }
+        word[len] = '\0';
+        if (iswalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
+    }
+
     if (strcmp(word, "component") != 0 && strcmp(word, "property") != 0 &&
             strcmp(word, "interface") != 0 && strcmp(word, "import") != 0) {
         return false;
