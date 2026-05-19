@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.20]
 
 - Fix for abstract keyword for script component definitions #30
 
