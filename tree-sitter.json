@@ -30,7 +30,7 @@
     }
   ],
   "metadata": {
-    "version": "0.26.21",
+    "version": "0.26.22",
     "license": "MIT",
     "description": "CFML grammar for tree-sitter",
     "authors": [
