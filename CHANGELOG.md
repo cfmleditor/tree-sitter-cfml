@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix versioning
+
 ## [0.26.21]
 
 - Fix for property definitions in cfscript components
