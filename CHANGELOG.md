@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix for property definitions in cfscript components
+
 ## [0.26.20]
 
 - Fix for abstract keyword for script component definitions #30

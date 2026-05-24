@@ -1184,3 +1184,46 @@ static component {
         name: (identifier)
         parameters: (formal_parameters)
         body: (statement_block)))))
+
+===================================
+property declarations
+===================================
+component {
+    property string name;
+    property numeric age;
+    property UserDAO userDAO;
+    property name;
+    property string email default="";
+    property name="test" type="string";
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (property_declaration
+        type: (identifier)
+        name: (identifier))
+      (property_declaration
+        type: (identifier)
+        name: (identifier))
+      (property_declaration
+        type: (identifier)
+        name: (identifier))
+      (property_declaration
+        name: (identifier))
+      (property_declaration
+        type: (identifier)
+        name: (identifier)
+        (component_attribute
+          (identifier)
+          (string)))
+      (property_declaration
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))))))

@@ -935,6 +935,10 @@
       "required": false,
       "types": [
         {
+          "type": "property_declaration",
+          "named": true
+        },
+        {
           "type": "statement",
           "named": true
         }
@@ -2074,6 +2078,46 @@
     }
   },
   {
+    "type": "property_declaration",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "type": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "path",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "component_attribute",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "query_expression",
     "named": true,
     "fields": {},
@@ -3182,6 +3226,10 @@
   {
     "type": "private_property_identifier",
     "named": true
+  },
+  {
+    "type": "property",
+    "named": false
   },
   {
     "type": "property_identifier",

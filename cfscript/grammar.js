@@ -148,6 +148,7 @@ module.exports = grammar({
     [$.expression, $.query_tag],
     [$.query_tag, $.expression],
     [$.sequence_expression, $.arguments],
+    [$.component_attribute, $.property_declaration],
   ],
 
   word: ($) => $.identifier,
@@ -1052,8 +1053,21 @@ module.exports = grammar({
 
     component_body: ($) => seq(
       '{',
-      repeat($.statement),
+      repeat(choice($.statement, $.property_declaration)),
       '}',
+    ),
+
+    property_declaration: ($) => seq(
+      'property',
+      choice(
+        prec.dynamic(1, seq(
+          optional(field('type', choice($.path, $.identifier))),
+          field('name', $.identifier),
+          repeat($.component_attribute),
+        )),
+        repeat1($.component_attribute),
+      ),
+      $._semicolon,
     ),
 
     field_definition: ($) => seq(
