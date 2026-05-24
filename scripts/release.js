@@ -130,6 +130,28 @@ async function release() {
     const cargo = readFileSync(cargoPath, 'utf8');
     writeFileSync(cargoPath, cargo.replace(/^version = ".*"/m, `version = "${version}"`));
     run('cargo check');
+
+    // 3. Update pyproject.toml
+    console.log('==> Updating pyproject.toml');
+    const pyprojectPath = join(root, 'pyproject.toml');
+    const pyproject = readFileSync(pyprojectPath, 'utf8');
+    writeFileSync(pyprojectPath, pyproject.replace(/^version = ".*"/m, `version = "${version}"`));
+
+    // 4. Update tree-sitter.json
+    console.log('==> Updating tree-sitter.json');
+    const tsJsonPath = join(root, 'tree-sitter.json');
+    const tsJson = readFileSync(tsJsonPath, 'utf8');
+    writeFileSync(tsJsonPath, tsJson.replace(/"version": ".*?"/, `"version": "${version}"`));
+
+    // 5. Update README.md and bindings/rust/README.md version references
+    console.log('==> Updating README.md version references');
+    const readmePath = join(root, 'README.md');
+    const readme = readFileSync(readmePath, 'utf8');
+    writeFileSync(readmePath, readme.replace(/tree-sitter-cfml = "[\d.]+"/g, `tree-sitter-cfml = "${version}"`));
+
+    const rustReadmePath = join(root, 'bindings', 'rust', 'README.md');
+    const rustReadme = readFileSync(rustReadmePath, 'utf8');
+    writeFileSync(rustReadmePath, rustReadme.replace(/tree-sitter-cfml = "[\d.]+"/g, `tree-sitter-cfml = "${version}"`));
   }
 
   // 3. Build
