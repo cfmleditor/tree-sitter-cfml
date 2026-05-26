@@ -194,14 +194,15 @@ more text
       (cf_attribute_name)
       (quoted_cf_attribute_value
         (attribute_value)))
-    (cf_savecontent_content)
-    (script_element
-      (start_tag
-        (tag_name))
-      (script_text)
-      (end_tag
-        (tag_name)))
-    (cf_savecontent_content)))
+    (cf_savecontent_body
+      (html_text)
+      (script_element
+        (start_tag
+          (tag_name))
+        (script_text)
+        (end_tag
+          (tag_name)))
+      (html_text))))
 
 ===================================
 cfsavecontent with only script element
@@ -216,12 +217,13 @@ cfsavecontent with only script element
       (cf_attribute_name)
       (quoted_cf_attribute_value
         (attribute_value)))
-    (script_element
-      (start_tag
-        (tag_name))
-      (script_text)
-      (end_tag
-        (tag_name)))))
+    (cf_savecontent_body
+      (script_element
+        (start_tag
+          (tag_name))
+        (script_text)
+        (end_tag
+          (tag_name))))))
 
 ===================================
 cfsavecontent without script element
@@ -236,7 +238,8 @@ cfsavecontent without script element
       (cf_attribute_name)
       (quoted_cf_attribute_value
         (attribute_value)))
-    (cf_savecontent_content)))
+    (cf_savecontent_body
+      (html_text))))
 
 ===================================
 inline JavaScript with less-than operator in attribute value

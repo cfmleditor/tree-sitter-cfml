@@ -1412,24 +1412,41 @@
             "value": ">"
           },
           {
-            "type": "REPEAT",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "cf_savecontent_content"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "script_element"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "style_element"
-                }
-              ]
-            }
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "cf_savecontent_body"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "cf_savecontent_body_html"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "cf_savecontent_body_script"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "cf_savecontent_body_css"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "cf_savecontent_body_xml"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "cf_savecontent_body_raw"
+                  }
+                ]
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
           },
           {
             "type": "SYMBOL",
@@ -1450,6 +1467,87 @@
           }
         ]
       }
+    },
+    "cf_savecontent_body": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_savecontent_body_cfml"
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_node"
+          }
+        }
+      ]
+    },
+    "cf_savecontent_body_html": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_savecontent_body_html"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_savecontent_content"
+        }
+      ]
+    },
+    "cf_savecontent_body_script": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_savecontent_body_script"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_savecontent_content"
+        }
+      ]
+    },
+    "cf_savecontent_body_css": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_savecontent_body_css"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_savecontent_content"
+        }
+      ]
+    },
+    "cf_savecontent_body_xml": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_savecontent_body_xml"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_savecontent_content"
+        }
+      ]
+    },
+    "cf_savecontent_body_raw": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_savecontent_body_raw"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_savecontent_content"
+        }
+      ]
     },
     "cf_output_tag": {
       "type": "PREC_RIGHT",
@@ -8691,6 +8789,30 @@
     {
       "type": "SYMBOL",
       "name": "_end_cf_savecontent_name"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_cf_savecontent_body_cfml"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_cf_savecontent_body_html"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_cf_savecontent_body_script"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_cf_savecontent_body_css"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_cf_savecontent_body_xml"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_cf_savecontent_body_raw"
     },
     {
       "type": "SYMBOL",

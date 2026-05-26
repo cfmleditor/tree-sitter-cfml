@@ -56,6 +56,12 @@ enum TokenType {
 
     CF_SAVECONTENT_START_TAG_NAME,
     CF_SAVECONTENT_END_TAG_NAME,
+    CF_SAVECONTENT_BODY_CFML,
+    CF_SAVECONTENT_BODY_HTML,
+    CF_SAVECONTENT_BODY_SCRIPT,
+    CF_SAVECONTENT_BODY_CSS,
+    CF_SAVECONTENT_BODY_XML,
+    CF_SAVECONTENT_BODY_RAW,
     CF_SAVECONTENT_CONTENT,
 
     CF_OUTPUT_START_TAG_NAME,
@@ -142,8 +148,7 @@ static inline bool valid_cf_end_tag_name(const bool *vs, unsigned count) {
 
 static inline bool no_content_symbols(const bool *vs, unsigned count) {
     return !VS(vs, RAW_TEXT, count) && !VS(vs, CF_XML_CONTENT, count) &&
-           !VS(vs, CF_QUERY_CONTENT, count) && !VS(vs, CF_SCRIPT_CONTENT, count) &&
-           !VS(vs, CF_SAVECONTENT_CONTENT, count);
+           !VS(vs, CF_QUERY_CONTENT, count) && !VS(vs, CF_SCRIPT_CONTENT, count);
 }
 
 static inline bool implicit_cf_end_tag_valid(const bool *vs, unsigned count) {
@@ -692,16 +697,74 @@ static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer, bool is_cfqu
     return true;
 }
 
-static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context) {
-
-    if (scanner->cf_tags.size == 0) {
-        return false;
-    }
-
+static bool scan_cfsavecontent_body_type(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols, unsigned count, bool is_cfquery_context) {
+    if (scanner->cf_tags.size == 0) return false;
     Tag *cf_tag = array_back(&scanner->cf_tags);
-    if (cf_tag->type != CF_SAVECONTENT) {
-        return false;
+    if (cf_tag->type != CF_SAVECONTENT) return false;
+
+    // Default to cfml
+    unsigned result = CF_SAVECONTENT_BODY_CFML;
+
+    // Mark end at current position - this is a zero-width token
+    lexer->mark_end(lexer);
+
+    // Peek ahead for <!--- @content TYPE --->
+    // Skip whitespace first
+    while (iswspace(lexer->lookahead)) advance(lexer);
+
+    if (lexer->lookahead == '<') {
+        advance(lexer);
+        if (lexer->lookahead == '!') {
+            advance(lexer);
+            if (lexer->lookahead == '-') {
+                advance(lexer);
+                if (lexer->lookahead == '-') {
+                    advance(lexer);
+                    if (lexer->lookahead == '-') {
+                        advance(lexer);
+                        // Skip whitespace after <!---
+                        while (iswspace(lexer->lookahead)) advance(lexer);
+                        // Check for @content
+                        const char *directive = "@content";
+                        size_t di = 0;
+                        bool matched = true;
+                        while (di < 8) {
+                            if (lexer->lookahead != directive[di]) { matched = false; break; }
+                            advance(lexer);
+                            di++;
+                        }
+                        if (matched) {
+                            // Skip whitespace
+                            while (iswspace(lexer->lookahead)) advance(lexer);
+                            // Read type word
+                            char type_buf[16];
+                            int len = 0;
+                            while (iswalpha(lexer->lookahead) && len < 15) {
+                                type_buf[len++] = towlower(lexer->lookahead);
+                                advance(lexer);
+                            }
+                            type_buf[len] = '\0';
+                            if (strcmp(type_buf, "script") == 0) result = CF_SAVECONTENT_BODY_SCRIPT;
+                            else if (strcmp(type_buf, "css") == 0) result = CF_SAVECONTENT_BODY_CSS;
+                            else if (strcmp(type_buf, "xml") == 0) result = CF_SAVECONTENT_BODY_XML;
+                            else if (strcmp(type_buf, "raw") == 0) result = CF_SAVECONTENT_BODY_RAW;
+                            else if (strcmp(type_buf, "html") == 0) result = CF_SAVECONTENT_BODY_HTML;
+                        }
+                    }
+                }
+            }
+        }
     }
+
+    if (!VS(valid_symbols, result, count)) return false;
+    lexer->result_symbol = result;
+    return true;
+}
+
+static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context) {
+    if (scanner->cf_tags.size == 0) return false;
+    Tag *cf_tag = array_back(&scanner->cf_tags);
+    if (cf_tag->type != CF_SAVECONTENT) return false;
 
     lexer->mark_end(lexer);
 
@@ -712,74 +775,28 @@ static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer, bool is
     memcpy(end_delimiter, "</CF", 4);
     memcpy(&end_delimiter[4], cf_tag->tag_name.contents, tag_len);
     end_delimiter[4 + tag_len] = '\0';
-
     size_t end_delim_len = 4 + tag_len;
+
     bool has_content = false;
 
     while (lexer->lookahead) {
         if (lexer->lookahead == '<') {
-            // Mark end before '<' so we don't consume it
             lexer->mark_end(lexer);
             advance(lexer);
-
-            // Check for </cfsavecontent>
-            if (towupper(lexer->lookahead) == end_delimiter[1]) {
-                size_t i = 1;
+            if (lexer->lookahead == '/') {
+                advance(lexer);
+                size_t i = 2;
                 bool matched = true;
                 while (i < end_delim_len) {
-                    if (towupper(lexer->lookahead) != end_delimiter[i]) {
-                        matched = false;
-                        break;
-                    }
+                    if (towupper(lexer->lookahead) != end_delimiter[i]) { matched = false; break; }
                     i++;
                     if (i < end_delim_len) advance(lexer);
                 }
                 if (matched) {
-                    // Found end delimiter, stop before '<'
                     lexer->result_symbol = CF_SAVECONTENT_CONTENT;
                     return has_content;
                 }
             }
-
-            // Check for <script or <style (case-insensitive)
-            if (towupper(lexer->lookahead) == 'S') {
-                advance(lexer);
-                const char *rest;
-                size_t rest_len;
-                if (towupper(lexer->lookahead) == 'C') {
-                    rest = "CRIPT";
-                    rest_len = 5;
-                } else if (towupper(lexer->lookahead) == 'T') {
-                    rest = "TYLE";
-                    rest_len = 4;
-                } else {
-                    rest = NULL;
-                    rest_len = 0;
-                }
-                if (rest) {
-                    size_t i = 0;
-                    bool matched = true;
-                    while (i < rest_len) {
-                        if (towupper(lexer->lookahead) != rest[i]) {
-                            matched = false;
-                            break;
-                        }
-                        i++;
-                        if (i < rest_len) advance(lexer);
-                    }
-                    if (matched) {
-                        advance(lexer);
-                        if (lexer->lookahead == '>' || lexer->lookahead == ' ' ||
-                            lexer->lookahead == '\t' || lexer->lookahead == '\n' ||
-                            lexer->lookahead == '\r' || lexer->lookahead == '/') {
-                            lexer->result_symbol = CF_SAVECONTENT_CONTENT;
-                            return has_content;
-                        }
-                    }
-                }
-            }
-
-            // Not a match, the '<' is part of content
             has_content = true;
             lexer->mark_end(lexer);
         } else {
@@ -1546,9 +1563,19 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
         return scan_cfscript_content(scanner, lexer, is_cfquery_context);
     }
 
+    if (VS(valid_symbols, CF_SAVECONTENT_BODY_CFML, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_HTML, count) ||
+        VS(valid_symbols, CF_SAVECONTENT_BODY_SCRIPT, count) ||
+        VS(valid_symbols, CF_SAVECONTENT_BODY_CSS, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_XML, count) ||
+        VS(valid_symbols, CF_SAVECONTENT_BODY_RAW, count)) {
+        if (scan_cfsavecontent_body_type(scanner, lexer, valid_symbols, count, is_cfquery_context)) {
+            return true;
+        }
+    }
+
     if (VS(valid_symbols, CF_SAVECONTENT_CONTENT, count)) {
         return scan_cfsavecontent_content(scanner, lexer, is_cfquery_context);
     }
+
 
     if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(scanner, lexer, is_cfquery_context)) {
         return true;
