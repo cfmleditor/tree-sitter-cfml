@@ -1584,6 +1584,10 @@
         {
           "type": "script_element",
           "named": true
+        },
+        {
+          "type": "style_element",
+          "named": true
         }
       ]
     }

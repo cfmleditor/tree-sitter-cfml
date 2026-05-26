@@ -741,29 +741,40 @@ static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer, bool is
                 }
             }
 
-            // Check for <script (case-insensitive)
-            const char *script_rest = "SCRIPT";
-            size_t script_rest_len = 6;
+            // Check for <script or <style (case-insensitive)
             if (towupper(lexer->lookahead) == 'S') {
-                size_t i = 0;
-                bool matched = true;
-                while (i < script_rest_len) {
-                    if (towupper(lexer->lookahead) != script_rest[i]) {
-                        matched = false;
-                        break;
-                    }
-                    i++;
-                    if (i < script_rest_len) advance(lexer);
+                advance(lexer);
+                const char *rest;
+                size_t rest_len;
+                if (towupper(lexer->lookahead) == 'C') {
+                    rest = "CRIPT";
+                    rest_len = 5;
+                } else if (towupper(lexer->lookahead) == 'T') {
+                    rest = "TYLE";
+                    rest_len = 4;
+                } else {
+                    rest = NULL;
+                    rest_len = 0;
                 }
-                if (matched) {
-                    // Check next char is whitespace or '>' to confirm it's a tag
-                    advance(lexer);
-                    if (lexer->lookahead == '>' || lexer->lookahead == ' ' ||
-                        lexer->lookahead == '\t' || lexer->lookahead == '\n' ||
-                        lexer->lookahead == '\r' || lexer->lookahead == '/') {
-                        // Found <script, stop before '<'
-                        lexer->result_symbol = CF_SAVECONTENT_CONTENT;
-                        return has_content;
+                if (rest) {
+                    size_t i = 0;
+                    bool matched = true;
+                    while (i < rest_len) {
+                        if (towupper(lexer->lookahead) != rest[i]) {
+                            matched = false;
+                            break;
+                        }
+                        i++;
+                        if (i < rest_len) advance(lexer);
+                    }
+                    if (matched) {
+                        advance(lexer);
+                        if (lexer->lookahead == '>' || lexer->lookahead == ' ' ||
+                            lexer->lookahead == '\t' || lexer->lookahead == '\n' ||
+                            lexer->lookahead == '\r' || lexer->lookahead == '/') {
+                            lexer->result_symbol = CF_SAVECONTENT_CONTENT;
+                            return has_content;
+                        }
                     }
                 }
             }
