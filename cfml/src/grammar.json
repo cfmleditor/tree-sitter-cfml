@@ -1048,7 +1048,7 @@
     },
     "cf_attribute_name": {
       "type": "PATTERN",
-      "value": "[^<>\"\\'/=\\s\\n\\r\\t#0-9]+"
+      "value": "[^<>\"'/=\\s\\n\\r\\t#0-9][^<>\"'/=\\s\\n\\r\\t#]*"
     },
     "cf_tag": {
       "type": "CHOICE",

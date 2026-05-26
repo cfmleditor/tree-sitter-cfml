@@ -469,20 +469,26 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
             lexer->mark_end(lexer);
             advance(lexer);
             if (lexer->lookahead == '#') {
-                // Numeric entity (&#digits; or &#xhex;) - consume as text since
-                // the # would be intercepted by hash token logic if we stopped here
-                advance(lexer);
-                if (lexer->lookahead == 'x' || lexer->lookahead == 'X') {
-                    advance(lexer);
-                    while (iswxdigit(lexer->lookahead)) advance(lexer);
-                } else {
-                    while (iswdigit(lexer->lookahead)) advance(lexer);
-                }
-                if (lexer->lookahead == ';') advance(lexer);
+                // Could be numeric entity (&#digits; or &#xhex;) or &# followed by CFML hash
+                // Mark end after & so it's consumed as text
                 lexer->mark_end(lexer);
                 saw_text = true;
                 saw_any = true;
-                continue;
+                advance(lexer);
+                if (lexer->lookahead == 'x' || lexer->lookahead == 'X' || iswdigit(lexer->lookahead)) {
+                    // Numeric entity - consume fully as text
+                    if (lexer->lookahead == 'x' || lexer->lookahead == 'X') {
+                        advance(lexer);
+                        while (iswxdigit(lexer->lookahead)) advance(lexer);
+                    } else {
+                        while (iswdigit(lexer->lookahead)) advance(lexer);
+                    }
+                    if (lexer->lookahead == ';') advance(lexer);
+                    lexer->mark_end(lexer);
+                    continue;
+                }
+                // &# not followed by digit/x - & consumed as text, break at #
+                break;
             }
             if (iswalpha(lexer->lookahead)) {
                 // Could be &word; - scan ahead for ;

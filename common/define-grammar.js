@@ -730,7 +730,7 @@ module.exports = function defineGrammar(dialect) {
         alias(/[^'"\s\n\r\t#:;<>]+/, $.attribute_value),
       ),
 
-      cf_attribute_name: _ => /[^<>"\'/=\s\n\r\t#0-9]+/,
+      cf_attribute_name: _ => /[^<>"'/=\s\n\r\t#0-9][^<>"'/=\s\n\r\t#]*/,
 
       cf_tag: $ => choice(
         seq(
