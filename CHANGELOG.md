@@ -1,8 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+- Add CDATA section support with CFML hash expressions (`<![CDATA[#expr#]]>`)
+
 ## [0.26.24]
 
 - Add cfsavecontent content-type directive (`<!--- @content TYPE --->`) supporting cfml, html, script, css, xml, sql, and raw
+- Add CDATA section support with CFML hash expressions (`<![CDATA[#expr#]]>`)
 - Remove cfprocessingdirective and cfsetting from void tags (they can have bodies)
 - Allow digits in cf_attribute_name (e.g. `show3d`)
 - Fix & handling in html_text (don't stop at non-entity ampersands)

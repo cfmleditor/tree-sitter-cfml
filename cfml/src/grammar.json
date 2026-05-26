@@ -102,6 +102,67 @@
         }
       ]
     },
+    "cdata_section": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "<![CDATA["
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_hash_dialect_eval"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_cf_tags"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PREC",
+                    "value": -1,
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[^\\]#<]+"
+                    }
+                  }
+                },
+                "named": true,
+                "value": "cdata_text"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "TOKEN",
+                  "content": {
+                    "type": "PREC",
+                    "value": -2,
+                    "content": {
+                      "type": "PATTERN",
+                      "value": "[\\]<]"
+                    }
+                  }
+                },
+                "named": true,
+                "value": "cdata_text"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "]]>"
+        }
+      ]
+    },
     "_doctype": {
       "type": "PATTERN",
       "value": "[Dd][Oo][Cc][Tt][Yy][Pp][Ee]"
@@ -267,6 +328,10 @@
         {
           "type": "SYMBOL",
           "name": "style_element"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cdata_section"
         },
         {
           "type": "SYMBOL",

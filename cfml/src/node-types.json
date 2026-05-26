@@ -925,6 +925,77 @@
     }
   },
   {
+    "type": "cdata_section",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cdata_text",
+          "named": true
+        },
+        {
+          "type": "cf_function_tag",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_query_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_tag",
+          "named": true
+        },
+        {
+          "type": "cf_script_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "cf_xml_tag",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "hash_single",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_attribute",
     "named": true,
     "fields": {},
@@ -1038,6 +1109,10 @@
       "required": false,
       "types": [
         {
+          "type": "cdata_section",
+          "named": true
+        },
+        {
           "type": "cf_attribute",
           "named": true
         },
@@ -1148,6 +1223,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "cdata_section",
+          "named": true
+        },
         {
           "type": "cf_else_tag",
           "named": true
@@ -1268,6 +1347,10 @@
       "required": true,
       "types": [
         {
+          "type": "cdata_section",
+          "named": true
+        },
+        {
           "type": "cf_function_tag",
           "named": true
         },
@@ -1374,6 +1457,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "cdata_section",
+          "named": true
+        },
         {
           "type": "cf_attribute",
           "named": true
@@ -1573,6 +1660,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "cdata_section",
+          "named": true
+        },
         {
           "type": "cf_function_tag",
           "named": true
@@ -1928,6 +2019,10 @@
       "required": true,
       "types": [
         {
+          "type": "cdata_section",
+          "named": true
+        },
+        {
           "type": "cf_end_tag",
           "named": true
         },
@@ -2207,6 +2302,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "cdata_section",
+          "named": true
+        },
         {
           "type": "cf_function_tag",
           "named": true
@@ -3400,6 +3499,10 @@
       "required": false,
       "types": [
         {
+          "type": "cdata_section",
+          "named": true
+        },
+        {
           "type": "cf_component_close_tag",
           "named": true
         },
@@ -4571,6 +4674,10 @@
     "named": false
   },
   {
+    "type": "<![CDATA[",
+    "named": false
+  },
+  {
     "type": "</",
     "named": false
   },
@@ -4679,6 +4786,10 @@
     "named": false
   },
   {
+    "type": "]]>",
+    "named": false
+  },
+  {
     "type": "^",
     "named": false
   },
@@ -4708,6 +4819,10 @@
   },
   {
     "type": "catch_type",
+    "named": true
+  },
+  {
+    "type": "cdata_text",
     "named": true
   },
   {

@@ -1,0 +1,28 @@
+===================================
+cdata section with hash expression inside cfoutput
+===================================
+<cfoutput><![CDATA[#XMLFormat(result.addr1)#]]></cfoutput>
+
+---
+
+(program
+  (cf_output_tag
+    (cdata_section
+      (hash_expression
+        (call_expression
+          function: (identifier)
+          arguments: (arguments
+            (member_expression
+              object: (identifier)
+              property: (property_identifier))))))))
+
+===================================
+cdata section with plain text
+===================================
+<![CDATA[plain text]]>
+
+---
+
+(program
+  (cdata_section
+    (cdata_text)))

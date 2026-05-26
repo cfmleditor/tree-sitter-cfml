@@ -221,6 +221,18 @@ module.exports = function defineGrammar(dialect) {
           repeat($.tag_attributes),
           '?>',
         ),
+
+        cdata_section: $ => seq(
+          '<![CDATA[',
+          repeat(choice(
+            $._hash_dialect_eval,
+            $._cf_tags,
+            alias(token(prec(-1, /[^\]#<]+/)), $.cdata_text),
+            alias(token(prec(-2, /[\]<]/)), $.cdata_text),
+          )),
+          ']]>',
+        ),
+
         _doctype: _ => /[Dd][Oo][Cc][Tt][Yy][Pp][Ee]/,
 
       } : {}),
@@ -260,6 +272,7 @@ module.exports = function defineGrammar(dialect) {
           $.element,
           $.script_element,
           $.style_element,
+          $.cdata_section,
           $.xml_decl,
         ] : [
           $._hash_always_eval,
