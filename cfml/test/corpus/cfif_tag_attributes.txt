@@ -1,0 +1,48 @@
+===================================
+cfif in self-closing tag attributes with ampersands and hash expressions
+===================================
+<img src="test.gif" border="0" <cfif FindNoCase('D',perms) GT 0>onClick="load('maint','page.cfm?id=#id#&name=#name#&action=delete','Title',false,''); return false;" style="cursor:pointer"<cfelse>onclick="return false;" href="##" disabled="disabled"</cfif> />
+
+---
+
+(program
+  (element
+    (self_closing_tag
+      (tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (tag_attributes
+        (cf_if_tag
+          (binary_expression
+            left: (call_expression
+              function: (identifier)
+              arguments: (arguments
+                (string
+                  (string_fragment))
+                (identifier)))
+            right: (number))
+          (html_text)
+          (hash_single)
+          (html_text)
+          (hash_single)
+          (html_text)
+          (html_text)
+          (hash_single)
+          (html_text)
+          (hash_single)
+          (html_text)
+          (html_text)
+          (cf_if_alt
+            (cf_else_tag)
+            (html_text)
+            (hash_empty)
+            (html_text))))
+      (self_closing_tag_delimiter))))

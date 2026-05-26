@@ -463,7 +463,50 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
     }
 
     while (lexer->lookahead != 0 && lexer->lookahead != '<' && lexer->lookahead != '>' && lexer->lookahead != '{' &&
-           lexer->lookahead != '}' && lexer->lookahead != '&' && lexer->lookahead != '#') {
+           lexer->lookahead != '}' && lexer->lookahead != '#') {
+        if (lexer->lookahead == '&') {
+            // Peek ahead to determine if this is an entity
+            lexer->mark_end(lexer);
+            advance(lexer);
+            if (lexer->lookahead == '#') {
+                // Numeric entity (&#digits; or &#xhex;) - consume as text since
+                // the # would be intercepted by hash token logic if we stopped here
+                advance(lexer);
+                if (lexer->lookahead == 'x' || lexer->lookahead == 'X') {
+                    advance(lexer);
+                    while (iswxdigit(lexer->lookahead)) advance(lexer);
+                } else {
+                    while (iswdigit(lexer->lookahead)) advance(lexer);
+                }
+                if (lexer->lookahead == ';') advance(lexer);
+                lexer->mark_end(lexer);
+                saw_text = true;
+                saw_any = true;
+                continue;
+            }
+            if (iswalpha(lexer->lookahead)) {
+                // Could be &word; - scan ahead for ;
+                unsigned count = 0;
+                while (iswalpha(lexer->lookahead) && count < 31) {
+                    advance(lexer);
+                    count++;
+                }
+                if (lexer->lookahead == ';' && count > 0) {
+                    // Valid entity pattern - stop before &
+                    break;
+                }
+                // Not a valid entity - consume as text
+                lexer->mark_end(lexer);
+                saw_text = true;
+                saw_any = true;
+                continue;
+            }
+            // & followed by non-alpha, non-# - consume as text
+            lexer->mark_end(lexer);
+            saw_text = true;
+            saw_any = true;
+            continue;
+        }
         bool is_wspace = iswspace(lexer->lookahead);
         if (lexer->lookahead == '\n') {
             at_newline = true;
