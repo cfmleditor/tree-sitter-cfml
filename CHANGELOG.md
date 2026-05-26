@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.24]
 
 - Add cfsavecontent content-type directive (`<!--- @content TYPE --->`) supporting cfml, html, script, css, xml, sql, and raw
 - Remove cfprocessingdirective and cfsetting from void tags (they can have bodies)
