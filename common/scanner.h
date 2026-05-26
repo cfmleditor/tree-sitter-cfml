@@ -61,6 +61,7 @@ enum TokenType {
     CF_SAVECONTENT_BODY_SCRIPT,
     CF_SAVECONTENT_BODY_CSS,
     CF_SAVECONTENT_BODY_XML,
+    CF_SAVECONTENT_BODY_SQL,
     CF_SAVECONTENT_BODY_RAW,
     CF_SAVECONTENT_CONTENT,
 
@@ -747,6 +748,7 @@ static bool scan_cfsavecontent_body_type(Scanner *scanner, TSLexer *lexer, const
                             if (strcmp(type_buf, "script") == 0) result = CF_SAVECONTENT_BODY_SCRIPT;
                             else if (strcmp(type_buf, "css") == 0) result = CF_SAVECONTENT_BODY_CSS;
                             else if (strcmp(type_buf, "xml") == 0) result = CF_SAVECONTENT_BODY_XML;
+                            else if (strcmp(type_buf, "sql") == 0) result = CF_SAVECONTENT_BODY_SQL;
                             else if (strcmp(type_buf, "raw") == 0) result = CF_SAVECONTENT_BODY_RAW;
                             else if (strcmp(type_buf, "html") == 0) result = CF_SAVECONTENT_BODY_HTML;
                         }
@@ -1566,7 +1568,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
     if (VS(valid_symbols, CF_SAVECONTENT_BODY_CFML, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_HTML, count) ||
         VS(valid_symbols, CF_SAVECONTENT_BODY_SCRIPT, count) ||
         VS(valid_symbols, CF_SAVECONTENT_BODY_CSS, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_XML, count) ||
-        VS(valid_symbols, CF_SAVECONTENT_BODY_RAW, count)) {
+        VS(valid_symbols, CF_SAVECONTENT_BODY_SQL, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_RAW, count)) {
         if (scan_cfsavecontent_body_type(scanner, lexer, valid_symbols, count, is_cfquery_context)) {
             return true;
         }

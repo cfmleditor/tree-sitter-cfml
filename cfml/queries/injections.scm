@@ -57,3 +57,7 @@
 ((cf_savecontent_body_html
   (cf_savecontent_content) @injection.content)
  (#set! injection.language "html"))
+
+((cf_savecontent_body_sql
+  (cf_savecontent_content) @injection.content)
+ (#set! injection.language "cfquery"))

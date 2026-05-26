@@ -1439,6 +1439,10 @@
                   },
                   {
                     "type": "SYMBOL",
+                    "name": "cf_savecontent_body_sql"
+                  },
+                  {
+                    "type": "SYMBOL",
                     "name": "cf_savecontent_body_raw"
                   }
                 ]
@@ -1529,6 +1533,19 @@
         {
           "type": "SYMBOL",
           "name": "_cf_savecontent_body_xml"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "cf_savecontent_content"
+        }
+      ]
+    },
+    "cf_savecontent_body_sql": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_cf_savecontent_body_sql"
         },
         {
           "type": "SYMBOL",
@@ -8809,6 +8826,10 @@
     {
       "type": "SYMBOL",
       "name": "_cf_savecontent_body_xml"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_cf_savecontent_body_sql"
     },
     {
       "type": "SYMBOL",

@@ -1733,6 +1733,21 @@
     }
   },
   {
+    "type": "cf_savecontent_body_sql",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_savecontent_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_savecontent_body_xml",
     "named": true,
     "fields": {},
@@ -1777,6 +1792,10 @@
         },
         {
           "type": "cf_savecontent_body_script",
+          "named": true
+        },
+        {
+          "type": "cf_savecontent_body_sql",
           "named": true
         },
         {

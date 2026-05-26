@@ -77,6 +77,7 @@ module.exports = function defineGrammar(dialect) {
         $._cf_savecontent_body_script,
         $._cf_savecontent_body_css,
         $._cf_savecontent_body_xml,
+        $._cf_savecontent_body_sql,
         $._cf_savecontent_body_raw,
         $.cf_savecontent_content,
         $._start_cf_output_name,
@@ -824,6 +825,7 @@ module.exports = function defineGrammar(dialect) {
             $.cf_savecontent_body_script,
             $.cf_savecontent_body_css,
             $.cf_savecontent_body_xml,
+            $.cf_savecontent_body_sql,
             $.cf_savecontent_body_raw,
           )),
           $._cf_close_tag,
@@ -836,6 +838,7 @@ module.exports = function defineGrammar(dialect) {
         cf_savecontent_body_script: $ => seq($._cf_savecontent_body_script, $.cf_savecontent_content),
         cf_savecontent_body_css: $ => seq($._cf_savecontent_body_css, $.cf_savecontent_content),
         cf_savecontent_body_xml: $ => seq($._cf_savecontent_body_xml, $.cf_savecontent_content),
+        cf_savecontent_body_sql: $ => seq($._cf_savecontent_body_sql, $.cf_savecontent_content),
         cf_savecontent_body_raw: $ => seq($._cf_savecontent_body_raw, $.cf_savecontent_content),
 
         cf_output_tag: $ => prec.right(3, seq(

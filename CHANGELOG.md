@@ -1,10 +1,12 @@
 # Changelog
 
-## [0.26.23]
+## [Unreleased]
 
-- Fix use of hashes inside script or style tags, while still considering placement of cfoutput tags
-- Fixes for entity and & symbols
-- Fixes for numbers in property names
+- Add cfsavecontent content-type directive (`<!--- @content TYPE --->`) supporting cfml, html, script, css, xml, sql, and raw
+- Remove cfprocessingdirective and cfsetting from void tags (they can have bodies)
+- Allow digits in cf_attribute_name (e.g. `show3d`)
+- Fix & handling in html_text (don't stop at non-entity ampersands)
+- Fix numeric entities (&#9654;) not conflicting with CFML hash expressions
 
 ## [0.26.22]
 
