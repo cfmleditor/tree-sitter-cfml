@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix use of hashes inside script or style tags, while still considering placement of cfoutput tags
+
 ## [0.26.22]
 
 - Fix versioning

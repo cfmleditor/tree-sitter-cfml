@@ -1,0 +1,33 @@
+===================================
+script element inside cfoutput enables hash expressions
+===================================
+<cfoutput><script>var x = #myVar#;</script></cfoutput>
+
+---
+
+(program
+  (cf_output_tag
+    (script_element
+      (start_tag
+        (tag_name))
+      (script_text)
+      (hash_expression
+        (identifier))
+      (script_text)
+      (end_tag
+        (tag_name)))))
+
+===================================
+script element without cfoutput treats hash as raw text
+===================================
+<script>var x = #myVar#;</script>
+
+---
+
+(program
+  (script_element
+    (start_tag
+      (tag_name))
+    (script_text)
+    (end_tag
+      (tag_name))))

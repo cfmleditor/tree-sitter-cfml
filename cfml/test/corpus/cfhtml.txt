@@ -268,7 +268,7 @@ inline JavaScript with less-than operator in attribute value
     (implicit_end_tag)))
 
 ===================================
-script element with CFML hash expressions and cf tags
+script element with cf tags but hash as raw text
 ===================================
 <script>
 var x = '#myVar#';
@@ -284,12 +284,43 @@ var admin = true;
     (start_tag
       (tag_name))
     (script_text)
-    (hash_expression
-      (identifier))
-    (script_text)
     (cf_if_tag
       (identifier)
       (html_text))
+    (script_text)
+    (end_tag
+      (tag_name))))
+
+===================================
+script element with cfoutput enables hash expressions
+===================================
+<script>$('<cfoutput>#myVar#</cfoutput>')</script>
+
+---
+
+(program
+  (script_element
+    (start_tag
+      (tag_name))
+    (script_text)
+    (cf_output_tag
+      (hash_expression
+        (identifier)))
+    (script_text)
+    (end_tag
+      (tag_name))))
+
+===================================
+script element hash without cfoutput is raw text
+===================================
+<script>$('#')</script>
+
+---
+
+(program
+  (script_element
+    (start_tag
+      (tag_name))
     (script_text)
     (end_tag
       (tag_name))))

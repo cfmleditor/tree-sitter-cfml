@@ -750,7 +750,7 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_cont
     while (lexer->lookahead) {
         // CFML boundary checks (only when not mid-delimiter match)
         if (stop_at_cfml && delimiter_index == 0) {
-            if (lexer->lookahead == '#') {
+            if (lexer->lookahead == '#' && scanner->cfoutput_depth > 0) {
                 break;
             }
             if (lexer->lookahead == '<') {
@@ -1375,13 +1375,6 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_con
 static bool scanner_in_hash_eval_context(Scanner *scanner, bool is_cfquery_context) {
     if (scanner->cfoutput_depth > 0 || scanner->cfcomponent_depth > 0 || scanner->cffunction_depth > 0) {
         return true;
-    }
-    // Inside <script> or <style> tags, hashes are always evaluated
-    if (scanner->tags.size > 0) {
-        TagType type = array_back(&scanner->tags)->type;
-        if (type == SCRIPT || type == STYLE) {
-            return true;
-        }
     }
     return false;
 }
