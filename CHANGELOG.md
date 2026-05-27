@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.25]
 
 - Add CDATA section support with CFML hash expressions (`<![CDATA[#expr#]]>`)
 
