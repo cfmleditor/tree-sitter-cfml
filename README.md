@@ -238,6 +238,7 @@ One grammar only: run `test` via the CLI from that dialect’s directory ([above
 
 ```bash
 npm run release -- 0.26.18
+npm run release -- 0.26.18 --user=ghedwards  # optional: switch gh auth before push
 ```
 
 The release script (`scripts/release.js`) will:

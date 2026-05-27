@@ -32,10 +32,11 @@ function run(cmd, opts) {
 }
 
 const dryRun = process.argv.includes('--dry-run');
-const version = process.argv.filter((a) => a !== '--dry-run')[2];
+const ghUser = process.argv.find((a) => a.startsWith('--user='))?.split('=')[1];
+const version = process.argv.filter((a) => a !== '--dry-run' && !a.startsWith('--user='))[2];
 if (!version || !/^\d+\.\d+\.\d+$/.test(version)) {
-  console.error('Usage: npm run release -- <version> [--dry-run]');
-  console.error('Example: npm run release -- 0.26.18 --dry-run');
+  console.error('Usage: npm run release -- <version> [--dry-run] [--user=<gh-username>]');
+  console.error('Example: npm run release -- 0.26.18 --dry-run --user=ghedwards');
   process.exit(1);
 }
 
@@ -189,6 +190,7 @@ async function release() {
 
   // 8. Push
   await confirm('==> Push commit and tag?');
+  if (ghUser) run(`gh auth switch --user ${ghUser}`);
   run('git push');
   run(`git push origin "v${version}"`);
 
