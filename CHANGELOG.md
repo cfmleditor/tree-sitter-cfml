@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased]
+
+### cfscript
+
+- Support string literal as catch type (e.g. `catch("any" ex)`)
+- Support case-insensitive `IN` / `OF` keywords in for-in loops
+
+### cfquery
+
+- Allow square brackets inside single-quoted and double-quoted SQL strings (e.g. `' [' + code + ']'`)
+- Support `<cfreturn>` inside cfquery bodies
+- Support `<cfoutput>` inside cfquery bodies
+
 ## [0.26.25]
 
 - Add CDATA section support with CFML hash expressions (`<![CDATA[#expr#]]>`)

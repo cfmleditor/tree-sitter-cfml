@@ -917,7 +917,23 @@
               },
               {
                 "type": "STRING",
+                "value": "IN"
+              },
+              {
+                "type": "STRING",
+                "value": "In"
+              },
+              {
+                "type": "STRING",
                 "value": "of"
+              },
+              {
+                "type": "STRING",
+                "value": "OF"
+              },
+              {
+                "type": "STRING",
+                "value": "Of"
               }
             ]
           }
@@ -1361,8 +1377,17 @@
                       "content": {
                         "type": "ALIAS",
                         "content": {
-                          "type": "SYMBOL",
-                          "name": "identifier"
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "SYMBOL",
+                              "name": "identifier"
+                            },
+                            {
+                              "type": "SYMBOL",
+                              "name": "string"
+                            }
+                          ]
                         },
                         "named": true,
                         "value": "catch_type"
@@ -3754,7 +3779,7 @@
                 "name": "operator",
                 "content": {
                   "type": "STRING",
-                  "value": "\\\\"
+                  "value": "\\"
                 }
               },
               {

@@ -648,6 +648,53 @@ try{
                 (string_fragment)))))))))
 
 ===================================
+try / catch with string type
+===================================
+try{
+  ret = xmlFormat(ARGUMENTS.variable);
+}catch("any" ex){
+  ret = "undefined";
+}
+---
+
+(program
+  (try_statement
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (call_expression
+            (identifier)
+            (arguments
+              (member_expression
+                (identifier)
+                (property_identifier)))))))
+    (catch_clause
+      (catch_type
+        (string_fragment))
+      (identifier)
+      (statement_block
+        (expression_statement
+          (assignment_expression
+            (identifier)
+            (string
+              (string_fragment))))))))
+
+===================================
+for in with uppercase IN
+===================================
+for (oVar IN VARIABLES) {
+
+}
+---
+
+(program
+  (for_in_statement
+    (identifier)
+    (identifier)
+    (statement_block)))
+
+===================================
 javascript escape sequences that don't work in CF
 ===================================
 var mapping = ListChangeDelims( arguments.testMapping, "", "/\" );

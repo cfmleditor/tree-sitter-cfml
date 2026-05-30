@@ -1497,3 +1497,85 @@ AND a.col1 = <cfqueryparam cfsqltype="cf_sql_char" value="#ARGUMENTS.col1#">
         right: (true))
       (query_close_paren)
       (query_close_paren))))
+
+===================================
+square brackets in quoted string
+===================================
+SELECT name + ' [' + code + ']' FROM test
+---
+
+(program
+  (query_keyword)
+  (query_math_expression
+    left: (query_math_expression
+      left: (query_math_expression
+        left: (query_identifier)
+        right: (quoted_query_value
+          (query_value)))
+      right: (query_identifier))
+    right: (quoted_query_value
+      (query_value)))
+  (query_keyword)
+  (query_identifier))
+
+===================================
+cfreturn inside cfif
+===================================
+SELECT col1 FROM test
+<cfif Len(x) LTE 0>
+<cfreturn result />
+</cfif>
+---
+
+(program
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (cf_if_tag
+    (binary_expression
+      left: (call_expression
+        function: (identifier)
+        arguments: (arguments
+          (identifier)))
+      right: (number))
+    (cf_return_tag
+      (identifier)
+      (cf_selfclose_void_tag_end
+        (self_closing_tag_delimiter)))))
+
+===================================
+cfoutput query inside cfquery
+===================================
+SELECT col1 FROM test
+WHERE (1=0
+<cfoutput query="qry">
+OR id = #qry.id#
+</cfoutput>
+)
+---
+
+(program
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (parenthesized_query_node
+    (query_assignment_expression
+      left: (query_number
+        (number))
+      right: (query_number
+        (number)))
+    (cf_output_tag
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (query_keyword)
+      (query_assignment_expression
+        left: (query_identifier)
+        right: (hash_expression
+          (member_expression
+            object: (identifier)
+            property: (property_identifier)))))))

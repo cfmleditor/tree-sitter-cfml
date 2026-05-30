@@ -27,8 +27,10 @@ enum TokenType {
     CF_IF_END_TAG_NAME,
     CF_ELSEIF_TAG_NAME,
     CF_ELSE_TAG_NAME,
+    CF_RETURN_START_TAG_NAME,
+    CF_OUTPUT_START_TAG_NAME,
 
-    // Rules below this point at not included by the cfquery dialect
+    // Rules below this point are not included by the cfquery dialect
     SCRIPT_START_TAG_NAME,
     STYLE_START_TAG_NAME,
     START_TAG_NAME,
@@ -41,7 +43,6 @@ enum TokenType {
     SINGLE_HASH,
     HASH_EMPTY,
 
-    CF_RETURN_START_TAG_NAME,
     CF_XML_START_TAG_NAME,
     CF_XML_END_TAG_NAME,
     CF_XML_CONTENT,
@@ -64,8 +65,6 @@ enum TokenType {
     CF_SAVECONTENT_BODY_SQL,
     CF_SAVECONTENT_BODY_RAW,
     CF_SAVECONTENT_CONTENT,
-
-    CF_OUTPUT_START_TAG_NAME,
 
     CF_FUNCTION_START_TAG_NAME,
     CF_FUNCTION_END_TAG_NAME,

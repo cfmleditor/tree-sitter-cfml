@@ -678,7 +678,7 @@
             "named": false
           },
           {
-            "type": "\\\\",
+            "type": "\\",
             "named": false
           },
           {
@@ -821,6 +821,29 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "catch_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "string_fragment",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1185,6 +1208,22 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "IN",
+            "named": false
+          },
+          {
+            "type": "In",
+            "named": false
+          },
+          {
+            "type": "OF",
+            "named": false
+          },
+          {
+            "type": "Of",
+            "named": false
+          },
           {
             "type": "in",
             "named": false
@@ -3015,11 +3054,27 @@
     "named": false
   },
   {
+    "type": "IN",
+    "named": false
+  },
+  {
+    "type": "In",
+    "named": false
+  },
+  {
+    "type": "OF",
+    "named": false
+  },
+  {
+    "type": "Of",
+    "named": false
+  },
+  {
     "type": "[",
     "named": false
   },
   {
-    "type": "\\\\",
+    "type": "\\",
     "named": false
   },
   {
@@ -3073,10 +3128,6 @@
   {
     "type": "catch",
     "named": false
-  },
-  {
-    "type": "catch_type",
-    "named": true
   },
   {
     "type": "comment",

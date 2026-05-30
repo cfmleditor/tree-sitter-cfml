@@ -666,7 +666,7 @@
             "named": false
           },
           {
-            "type": "\\\\",
+            "type": "\\",
             "named": false
           },
           {
@@ -835,6 +835,29 @@
     }
   },
   {
+    "type": "catch_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "string_fragment",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_attribute",
     "named": true,
     "fields": {},
@@ -941,6 +964,14 @@
         },
         {
           "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
           "named": true
         },
         {
@@ -1071,6 +1102,14 @@
           "named": true
         },
         {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
           "type": "cf_selfclose_tag",
           "named": true
         },
@@ -1092,6 +1131,141 @@
         },
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "null",
+          "named": true
+        },
+        {
+          "type": "parenthesized_query_node",
+          "named": true
+        },
+        {
+          "type": "query_alias",
+          "named": true
+        },
+        {
+          "type": "query_assignment_expression",
+          "named": true
+        },
+        {
+          "type": "query_close_paren",
+          "named": true
+        },
+        {
+          "type": "query_comma",
+          "named": true
+        },
+        {
+          "type": "query_comparison_expression",
+          "named": true
+        },
+        {
+          "type": "query_function",
+          "named": true
+        },
+        {
+          "type": "query_function_name",
+          "named": true
+        },
+        {
+          "type": "query_identifier",
+          "named": true
+        },
+        {
+          "type": "query_keyword",
+          "named": true
+        },
+        {
+          "type": "query_math_expression",
+          "named": true
+        },
+        {
+          "type": "query_number",
+          "named": true
+        },
+        {
+          "type": "query_open_paren",
+          "named": true
+        },
+        {
+          "type": "query_operator",
+          "named": true
+        },
+        {
+          "type": "query_semicolon",
+          "named": true
+        },
+        {
+          "type": "query_star",
+          "named": true
+        },
+        {
+          "type": "quoted_query_value",
+          "named": true
+        },
+        {
+          "type": "text",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "cf_output_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "bracketed_query_value",
+          "named": true
+        },
+        {
+          "type": "cf_attribute",
+          "named": true
+        },
+        {
+          "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
+          "type": "cf_selfclose_tag",
+          "named": true
+        },
+        {
+          "type": "cf_set_tag",
+          "named": true
+        },
+        {
+          "type": "cf_tag",
+          "named": true
+        },
+        {
+          "type": "double_quoted_query_value",
+          "named": true
+        },
+        {
+          "type": "erroneous_cf_end_tag",
+          "named": true
+        },
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
           "named": true
         },
         {
@@ -1224,6 +1398,25 @@
     }
   },
   {
+    "type": "cf_return_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "cf_selfclose_void_tag_end",
+          "named": true
+        },
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "cf_selfclose_tag",
     "named": true,
     "fields": {},
@@ -1336,6 +1529,14 @@
         },
         {
           "type": "cf_if_tag",
+          "named": true
+        },
+        {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
           "named": true
         },
         {
@@ -2638,6 +2839,14 @@
           "named": true
         },
         {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
           "type": "cf_selfclose_tag",
           "named": true
         },
@@ -2777,6 +2986,14 @@
           "named": true
         },
         {
+          "type": "cf_output_tag",
+          "named": true
+        },
+        {
+          "type": "cf_return_tag",
+          "named": true
+        },
+        {
           "type": "cf_selfclose_tag",
           "named": true
         },
@@ -2900,6 +3117,14 @@
             "named": true
           },
           {
+            "type": "cf_output_tag",
+            "named": true
+          },
+          {
+            "type": "cf_return_tag",
+            "named": true
+          },
+          {
             "type": "cf_selfclose_tag",
             "named": true
           },
@@ -3015,6 +3240,14 @@
           },
           {
             "type": "cf_if_tag",
+            "named": true
+          },
+          {
+            "type": "cf_output_tag",
+            "named": true
+          },
+          {
+            "type": "cf_return_tag",
             "named": true
           },
           {
@@ -3142,6 +3375,14 @@
             "named": true
           },
           {
+            "type": "cf_output_tag",
+            "named": true
+          },
+          {
+            "type": "cf_return_tag",
+            "named": true
+          },
+          {
             "type": "cf_selfclose_tag",
             "named": true
           },
@@ -3257,6 +3498,14 @@
           },
           {
             "type": "cf_if_tag",
+            "named": true
+          },
+          {
+            "type": "cf_output_tag",
+            "named": true
+          },
+          {
+            "type": "cf_return_tag",
             "named": true
           },
           {
@@ -3386,6 +3635,14 @@
           },
           {
             "type": "cf_if_tag",
+            "named": true
+          },
+          {
+            "type": "cf_output_tag",
+            "named": true
+          },
+          {
+            "type": "cf_return_tag",
             "named": true
           },
           {
@@ -3534,6 +3791,14 @@
           },
           {
             "type": "cf_if_tag",
+            "named": true
+          },
+          {
+            "type": "cf_output_tag",
+            "named": true
+          },
+          {
+            "type": "cf_return_tag",
             "named": true
           },
           {
@@ -3702,6 +3967,14 @@
             "named": true
           },
           {
+            "type": "cf_output_tag",
+            "named": true
+          },
+          {
+            "type": "cf_return_tag",
+            "named": true
+          },
+          {
             "type": "cf_selfclose_tag",
             "named": true
           },
@@ -3839,6 +4112,14 @@
           },
           {
             "type": "cf_if_tag",
+            "named": true
+          },
+          {
+            "type": "cf_output_tag",
+            "named": true
+          },
+          {
+            "type": "cf_return_tag",
             "named": true
           },
           {
@@ -4804,7 +5085,7 @@
     "named": false
   },
   {
-    "type": "\\\\",
+    "type": "\\",
     "named": false
   },
   {
@@ -4842,10 +5123,6 @@
   {
     "type": "catch",
     "named": false
-  },
-  {
-    "type": "catch_type",
-    "named": true
   },
   {
     "type": "cf_attribute_name",

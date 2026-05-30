@@ -45,6 +45,8 @@ module.exports = function defineGrammar(dialect) {
       $._end_cf_if_name,
       $._start_cf_elseif_name,
       $._start_cf_else_name,
+      $._start_cf_return_name,
+      $._start_cf_output_name,
 
       ...(dialect !== 'cfquery' ? [
 
@@ -60,7 +62,6 @@ module.exports = function defineGrammar(dialect) {
         $._start_hash_expression,
         $._single_hash,
         $._hash_empty_external,
-        $._start_cf_return_name,
         $._start_cf_xml_name,
         $._end_cf_xml_name,
         $.cf_xml_content,
@@ -80,7 +81,6 @@ module.exports = function defineGrammar(dialect) {
         $._cf_savecontent_body_sql,
         $._cf_savecontent_body_raw,
         $.cf_savecontent_content,
-        $._start_cf_output_name,
         $._start_cf_function_name,
         $._end_cf_function_name,
         $._start_cf_component_name,
@@ -190,8 +190,8 @@ module.exports = function defineGrammar(dialect) {
       [$.call_expression, $._property_name],
       [$._for_header, $.expression],
       ...(dialect === 'cfquery' ? [
-        [$.cf_if_tag, $.query_comparison_expression],
-        [$.cf_if_tag, $.query_assignment_expression],
+        [$.cf_output_tag, $.query_comparison_expression],
+        [$.cf_output_tag, $.query_assignment_expression],
         [$.parenthesized_query_node, $.query_open_paren],
       ] : []),
     ],
@@ -509,7 +509,7 @@ module.exports = function defineGrammar(dialect) {
           repeat(
             choice(
               $._hash_always_eval,
-              alias(/[^'\s\n\r\t\[\]#]+/, $.query_value),
+              alias(/[^'\s\n\r\t#]+/, $.query_value),
             ),
           ),
           '\'',
@@ -519,7 +519,7 @@ module.exports = function defineGrammar(dialect) {
           repeat(
             choice(
               $._hash_always_eval,
-              alias(/[^'"\s\n\r\t\[\]#]+/, $.query_value),
+              alias(/[^'"\s\n\r\t#]+/, $.query_value),
             ),
           ),
           '"',
@@ -787,13 +787,6 @@ module.exports = function defineGrammar(dialect) {
 
       ...(dialect !== 'cfquery' ? {
 
-        cf_return_tag: $ => prec.right(3, seq(
-          $._cf_open_tag,
-          $._start_cf_return_name,
-          optional($.expression),
-          $.cf_selfclose_void_tag_end,
-        )),
-
         cf_query_tag: $ => prec.right(3, seq(
           $._cf_open_tag,
           $._start_cf_query_name,
@@ -854,17 +847,6 @@ module.exports = function defineGrammar(dialect) {
         cf_savecontent_body_sql: $ => seq($._cf_savecontent_body_sql, $.cf_savecontent_content),
         cf_savecontent_body_raw: $ => seq($._cf_savecontent_body_raw, $.cf_savecontent_content),
 
-        cf_output_tag: $ => prec.right(3, seq(
-          $._cf_open_tag,
-          $._start_cf_output_name,
-          repeat($.cf_attribute),
-          alias($._close_cf_tag_delim, '>'),
-          repeat($._node),
-          $._cf_close_tag,
-          $._end_cf_tag_name,
-          alias($._close_cf_tag_delim, '>'),
-        )),
-
         cf_function_tag: $ => prec.right(3, seq(
           $._cf_open_tag,
           $._start_cf_function_name,
@@ -890,18 +872,36 @@ module.exports = function defineGrammar(dialect) {
         ),
       } : {}),
 
+      cf_return_tag: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        $._start_cf_return_name,
+        optional($.expression),
+        $.cf_selfclose_void_tag_end,
+      )),
+
+      cf_output_tag: $ => prec.right(3, seq(
+        $._cf_open_tag,
+        $._start_cf_output_name,
+        repeat($.cf_attribute),
+        alias($._close_cf_tag_delim, '>'),
+        repeat($._node),
+        $._cf_close_tag,
+        $._end_cf_tag_name,
+        alias($._close_cf_tag_delim, '>'),
+      )),
+
       _cf_tags: $ => prec.right(3, choice(
         $.cf_selfclose_tag,
         $.cf_if_tag,
         $.cf_set_tag,
         $.cf_tag,
+        $.cf_return_tag,
+        $.cf_output_tag,
         ...(dialect !== 'cfquery' ? [
-          $.cf_return_tag,
           $.cf_query_tag,
           $.cf_xml_tag,
           $.cf_script_tag,
           $.cf_savecontent_tag,
-          $.cf_output_tag,
           $.cf_function_tag,
         ] : []),
       )),
@@ -1251,7 +1251,7 @@ module.exports = function defineGrammar(dialect) {
         optional(
           seq(
             '(',
-            optional(field('type', alias($.identifier, $.catch_type))),
+            optional(field('type', alias(choice($.identifier, $.string), $.catch_type))),
             field('parameter', choice($.identifier, $._destructuring_pattern)),
             ')',
           ),
@@ -1559,7 +1559,7 @@ module.exports = function defineGrammar(dialect) {
           ['*', 'binary_times'],
           ['/', 'binary_times'],
           ['%', 'binary_times'],
-          ['\\\\', 'binary_times'],
+          ['\\', 'binary_times'],
           [/[mM][oO][dD]/, 'binary_times'],
           ['**', 'binary_exp', 'right'],
           ['<', 'binary_relation'],

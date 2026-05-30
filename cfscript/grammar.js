@@ -361,7 +361,7 @@ module.exports = grammar({
           optional($._automatic_semicolon),
         ),
       ),
-      field('operator', choice('in', 'of')),
+      field('operator', choice('in', 'IN', 'In', 'of', 'OF', 'Of')),
       field('right', $._expressions),
       ')',
     ),
@@ -458,7 +458,7 @@ module.exports = grammar({
       optional(
         seq(
           '(',
-          optional(field('type', alias($.identifier, $.catch_type))),
+          optional(field('type', alias(choice($.identifier, $.string), $.catch_type))),
           field('parameter', choice($.identifier, $._destructuring_pattern)),
           ')',
         ),
@@ -801,7 +801,7 @@ module.exports = grammar({
         ['*', 'binary_times'],
         ['/', 'binary_times'],
         ['%', 'binary_times'],
-        ['\\\\', 'binary_times'],
+        ['\\', 'binary_times'],
         [/[mM][oO][dD]/, 'binary_times'],
         ['**', 'binary_exp', 'right'],
         ['<', 'binary_relation'],
