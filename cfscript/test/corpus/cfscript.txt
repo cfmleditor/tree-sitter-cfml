@@ -651,7 +651,7 @@ try{
 try / catch with string type
 ===================================
 try{
-  ret = xmlFormat(ARGUMENTS.variable);
+  ret = doSomething(x);
 }catch("any" ex){
   ret = "undefined";
 }
@@ -666,9 +666,7 @@ try{
           (call_expression
             (identifier)
             (arguments
-              (member_expression
-                (identifier)
-                (property_identifier)))))))
+              (identifier))))))
     (catch_clause
       (catch_type
         (string_fragment))
@@ -683,7 +681,7 @@ try{
 ===================================
 for in with uppercase IN
 ===================================
-for (oVar IN VARIABLES) {
+for (item IN collection) {
 
 }
 ---

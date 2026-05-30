@@ -945,10 +945,10 @@ FROM test s
   (query_keyword)
   (query_alias
     (query_identifier)
-    (query_math_expression
-      (query_identifier)
-      (query_number
-        (number))))
+    (query_concat_expression
+      (query_identifier)))
+  (query_number
+    (number))
   (query_keyword)
   (query_identifier)
   (query_keyword)
@@ -1506,15 +1506,15 @@ SELECT name + ' [' + code + ']' FROM test
 
 (program
   (query_keyword)
-  (query_math_expression
-    left: (query_math_expression
-      left: (query_math_expression
-        left: (query_identifier)
-        right: (quoted_query_value
-          (query_value)))
-      right: (query_identifier))
-    right: (quoted_query_value
+  (query_concat_expression
+    left: (query_identifier))
+  (query_concat_expression
+    left: (quoted_query_value
       (query_value)))
+  (query_concat_expression
+    left: (query_identifier))
+  (quoted_query_value
+    (query_value))
   (query_keyword)
   (query_identifier))
 
@@ -1663,11 +1663,11 @@ exec sp_tables @table_type="'Table'"
 sql case when inside cfcase tag
 ===================================
 <cfswitch expression="#x#">
-<cfcase value="form_cls">
-CASE WHEN s.form_cls IS NULL THEN 1 ELSE 0 END, s.surname
+<cfcase value="col_a">
+CASE WHEN t.col_a IS NULL THEN 1 ELSE 0 END, t.col_b
 </cfcase>
 <cfdefaultcase>
-ORDER BY st.stud_code
+ORDER BY t.id
 </cfdefaultcase>
 </cfswitch>
 ---
@@ -1722,3 +1722,44 @@ ORDER BY st.stud_code
         (cf_tag_name)))
     (cf_end_tag
       (cf_tag_name))))
+
+===================================
+concat with cfif between operands
+===================================
+SELECT col1 +
+<cfif x IS true>
+col2 +
+</cfif>
+col3
+FROM test
+---
+
+(program
+  (query_keyword)
+  (query_concat_expression
+    left: (query_identifier))
+  (cf_if_tag
+    (binary_expression
+      left: (identifier)
+      right: (true))
+    (query_concat_expression
+      left: (query_identifier)))
+  (query_identifier)
+  (query_keyword)
+  (query_identifier))
+
+===================================
+select with math expression
+===================================
+SELECT col1 - col2 / col3 FROM test
+---
+
+(program
+  (query_keyword)
+  (query_math_expression
+    left: (query_math_expression
+      left: (query_identifier)
+      right: (query_identifier))
+    right: (query_identifier))
+  (query_keyword)
+  (query_identifier))

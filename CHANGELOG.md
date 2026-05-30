@@ -18,6 +18,7 @@
 - Fix `--` inside quoted strings being incorrectly parsed as a line comment
 - Fix single quotes inside double-quoted values causing parse errors
 - Fix SQL `CASE WHEN...END` inside `<cfcase>` tags triggering erroneous implicit tag close
+- Split `+` concatenation into `query_concat_expression` (with optional right operand) to support `+` before `<cfif>` blocks
 
 ## [0.26.25]
 

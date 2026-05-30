@@ -440,6 +440,7 @@ module.exports = function defineGrammar(dialect) {
           $.query_function_name,
           $.query_alias,
           $.query_math_expression,
+          $.query_concat_expression,
           $.query_comparison_expression,
           $.query_assignment_expression,
           $.parenthesized_query_node,
@@ -492,8 +493,14 @@ module.exports = function defineGrammar(dialect) {
 
         query_math_expression: ($) => prec.left('binary_plus', seq(
           field('left', $._node),
-          field('operator', choice('+', '-', '/', '%')),
+          field('operator', choice('-', '/', '%')),
           field('right', $._node),
+        )),
+
+        query_concat_expression: ($) => prec.left('binary_plus', seq(
+          field('left', $._node),
+          '+',
+          optional(field('right', $._node)),
         )),
 
         bracketed_query_value: $ => seq('[',
