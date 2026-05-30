@@ -183,7 +183,7 @@ dependencies = [
 
 [[package]]
 name = "tree-sitter-cfml"
-version = "0.26.25"
+version = "0.26.26"
 dependencies = [
  "cc",
  "tree-sitter",
