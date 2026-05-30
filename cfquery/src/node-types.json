@@ -564,6 +564,29 @@
     }
   },
   {
+    "type": "backtick_quoted_query_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "hash_empty",
+          "named": true
+        },
+        {
+          "type": "hash_expression",
+          "named": true
+        },
+        {
+          "type": "query_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "binary_expression",
     "named": true,
     "fields": {
@@ -947,6 +970,10 @@
       "required": true,
       "types": [
         {
+          "type": "backtick_quoted_query_value",
+          "named": true
+        },
+        {
           "type": "bracketed_query_value",
           "named": true
         },
@@ -1090,6 +1117,10 @@
       "required": true,
       "types": [
         {
+          "type": "backtick_quoted_query_value",
+          "named": true
+        },
+        {
           "type": "bracketed_query_value",
           "named": true
         },
@@ -1220,6 +1251,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "backtick_quoted_query_value",
+          "named": true
+        },
         {
           "type": "bracketed_query_value",
           "named": true
@@ -1519,6 +1554,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "backtick_quoted_query_value",
+          "named": true
+        },
         {
           "type": "bracketed_query_value",
           "named": true
@@ -2831,6 +2870,10 @@
       "required": false,
       "types": [
         {
+          "type": "backtick_quoted_query_value",
+          "named": true
+        },
+        {
           "type": "bracketed_query_value",
           "named": true
         },
@@ -2978,6 +3021,10 @@
       "required": false,
       "types": [
         {
+          "type": "backtick_quoted_query_value",
+          "named": true
+        },
+        {
           "type": "bracketed_query_value",
           "named": true
         },
@@ -3109,6 +3156,10 @@
         "required": true,
         "types": [
           {
+            "type": "backtick_quoted_query_value",
+            "named": true
+          },
+          {
             "type": "bracketed_query_value",
             "named": true
           },
@@ -3234,6 +3285,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "backtick_quoted_query_value",
+            "named": true
+          },
           {
             "type": "bracketed_query_value",
             "named": true
@@ -3367,6 +3422,10 @@
         "required": true,
         "types": [
           {
+            "type": "backtick_quoted_query_value",
+            "named": true
+          },
+          {
             "type": "bracketed_query_value",
             "named": true
           },
@@ -3492,6 +3551,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "backtick_quoted_query_value",
+            "named": true
+          },
           {
             "type": "bracketed_query_value",
             "named": true
@@ -3629,6 +3692,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "backtick_quoted_query_value",
+            "named": true
+          },
           {
             "type": "bracketed_query_value",
             "named": true
@@ -3785,6 +3852,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "backtick_quoted_query_value",
+            "named": true
+          },
           {
             "type": "bracketed_query_value",
             "named": true
@@ -3959,6 +4030,10 @@
         "required": true,
         "types": [
           {
+            "type": "backtick_quoted_query_value",
+            "named": true
+          },
+          {
             "type": "bracketed_query_value",
             "named": true
           },
@@ -4106,6 +4181,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "backtick_quoted_query_value",
+            "named": true
+          },
           {
             "type": "bracketed_query_value",
             "named": true
@@ -5098,6 +5177,10 @@
   },
   {
     "type": "^=",
+    "named": false
+  },
+  {
+    "type": "`",
     "named": false
   },
   {

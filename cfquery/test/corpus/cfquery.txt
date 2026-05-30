@@ -1579,3 +1579,68 @@ OR id = #qry.id#
           (member_expression
             object: (identifier)
             property: (property_identifier)))))))
+
+===================================
+backtick quoted identifiers
+===================================
+SELECT `column_name` FROM `table_name` WHERE `id` = 1
+---
+
+(program
+  (query_keyword)
+  (backtick_quoted_query_value
+    (query_value))
+  (query_keyword)
+  (backtick_quoted_query_value
+    (query_value))
+  (query_keyword)
+  (query_assignment_expression
+    left: (backtick_quoted_query_value
+      (query_value))
+    right: (query_number
+      (number))))
+
+===================================
+tsql at variables
+===================================
+exec(@script)
+while @@fetch_status = 0
+BEGIN
+SELECT @name
+END
+---
+
+(program
+  (query_keyword)
+  (parenthesized_query_node
+    (query_identifier))
+  (query_keyword)
+  (query_assignment_expression
+    left: (query_identifier)
+    right: (query_number
+      (number)))
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword))
+
+===================================
+double dash inside quoted string
+===================================
+SELECT 'hello -- world' FROM test
+-- actual comment
+WHERE name = '--value--'
+---
+
+(program
+  (query_keyword)
+  (quoted_query_value
+    (query_value))
+  (query_keyword)
+  (query_identifier)
+  (comment)
+  (query_keyword)
+  (query_assignment_expression
+    left: (query_identifier)
+    right: (quoted_query_value
+      (query_value))))

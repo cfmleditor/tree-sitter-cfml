@@ -12,6 +12,10 @@
 - Allow square brackets inside single-quoted and double-quoted SQL strings (e.g. `' [' + code + ']'`)
 - Support `<cfreturn>` inside cfquery bodies
 - Support `<cfoutput>` inside cfquery bodies
+- Support backtick-quoted identifiers for MySQL-style quoting (`` `column_name` ``)
+- Support T-SQL `@variable` and `@@system_variable` identifiers
+- Add `BEGIN`, `WHILE`, `GO`, `EOF` to SQL keywords
+- Fix `--` inside quoted strings being incorrectly parsed as a line comment
 
 ## [0.26.25]
 

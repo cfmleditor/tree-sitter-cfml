@@ -434,6 +434,7 @@ module.exports = function defineGrammar(dialect) {
           $.quoted_query_value,
           $.double_quoted_query_value,
           $.bracketed_query_value,
+          $.backtick_quoted_query_value,
           $.query_star,
           $.query_function,
           $.query_function_name,
@@ -505,11 +506,21 @@ module.exports = function defineGrammar(dialect) {
           ']',
         ),
 
+        backtick_quoted_query_value: $ => seq('`',
+          repeat(
+            choice(
+              $._hash_always_eval,
+              alias(/[^`\s\n\r\t#]+/, $.query_value),
+            ),
+          ),
+          '`',
+        ),
+
         quoted_query_value: $ => seq('\'',
           repeat(
             choice(
               $._hash_always_eval,
-              alias(/[^'\s\n\r\t#]+/, $.query_value),
+              alias(token(prec(1, /[^'#]+/)), $.query_value),
             ),
           ),
           '\'',
@@ -519,7 +530,7 @@ module.exports = function defineGrammar(dialect) {
           repeat(
             choice(
               $._hash_always_eval,
-              alias(/[^'"\s\n\r\t#]+/, $.query_value),
+              alias(token(prec(1, /[^'"#]+/)), $.query_value),
             ),
           ),
           '"',
@@ -589,6 +600,10 @@ module.exports = function defineGrammar(dialect) {
           /[tT][aA][bB][lL][eE]/,
           /[eE][xX][eE][cC]/,
           /[wW][iI][nN][dD][oO][wW]/,
+          /[bB][eE][gG][iI][nN]/,
+          /[wW][hH][iI][lL][eE]/,
+          /[gG][oO]/,
+          /[eE][oO][fF]/,
         )),
 
         query_function_name: ($) => token(choice(
@@ -717,6 +732,8 @@ module.exports = function defineGrammar(dialect) {
           return choice(
             token(seq(':', alphanumeric, repeat(alphanumeric))),
             token(seq(alphanumeric, repeat(alphanumeric))),
+            token(seq('@@', alphanumeric, repeat(alphanumeric))),
+            token(seq('@', alphanumeric, repeat(alphanumeric))),
             alias(/\?/, $.placeholder),
           );
         },
