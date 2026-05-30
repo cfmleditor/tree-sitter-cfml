@@ -16,6 +16,8 @@
 - Support T-SQL `@variable` and `@@system_variable` identifiers
 - Add `BEGIN`, `WHILE`, `GO`, `EOF` to SQL keywords
 - Fix `--` inside quoted strings being incorrectly parsed as a line comment
+- Fix single quotes inside double-quoted values causing parse errors
+- Fix SQL `CASE WHEN...END` inside `<cfcase>` tags triggering erroneous implicit tag close
 
 ## [0.26.25]
 

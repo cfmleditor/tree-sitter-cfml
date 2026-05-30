@@ -902,7 +902,7 @@ static void pop_tag(Scanner *scanner, bool is_cf_context) {
     }
 }
 
-static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_context, bool is_cfquery_context) {
+static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_context, bool is_cfquery_context, bool from_tag_open) {
 
     Tag *parent = is_cf_context
         ? (scanner->cf_tags.size == 0 ? NULL : array_back(&scanner->cf_tags))
@@ -1038,7 +1038,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         }
     } else {
 
-        if (is_cf_context && !result.is_cf_tag && parent && tag_eq(parent, &next_tag)) {
+        if (from_tag_open && is_cf_context && !result.is_cf_tag && parent && tag_eq(parent, &next_tag)) {
             pop_tag(scanner, true);
             lexer->result_symbol = IMPLICIT_CF_END_TAG;
             tag_free(&next_tag);
@@ -1596,11 +1596,11 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             }
 
             if (implicit_cf_end_tag_valid(valid_symbols, count)) {
-                return scan_implicit_end_tag(scanner, lexer, true, is_cfquery_context);
+                return scan_implicit_end_tag(scanner, lexer, true, is_cfquery_context, true);
             }
 
             if (VS(valid_symbols, IMPLICIT_END_TAG, count)) {
-                return scan_implicit_end_tag(scanner, lexer, false, is_cfquery_context);
+                return scan_implicit_end_tag(scanner, lexer, false, is_cfquery_context, true);
             }
 
             break;
@@ -1608,11 +1608,11 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
         case '\0':
 
             if (implicit_cf_end_tag_valid(valid_symbols, count)) {
-                return scan_implicit_end_tag(scanner, lexer, true, is_cfquery_context);
+                return scan_implicit_end_tag(scanner, lexer, true, is_cfquery_context, true);
             }
 
             if (VS(valid_symbols, IMPLICIT_END_TAG, count)) {
-                return scan_implicit_end_tag(scanner, lexer, false, is_cfquery_context);
+                return scan_implicit_end_tag(scanner, lexer, false, is_cfquery_context, true);
             }
             break;
 
@@ -1652,9 +1652,9 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             }
 
             if (VS(valid_symbols, IMPLICIT_END_TAG, count)) {
-                return scan_implicit_end_tag(scanner, lexer, false, is_cfquery_context);
+                return scan_implicit_end_tag(scanner, lexer, false, is_cfquery_context, false);
             } else if (VS(valid_symbols, IMPLICIT_CF_END_TAG, count)) {
-                return scan_implicit_end_tag(scanner, lexer, true, is_cfquery_context);
+                return scan_implicit_end_tag(scanner, lexer, true, is_cfquery_context, false);
             }
 
             if (VS(valid_symbols, ERRONEOUS_END_TAG_NAME, count)) {

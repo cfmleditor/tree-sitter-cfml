@@ -530,7 +530,7 @@ module.exports = function defineGrammar(dialect) {
           repeat(
             choice(
               $._hash_always_eval,
-              alias(token(prec(1, /[^'"#]+/)), $.query_value),
+              alias(token(prec(1, /[^"#]+/)), $.query_value),
             ),
           ),
           '"',

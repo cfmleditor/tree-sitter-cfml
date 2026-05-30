@@ -1644,3 +1644,81 @@ WHERE name = '--value--'
     left: (query_identifier)
     right: (quoted_query_value
       (query_value))))
+
+===================================
+single quotes inside double quoted value
+===================================
+exec sp_tables @table_type="'Table'"
+---
+
+(program
+  (query_keyword)
+  (query_identifier)
+  (query_assignment_expression
+    left: (query_identifier)
+    right: (double_quoted_query_value
+      (query_value))))
+
+===================================
+sql case when inside cfcase tag
+===================================
+<cfswitch expression="#x#">
+<cfcase value="form_cls">
+CASE WHEN s.form_cls IS NULL THEN 1 ELSE 0 END, s.surname
+</cfcase>
+<cfdefaultcase>
+ORDER BY st.stud_code
+</cfdefaultcase>
+</cfswitch>
+---
+
+(program
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (hash_expression
+              (identifier))))))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))))
+      (query_keyword)
+      (query_keyword)
+      (query_alias
+        left: (query_identifier)
+        right: (query_identifier))
+      (query_keyword)
+      (query_identifier)
+      (query_keyword)
+      (query_number
+        (number))
+      (query_keyword)
+      (query_number
+        (number))
+      (query_keyword)
+      (query_comma)
+      (query_alias
+        left: (query_identifier)
+        right: (query_identifier))
+      (cf_end_tag
+        (cf_tag_name)))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name))
+      (query_keyword)
+      (query_keyword)
+      (query_alias
+        left: (query_identifier)
+        right: (query_identifier))
+      (cf_end_tag
+        (cf_tag_name)))
+    (cf_end_tag
+      (cf_tag_name))))
