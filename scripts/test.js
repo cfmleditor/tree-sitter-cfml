@@ -54,4 +54,8 @@ for (const dir of parsers) {
   }
 }
 
-try { unlinkSync(emptyFile); } catch {}
+try {
+  unlinkSync(emptyFile);
+} catch {
+  // ignore
+}
