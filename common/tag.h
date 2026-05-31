@@ -29,6 +29,7 @@ typedef enum {
     END_OF_VOID_TAGS,
 
     CUSTOM,
+    DYNAMIC,
     CFML,
     CF_VOID,
     CF_SET,
@@ -326,7 +327,7 @@ static const char *CF_VOID_TAGS[] = {
     "PROCPARAM", "PROCRESULT", "INVOKEARGUMENT", "SPREADSHEET", "PDFPARAM",
     "PDFFORMPARAM", "PDFSUBFORM", "MAILPARAM", "GRIDROW", "GRIDUPDATE", "IMAGE",
     "TREEITEM", "MENUITEM", "MAPLOCATION", "PRESENTERITEM", "IMPORT", "TRACE",
-    "GRIDCOLUMN", NULL
+    "GRIDCOLUMN", "OBJECT", NULL
 };
 
 static inline bool cf_tag_name_in(const String *name, const char **list) {

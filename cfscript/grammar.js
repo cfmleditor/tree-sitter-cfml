@@ -101,6 +101,8 @@ module.exports = grammar({
     [$.function_expression, $.parameter_type],
     [$.primary_expression, $.path],
     [$.primary_expression, $.parameter_type],
+    [$.primary_expression, $.parameter_type, $.pattern],
+    [$.parameter_type, $.pattern],
     [$.primary_expression, $._property_name],
     [$.primary_expression, $.method_definition],
     [$.primary_expression, $.rest_pattern],
@@ -122,6 +124,11 @@ module.exports = grammar({
     [$.ternary_expression, $.pair],
     [$.elvis_expression, $.pair],
 
+    [$.primary_expression, $.query_tag],
+    [$._property_name, $.primary_expression, $.query_tag],
+    [$.primary_expression, $.query_expression],
+    [$._property_name, $.primary_expression, $.query_expression],
+    [$.arguments, $.parenthesized_expression],
     [$.expression, $.parenthesized_expression],
     [$.expression, $.expression_statement],
 
@@ -271,9 +278,11 @@ module.exports = grammar({
       $.throw_statement,
       $.empty_statement,
       $.labeled_statement,
+      $.include_statement,
 
       $.tag_statement,
       $.query_tag,
+      $.component,
     ),
 
     expression_statement: ($) => seq(
@@ -383,7 +392,7 @@ module.exports = grammar({
     try_statement: ($) => seq(
       'try',
       field('body', $.statement_block),
-      optional(field('handler', $.catch_clause)),
+      repeat(field('handler', $.catch_clause)),
       optional(field('finalizer', $.finally_clause)),
     ),
 
@@ -422,6 +431,12 @@ module.exports = grammar({
       $._semicolon,
     ),
 
+    include_statement: ($) => prec(1, seq(
+      'include',
+      $._expressions,
+      $._semicolon,
+    )),
+
     empty_statement: (_) => ';',
 
     labeled_statement: ($) => prec.dynamic(-1, seq(
@@ -458,7 +473,7 @@ module.exports = grammar({
       optional(
         seq(
           '(',
-          optional(field('type', alias(choice($.identifier, $.string), $.catch_type))),
+          optional(field('type', alias(choice($.identifier, $.nested_identifier, $.string), $.catch_type))),
           field('parameter', choice($.identifier, $._destructuring_pattern)),
           ')',
         ),
@@ -595,12 +610,12 @@ module.exports = grammar({
     )),
 
     component: ($) => prec('literal', seq(
-      optional(choice('static', 'abstract')),
+      optional(choice('static', 'abstract', 'final')),
       choice(
         'component',
         'interface',
       ),
-      repeat($.component_attribute),
+      repeat(seq(optional($.tag_linefeed), $.component_attribute)),
       field('body', $.component_body),
     )),
 
@@ -646,20 +661,23 @@ module.exports = grammar({
       'date',
       'function',
       'guid',
+      'query',
       'void',
       $.path,
       $.identifier,
     ),
 
     function_declaration: ($) => prec.right('declaration', seq(
-      optional($.access_type),
-      optional(choice('function', $.path, $.identifier)),
+      repeat($.access_type),
+      optional(choice('function', 'query', $.path, $.identifier)),
       'function',
       field('name', $.identifier),
       $._call_signature,
-      repeat($.assignment_expression),
-      field('body', $.statement_block),
-      optional($._automatic_semicolon),
+      repeat(prec(1, seq(optional($.tag_linefeed), choice($.assignment_expression, $.identifier)))),
+      choice(
+        seq(optional($.tag_linefeed), field('body', $.statement_block), optional($._automatic_semicolon)),
+        $._semicolon,
+      ),
     )),
 
     arrow_function: ($) => seq(
@@ -679,10 +697,16 @@ module.exports = grammar({
     ),
 
     _call_signature: ($) => field('parameters', $.formal_parameters),
-    _formal_parameter: ($) => seq(
-      optional('required'),
-      optional($.parameter_type),
-      choice($.pattern, $.assignment_pattern),
+    _formal_parameter: ($) => choice(
+      seq(
+        optional('required'),
+        $.parameter_type,
+        optional(choice($.pattern, $.assignment_pattern)),
+      ),
+      seq(
+        optional('required'),
+        choice($.pattern, $.assignment_pattern),
+      ),
     ),
 
     optional_chain: (_) => '?.',
@@ -702,7 +726,7 @@ module.exports = grammar({
 
     new_expression: ($) => prec.right('new', seq(
       'new',
-      field('constructor', choice($.primary_expression, $.new_expression)),
+      optional(field('constructor', choice($.primary_expression, $.new_expression))),
       field('arguments', optional(prec.dynamic(1, $.arguments))),
     )),
 
@@ -826,6 +850,11 @@ module.exports = grammar({
         [/[gG][eE]/, 'binary_relation'],
         ['>', 'binary_relation'],
         [/[gG][tT]/, 'binary_relation'],
+        [/[gG][rR][eE][aA][tT][eE][rR]\s+[tT][hH][aA][nN]/, 'binary_relation'],
+        [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]/, 'binary_relation'],
+        [/[gG][rR][eE][aA][tT][eE][rR]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_relation'],
+        [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_relation'],
+        [/[nN][oO][tT]\s+[eE][qQ][uU][aA][lL]/, 'binary_equality'],
         ['??', 'ternary'],
         ['instanceof', 'binary_relation'],
         ['in', 'binary_relation'],
@@ -906,7 +935,6 @@ module.exports = grammar({
     // http://stackoverflow.com/questions/13014947/regex-to-match-a-c-style-multiline-comment/36328890#36328890
     comment: (_) => token(choice(
       seq('//', /[^\r\n\u2028\u2029]*/),
-      seq('--', /[^\r\n\u2028\u2029]*/),
       seq(
         '/*',
         /[^*]*\*+([^/*][^*]*\*+)*/,
@@ -1053,9 +1081,11 @@ module.exports = grammar({
 
     component_body: ($) => seq(
       '{',
-      repeat(choice($.statement, $.property_declaration)),
+      repeat(choice($.statement, $.property_declaration, $.static_initializer)),
       '}',
     ),
+
+    static_initializer: ($) => seq('static', $.statement_block),
 
     property_declaration: ($) => seq(
       'property',
@@ -1063,9 +1093,9 @@ module.exports = grammar({
         prec.dynamic(1, seq(
           optional(field('type', choice($.path, $.identifier))),
           field('name', $.identifier),
-          repeat($.component_attribute),
+          repeat(seq(optional($.tag_linefeed), $.component_attribute)),
         )),
-        repeat1($.component_attribute),
+        repeat1(seq(optional($.tag_linefeed), $.component_attribute)),
       ),
       $._semicolon,
     ),
@@ -1171,6 +1201,11 @@ module.exports = grammar({
       'export',
       'let',
       'component',
+      'private',
+      'public',
+      'include',
+      'query',
+      'queryExecute',
     ),
 
     _semicolon: ($) => choice($._automatic_semicolon, ';'),
@@ -1190,18 +1225,19 @@ module.exports = grammar({
     query_expression: ($) => seq(
       'queryExecute',
       '(',
+      choice(
+        seq('"', $.query_text, '"'),
+        seq('\'', $.query_text, '\''),
+      ),
       repeat(
         seq(
+          '&',
           choice(
-            seq(
-              '"',
-              $.query_text,
-              '"',
-            ),
+            seq('"', $.query_text, '"'),
+            seq('\'', $.query_text, '\''),
             $.identifier,
             $.parenthesized_expression,
           ),
-          optional('&'),
         ),
       ),
       repeat(seq(',', $.expression)),

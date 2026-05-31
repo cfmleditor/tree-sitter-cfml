@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const {join} = require('path');
+const {spawnSync} = require('child_process');
 const {spawnTreeSitter, spawnTreeSitterAsync, root} = require('./tree-sitter-cli.cjs');
 
 const only = process.env.DIALECT;
@@ -27,6 +28,12 @@ if (dirs.length === 1) {
         console.error(`${f.dir}: generate failed (exit ${f.code})`);
       }
       process.exit(1);
+    }
+    // Rebuild native addon
+    const rb = spawnSync('npx', ['node-gyp', 'rebuild'], {cwd: root, stdio: 'inherit'});
+    if (rb.status !== 0) {
+      console.error('native addon rebuild failed');
+      process.exit(rb.status ?? 1);
     }
   });
 }

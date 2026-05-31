@@ -6,6 +6,16 @@
 
 - Support string literal as catch type (e.g. `catch("any" ex)`)
 - Support case-insensitive `IN` / `OF` keywords in for-in loops
+- Remove `--` as a comment (was conflicting with decrement operator)
+- Add `include` statement support (e.g. `include "file.cfm";`)
+- Add `private`, `public` to reserved identifiers (usable as variable names)
+- Allow `component` as an inline statement (not just top-level)
+- Support abstract function declarations in interfaces (`function name();`)
+- Support dotted catch types (e.g. `catch (App.CustomException e)`)
+- Support multiple catch clauses in try/catch
+- Support `final` as a component modifier
+- Support multiple access modifiers on functions (e.g. `public static string function`)
+- Support multi-line property declarations and function attributes (using `tag_linefeed`)
 
 ### cfquery
 

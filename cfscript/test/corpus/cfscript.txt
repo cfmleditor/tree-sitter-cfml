@@ -833,7 +833,8 @@ private function verifyPacket(required struct samlPacket){
       (arguments
         (function_expression
           (formal_parameters
-            (identifier))
+            (parameter_type
+              (identifier)))
           (assignment_expression
             (identifier)
             (true))
@@ -1272,3 +1273,567 @@ component {
           (identifier)
           (string
             (string_fragment)))))))
+
+===================================
+include statement
+===================================
+include "helper.cfm";
+---
+
+(program
+  (include_statement
+    (string
+      (string_fragment))))
+
+===================================
+decrement operators
+===================================
+x--;
+y = --x;
+---
+
+(program
+  (expression_statement
+    (update_expression
+      argument: (identifier)))
+  (expression_statement
+    (assignment_expression
+      left: (identifier)
+      right: (update_expression
+        argument: (identifier)))))
+
+===================================
+private and public as identifiers
+===================================
+private = "secret";
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      left: (identifier)
+      right: (string
+        (string_fragment)))))
+
+===================================
+component with accessors and property
+===================================
+component name="TestComponent" accessors="true" {
+    property name="title" default="test";
+}
+---
+
+(program
+  (component
+    (component_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    (component_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    body: (component_body
+      (property_declaration
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))))))
+
+===================================
+component with identifier name
+===================================
+component LocalBase {
+    variables.data = "";
+
+    function getData() {
+        return variables.data;
+    }
+}
+---
+
+(program
+  (component
+    (component_attribute
+      (identifier))
+    body: (component_body
+      (expression_statement
+        (assignment_expression
+          left: (member_expression
+            object: (identifier)
+            property: (property_identifier))
+          right: (string)))
+      (function_declaration
+        name: (identifier)
+        parameters: (formal_parameters)
+        body: (statement_block
+          (return_statement
+            (member_expression
+              object: (identifier)
+              property: (property_identifier))))))))
+
+===================================
+savecontent with include
+===================================
+savecontent variable="captured" {
+    include "styles.css";
+}
+---
+
+(program
+  (tag_statement
+    tag: (identifier)
+    arguments: (assignment_expression
+      left: (identifier)
+      right: (string
+        (string_fragment)))
+    body: (statement_block
+      (include_statement
+        (string
+          (string_fragment))))))
+
+===================================
+while loop with increment and decrement
+===================================
+i = 0;
+j = 10;
+while (i < 5 && j > 5) {
+    i++;
+    j--;
+}
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      left: (identifier)
+      right: (number)))
+  (expression_statement
+    (assignment_expression
+      left: (identifier)
+      right: (number)))
+  (while_statement
+    condition: (parenthesized_expression
+      (binary_expression
+        left: (binary_expression
+          left: (identifier)
+          right: (number))
+        right: (binary_expression
+          left: (identifier)
+          right: (number))))
+    body: (statement_block
+      (expression_statement
+        (update_expression
+          argument: (identifier)))
+      (expression_statement
+        (update_expression
+          argument: (identifier))))))
+
+===================================
+interface with abstract functions
+===================================
+interface {
+    function area();
+    function perimeter();
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (function_declaration
+        name: (identifier)
+        parameters: (formal_parameters))
+      (function_declaration
+        name: (identifier)
+        parameters: (formal_parameters)))))
+
+===================================
+inline component followed by statements
+===================================
+component Base {
+    function getData() {
+        return "test";
+    }
+}
+
+x = new Base();
+---
+
+(program
+  (component
+    (component_attribute
+      (identifier))
+    body: (component_body
+      (function_declaration
+        name: (identifier)
+        parameters: (formal_parameters)
+        body: (statement_block
+          (return_statement
+            (string
+              (string_fragment)))))))
+  (expression_statement
+    (assignment_expression
+      left: (identifier)
+      right: (new_expression
+        constructor: (identifier)
+        arguments: (arguments)))))
+
+===================================
+function with metadata attributes
+===================================
+component {
+    function run() localMode="modern" {
+        return 1;
+    }
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (function_declaration
+        name: (identifier)
+        parameters: (formal_parameters)
+        (assignment_expression
+          left: (identifier)
+          right: (string
+            (string_fragment)))
+        body: (statement_block
+          (return_statement
+            (number)))))))
+
+===================================
+multiple catch clauses with dotted type
+===================================
+try {
+    x = 1;
+} catch (App.CustomException e) {
+    y = 2;
+} catch (any e) {
+    z = 3;
+}
+---
+
+(program
+  (try_statement
+    body: (statement_block
+      (expression_statement
+        (assignment_expression
+          left: (identifier)
+          right: (number))))
+    handler: (catch_clause
+      type: (catch_type
+        object: (identifier)
+        property: (property_identifier))
+      parameter: (identifier)
+      body: (statement_block
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (number)))))
+    handler: (catch_clause
+      type: (catch_type)
+      parameter: (identifier)
+      body: (statement_block
+        (expression_statement
+          (assignment_expression
+            left: (identifier)
+            right: (number)))))))
+
+===================================
+property with multiple attributes
+===================================
+component {
+    property name="items" fieldType="many-to-many" cfc="user" lazy="extra" singularname="item";
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (property_declaration
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))))))
+
+===================================
+function attributes on new line
+===================================
+component {
+    public void function init()
+    output=false hint="constructor" {
+        x = "";
+    }
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (function_declaration
+        (access_type)
+        (identifier)
+        name: (identifier)
+        parameters: (formal_parameters)
+        (assignment_expression
+          left: (identifier)
+          right: (false))
+        (assignment_expression
+          left: (identifier)
+          right: (string
+            (string_fragment)))
+        body: (statement_block
+          (expression_statement
+            (assignment_expression
+              left: (identifier)
+              right: (string))))))))
+
+===================================
+multi-line property declaration
+===================================
+component {
+    property name="items" fieldType="many-to-many"
+        cfc="user" lazy="extra";
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (property_declaration
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))))))
+
+===================================
+final component
+===================================
+final component { }
+---
+
+(program
+  (component
+    body: (component_body)))
+
+===================================
+function with multiple access modifiers
+===================================
+component {
+    public static string function create() {
+        return "x";
+    }
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (function_declaration
+        (access_type)
+        (access_type)
+        (identifier)
+        name: (identifier)
+        parameters: (formal_parameters)
+        body: (statement_block
+          (return_statement
+            (string
+              (string_fragment))))))))
+
+===================================
+static initializer block
+===================================
+component {
+    static {
+        x = "value";
+    }
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (static_initializer
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              left: (identifier)
+              right: (string
+                (string_fragment)))))))))
+
+===================================
+ternary with new() no constructor
+===================================
+var x = isNull(obj) ? new() : obj;
+---
+
+(program
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      value: (ternary_expression
+        condition: (call_expression
+          function: (identifier)
+          arguments: (arguments
+            (identifier)))
+        consequence: (new_expression
+          arguments: (arguments))
+        alternative: (identifier)))))
+
+===================================
+query variable method chaining
+===================================
+query
+    .newQuery()
+    .from("table")
+    .get();
+---
+
+(program
+  (expression_statement
+    (call_expression
+      function: (member_expression
+        object: (call_expression
+          function: (member_expression
+            object: (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (property_identifier))
+              arguments: (arguments))
+            property: (property_identifier))
+          arguments: (arguments
+            (string
+              (string_fragment))))
+        property: (property_identifier))
+      arguments: (arguments))))
+
+===================================
+query as function return type
+===================================
+component {
+    query function getData() {
+        return queryNew("");
+    }
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (function_declaration
+        name: (identifier)
+        parameters: (formal_parameters)
+        body: (statement_block
+          (return_statement
+            (call_expression
+              function: (identifier)
+              arguments: (arguments
+                (string)))))))))
+
+===================================
+query as parameter type
+===================================
+component {
+    function process(query data = getData()) {
+        return data;
+    }
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (function_declaration
+        name: (identifier)
+        parameters: (formal_parameters
+          (parameter_type)
+          (assignment_pattern
+            left: (identifier)
+            right: (call_expression
+              function: (identifier)
+              arguments: (arguments))))
+        body: (statement_block
+          (return_statement
+            (identifier)))))))
+
+===================================
+function with bare annotation
+===================================
+component {
+    function process(event, rc) secured {
+        return rc;
+    }
+}
+---
+
+(program
+  (component
+    body: (component_body
+      (function_declaration
+        name: (identifier)
+        parameters: (formal_parameters
+          (parameter_type
+            (identifier))
+          (parameter_type
+            (identifier)))
+        (identifier)
+        body: (statement_block
+          (return_statement
+            (identifier)))))))
+
+===================================
+component with multi-line bare attributes
+===================================
+component
+    implements="IProvider"
+    singleton
+    threadsafe
+{
+}
+---
+
+(program
+  (component
+    (component_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    (component_attribute
+      (identifier))
+    (component_attribute
+      (identifier))
+    body: (component_body)))

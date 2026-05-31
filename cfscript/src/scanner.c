@@ -107,6 +107,42 @@ static WhitespaceResult scan_whitespace_and_comments(TSLexer *lexer, bool *scann
     }
 }
 
+// Check if the current position matches a CFML word operator (case-insensitive).
+// Returns true if a word operator is found, false otherwise.
+static bool scan_cfml_word_operator(TSLexer *lexer) {
+    // Collect up to 10 chars to identify the operator
+    char buf[11] = {0};
+    int len = 0;
+    for (; len < 10 && iswalpha(lexer->lookahead); len++) {
+        buf[len] = towlower(lexer->lookahead);
+        skip(lexer);
+    }
+    bool at_end = !iswalnum(lexer->lookahead);
+    if (!at_end) return false;
+
+    // Match against known word operators
+    return (len == 2 && (
+        (buf[0] == 'o' && buf[1] == 'r') ||
+        (buf[0] == 'e' && buf[1] == 'q') ||
+        (buf[0] == 'g' && buf[1] == 't') ||
+        (buf[0] == 'g' && buf[1] == 'e') ||
+        (buf[0] == 'l' && buf[1] == 't') ||
+        (buf[0] == 'l' && buf[1] == 'e') ||
+        (buf[0] == 'i' && buf[1] == 'n')
+    )) || (len == 3 && (
+        (buf[0] == 'a' && buf[1] == 'n' && buf[2] == 'd') ||
+        (buf[0] == 'n' && buf[1] == 'e' && buf[2] == 'q') ||
+        (buf[0] == 'n' && buf[1] == 'o' && buf[2] == 't') ||
+        (buf[0] == 'g' && buf[1] == 't' && buf[2] == 'e') ||
+        (buf[0] == 'l' && buf[1] == 't' && buf[2] == 'e') ||
+        (buf[0] == 'm' && buf[1] == 'o' && buf[2] == 'd')
+    )) || (len == 10 &&
+        buf[0] == 'i' && buf[1] == 'n' && buf[2] == 's' && buf[3] == 't' &&
+        buf[4] == 'a' && buf[5] == 'n' && buf[6] == 'c' && buf[7] == 'e' &&
+        buf[8] == 'o' && buf[9] == 'f'
+    );
+}
+
 static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, bool *scanned_comment) {
     lexer->result_symbol = AUTOMATIC_SEMICOLON;
     lexer->mark_end(lexer);
@@ -189,31 +225,17 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
             skip(lexer);
             return lexer->lookahead != '=';
 
-        // Don't insert a semicolon before `in` or `instanceof`, but do insert one
-        // before an identifier.
+        // Don't insert a semicolon before CFML word operators
+        // (and, or, eq, neq, not, gt, gte, ge, lt, lte, le, mod, in, instanceof)
+        case 'a': case 'A':
+        case 'o': case 'O':
+        case 'e': case 'E':
+        case 'n': case 'N':
+        case 'g': case 'G':
+        case 'l': case 'L':
+        case 'm': case 'M':
         case 'i':
-            skip(lexer);
-
-            if (lexer->lookahead != 'n') {
-                return true;
-            }
-            skip(lexer);
-
-            if (!iswalpha(lexer->lookahead)) {
-                return false;
-            }
-
-            for (unsigned i = 0; i < 8; i++) {
-                if (lexer->lookahead != "stanceof"[i]) {
-                    return true;
-                }
-                skip(lexer);
-            }
-
-            if (!iswalpha(lexer->lookahead)) {
-                return false;
-            }
-            break;
+            return !scan_cfml_word_operator(lexer);
 
         default:
             break;

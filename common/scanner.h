@@ -298,6 +298,26 @@ static bool scan_comment(TSLexer *lexer, bool is_cfquery_context) {
 
     advance(lexer);
 
+    // IE conditional comments: <!--[if ...]>...<![endif]--> or <!--<![endif]-->
+    // These don't nest — just scan until -->
+    if (lexer->lookahead == '[' || lexer->lookahead == '<') {
+        unsigned close_dashes = 0;
+        while (lexer->lookahead) {
+            if (lexer->lookahead == '-') {
+                close_dashes++;
+            } else if (lexer->lookahead == '>' && close_dashes >= 2) {
+                lexer->result_symbol = CFML_COMMENT;
+                advance(lexer);
+                lexer->mark_end(lexer);
+                return true;
+            } else {
+                close_dashes = 0;
+            }
+            advance(lexer);
+        }
+        return false;
+    }
+
     unsigned dashes = 0;
     unsigned direction = -1;
     unsigned nesting = 1;
@@ -1072,6 +1092,15 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
 
 static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_context, bool is_cfquery_context) {
 
+    // Dynamic tag name: <#expression#>
+    if (lexer->lookahead == '#') {
+        Tag tag = tag_new();
+        tag.type = DYNAMIC;
+        array_push(&scanner->tags, tag);
+        lexer->result_symbol = START_TAG_NAME;
+        return true;
+    }
+
     TagNameResult result = scan_tag_name(lexer, is_cfquery_context);
 
     if (result.tag_name.size == 0) {
@@ -1185,6 +1214,15 @@ static void set_end_tag_symbol(Scanner *scanner, TSLexer *lexer, Tag *tag, bool 
 
 static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_context, bool is_cfquery_context) {
 
+    // Dynamic closing tag: </#expression#>
+    if (lexer->lookahead == '#') {
+        if (scanner->tags.size > 0 && array_back(&scanner->tags)->type == DYNAMIC) {
+            pop_tag(scanner, false);
+        }
+        lexer->result_symbol = END_TAG_NAME;
+        return true;
+    }
+
     TagNameResult result = scan_tag_name(lexer, is_cfquery_context);
 
     if (result.tag_name.size == 0) {
@@ -1287,6 +1325,39 @@ static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer, bo
     return false;
 }
 
+// Check if the current position matches a CFML word operator (case-insensitive).
+static bool scan_cfml_word_operator(TSLexer *lexer) {
+    char buf[11] = {0};
+    int len = 0;
+    for (; len < 10 && iswalpha(lexer->lookahead); len++) {
+        buf[len] = towlower(lexer->lookahead);
+        skip(lexer);
+    }
+    bool at_end = !iswalnum(lexer->lookahead);
+    if (!at_end) return false;
+
+    return (len == 2 && (
+        (buf[0] == 'o' && buf[1] == 'r') ||
+        (buf[0] == 'e' && buf[1] == 'q') ||
+        (buf[0] == 'g' && buf[1] == 't') ||
+        (buf[0] == 'g' && buf[1] == 'e') ||
+        (buf[0] == 'l' && buf[1] == 't') ||
+        (buf[0] == 'l' && buf[1] == 'e') ||
+        (buf[0] == 'i' && buf[1] == 'n')
+    )) || (len == 3 && (
+        (buf[0] == 'a' && buf[1] == 'n' && buf[2] == 'd') ||
+        (buf[0] == 'n' && buf[1] == 'e' && buf[2] == 'q') ||
+        (buf[0] == 'n' && buf[1] == 'o' && buf[2] == 't') ||
+        (buf[0] == 'g' && buf[1] == 't' && buf[2] == 'e') ||
+        (buf[0] == 'l' && buf[1] == 't' && buf[2] == 'e') ||
+        (buf[0] == 'm' && buf[1] == 'o' && buf[2] == 'd')
+    )) || (len == 10 &&
+        buf[0] == 'i' && buf[1] == 'n' && buf[2] == 's' && buf[3] == 't' &&
+        buf[4] == 'a' && buf[5] == 'n' && buf[6] == 'c' && buf[7] == 'e' &&
+        buf[8] == 'o' && buf[9] == 'f'
+    );
+}
+
 static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, bool *scanned_comment, bool is_cfquery_context) {
     lexer->result_symbol = AUTOMATIC_SEMICOLON;
     lexer->mark_end(lexer);
@@ -1368,31 +1439,17 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
             skip(lexer);
             return lexer->lookahead != '=';
 
-        // Don't insert a semicolon before `in` or `instanceof`, but do insert one
-        // before an identifier.
+        // Don't insert a semicolon before CFML word operators
+        // (and, or, eq, neq, not, gt, gte, ge, lt, lte, le, mod, in, instanceof)
         case 'i':
-            skip(lexer);
-
-            if (lexer->lookahead != 'n') {
-                return true;
-            }
-            skip(lexer);
-
-            if (!iswalpha(lexer->lookahead)) {
-                return false;
-            }
-
-            for (unsigned i = 0; i < 8; i++) {
-                if (lexer->lookahead != "stanceof"[i]) {
-                    return true;
-                }
-                skip(lexer);
-            }
-
-            if (!iswalpha(lexer->lookahead)) {
-                return false;
-            }
-            break;
+        case 'a': case 'A':
+        case 'o': case 'O':
+        case 'e': case 'E':
+        case 'n': case 'N':
+        case 'g': case 'G':
+        case 'l': case 'L':
+        case 'm': case 'M':
+            return !scan_cfml_word_operator(lexer);
 
         default:
             break;

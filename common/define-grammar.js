@@ -146,11 +146,14 @@ module.exports = function defineGrammar(dialect) {
     ],
 
     conflicts: ($) => [
+      [$.variable_declaration, $.access_type],
       [$.object, $.object_pattern],
       [$.primary_expression, $.pattern],
       [$.assignment_expression, $.pattern],
       [$.primary_expression, $.path],
       [$.primary_expression, $.parameter_type],
+      [$.primary_expression, $.parameter_type, $.pattern],
+      [$.parameter_type, $.pattern],
       [$.primary_expression, $._property_name],
       [$.primary_expression, $.method_definition],
       [$.primary_expression, $.rest_pattern],
@@ -250,6 +253,10 @@ module.exports = function defineGrammar(dialect) {
             alias(choice('var', 'VAR', 'Var', 'vAR', 'vAr', 'vaR', 'VaR', 'VAr'), $.cf_var),
             $._cf_tag_expression,
           ),
+          seq(
+            alias(choice('final', 'FINAL', 'Final'), $.cf_var),
+            $._cf_tag_expression,
+          ),
           $._cf_tag_expression,
         ),
         $.cf_selfclose_void_tag_end,
@@ -308,7 +315,10 @@ module.exports = function defineGrammar(dialect) {
 
         start_tag: $ => prec.right(3, seq(
           '<',
-          alias($._start_tag_name, $.tag_name),
+          choice(
+            alias($._start_tag_name, $.tag_name),
+            alias($._hash_dialect_eval, $.tag_name),
+          ),
           repeat($.tag_attributes),
           alias($._close_tag_delim, '>'),
         )),
@@ -352,7 +362,10 @@ module.exports = function defineGrammar(dialect) {
 
         end_tag: $ => prec.right(4, seq(
           '</',
-          alias($._end_tag_name, $.tag_name),
+          choice(
+            alias($._end_tag_name, $.tag_name),
+            alias($._hash_dialect_eval, $.tag_name),
+          ),
           alias($._close_tag_delim, '>'),
         )),
 
@@ -1099,7 +1112,7 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       variable_declaration: ($) => seq(
-        'var',
+        choice('var', 'final', seq('final', 'var'), seq('var', 'final')),
         commaSep1($.variable_declarator),
         $._semicolon,
       ),
@@ -1275,7 +1288,7 @@ module.exports = function defineGrammar(dialect) {
         optional(
           seq(
             '(',
-            optional(field('type', alias(choice($.identifier, $.string), $.catch_type))),
+            optional(field('type', alias(choice($.identifier, $.nested_identifier, $.string), $.catch_type))),
             field('parameter', choice($.identifier, $._destructuring_pattern)),
             ')',
           ),
@@ -1460,10 +1473,16 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       _call_signature: ($) => field('parameters', $.formal_parameters),
-      _formal_parameter: ($) => seq(
-        optional('required'),
-        optional($.parameter_type),
-        choice($.pattern, $.assignment_pattern),
+      _formal_parameter: ($) => choice(
+        seq(
+          optional('required'),
+          $.parameter_type,
+          optional(choice($.pattern, $.assignment_pattern)),
+        ),
+        seq(
+          optional('required'),
+          choice($.pattern, $.assignment_pattern),
+        ),
       ),
 
       optional_chain: (_) => '?.',
@@ -1608,6 +1627,11 @@ module.exports = function defineGrammar(dialect) {
           [/[gG][eE]/, 'binary_relation'],
           ['>', 'binary_relation'],
           [/[gG][tT]/, 'binary_relation'],
+          [/[gG][rR][eE][aA][tT][eE][rR]\s+[tT][hH][aA][nN]/, 'binary_relation'],
+          [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]/, 'binary_relation'],
+          [/[gG][rR][eE][aA][tT][eE][rR]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_relation'],
+          [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_relation'],
+          [/[nN][oO][tT]\s+[eE][qQ][uU][aA][lL]/, 'binary_equality'],
           ['??', 'ternary'],
           ['instanceof', 'binary_relation'],
           ['in', 'binary_relation'],
