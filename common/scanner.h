@@ -1065,7 +1065,7 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
             return true;
         }
 
-        if (!is_cf_context && parent && tag_eq(parent, &next_tag)) {
+        if (!is_cf_context && parent && tag_eq(parent, &next_tag) && tag_implicitly_closes_self(parent)) {
             pop_tag(scanner, false);
             lexer->result_symbol = IMPLICIT_END_TAG;
             tag_free(&next_tag);

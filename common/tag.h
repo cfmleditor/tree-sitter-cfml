@@ -399,6 +399,36 @@ static inline bool cf_tag_is_void(const Tag *self) {
     return self->type == CF_VOID;
 }
 
+// Tags that implicitly close when they encounter another opening tag of the same type.
+// Per HTML spec: p, li, dt, dd, td, th, tr, thead, tbody, tfoot, colgroup, option, optgroup, head, body, html, rb, rp, rt, rtc.
+static inline bool tag_implicitly_closes_self(const Tag *self) {
+    switch (self->type) {
+        case P:
+        case LI:
+        case DT:
+        case DD:
+        case TD:
+        case TH:
+        case TR:
+        case THEAD:
+        case TBODY:
+        case TFOOT:
+        case COLGROUP:
+        case OPTION:
+        case OPTGROUP:
+        case HEAD:
+        case BODY:
+        case HTML:
+        case RB:
+        case RP:
+        case RT:
+        case RTC:
+            return true;
+        default:
+            return false;
+    }
+}
+
 static inline bool tag_eq(const Tag *self, const Tag *other) {
     if (self->type != other->type) return false;
     if (self->type == CUSTOM || self->type == CFML || self->type == CF_VOID || self->type == CF_XML || self->type == CF_QUERY || self->type == CF_SCRIPT || self->type == CF_SAVECONTENT || self->type == CF_OUTPUT || self->type == CF_FUNCTION || self->type == CF_SET || self->type == CF_RETURN || self->type == CF_IF || self->type == CF_ELSEIF || self->type == CF_ELSE) {
