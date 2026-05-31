@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+- Support `final` as a component modifier
+- Support multiple access modifiers on functions (e.g. `public static string function`)
+- Support multi-line property declarations and function attributes (using `tag_linefeed`)
+- Support dotted catch types (e.g. `catch (App.CustomException e)`)
+- Support multiple catch clauses in try/catch
+- Support parameter metadata attributes (e.g. `string name = "" taffy_minlength="1"`)
+- Fix automatic semicolon insertion before CFML word operators (`and`, `or`, `eq`, `neq`, `not`, `gt`, `gte`, `ge`, `lt`, `lte`, `le`, `mod`)
+
 ## [0.26.26]
 
 ### cfscript
@@ -11,11 +21,6 @@
 - Add `private`, `public` to reserved identifiers (usable as variable names)
 - Allow `component` as an inline statement (not just top-level)
 - Support abstract function declarations in interfaces (`function name();`)
-- Support dotted catch types (e.g. `catch (App.CustomException e)`)
-- Support multiple catch clauses in try/catch
-- Support `final` as a component modifier
-- Support multiple access modifiers on functions (e.g. `public static string function`)
-- Support multi-line property declarations and function attributes (using `tag_linefeed`)
 
 ### cfquery
 
