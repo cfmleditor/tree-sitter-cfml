@@ -13,12 +13,12 @@
 (cf_component_open_tag) @indent
 
 ; CF block tags (cfif, cffunction, cfoutput, cfscript, cfquery, cfsavecontent)
-(cf_if_tag) @indent
-(cf_function_tag) @indent
-(cf_output_tag) @indent
-(cf_script_tag) @indent
-(cf_query_tag) @indent
-(cf_savecontent_tag) @indent
+(cf_if_tag "</cf" @end) @indent
+(cf_function_tag "</cf" @end) @indent
+(cf_output_tag "</cf" @end) @indent
+(cf_script_tag "</cf" @end) @indent
+(cf_query_tag "</cf" @end) @indent
+(cf_savecontent_tag "</cf" @end) @indent
 
 ; Script-level nodes (expressions inside cfset, cfif, cfreturn, cfscript, etc.)
 (statement_block "}" @end) @indent
