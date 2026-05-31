@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.27]
 
 - Support `final` as a component modifier
 - Support multiple access modifiers on functions (e.g. `public static string function`)
