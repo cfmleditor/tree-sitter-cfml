@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 - Add .scm files as a source of truth for other projects
+- Add validation for .scm files against the respective grammars
 
 ## [0.26.27]
 
