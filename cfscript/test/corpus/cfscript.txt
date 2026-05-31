@@ -229,6 +229,42 @@ public function function doThing(string firstName = "blah",required function fir
     (statement_block)))
 
 ===================================
+parameter attributes
+===================================
+public function doThing(string name = "" taffy_minlength="1" taffy_maxlength="255", string value = "" taffy_maxlength="500")
+{
+
+}
+---
+
+(program
+  (function_declaration
+    (access_type)
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (assignment_pattern
+        (identifier)
+        (string))
+      (parameter_attribute
+        (identifier)
+        (string
+          (string_fragment)))
+      (parameter_attribute
+        (identifier)
+        (string
+          (string_fragment)))
+      (parameter_type)
+      (assignment_pattern
+        (identifier)
+        (string))
+      (parameter_attribute
+        (identifier)
+        (string
+          (string_fragment))))
+    (statement_block)))
+
+===================================
 script tag
 ===================================
 cfmail(test=test){

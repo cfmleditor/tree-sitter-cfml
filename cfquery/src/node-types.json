@@ -2172,6 +2172,10 @@
           "named": true
         },
         {
+          "type": "parameter_attribute",
+          "named": true
+        },
+        {
           "type": "parameter_type",
           "named": true
         },
@@ -2862,6 +2866,25 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "parameter_attribute",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        }
+      ]
     }
   },
   {

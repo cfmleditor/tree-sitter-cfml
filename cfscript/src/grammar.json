@@ -2731,6 +2731,13 @@
                   "type": "BLANK"
                 }
               ]
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "parameter_attribute"
+              }
             }
           ]
         },
@@ -2761,10 +2768,38 @@
                   "name": "assignment_pattern"
                 }
               ]
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "parameter_attribute"
+              }
             }
           ]
         }
       ]
+    },
+    "parameter_attribute": {
+      "type": "PREC_DYNAMIC",
+      "value": -2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          {
+            "type": "STRING",
+            "value": "="
+          },
+          {
+            "type": "SYMBOL",
+            "name": "string"
+          }
+        ]
+      }
     },
     "optional_chain": {
       "type": "STRING",
@@ -7514,6 +7549,11 @@
     [
       "component_attribute",
       "property_declaration"
+    ],
+    [
+      "parameter_attribute",
+      "assignment_expression",
+      "pattern"
     ]
   ],
   "precedences": [

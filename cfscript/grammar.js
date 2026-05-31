@@ -156,6 +156,7 @@ module.exports = grammar({
     [$.query_tag, $.expression],
     [$.sequence_expression, $.arguments],
     [$.component_attribute, $.property_declaration],
+    [$.parameter_attribute, $.assignment_expression, $.pattern],
   ],
 
   word: ($) => $.identifier,
@@ -702,12 +703,20 @@ module.exports = grammar({
         optional('required'),
         $.parameter_type,
         optional(choice($.pattern, $.assignment_pattern)),
+        repeat($.parameter_attribute),
       ),
       seq(
         optional('required'),
         choice($.pattern, $.assignment_pattern),
+        repeat($.parameter_attribute),
       ),
     ),
+
+    parameter_attribute: ($) => prec.dynamic(-2, seq(
+      $.identifier,
+      '=',
+      $.string,
+    )),
 
     optional_chain: (_) => '?.',
     static_chain: (_) => '::',

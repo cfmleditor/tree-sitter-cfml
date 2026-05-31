@@ -192,6 +192,7 @@ module.exports = function defineGrammar(dialect) {
       [$.switch_case, $.expression, $._property_name],
       [$.call_expression, $._property_name],
       [$._for_header, $.expression],
+      [$.parameter_attribute, $.assignment_expression, $.pattern],
       ...(dialect === 'cfquery' ? [
         [$.cf_output_tag, $.query_comparison_expression],
         [$.cf_output_tag, $.query_assignment_expression],
@@ -1478,12 +1479,20 @@ module.exports = function defineGrammar(dialect) {
           optional('required'),
           $.parameter_type,
           optional(choice($.pattern, $.assignment_pattern)),
+          repeat($.parameter_attribute),
         ),
         seq(
           optional('required'),
           choice($.pattern, $.assignment_pattern),
+          repeat($.parameter_attribute),
         ),
       ),
+
+      parameter_attribute: ($) => prec.dynamic(-2, seq(
+        $.identifier,
+        '=',
+        $.string,
+      )),
 
       optional_chain: (_) => '?.',
       static_chain: (_) => '::',
