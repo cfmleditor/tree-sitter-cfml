@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Add .scm files as a source of truth for other projects
+
 ## [0.26.27]
 
 - Support `final` as a component modifier
