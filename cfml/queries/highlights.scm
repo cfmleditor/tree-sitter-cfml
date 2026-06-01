@@ -36,6 +36,12 @@
 
 (identifier) @variable
 
+; CFML scopes
+;-------------
+
+((identifier) @variable.builtin
+ (#match? @variable.builtin "^(?i)(APPLICATION|ARGUMENTS|CGI|CLIENT|COOKIE|FORM|LOCAL|REQUEST|SERVER|SESSION|THIS|URL|VARIABLES)$"))
+
 ; Properties
 ;-----------
 
@@ -170,6 +176,22 @@
 
 ((identifier) @number
   (#any-of? @number "NaN" "Infinity"))
+
+(ordered_struct
+  ["[" ":" "]"] @punctuation.bracket)
+
+; Types
+;------
+
+(parameter_type) @type
+(catch_clause
+  type: (catch_type) @type)
+
+; Imports
+;--------
+
+(import_path
+  (identifier) @module)
 
 ; Punctuation
 ;------------

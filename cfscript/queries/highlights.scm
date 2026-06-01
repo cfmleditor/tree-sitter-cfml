@@ -3,11 +3,30 @@
 
 (identifier) @variable
 
+; CFML scopes
+;-------------
+
+((identifier) @variable.builtin
+ (#match? @variable.builtin "^(?i)(APPLICATION|ARGUMENTS|CGI|CLIENT|COOKIE|FORM|LOCAL|REQUEST|SERVER|SESSION|THIS|URL|VARIABLES)$"))
+
 ; Properties
 ;-----------
 
 (property_identifier) @property
 (shorthand_property_identifier) @property
+(private_property_identifier) @property
+
+; Component and property declarations
+;-------------------------------------
+
+(component_attribute
+  (attribute_label) @attribute)
+
+(property_declaration
+  name: (identifier) @property)
+
+(spread_element
+  "..." @operator)
 
 ; Function and method definitions
 ;--------------------------------
@@ -113,6 +132,12 @@
   ","
 ] @punctuation.delimiter
 
+(ordered_struct
+  ["[" ":" "]"] @punctuation.bracket)
+
+(cfml_template
+  "```" @punctuation.delimiter)
+
 (ternary_expression
   [
     "?"
@@ -121,6 +146,27 @@
 
 (elvis_expression
   "?:" @keyword.conditional.ternary)
+
+; Types
+;------
+
+(parameter_type) @type
+(catch_clause
+  type: (catch_type) @type)
+
+; Tag statements
+;---------------
+
+(tag_statement
+  tag: (identifier) @keyword)
+(query_tag
+  "query" @keyword)
+
+; Imports
+;--------
+
+(import_path
+  (identifier) @module)
 
 
 [
@@ -200,6 +246,7 @@
   "if"
   "import"
   "in"
+  "include"
   "instanceof"
   "let"
   "new"
