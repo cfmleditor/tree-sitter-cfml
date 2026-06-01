@@ -1,5 +1,25 @@
 # Changelog
 
+## [Unreleased]
+
+### cfml & cfscript
+
+- Add `[:]` ordered struct literal syntax
+- Add `EQUAL` as a binary equality operator (synonym for `EQ`)
+- Support wildcard imports (e.g. `import component.*`)
+- Allow `cfhtmlhead`, `cfhtmlbody`, and `cfcache` as paired tags with closing tags
+
+### cfscript
+
+- Support multiple attributes on `include` statement (e.g. `include template="file.cfm" runonce="true"`)
+- Support multiline `query` tag with attributes on separate lines
+- Add triple-backtick cfml template blocks (` ``` `) with cfml injection
+- Support dotted variable names in catch clause parameter (e.g. `catch (any local.e)`)
+- Support `new component` inline component expressions with attributes and body
+- Support case-insensitive `Component` in `new component` expressions
+- Support `java:` and `cfml:` type prefixes in `new` expressions (e.g. `new java:java.io.File(path)`)
+- Allow whitespace between `?` and `:` in elvis operator
+
 ## [0.26.28]
 
 - Add .scm files as a source of truth for other projects

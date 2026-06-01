@@ -2133,7 +2133,7 @@
                     "type": "ALIAS",
                     "content": {
                       "type": "PATTERN",
-                      "value": "[^'\\s\\n\\r\\t#]+"
+                      "value": "[^'#]+"
                     },
                     "named": true,
                     "value": "attribute_value"
@@ -2171,7 +2171,7 @@
                     "type": "ALIAS",
                     "content": {
                       "type": "PATTERN",
-                      "value": "[^\"\\s\\n\\r\\t#]+"
+                      "value": "[^\"#]+"
                     },
                     "named": true,
                     "value": "attribute_value"
@@ -2264,7 +2264,7 @@
               "name": "source",
               "content": {
                 "type": "SYMBOL",
-                "name": "path"
+                "name": "import_path"
               }
             }
           ]
@@ -2284,6 +2284,40 @@
         {
           "type": "SYMBOL",
           "name": "_semicolon"
+        }
+      ]
+    },
+    "import_path": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "identifier"
+        },
+        {
+          "type": "REPEAT1",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "."
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "identifier"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "*"
+                  }
+                ]
+              }
+            ]
+          }
         }
       ]
     },
@@ -3768,6 +3802,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "ordered_struct"
+        },
+        {
+          "type": "SYMBOL",
           "name": "function_expression"
         },
         {
@@ -4208,6 +4246,27 @@
           "value": "]"
         }
       ]
+    },
+    "ordered_struct": {
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "["
+          },
+          {
+            "type": "STRING",
+            "value": ":"
+          },
+          {
+            "type": "STRING",
+            "value": "]"
+          }
+        ]
+      }
     },
     "array_pattern": {
       "type": "SEQ",
@@ -6193,6 +6252,39 @@
                 "content": {
                   "type": "PATTERN",
                   "value": "[eE][qQ]"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": "binary_equality",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[eE][qQ][uU][aA][lL]"
                 }
               },
               {

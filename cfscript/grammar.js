@@ -36,6 +36,7 @@ module.exports = grammar({
     $.regex_pattern,
     $.query_text,
     $.tag_linefeed,
+    $.cfml_template_content,
   ],
 
   extras: ($) => [
@@ -99,6 +100,8 @@ module.exports = grammar({
     [$.primary_expression, $.pattern],
     [$.assignment_expression, $.pattern],
     [$.function_expression, $.parameter_type],
+    [$.function_expression, $.function_declaration],
+    [$.expression, $.function_expression, $.function_declaration],
     [$.primary_expression, $.path],
     [$.primary_expression, $.parameter_type],
     [$.primary_expression, $.parameter_type, $.pattern],
@@ -152,11 +155,10 @@ module.exports = grammar({
     [$.tag_statement, $.expression],
     [$.program, $.statement],
     [$.primary_expression, $.tag_statement, $._property_name],
-    [$.expression, $.query_tag],
-    [$.query_tag, $.expression],
     [$.sequence_expression, $.arguments],
     [$.component_attribute, $.property_declaration],
     [$.parameter_attribute, $.assignment_expression, $.pattern],
+    [$.primary_expression, $.parameter_attribute],
   ],
 
   word: ($) => $.identifier,
@@ -203,11 +205,13 @@ module.exports = grammar({
         seq($.import_clause, $._from_clause),
         field('source', $.string),
         field('source', $.identifier),
-        field('source', $.path),
+        field('source', $.import_path),
       ),
       optional($.import_attribute),
       $._semicolon,
     ),
+
+    import_path: ($) => seq($.identifier, repeat1(seq('.', choice($.identifier, '*')))),
 
     path: ($) => seq($.identifier, repeat1(seq('.', $.identifier))),
 
@@ -281,6 +285,7 @@ module.exports = grammar({
       $.labeled_statement,
       $.include_statement,
 
+      $.cfml_template,
       $.tag_statement,
       $.query_tag,
       $.component,
@@ -434,8 +439,10 @@ module.exports = grammar({
 
     include_statement: ($) => prec(1, seq(
       'include',
-      $._expressions,
-      $._semicolon,
+      choice(
+        seq(repeat1($.parameter_attribute), $._semicolon),
+        seq($._expressions, $._semicolon),
+      ),
     )),
 
     empty_statement: (_) => ';',
@@ -475,7 +482,7 @@ module.exports = grammar({
         seq(
           '(',
           optional(field('type', alias(choice($.identifier, $.nested_identifier, $.string), $.catch_type))),
-          field('parameter', choice($.identifier, $._destructuring_pattern)),
+          field('parameter', choice($.identifier, $.nested_identifier, $._destructuring_pattern)),
           ')',
         ),
       ),
@@ -535,6 +542,7 @@ module.exports = grammar({
       $.null,
       $.object,
       $.array,
+      $.ordered_struct,
       $.function_expression,
       $.arrow_function,
       $.meta_property,
@@ -595,6 +603,8 @@ module.exports = grammar({
       ']',
     ),
 
+    ordered_struct: ($) => prec(1, seq('[', ':', ']')),
+
     array_pattern: ($) => seq(
       '[',
       commaSep(optional(choice(
@@ -638,7 +648,7 @@ module.exports = grammar({
       'function',
       field('name', optional($.identifier)),
       $._call_signature,
-      repeat($.assignment_expression),
+      repeat(prec(1, $.assignment_expression)),
       field('body', $.statement_block),
     )),
 
@@ -733,10 +743,19 @@ module.exports = grammar({
       )),
     ),
 
-    new_expression: ($) => prec.right('new', seq(
-      'new',
-      optional(field('constructor', choice($.primary_expression, $.new_expression))),
-      field('arguments', optional(prec.dynamic(1, $.arguments))),
+    new_expression: ($) => prec.right('new', choice(
+      seq(
+        'new',
+        /[Cc][Oo][Mm][Pp][Oo][Nn][Ee][Nn][Tt]/,
+        repeat(seq(optional($.tag_linefeed), $.component_attribute)),
+        field('body', $.component_body),
+      ),
+      seq(
+        'new',
+        optional(field('prefix', seq(choice('java', 'cfml'), ':'))),
+        optional(field('constructor', choice($.primary_expression, $.new_expression))),
+        field('arguments', optional(prec.dynamic(1, $.arguments))),
+      ),
     )),
 
     member_expression: $ => prec('member', seq(
@@ -845,6 +864,7 @@ module.exports = grammar({
         ['==', 'binary_equality'],
         ['===', 'binary_equality'],
         [/[eE][qQ]/, 'binary_equality'],
+        [/[eE][qQ][uU][aA][lL]/, 'binary_equality'],
         [/[iI][sS]/, 'binary_equality'],
         ['<>', 'binary_equality'],
         ['!=', 'binary_equality'],
@@ -1231,6 +1251,8 @@ module.exports = grammar({
       '`',
     ),
 
+    cfml_template: ($) => seq('```', $.cfml_template_content, '```'),
+
     query_expression: ($) => seq(
       'queryExecute',
       '(',
@@ -1255,7 +1277,8 @@ module.exports = grammar({
 
     query_tag: ($) => seq(
       'query',
-      field('arguments', repeat($.assignment_expression)),
+      repeat(prec(1, seq(optional($.tag_linefeed), field('arguments', $.assignment_expression)))),
+      optional($.tag_linefeed),
       field('body', $.statement_block),
     ),
 

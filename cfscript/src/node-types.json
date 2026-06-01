@@ -162,6 +162,10 @@
         "named": true
       },
       {
+        "type": "ordered_struct",
+        "named": true
+      },
+      {
         "type": "parenthesized_expression",
         "named": true
       },
@@ -205,6 +209,10 @@
     "subtypes": [
       {
         "type": "break_statement",
+        "named": true
+      },
+      {
+        "type": "cfml_template",
         "named": true
       },
       {
@@ -816,6 +824,10 @@
           {
             "type": "identifier",
             "named": true
+          },
+          {
+            "type": "nested_identifier",
+            "named": true
           }
         ]
       },
@@ -927,6 +939,21 @@
           }
         ]
       }
+    }
+  },
+  {
+    "type": "cfml_template",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "cfml_template_content",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -1610,6 +1637,21 @@
     }
   },
   {
+    "type": "import_path",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "import_specifier",
     "named": true,
     "fields": {
@@ -1652,7 +1694,7 @@
             "named": true
           },
           {
-            "type": "path",
+            "type": "import_path",
             "named": true
           },
           {
@@ -1682,11 +1724,15 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "parameter_attribute",
           "named": true
         },
         {
@@ -1882,6 +1928,36 @@
     }
   },
   {
+    "type": "nested_identifier",
+    "named": true,
+    "fields": {
+      "object": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
+          }
+        ]
+      },
+      "property": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "property_identifier",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "new_expression",
     "named": true,
     "fields": {
@@ -1891,6 +1967,16 @@
         "types": [
           {
             "type": "arguments",
+            "named": true
+          }
+        ]
+      },
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "component_body",
             "named": true
           }
         ]
@@ -1908,7 +1994,39 @@
             "named": true
           }
         ]
+      },
+      "prefix": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": ":",
+            "named": false
+          },
+          {
+            "type": "cfml",
+            "named": false
+          },
+          {
+            "type": "java",
+            "named": false
+          }
+        ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "component_attribute",
+          "named": true
+        },
+        {
+          "type": "tag_linefeed",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -2002,6 +2120,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "ordered_struct",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "pair",
@@ -2294,6 +2417,16 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "tag_linefeed",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -3196,6 +3329,10 @@
     "named": false
   },
   {
+    "type": "```",
+    "named": false
+  },
+  {
     "type": "abstract",
     "named": false
   },
@@ -3230,6 +3367,14 @@
   {
     "type": "catch",
     "named": false
+  },
+  {
+    "type": "cfml",
+    "named": false
+  },
+  {
+    "type": "cfml_template_content",
+    "named": true
   },
   {
     "type": "comment",
@@ -3330,6 +3475,10 @@
   },
   {
     "type": "interface",
+    "named": false
+  },
+  {
+    "type": "java",
     "named": false
   },
   {

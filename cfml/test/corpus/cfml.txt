@@ -2886,3 +2886,102 @@ dynamic tag name with hash expression
         (tag_name
           (hash_expression
             (identifier)))))))
+
+===================================
+ordered struct literal in cfscript block
+===================================
+<cfscript>
+x = [:];
+</cfscript>
+---
+
+(program
+  (cf_script_tag
+    (cf_script_content)))
+
+===================================
+cfcache as paired tag
+===================================
+<cfcache action="get" id="cache" name="cachedVar">
+</cfcache>
+<cfif isNull(cachedVar)>
+	<cfcache action="put" value="#APPLICATION.ApplicationName#" id="cache">
+	</cfcache>
+</cfif>
+<cfcache action="get" id="cache" name="cachedVar">
+</cfcache>
+<cfoutput>#cachedVar#</cfoutput>
+---
+
+(program
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (cf_end_tag
+      (cf_tag_name)))
+  (cf_if_tag
+    (call_expression
+      function: (identifier)
+      arguments: (arguments
+        (identifier)))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value))))
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (hash_expression
+                (member_expression
+                  object: (identifier)
+                  property: (property_identifier))))))
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))))
+      (cf_end_tag
+        (cf_tag_name))))
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (cf_end_tag
+      (cf_tag_name)))
+  (cf_output_tag
+    (hash_expression
+      (identifier))))

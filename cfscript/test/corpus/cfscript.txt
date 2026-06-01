@@ -1873,3 +1873,149 @@ component
     (component_attribute
       (identifier))
     body: (component_body)))
+
+===================================
+ordered struct literal
+===================================
+x = [:];
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct))))
+
+===================================
+include with multiple attributes
+===================================
+include template="test.cfm" runonce="true";
+---
+
+(program
+  (include_statement
+    (parameter_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    (parameter_attribute
+      (identifier)
+      (string
+        (string_fragment)))))
+
+===================================
+import with wildcard
+===================================
+import component.*;
+---
+
+(program
+  (import_statement
+    source: (import_path
+      (identifier))))
+
+===================================
+multiline query tag with cachedWithin
+===================================
+query
+	        name="local.qoq"
+	        dbtype="query"
+	        cachedWithin=createTimeSpan(0,0,0,time) {
+	        echo('select * from qry where a>'&time);
+	    }
+---
+
+(program
+  (query_tag
+    arguments: (assignment_expression
+      left: (identifier)
+      right: (string
+        (string_fragment)))
+    arguments: (assignment_expression
+      left: (identifier)
+      right: (string
+        (string_fragment)))
+    arguments: (assignment_expression
+      left: (identifier)
+      right: (call_expression
+        function: (identifier)
+        arguments: (arguments
+          (number)
+          (number)
+          (number)
+          (identifier))))
+    body: (statement_block
+      (expression_statement
+        (call_expression
+          function: (identifier)
+          arguments: (arguments
+            (binary_expression
+              left: (string
+                (string_fragment))
+              right: (identifier))))))))
+
+===================================
+cfml template block
+===================================
+name = "World";
+```
+<h1>Hello #name#</h1>
+```
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (cfml_template
+    (cfml_template_content)))
+
+===================================
+new inline component with attributes
+===================================
+var msal = new component javaSettings='{"maven":["com.microsoft.azure:msal4j:1.23.1"]}' {
+	import com.microsoft.aad.msal4j.ClientCredentialFactory;
+
+	function buildApp() {
+		var clientCredential = ClientCredentialFactory::createFromSecret( "test-secret" );
+		return clientCredential;
+	}
+};
+---
+
+(program
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      value: (new_expression
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        body: (component_body
+          (import_statement
+            source: (import_path
+              (identifier)
+              (identifier)
+              (identifier)
+              (identifier)
+              (identifier)))
+          (function_declaration
+            name: (identifier)
+            parameters: (formal_parameters)
+            body: (statement_block
+              (variable_declaration
+                (variable_declarator
+                  name: (identifier)
+                  value: (call_expression
+                    function: (member_expression
+                      object: (identifier)
+                      static_chain: (static_chain)
+                      property: (property_identifier))
+                    arguments: (arguments
+                      (string
+                        (string_fragment))))))
+              (return_statement
+                (identifier)))))))))

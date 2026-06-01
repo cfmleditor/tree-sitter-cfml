@@ -11,7 +11,8 @@ enum TokenType {
     LOGICAL_OR,
     REGEX_PATTERN,
     QUERY_TEXT,
-    TAG_LINEFEED
+    TAG_LINEFEED,
+    CFML_TEMPLATE_CONTENT
 };
 
 void *tree_sitter_cfscript_external_scanner_create() { return NULL; }
@@ -255,6 +256,11 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
     if (lexer->lookahead == '?') {
         advance(lexer);
 
+        // Skip whitespace between ? and : for elvis operator
+        while (lexer->lookahead == ' ' || lexer->lookahead == '\t') {
+            advance(lexer);
+        }
+
         if (lexer->lookahead == ':') {
 
             advance(lexer);
@@ -386,7 +392,33 @@ static bool scan_query_text(TSLexer *lexer) {
     return saw_text;
 }
 
+static bool scan_cfml_template_content(TSLexer *lexer) {
+    lexer->result_symbol = CFML_TEMPLATE_CONTENT;
+    bool has_content = false;
+    while (lexer->lookahead != 0) {
+        if (lexer->lookahead == '`') {
+            lexer->mark_end(lexer);
+            advance(lexer);
+            if (lexer->lookahead == '`') {
+                advance(lexer);
+                if (lexer->lookahead == '`') {
+                    return has_content;
+                }
+            }
+            has_content = true;
+        } else {
+            advance(lexer);
+            has_content = true;
+        }
+    }
+    return false;
+}
+
 bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
+    if (valid_symbols[CFML_TEMPLATE_CONTENT]) {
+        return scan_cfml_template_content(lexer);
+    }
+
     if (valid_symbols[TEMPLATE_CHARS]) {
         if (valid_symbols[AUTOMATIC_SEMICOLON]) {
             return false;

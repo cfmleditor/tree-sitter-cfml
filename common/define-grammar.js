@@ -989,7 +989,7 @@ module.exports = function defineGrammar(dialect) {
           repeat(
             choice(
               $._hash_always_eval,
-              alias(/[^'\s\n\r\t#]+/, $.attribute_value),
+              alias(/[^'#]+/, $.attribute_value),
             ),
           ),
           '\''),
@@ -998,7 +998,7 @@ module.exports = function defineGrammar(dialect) {
             choice(
               $._hash_always_eval,
               '""',
-              alias(/[^"\s\n\r\t#]+/, $.attribute_value),
+              alias(/[^"#]+/, $.attribute_value),
             ),
           ),
           '"'),
@@ -1029,11 +1029,13 @@ module.exports = function defineGrammar(dialect) {
           seq($.import_clause, $._from_clause),
           field('source', $.string),
           field('source', $.identifier),
-          field('source', $.path),
+          field('source', $.import_path),
         ),
         optional($.import_attribute),
         $._semicolon,
       ),
+
+      import_path: ($) => seq($.identifier, repeat1(seq('.', choice($.identifier, '*')))),
 
       path: ($) => seq($.identifier, repeat1(seq('.', $.identifier))),
 
@@ -1348,6 +1350,7 @@ module.exports = function defineGrammar(dialect) {
         $.null,
         $.object,
         $.array,
+        $.ordered_struct,
         $.function_expression,
         $.arrow_function,
         $.meta_property,
@@ -1407,6 +1410,8 @@ module.exports = function defineGrammar(dialect) {
         ))),
         ']',
       ),
+
+      ordered_struct: ($) => prec(1, seq('[', ':', ']')),
 
       array_pattern: ($) => seq(
         '[',
@@ -1622,6 +1627,7 @@ module.exports = function defineGrammar(dialect) {
           ['==', 'binary_equality'],
           ['===', 'binary_equality'],
           [/[eE][qQ]/, 'binary_equality'],
+          [/[eE][qQ][uU][aA][lL]/, 'binary_equality'],
           [/[iI][sS]/, 'binary_equality'],
           ['<>', 'binary_equality'],
           ['!=', 'binary_equality'],

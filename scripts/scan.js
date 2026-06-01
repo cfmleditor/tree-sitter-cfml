@@ -195,15 +195,19 @@ function scanFile(filePath) {
 const resolvedDir = path.resolve(dir);
 const files = collectFiles(resolvedDir).sort();
 
+const startTime = performance.now();
+
 for (const file of files) {
   scanFile(file);
 }
 
+const elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
+
 console.log('');
 if (totalErrors === 0) {
-  console.log(`No parse errors found in ${totalFiles} files.`);
+  console.log(`No parse errors found in ${totalFiles} files. (${elapsed}s)`);
 } else {
-  console.log(`Found ${totalErrors} parse error(s) across ${filesWithErrors} file(s) (${totalFiles} files scanned).`);
+  console.log(`Found ${totalErrors} parse error(s) across ${filesWithErrors} file(s) (${totalFiles} files scanned, ${elapsed}s).`);
 }
 
 process.exit(totalErrors > 0 ? 1 : 0);

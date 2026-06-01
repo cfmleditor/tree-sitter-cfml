@@ -158,6 +158,10 @@
         "named": true
       },
       {
+        "type": "ordered_struct",
+        "named": true
+      },
+      {
         "type": "parenthesized_expression",
         "named": true
       },
@@ -3010,6 +3014,21 @@
     }
   },
   {
+    "type": "import_path",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "import_specifier",
     "named": true,
     "fields": {
@@ -3052,7 +3071,7 @@
             "named": true
           },
           {
-            "type": "path",
+            "type": "import_path",
             "named": true
           },
           {
@@ -3383,6 +3402,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "ordered_struct",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "pair",
