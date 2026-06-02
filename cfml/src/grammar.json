@@ -660,13 +660,27 @@
             "value": "<"
           },
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "_start_tag_name"
-            },
-            "named": true,
-            "value": "tag_name"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_start_tag_name"
+                },
+                "named": true,
+                "value": "tag_name"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_hash_dialect_eval"
+                },
+                "named": true,
+                "value": "tag_name"
+              }
+            ]
           },
           {
             "type": "REPEAT",

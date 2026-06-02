@@ -1318,8 +1318,8 @@ static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer, bo
         advance(lexer);
         if (scanner->tags.size > 0) {
             pop_tag(scanner, false);
-            lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
         }
+        lexer->result_symbol = SELF_CLOSING_TAG_DELIMITER;
         return true;
     }
     return false;

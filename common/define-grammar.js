@@ -351,7 +351,10 @@ module.exports = function defineGrammar(dialect) {
 
         self_closing_tag: $ => prec.right(2, seq(
           '<',
-          alias($._start_tag_name, $.tag_name),
+          choice(
+            alias($._start_tag_name, $.tag_name),
+            alias($._hash_dialect_eval, $.tag_name),
+          ),
           repeat(
             $.tag_attributes,
           ),
