@@ -19,6 +19,7 @@
 - Support case-insensitive `Component` in `new component` expressions
 - Support `java:` and `cfml:` type prefixes in `new` expressions (e.g. `new java:java.io.File(path)`)
 - Allow whitespace between `?` and `:` in elvis operator
+- Fix `hash_empty` (`##`) to use `token.immediate`, preventing GLR state explosion in large files
 
 ## [0.26.28]
 

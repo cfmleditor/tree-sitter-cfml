@@ -115,7 +115,6 @@ module.exports = grammar({
     [$.labeled_statement, $._property_name],
     [$.computed_property_name, $.array],
     [$.binary_expression, $._initializer],
-    [$.hash_expression, $.hash_empty],
     [$.method_definition, $.access_type],
     [$.expression, $._property_name],
     [$.expression, $.object],
@@ -1215,7 +1214,7 @@ module.exports = grammar({
       '#',
     ),
 
-    hash_empty: ($) => seq('#', '#'),
+    hash_empty: ($) => token.immediate('##'),
 
     computed_property_name: ($) => seq(
       '[',

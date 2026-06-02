@@ -7096,17 +7096,11 @@
       ]
     },
     "hash_empty": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "#"
-        },
-        {
-          "type": "STRING",
-          "value": "#"
-        }
-      ]
+      "type": "IMMEDIATE_TOKEN",
+      "content": {
+        "type": "STRING",
+        "value": "##"
+      }
     },
     "computed_property_name": {
       "type": "SEQ",
@@ -7650,10 +7644,6 @@
     [
       "binary_expression",
       "_initializer"
-    ],
-    [
-      "hash_expression",
-      "hash_empty"
     ],
     [
       "method_definition",

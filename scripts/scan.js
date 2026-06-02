@@ -8,9 +8,12 @@ const {cfml, cfscript, cfquery} = require('..');
 
 const dir = process.argv[2];
 if (!dir) {
-  console.error('Usage: node scripts/scan.js <directory>');
+  console.error('Usage: node scripts/scan.js <path> [--language cfml|cfscript|cfquery]');
   process.exit(1);
 }
+
+const langIdx = process.argv.indexOf('--language');
+const forcedLang = langIdx !== -1 ? process.argv[langIdx + 1] : null;
 
 const EXTENSIONS = new Set(['.cfm', '.cfml', '.cfc', '.cfs']);
 
@@ -133,15 +136,23 @@ function scanFile(filePath) {
   if (buf.includes(0)) return; // skip binary files
   const source = buf.toString('utf8');
   const ext = path.extname(filePath).toLowerCase();
+  const lang = forcedLang || (ext === '.cfs' ? 'cfscript' : 'cfml');
   let hadErrors = false;
 
-  if (ext === '.cfs') {
-    // Pure cfscript
+  if (lang === 'cfscript') {
     const tree = parserCfscript.parse(source);
     const errors = [];
     findErrors(tree.rootNode, errors);
     if (errors.length > 0) {
       reportErrors(filePath, 'cfscript', errors);
+      hadErrors = true;
+    }
+  } else if (lang === 'cfquery') {
+    const tree = parserCfquery.parse(source);
+    const errors = [];
+    findErrors(tree.rootNode, errors);
+    if (errors.length > 0) {
+      reportErrors(filePath, 'cfquery', errors);
       hadErrors = true;
     }
   } else {
@@ -193,7 +204,8 @@ function scanFile(filePath) {
 
 // Main
 const resolvedDir = path.resolve(dir);
-const files = collectFiles(resolvedDir).sort();
+const stat = fs.statSync(resolvedDir);
+const files = stat.isFile() ? [resolvedDir] : collectFiles(resolvedDir).sort();
 
 const startTime = performance.now();
 

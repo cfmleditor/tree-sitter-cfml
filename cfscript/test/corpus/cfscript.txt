@@ -2019,3 +2019,22 @@ var msal = new component javaSettings='{"maven":["com.microsoft.azure:msal4j:1.2
                         (string_fragment))))))
               (return_statement
                 (identifier)))))))))
+
+===================================
+hash empty in string concatenation
+===================================
+local.rv &= "##" & arguments.anchor;
+---
+
+(program
+  (expression_statement
+    (augmented_assignment_expression
+      left: (member_expression
+        object: (identifier)
+        property: (property_identifier))
+      right: (binary_expression
+        left: (string
+          (hash_empty))
+        right: (member_expression
+          object: (identifier)
+          property: (property_identifier))))))

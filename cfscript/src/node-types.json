@@ -1538,11 +1538,6 @@
     }
   },
   {
-    "type": "hash_empty",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "hash_expression",
     "named": true,
     "fields": {},
@@ -3448,6 +3443,10 @@
   {
     "type": "guid",
     "named": false
+  },
+  {
+    "type": "hash_empty",
+    "named": true
   },
   {
     "type": "identifier",
