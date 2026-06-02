@@ -27,6 +27,8 @@
 (cf_elseif_tag) @tag
 (cf_return_tag) @tag
 (cf_xml_tag) @tag
+(cf_component_open_tag) @tag
+(cf_component_close_tag) @tag
 
 (tag_name) @tag
 (cf_tag_name) @tag
