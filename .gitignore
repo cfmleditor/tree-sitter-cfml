@@ -72,4 +72,5 @@ Thumbs.db
 *.zip
 .npmrc
 tree-sitter.exe
+/tree-sitter
 /vendor
