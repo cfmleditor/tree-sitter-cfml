@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+
+- Publish Python bindings to PyPI as part of the release workflow (wheels built via `cibuildwheel`, sdist via `build`, upload via trusted publishing)
+- Fix Python sdist/wheel builds: bundle `common/*.h`, per-dialect `tree_sitter/*.h`, and `cfml/queries/*.scm` so `pip install tree-sitter-cfml` succeeds from source and query constants resolve
+
 ## [0.26.29]
 
 ### cfml & cfscript
