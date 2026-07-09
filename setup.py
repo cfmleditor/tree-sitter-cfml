@@ -38,9 +38,9 @@ else:
 
 class Build(build):
     def run(self):
-        if path.isdir("queries"):
+        if path.isdir("cfml/queries"):
             dest = path.join(self.build_lib, "tree_sitter_cfml", "queries")
-            self.copy_tree("queries", dest)
+            self.copy_tree("cfml/queries", dest)
         super().run()
 
 
@@ -55,8 +55,11 @@ class BdistWheel(bdist_wheel):
 class EggInfo(egg_info):
     def find_sources(self):
         super().find_sources()
-        self.filelist.recursive_include("queries", "*.scm")
+        self.filelist.recursive_include("cfml/queries", "*.scm")
         self.filelist.include("cfml/src/tree_sitter/*.h")
+        self.filelist.include("cfscript/src/tree_sitter/*.h")
+        self.filelist.include("cfquery/src/tree_sitter/*.h")
+        self.filelist.include("common/*.h")
 
 
 setup(
