@@ -40,20 +40,45 @@ _cf_close_tag: $ => prec.right(1, keyword('</Cf', '</cf')),
 This is a known, deliberate decision. Any future keyword whose first character
 is not a letter needs the same treatment.
 
-#### Do not use case-insensitive regex tokens for keywords
+#### `keyword()` vs. case-insensitive regex — which to use
 
-Do **not** replace the enumerated string literals with
-`token(prec(1, /[rR][eE].../))`. A regex token is not eligible for tree-sitter's
-keyword extraction, and the explicit precedence overrides longest-match, so it
-out-lexes a *longer* identifier wherever the keyword is valid:
-`while_value = 1;` parses as `while` + `_value`, and
+Both mechanisms exist on purpose and are **not** interchangeable. Do not
+"consistency-fix" one into the other; each is a regression in the other's
+territory.
+
+| | `keyword('Word')` | regex char class `/[wW][oO].../` |
+|---|---|---|
+| **use when** | the token competes with `identifier` in the same position, **or** a `.scm` query matches its literal | operator or SQL token that cannot collide with an identifier, or whose node name is uniform anyway |
+| **gives you** | eligible for keyword extraction; stable node name via the alias | full 2^n casing coverage; one compact DFA |
+| **costs you** | only 4 casings (see above) | no keyword extraction; node name varies with the matched text |
+
+**Never** write a keyword as `token(prec(1, /[rR][eE].../))`. Such a token is
+not eligible for keyword extraction, and the explicit precedence overrides
+longest-match, so it out-lexes a *longer* identifier wherever the keyword is
+valid: `while_value = 1;` parses as `while` + `_value`, and
 `<cfset x = functionalImpact>` as `function` + `alImpact`.
 
-This does **not** apply to multi-word tokens such as `static get` or
-`does not contain`, nor to the SQL keyword tables in the cfquery grammar. Those
-contain mandatory whitespace, or are declared without explicit precedence, so
-longest-match still wins and identifiers like `orders` or `selected_items` are
-safe.
+The regexes currently in the grammar are all correctly on the regex side:
+
+- **word operators** (`eq`, `is`, `neq`, `ct`, `gt`, `gte`, `contains`,
+  `does not contain`, …) — bare regexes with no explicit precedence, so
+  longest-match protects identifiers. Verified: `containsKey`, `eqValue`,
+  `isValue`, `gteLimit`, `notFlag`, `modValue`, `greaterThanY` all parse
+  correctly. No query matches an operator literal, so the alias would buy
+  nothing, and converting would *lose* casings that work today such as `eQ`
+  and `DoEs NoT cOnTaIn`.
+- **SQL tables** (`query_keyword`, `query_function_name`) — `token(choice(...))`
+  with no precedence, and every alternative collapses into the single
+  `query_keyword` node, so the node name does not vary by which alternative
+  matched. Identifiers like `orders` and `selected_items` are safe.
+- **multi-word tokens** (`static get`, `does not contain`) — contain mandatory
+  `\s+`, so they can never be a subset of the identifier token and the
+  collision hazard does not exist.
+
+Two entries sit deliberately on the other side: `$._kw_instanceof` and
+`$._kw_in` are `keyword()` rules *inside* the operator table, because unlike
+`eq` or `ct` they are real keywords that also appear in identifier position
+elsewhere and are matched by the highlight queries.
 
 Covered by `cfml/test/corpus/case_insensitivity.txt`,
 `cfscript/test/corpus/case_insensitivity.txt` and the keyword-prefix tests in
