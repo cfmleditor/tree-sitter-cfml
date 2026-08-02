@@ -50,10 +50,6 @@
         "named": true
       },
       {
-        "type": "pair",
-        "named": true
-      },
-      {
         "type": "primary_expression",
         "named": true
       },
@@ -139,10 +135,6 @@
       },
       {
         "type": "member_expression",
-        "named": true
-      },
-      {
-        "type": "meta_property",
         "named": true
       },
       {
@@ -295,6 +287,10 @@
           "named": true
         },
         {
+          "type": "pair",
+          "named": true
+        },
+        {
           "type": "spread_element",
           "named": true
         }
@@ -311,6 +307,10 @@
       "types": [
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "pair",
           "named": true
         },
         {
@@ -797,10 +797,6 @@
           },
           {
             "type": "hash_expression",
-            "named": true
-          },
-          {
-            "type": "import",
             "named": true
           },
           {
@@ -2351,11 +2347,6 @@
     }
   },
   {
-    "type": "import",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "import_attribute",
     "named": true,
     "fields": {},
@@ -2513,10 +2504,6 @@
           {
             "type": "expression",
             "named": true
-          },
-          {
-            "type": "import",
-            "named": true
           }
         ]
       },
@@ -2555,11 +2542,6 @@
         ]
       }
     }
-  },
-  {
-    "type": "meta_property",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "method_definition",
@@ -4986,6 +4968,11 @@
     }
   },
   {
+    "type": "super",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "switch_body",
     "named": true,
     "fields": {},
@@ -5113,6 +5100,11 @@
     }
   },
   {
+    "type": "this",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "throw_statement",
     "named": true,
     "fields": {},
@@ -5120,6 +5112,10 @@
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "arguments",
+          "named": true
+        },
         {
           "type": "expression",
           "named": true
@@ -5619,10 +5615,6 @@
     "named": true
   },
   {
-    "type": "cf_var",
-    "named": true
-  },
-  {
     "type": "component",
     "named": false
   },
@@ -5717,10 +5709,6 @@
   {
     "type": "logical_or",
     "named": true
-  },
-  {
-    "type": "meta",
-    "named": false
   },
   {
     "type": "new",
@@ -5852,14 +5840,10 @@
   },
   {
     "type": "super",
-    "named": true
-  },
-  {
-    "type": "switch",
     "named": false
   },
   {
-    "type": "target",
+    "type": "switch",
     "named": false
   },
   {
@@ -5868,7 +5852,7 @@
   },
   {
     "type": "this",
-    "named": true
+    "named": false
   },
   {
     "type": "throw",

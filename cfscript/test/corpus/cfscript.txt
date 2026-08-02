@@ -963,20 +963,19 @@ private function verifyPacket(required struct samlPacket){
                     (identifier)
                     (property_identifier))))))))
       (throw_statement
-        (parenthesized_expression
-          (sequence_expression
-            (pair
-              (property_identifier)
-              (string
-                (string_fragment)))
-            (pair
-              (property_identifier)
-              (string
-                (string_fragment)
-                (hash_expression
-                  (member_expression
-                    (identifier)
-                    (property_identifier))))))))
+        (arguments
+          (pair
+            (property_identifier)
+            (string
+              (string_fragment)))
+          (pair
+            (property_identifier)
+            (string
+              (string_fragment)
+              (hash_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier)))))))
       (return_statement
         (member_expression
           (identifier)
@@ -2038,3 +2037,212 @@ local.rv &= "##" & arguments.anchor;
         right: (member_expression
           object: (identifier)
           property: (property_identifier))))))
+
+===================================
+keywords as variable names
+===================================
+package = "com.example";
+remote = getUrl();
+abstract = true;
+final = getValue();
+var package = "com.example";
+var remote = getUrl();
+var abstract = true;
+var final = getValue();
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      left: (identifier)
+      right: (string
+        (string_fragment))))
+  (expression_statement
+    (assignment_expression
+      left: (identifier)
+      right: (call_expression
+        function: (identifier)
+        arguments: (arguments))))
+  (expression_statement
+    (assignment_expression
+      left: (identifier)
+      right: (true)))
+  (expression_statement
+    (assignment_expression
+      left: (identifier)
+      right: (call_expression
+        function: (identifier)
+        arguments: (arguments))))
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      value: (string
+        (string_fragment))))
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      value: (call_expression
+        function: (identifier)
+        arguments: (arguments))))
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      value: (true)))
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      value: (call_expression
+        function: (identifier)
+        arguments: (arguments)))))
+
+===================================
+new as property name
+===================================
+obj.new;
+obj.new();
+obj.new = "test";
+var x = obj.new.toString();
+---
+
+(program
+  (expression_statement
+    (member_expression
+      object: (identifier)
+      property: (property_identifier)))
+  (expression_statement
+    (call_expression
+      function: (member_expression
+        object: (identifier)
+        property: (property_identifier))
+      arguments: (arguments)))
+  (expression_statement
+    (assignment_expression
+      left: (member_expression
+        object: (identifier)
+        property: (property_identifier))
+      right: (string
+        (string_fragment))))
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      value: (call_expression
+        function: (member_expression
+          object: (member_expression
+            object: (identifier)
+            property: (property_identifier))
+          property: (property_identifier))
+        arguments: (arguments)))))
+
+===================================
+pair syntax in named function arguments
+===================================
+foo(arg1: "value1", arg2: 42);
+---
+
+(program
+  (expression_statement
+    (call_expression
+      function: (identifier)
+      arguments: (arguments
+        (pair
+          key: (property_identifier)
+          value: (string
+            (string_fragment)))
+        (pair
+          key: (property_identifier)
+          value: (number))))))
+
+===================================
+pair syntax in object literal
+===================================
+var s = {name: "Alice", age: 30};
+---
+
+(program
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      value: (object
+        (pair
+          key: (property_identifier)
+          value: (string
+            (string_fragment)))
+        (pair
+          key: (property_identifier)
+          value: (number))))))
+
+===================================
+pair syntax in ordered struct array
+===================================
+var s = [name: "Alice", age: 30];
+---
+
+(program
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      value: (array
+        (pair
+          key: (property_identifier)
+          value: (string
+            (string_fragment)))
+        (pair
+          key: (property_identifier)
+          value: (number))))))
+
+===================================
+equals syntax in named function arguments
+===================================
+foo(arg1 = "value1", arg2 = 42);
+---
+
+(program
+  (expression_statement
+    (call_expression
+      function: (identifier)
+      arguments: (arguments
+        (assignment_expression
+          left: (identifier)
+          right: (string
+            (string_fragment)))
+        (assignment_expression
+          left: (identifier)
+          right: (number))))))
+
+===================================
+equals syntax in object literal
+===================================
+var s = {name = "Alice", age = 30};
+---
+
+(program
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      value: (object_pattern
+        (object_assignment_pattern
+          left: (shorthand_property_identifier_pattern)
+          right: (string
+            (string_fragment)))
+        (object_assignment_pattern
+          left: (shorthand_property_identifier_pattern)
+          right: (number))))))
+
+===================================
+equals syntax in array
+===================================
+var s = [name = "Alice", age = 30];
+---
+
+(program
+  (variable_declaration
+    (variable_declarator
+      name: (identifier)
+      value: (array
+        (assignment_expression
+          left: (identifier)
+          right: (string
+            (string_fragment)))
+        (assignment_expression
+          left: (identifier)
+          right: (number))))))

@@ -19,6 +19,8 @@ module.exports = function defineGrammar(dialect) {
       /[\s\p{Zs}\uFEFF\u2028\u2029\u2060\u200B]/,
     ],
 
+    word: ($) => $.identifier,
+
     // @ts-ignore
     externals: $ => [
       $._automatic_semicolon,
@@ -99,6 +101,41 @@ module.exports = function defineGrammar(dialect) {
     ],
 
     inline: ($) => [
+      $._kw_abstract,
+      $._kw_break,
+      $._kw_case,
+      $._kw_catch,
+      $._kw_component,
+      $._kw_continue,
+      $._kw_debugger,
+      $._kw_default,
+      $._kw_do,
+      $._kw_else,
+      $._kw_export,
+      $._kw_final,
+      $._kw_finally,
+      $._kw_for,
+      $._kw_function,
+      $._kw_get,
+      $._kw_if,
+      $._kw_import,
+      $._kw_in,
+      $._kw_instanceof,
+      $._kw_let,
+      $._kw_new,
+      $._kw_package,
+      $._kw_private,
+      $._kw_public,
+      $._kw_remote,
+      $._kw_return,
+      $._kw_set,
+      $._kw_static,
+      $._kw_switch,
+      $._kw_throw,
+      $._kw_try,
+      $._kw_var,
+      $._kw_while,
+      $._kw_with,
       $._call_signature,
       $._formal_parameter,
       $._expressions,
@@ -139,14 +176,13 @@ module.exports = function defineGrammar(dialect) {
       ['member', 'new', 'call', $.expression],
       ['declaration', 'literal'],
       [$.primary_expression, $.statement_block, 'object'],
-      [$.meta_property, $.import],
-      [$.import_statement, $.import],
       // [$.export_statement, $.primary_expression],
       // [$.lexical_declaration, $.primary_expression],
     ],
 
     conflicts: ($) => [
       [$.variable_declaration, $.access_type],
+      [$.variable_declaration, $.primary_expression],
       [$.object, $.object_pattern],
       [$.primary_expression, $.pattern],
       [$.assignment_expression, $.pattern],
@@ -165,31 +201,29 @@ module.exports = function defineGrammar(dialect) {
       [$.binary_expression, $._initializer],
       [$.assignment_expression, $._hash_always_eval],
       [$.method_definition, $.access_type],
-      [$.expression, $._property_name],
-      [$.expression, $.object],
-      [$.binary_expression, $.pair],
-      [$.member_expression, $.pair],
-      [$.subscript_expression, $.pair],
-      [$.member_expression, $.subscript_expression, $.pair],
-      [$.update_expression, $.pair],
-      [$.ternary_expression, $.pair],
-      [$.elvis_expression, $.pair],
-
+      // `pair` (expression ':' expression) is reachable from `arguments` and
+      // `array`, so `case <expr> :` is ambiguous with the start of a pair.
+      [$.switch_case, $.expression],
       [$.expression, $.parenthesized_expression],
+      [$.primary_expression, $.function_expression, $._property_name],
+      [$.function_expression, $.pattern],
+      [$.primary_expression, $.function_expression],
       [$.expression, $.expression_statement],
       [$.expression, $.arguments],
+      // `throw ( x )` is ambiguous between `arguments` and a parenthesized expression.
+      [$.parenthesized_expression, $.expression, $.arguments],
+      [$.parenthesized_expression, $.arguments],
+      [$.sequence_expression, $.arguments],
       [$.expression, $.assignment_expression],
       [$.expression, $.return_statement],
       [$.expression, $.throw_statement],
       [$.expression, $.for_statement],
       [$.expression, $._cf_tag_expression],
-      [$.expression, $.assignment_expression, $._property_name],
       [$.expression, $.function_expression],
       [$.assignment_expression, $._property_name],
       [$.object_assignment_pattern, $._property_name],
       [$.object_assignment_pattern, $.assignment_expression, $._property_name],
 
-      [$.switch_case, $.expression, $._property_name],
       [$.call_expression, $._property_name],
       [$._for_header, $.expression],
       [$.parameter_attribute, $.assignment_expression, $.pattern],
@@ -221,7 +255,7 @@ module.exports = function defineGrammar(dialect) {
         ),
         xml_decl: $ => seq(
           '<?',
-          keyword('xml'),
+          $._kw_xml,
           repeat($.tag_attributes),
           '?>',
         ),
@@ -251,11 +285,11 @@ module.exports = function defineGrammar(dialect) {
         $._start_cf_set_name,
         choice(
           seq(
-            alias(choice('var', 'VAR', 'Var', 'vAR', 'vAr', 'vaR', 'VaR', 'VAr'), $.cf_var),
+            alias($._kw_var, $.cf_var),
             $._cf_tag_expression,
           ),
           seq(
-            alias(choice('final', 'FINAL', 'Final'), $.cf_var),
+            alias($._kw_final, $.cf_var),
             $._cf_tag_expression,
           ),
           $._cf_tag_expression,
@@ -288,8 +322,8 @@ module.exports = function defineGrammar(dialect) {
         ]),
       ),
 
-      _cf_open_tag: $ => prec.right(1, keyword('<cf')),
-      _cf_close_tag: $ => prec.right(1, keyword('</cf')),
+      _cf_open_tag: $ => prec.right(1, keyword('<Cf', '<cf')),
+      _cf_close_tag: $ => prec.right(1, keyword('</Cf', '</cf')),
 
       cf_tag_attributes: $ => choice(
         $.cf_attribute,
@@ -1024,10 +1058,8 @@ module.exports = function defineGrammar(dialect) {
       // Import declarations
       //
 
-      import: (_) => token('import'),
-
       import_statement: ($) => seq(
-        'import',
+        $._kw_import,
         choice(
           seq($.import_clause, $._from_clause),
           field('source', $.string),
@@ -1081,7 +1113,7 @@ module.exports = function defineGrammar(dialect) {
         ),
       ),
 
-      import_attribute: ($) => seq('with', $.object),
+      import_attribute: ($) => seq($._kw_with, $.object),
 
       //
       // Statements
@@ -1118,7 +1150,7 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       variable_declaration: ($) => seq(
-        choice('var', 'final', seq('final', 'var'), seq('var', 'final')),
+        choice($._kw_var, $._kw_final, seq($._kw_final, $._kw_var), seq($._kw_var, $._kw_final)),
         commaSep1($.variable_declarator),
         $._semicolon,
       ),
@@ -1135,23 +1167,23 @@ module.exports = function defineGrammar(dialect) {
         optional($._automatic_semicolon),
       )),
 
-      else_clause: ($) => seq('else', $.statement),
+      else_clause: ($) => seq($._kw_else, $.statement),
 
       if_statement: ($) => prec.right(seq(
-        'if',
+        $._kw_if,
         field('condition', $.parenthesized_expression),
         field('consequence', $.statement),
         optional(field('alternative', $.else_clause)),
       )),
 
       switch_statement: ($) => seq(
-        'switch',
+        $._kw_switch,
         field('value', $.parenthesized_expression),
         field('body', $.switch_body),
       ),
 
       for_statement: ($) => seq(
-        'for',
+        $._kw_for,
         '(',
         choice(
           field('initializer', $.variable_declaration),
@@ -1168,7 +1200,7 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       for_in_statement: ($) => seq(
-        'for',
+        $._kw_for,
         $._for_header,
         field('body', $.statement),
       ),
@@ -1181,7 +1213,7 @@ module.exports = function defineGrammar(dialect) {
             $.parenthesized_expression,
           )),
           seq(
-            field('kind', 'var'),
+            field('kind', $._kw_var),
             field('left', choice(
               $.identifier,
               $._destructuring_pattern,
@@ -1197,64 +1229,67 @@ module.exports = function defineGrammar(dialect) {
             optional($._automatic_semicolon),
           ),
         ),
-        field('operator', choice('in', 'of')),
+        field('operator', choice($._kw_in, 'of')),
         field('right', $._expressions),
         ')',
       ),
 
       while_statement: ($) => seq(
-        'while',
+        $._kw_while,
         field('condition', $.parenthesized_expression),
         field('body', $.statement),
       ),
 
       do_statement: ($) => prec.right(seq(
-        'do',
+        $._kw_do,
         field('body', $.statement),
-        'while',
+        $._kw_while,
         field('condition', $.parenthesized_expression),
         optional($._semicolon),
       )),
 
       try_statement: ($) => seq(
-        'try',
+        $._kw_try,
         field('body', $.statement_block),
         optional(field('handler', $.catch_clause)),
         optional(field('finalizer', $.finally_clause)),
       ),
 
       with_statement: ($) => seq(
-        'with',
+        $._kw_with,
         field('object', $.parenthesized_expression),
         field('body', $.statement),
       ),
 
       break_statement: ($) => seq(
-        'break',
+        $._kw_break,
         field('label', optional(alias($.identifier, $.statement_identifier))),
         $._semicolon,
       ),
 
       continue_statement: ($) => seq(
-        'continue',
+        $._kw_continue,
         field('label', optional(alias($.identifier, $.statement_identifier))),
         $._semicolon,
       ),
 
       debugger_statement: ($) => seq(
-        'debugger',
+        $._kw_debugger,
         $._semicolon,
       ),
 
       return_statement: ($) => seq(
-        'return',
+        $._kw_return,
         optional($._expressions),
         $._semicolon,
       ),
 
+      // `throw` takes an expression (`throw "msg";`) but is also called with
+      // named arguments (`throw(type="x", message="y")` / `throw(type:"x")`).
+      // `pair` is only reachable from `arguments`, so accept those explicitly.
       throw_statement: ($) => seq(
-        'throw',
-        $._expressions,
+        $._kw_throw,
+        choice(prec.dynamic(1, $.arguments), $._expressions),
         $._semicolon,
       ),
 
@@ -1277,20 +1312,20 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       switch_case: ($) => seq(
-        'case',
+        $._kw_case,
         field('value', $._expressions),
         ':',
         field('body', repeat($.statement)),
       ),
 
       switch_default: ($) => seq(
-        'default',
+        $._kw_default,
         ':',
         field('body', repeat($.statement)),
       ),
 
       catch_clause: ($) => seq(
-        'catch',
+        $._kw_catch,
         optional(
           seq(
             '(',
@@ -1303,7 +1338,7 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       finally_clause: ($) => seq(
-        'finally',
+        $._kw_finally,
         field('body', $.statement_block),
       ),
 
@@ -1333,7 +1368,6 @@ module.exports = function defineGrammar(dialect) {
         $.update_expression,
         $.new_expression,
         $._hash_always_eval,
-        $.pair,
         $.object_pattern,
       ),
 
@@ -1356,7 +1390,6 @@ module.exports = function defineGrammar(dialect) {
         $.ordered_struct,
         $.function_expression,
         $.arrow_function,
-        $.meta_property,
         $.call_expression,
       ),
 
@@ -1409,6 +1442,7 @@ module.exports = function defineGrammar(dialect) {
         '[',
         commaSep(optional(choice(
           $.expression,
+          $.pair,
           $.spread_element,
         ))),
         ']',
@@ -1431,8 +1465,15 @@ module.exports = function defineGrammar(dialect) {
         field('property', alias($.identifier, $.property_identifier)),
       )),
 
+      // NOTE: every `function` literal in this file deliberately stays plain
+      // (case-sensitive), unlike the other statement keywords and unlike
+      // cfscript. `function` is also a `parameter_type`, and via
+      // `function_declaration` that puts cf tag expressions in a state where
+      // the `token(prec(1, ...))` keyword form out-lexes a longer identifier —
+      // `<cfset x = functionalImpact>` then parses as `function` + `alImpact`.
+      // Covered by cfml/test/corpus/case_insensitivity.txt.
       function_expression: ($) => prec('literal', seq(
-        'function',
+        $._kw_function,
         field('name', optional($.identifier)),
         $._call_signature,
         repeat($.assignment_expression),
@@ -1440,13 +1481,13 @@ module.exports = function defineGrammar(dialect) {
       )),
 
       access_type: ($) => choice(
-        'public',
-        'private',
-        'package',
-        'remote',
-        'static',
-        'final',
-        'abstract',
+        $._kw_public,
+        $._kw_private,
+        $._kw_package,
+        $._kw_remote,
+        $._kw_static,
+        $._kw_final,
+        $._kw_abstract,
       ),
 
       parameter_type: ($) => choice(
@@ -1456,8 +1497,8 @@ module.exports = function defineGrammar(dialect) {
 
       function_declaration: ($) => prec.right('declaration', seq(
         optional($.access_type),
-        optional(choice('function', $.path, $.identifier)),
-        'function',
+        optional(choice($._kw_function, $.path, $.identifier)),
+        $._kw_function,
         field('name', $.identifier),
         $._call_signature,
         repeat($.assignment_expression),
@@ -1484,13 +1525,13 @@ module.exports = function defineGrammar(dialect) {
       _call_signature: ($) => field('parameters', $.formal_parameters),
       _formal_parameter: ($) => choice(
         seq(
-          optional('required'),
+          optional(keyword('Required')),
           $.parameter_type,
           optional(choice($.pattern, $.assignment_pattern)),
           repeat($.parameter_attribute),
         ),
         seq(
-          optional('required'),
+          optional(keyword('Required')),
           choice($.pattern, $.assignment_pattern),
           repeat($.parameter_attribute),
         ),
@@ -1507,7 +1548,7 @@ module.exports = function defineGrammar(dialect) {
 
       call_expression: ($) => choice(
         prec('call', seq(
-          field('function', choice($.primary_expression, $._hash_always_eval, $.import)),
+          field('function', choice($.primary_expression, $._hash_always_eval)),
           field('arguments', $.arguments),
         )),
         prec('member', seq(
@@ -1518,20 +1559,18 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       new_expression: ($) => prec.right('new', seq(
-        'new',
+        $._kw_new,
         field('constructor', choice($.primary_expression, $.new_expression)),
         field('arguments', optional(prec.dynamic(1, $.arguments))),
       )),
 
       member_expression: $ => prec('member', seq(
-        field('object', choice($.expression, $.primary_expression, $.import)),
+        field('object', choice($.expression, $.primary_expression)),
         choice('.', field('optional_chain', $.optional_chain), field('static_chain', $.static_chain)),
         field('property', choice(
           $.private_property_identifier,
-          alias(
-            $.identifier,
-            $.property_identifier,
-          ),
+          alias($.identifier, $.property_identifier),
+          alias($._kw_new, $.property_identifier),
         )),
       )),
 
@@ -1638,7 +1677,7 @@ module.exports = function defineGrammar(dialect) {
           [/[nN][eE][qQ]/, 'binary_equality'],
           [/[cC][oO][nN][tT][aA][iI][nN][sS]/, 'binary_equality'],
           [/[cC][tT]/, 'binary_equality'],
-          [/[dD][oO][eE][sS]\s[nN][oO][tT]\s[cC][oO][nN][tT][aA][iI][nN]/, 'binary_equality'],
+          [/[dD][oO][eE][sS]\s+[nN][oO][tT]\s+[cC][oO][nN][tT][aA][iI][nN]/, 'binary_equality'],
           [/[nN][cC][tT]/, 'binary_equality'],
           ['>=', 'binary_relation'],
           [/[gG][tT][eE]/, 'binary_relation'],
@@ -1651,8 +1690,8 @@ module.exports = function defineGrammar(dialect) {
           [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_relation'],
           [/[nN][oO][tT]\s+[eE][qQ][uU][aA][lL]/, 'binary_equality'],
           ['??', 'ternary'],
-          ['instanceof', 'binary_relation'],
-          ['in', 'binary_relation'],
+          [$._kw_instanceof, 'binary_relation'],
+          [$._kw_in, 'binary_relation'],
         ].map(([operator, precedence, associativity]) =>
         // @ts-ignore
           (associativity === 'right' ? prec.right : prec.left)(precedence, seq(
@@ -1832,13 +1871,14 @@ module.exports = function defineGrammar(dialect) {
         return token(seq('~', alpha, repeat(alphanumeric)));
       },
 
-      meta_property: (_) => choice(seq('new', '.', 'target'), seq('import', '.', 'meta')),
 
-      this: (_) => 'this',
-      super: (_) => 'super',
-      true: (_) => 'true',
-      false: (_) => 'false',
-      null: (_) => 'null',
+      this: (_) => keyword('This'),
+      super: (_) => keyword('Super'),
+      // SQL uses TRUE/FALSE/NULL as ordinary identifiers inside <cfquery>, so
+      // only the script dialects lex them as literals in any casing.
+      true: (_) => dialect === 'cfquery' ? 'true' : keyword('True'),
+      false: (_) => dialect === 'cfquery' ? 'false' : keyword('False'),
+      null: (_) => dialect === 'cfquery' ? 'null' : keyword('Null'),
       undefined: (_) => 'undefined',
 
       //
@@ -1847,7 +1887,7 @@ module.exports = function defineGrammar(dialect) {
 
       arguments: ($) => seq(
         '(',
-        commaSep(optional(choice($.expression, $._hash_always_eval, $.spread_element))),
+        commaSep(optional(choice($.expression, $.pair, $._hash_always_eval, $.spread_element))),
         ')',
       ),
 
@@ -1879,7 +1919,7 @@ module.exports = function defineGrammar(dialect) {
 
       field_definition: ($) => seq(
         repeat(field('decorator', $.decorator)),
-        optional('static'),
+        optional($._kw_static),
         field('property', $._property_name),
         optional($._initializer),
       ),
@@ -1909,8 +1949,8 @@ module.exports = function defineGrammar(dialect) {
       method_definition: ($) => seq(
         repeat(field('decorator', $.decorator)),
         optional(choice(
-          'static',
-          alias(token(seq('static', /\s+/, 'get', /\s*\n/)), 'static get'),
+          $._kw_static,
+          alias(token(seq(/[sS][tT][aA][tT][iI][cC]/, /\s+/, /[gG][eE][tT]/, /\s*\n/)), 'static get'),
         )),
         // optional('async'),
         optional(choice('get', 'set', '*')),
@@ -1971,13 +2011,20 @@ module.exports = function defineGrammar(dialect) {
         ']',
       ),
 
-      _reserved_identifier: (_) => choice(
-        'get',
-        'set',
-        'static',
-        'export',
-        'let',
-        'component',
+      _reserved_identifier: ($) => choice(
+        $._kw_get,
+        $._kw_set,
+        $._kw_static,
+        $._kw_export,
+        $._kw_let,
+        $._kw_component,
+        $._kw_public,
+        $._kw_private,
+        $._kw_package,
+        $._kw_remote,
+        $._kw_abstract,
+        $._kw_final,
+        $._kw_function,
       ),
 
       _semicolon: ($) => choice($._automatic_semicolon, ';'),
@@ -1985,31 +2032,99 @@ module.exports = function defineGrammar(dialect) {
       /*
         END SCRIPT BASED RULES
       */
+      // Keyword tokens. Defined once here and referenced as `$._kw_<word>`
+      // so a keyword can never be spelled two different ways in two rules —
+      // that divergence is what previously produced two competing tokens for
+      // `component`. Hidden (leading `_`) so they add no node to the tree.
+      _kw_abstract: (_) => keyword('Abstract'),
+      _kw_break: (_) => keyword('Break'),
+      _kw_case: (_) => keyword('Case'),
+      _kw_catch: (_) => keyword('Catch'),
+      _kw_component: (_) => keyword('Component'),
+      _kw_continue: (_) => keyword('Continue'),
+      _kw_debugger: (_) => keyword('Debugger'),
+      _kw_default: (_) => keyword('Default'),
+      _kw_do: (_) => keyword('Do'),
+      _kw_else: (_) => keyword('Else'),
+      _kw_export: (_) => keyword('Export'),
+      _kw_final: (_) => keyword('Final'),
+      _kw_finally: (_) => keyword('Finally'),
+      _kw_for: (_) => keyword('For'),
+      _kw_function: (_) => keyword('Function'),
+      _kw_get: (_) => keyword('Get'),
+      _kw_if: (_) => keyword('If'),
+      _kw_import: (_) => keyword('Import'),
+      _kw_in: (_) => keyword('In'),
+      _kw_instanceof: (_) => keyword('Instanceof'),
+      _kw_let: (_) => keyword('Let'),
+      _kw_new: (_) => keyword('New'),
+      _kw_package: (_) => keyword('Package'),
+      _kw_private: (_) => keyword('Private'),
+      _kw_public: (_) => keyword('Public'),
+      _kw_remote: (_) => keyword('Remote'),
+      _kw_return: (_) => keyword('Return'),
+      _kw_set: (_) => keyword('Set'),
+      _kw_static: (_) => keyword('Static'),
+      _kw_switch: (_) => keyword('Switch'),
+      _kw_throw: (_) => keyword('Throw'),
+      _kw_try: (_) => keyword('Try'),
+      _kw_var: (_) => keyword('Var'),
+      _kw_while: (_) => keyword('While'),
+      _kw_with: (_) => keyword('With'),
+      _kw_xml: ($) => keyword('Xml'),
+
     },
   });
 
   /**
+   * CFML keywords are case-insensitive. Enumerate the accepted casings as plain
+   * string literals and alias back to the canonical spelling, so node names and
+   * `.scm` queries stay stable regardless of the casing in the source.
+   *
+   * String literals (not regexes) matter here: they stay eligible for
+   * tree-sitter's keyword extraction, so `while_value` still lexes as one
+   * identifier. A `token(prec(1, /[wW].../))` regex would out-lex the longer
+   * identifier and split it.
+   *
    * @param {string} word
    */
-  function keyword(word) {
-    return alias(reserved(caseInsensitive(word)), word);
+  function keyword(word, nodeName = lowerFirst(word)) {
+    return alias(choice(...casings(word)), nodeName);
   }
 
   /**
-   * @param {string | RegExp} regex
+   * Casings accepted for a keyword. Keywords are written in PascalCase
+   * (`Break`, `QueryExecute`, `<Cf`) so all four real-world forms fall out of the
+   * one spelling: PascalCase, lowercase, UPPERCASE and camelCase.
+   *
+   * Interior mixed casing such as `reTURN` is deliberately not matched — it does
+   * not occur in real code, and enumerating 2^n variants inflates the lexer.
+   *
+   * @param {string} word
+   * @returns {string[]}
    */
-  function reserved(regex) {
-    return token(prec(1, new RegExp(regex)));
+  function casings(word) {
+    return [...new Set([
+      word,
+      word.toLowerCase(),
+      word.toUpperCase(),
+      lowerFirst(word),
+    ])];
   }
 
   /**
+   * Lowercase the first character. This is the canonical node name a keyword is
+   * aliased to, which keeps `.scm` queries matching regardless of the casing in
+   * the source. Tokens starting with punctuation (`<Cf`) must pass `nodeName`
+   * explicitly, since lowercasing `<` is a no-op.
+   *
    * @param {string} word
+   * @returns {string}
    */
-  function caseInsensitive(word) {
-    return word.split('')
-      .map(letter => `[${letter}${letter.toUpperCase()}]`)
-      .join('');
+  function lowerFirst(word) {
+    return word.charAt(0).toLowerCase() + word.slice(1);
   }
+
 
   /**
    * @param {Rule} rule

@@ -597,7 +597,7 @@ mixed cfset, cfscript, cfoutput, and complex attribute hashes
   (cf_set_tag
     (assignment_expression
       (identifier)
-      (identifier))
+      (true))
     (cf_selfclose_void_tag_end
       (self_closing_tag_delimiter)))
   (element

@@ -1,0 +1,528 @@
+===================================
+cf_var keyword casing
+===================================
+<cfset var a = 1>
+<cfset VAR b = 2>
+<cfset Var c = 3>
+
+---
+
+(program
+  (cf_set_tag
+    (cf_var)
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (cf_var)
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (cf_var)
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end)))
+
+===================================
+identifiers beginning with a keyword are not split
+===================================
+<cfset a = functionalImpact>
+<cfset b = returnValue>
+<cfset c = ifBlank>
+<cfset d = forEach>
+<cfset e = varName>
+<cfset f = newItem>
+<cfset g = includeAll>
+<cfset h = importData>
+<cfset i = whileLoop>
+<cfset j = tryIt>
+<cfset k = structNew>
+<cfset l = propertyList>
+<cfset m = paramValue>
+<cfset n = caseSensitive>
+<cfset o = defaultValue>
+<cfset p = switchBoard>
+<cfset q = continueFlag>
+<cfset r = breakPoint>
+<cfset s = throwable>
+<cfset t = catchAll>
+<cfset u = finallyBlock>
+<cfset v = interfaceName>
+<cfset w = instanceofCheck>
+<cfset x = withItem>
+<cfset y = elseWhere>
+<cfset z = doThing>
+
+---
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (cf_selfclose_void_tag_end)))
+
+===================================
+keyword-prefixed identifiers as call targets and members
+===================================
+<cfset model = functionalImpactModel(context=ARGUMENTS.context)>
+<cfset var functionalImpactData = structNew()>
+<cfset returnValue = obj.functionalImpact()>
+
+---
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (assignment_expression
+            (identifier)
+            (member_expression
+              (identifier)
+              (property_identifier))))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (cf_var)
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments)))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments)))
+    (cf_selfclose_void_tag_end)))
+
+===================================
+VARIABLES scope is not the var keyword
+===================================
+<cfset VARIABLES.test = StructNew()>
+<cfset variables.other = 1>
+<cfset var test = StructNew()>
+
+---
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (call_expression
+        (identifier)
+        (arguments)))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (number))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (cf_var)
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments)))
+    (cf_selfclose_void_tag_end)))
+
+===================================
+cffunction attribute values that look like keywords
+===================================
+<cffunction name="f" access="public" returntype="any" output="no">
+	<cfargument name="context" type="any" required="true" />
+	<cfreturn 1>
+</cffunction>
+<cffunction name="g" access="private" returntype="struct">
+	<cfreturn {}>
+</cffunction>
+<cffunction name="h" access="remote" returntype="void"></cffunction>
+
+---
+
+(program
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_selfclose_tag
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_selfclose_void_tag_end
+        (self_closing_tag_delimiter)))
+    (cf_return_tag
+      (number)
+      (cf_selfclose_void_tag_end)))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_return_tag
+      (object_pattern)
+      (cf_selfclose_void_tag_end)))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))))
+
+===================================
+keyword-prefixed identifiers at expression start
+===================================
+<cfset while_value = 1>
+<cfset function_name = 2>
+<cfset return_code = 3>
+<cfset var_holder = 4>
+<cfset if_block = 5>
+
+---
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end)))
+
+===================================
+keywords inside strings and hash expressions
+===================================
+<cfset x = "a function b">
+<cfoutput>#functionalImpact#</cfoutput>
+<cfif returnValue GT 1><cfset y = 1></cfif>
+
+---
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (cf_selfclose_void_tag_end))
+  (cf_output_tag
+    (hash_expression
+      (identifier)))
+  (cf_if_tag
+    (binary_expression
+      (identifier)
+      (number))
+    (cf_set_tag
+      (assignment_expression
+        (identifier)
+        (number))
+      (cf_selfclose_void_tag_end))))
+
+===================================
+uppercase value literals in cfset
+===================================
+<CFSET result = TRUE />
+<cfset a = False>
+<cfset b = NULL>
+<cfset c = THIS.foo>
+
+---
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (true))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (false))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (null))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (this)
+        (property_identifier)))
+    (cf_selfclose_void_tag_end)))
+
+===================================
+cf tag name casings
+===================================
+<cfif x><cfelse></cfif>
+<Cfif x><Cfelse></Cfif>
+<CFIF x><CFELSE></CFIF>
+
+---
+
+(program
+  (cf_if_tag
+    (identifier)
+    (cf_if_alt
+      (cf_else_tag)))
+  (cf_if_tag
+    (identifier)
+    (cf_if_alt
+      (cf_else_tag)))
+  (cf_if_tag
+    (identifier)
+    (cf_if_alt
+      (cf_else_tag))))
+
+===================================
+cf tag name casings across tag types
+===================================
+<Cfset a = 1>
+<CFSET b = 2>
+<Cfoutput>#a#</Cfoutput>
+<Cfloop index="i" from="1" to="2"></Cfloop>
+<Cfdump var="#a#">
+<Cfabort>
+
+---
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end))
+  (cf_output_tag
+    (hash_expression
+      (identifier)))
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (cf_end_tag
+      (cf_tag_name)))
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (hash_expression
+          (identifier))))
+    (cf_selfclose_void_tag_end))
+  (cf_selfclose_tag
+    (cf_selfclose_void_tag_end)))

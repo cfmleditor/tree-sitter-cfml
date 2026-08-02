@@ -1763,3 +1763,87 @@ SELECT col1 - col2 / col3 FROM test
     right: (query_identifier))
   (query_keyword)
   (query_identifier))
+
+===================================
+identifiers beginning with a sql keyword
+===================================
+SELECT orders, notes, settings, topic, forms FROM assets
+
+---
+
+(program
+  (query_keyword)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier))
+
+===================================
+more identifiers beginning with a sql keyword
+===================================
+SELECT selected_items, inner_join, ontario, byline FROM allocation
+
+---
+
+(program
+  (query_keyword)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_comma)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier))
+
+===================================
+exact keyword as identifier needs escaping
+===================================
+SELECT [end], "end" FROM t
+
+---
+
+(program
+  (query_keyword)
+  (bracketed_query_value
+    (query_value))
+  (query_comma)
+  (double_quoted_query_value
+    (query_value))
+  (query_keyword)
+  (query_identifier))
+
+===================================
+sql true false null stay query identifiers
+===================================
+SELECT * FROM t WHERE a IS NOT NULL AND b = TRUE AND c = FALSE
+
+---
+
+(program
+  (query_keyword)
+  (query_star
+    (star))
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_assignment_expression
+    (query_identifier)
+    (query_identifier))
+  (query_keyword)
+  (query_assignment_expression
+    (query_identifier)
+    (query_identifier)))

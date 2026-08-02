@@ -256,7 +256,6 @@
   "set"
   "static"
   "switch"
-  "target"
   "throw"
   "try"
   "var"
