@@ -5195,6 +5195,11 @@
     "fields": {}
   },
   {
+    "type": "undefined",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "update_expression",
     "named": true,
     "fields": {
@@ -5868,7 +5873,7 @@
   },
   {
     "type": "undefined",
-    "named": true
+    "named": false
   },
   {
     "type": "var",

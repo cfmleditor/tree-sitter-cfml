@@ -1879,7 +1879,7 @@ module.exports = function defineGrammar(dialect) {
       true: (_) => dialect === 'cfquery' ? 'true' : keyword('True'),
       false: (_) => dialect === 'cfquery' ? 'false' : keyword('False'),
       null: (_) => dialect === 'cfquery' ? 'null' : keyword('Null'),
-      undefined: (_) => 'undefined',
+      undefined: (_) => keyword('Undefined'),
 
       //
       // Expression components
@@ -2055,7 +2055,7 @@ module.exports = function defineGrammar(dialect) {
       _kw_if: (_) => keyword('If'),
       _kw_import: (_) => keyword('Import'),
       _kw_in: (_) => keyword('In'),
-      _kw_instanceof: (_) => keyword('Instanceof'),
+      _kw_instanceof: (_) => keyword('InstanceOf', 'instanceof'),
       _kw_let: (_) => keyword('Let'),
       _kw_new: (_) => keyword('New'),
       _kw_package: (_) => keyword('Package'),
@@ -2086,7 +2086,9 @@ module.exports = function defineGrammar(dialect) {
    * identifier. A `token(prec(1, /[wW].../))` regex would out-lex the longer
    * identifier and split it.
    *
-   * @param {string} word
+   * @param {string} word PascalCase spelling of the keyword, e.g. `Break`.
+   * @param {string} [nodeName] Canonical node name. Defaults to `lowerFirst(word)`;
+   *   pass it explicitly for tokens starting with punctuation, e.g. `('<Cf', '<cf')`.
    */
   function keyword(word, nodeName = lowerFirst(word)) {
     return alias(choice(...casings(word)), nodeName);

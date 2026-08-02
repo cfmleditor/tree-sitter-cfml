@@ -699,17 +699,17 @@ module.exports = grammar({
     ),
 
     parameter_type: ($) => choice(
-      'any',
-      'string',
-      'numeric',
-      'xml',
-      'binary',
-      'boolean',
-      'date',
+      keyword('Any'),
+      keyword('String'),
+      keyword('Numeric'),
+      keyword('Xml'),
+      keyword('Binary'),
+      keyword('Boolean'),
+      keyword('Date'),
       $._kw_function,
-      'guid',
+      keyword('Guid'),
       keyword('Query'),
-      'void',
+      keyword('Void'),
       $.path,
       $.identifier,
     ),
@@ -1105,7 +1105,7 @@ module.exports = grammar({
     true: (_) => keyword('True'),
     false: (_) => keyword('False'),
     null: (_) => keyword('Null'),
-    undefined: (_) => token('undefined'),
+    undefined: (_) => keyword('Undefined'),
 
     //
     // Expression components
@@ -1364,7 +1364,7 @@ module.exports = grammar({
     _kw_import: (_) => keyword('Import'),
     _kw_in: (_) => keyword('In'),
     _kw_include: (_) => keyword('Include'),
-    _kw_instanceof: (_) => keyword('Instanceof'),
+    _kw_instanceof: (_) => keyword('InstanceOf', 'instanceof'),
     _kw_interface: (_) => keyword('Interface'),
     _kw_new: (_) => keyword('New'),
     _kw_of: (_) => keyword('Of'),
@@ -1386,11 +1386,13 @@ module.exports = grammar({
 });
 
 /**
- * CFML keywords are case-insensitive (`RETURN`, `Return` and `return` are all
- * valid). Match any casing but alias back to the lowercase form so node names
- * and queries stay stable.
+ * CFML keywords are case-insensitive. Keywords are written in PascalCase and
+ * matched in any of the accepted casings, then aliased back to a canonical node
+ * name so node names and `.scm` queries stay stable.
  *
- * @param {string} word
+ * @param {string} word PascalCase spelling of the keyword, e.g. `Break`.
+ * @param {string} [nodeName] Canonical node name. Defaults to `lowerFirst(word)`;
+ *   pass it explicitly for tokens starting with punctuation, e.g. `('<Cf', '<cf')`.
  */
 function keyword(word, nodeName = lowerFirst(word)) {
   return alias(choice(...casings(word)), nodeName);

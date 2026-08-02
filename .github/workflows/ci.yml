@@ -55,6 +55,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v5
+      # node-gyp needs Visual Studio Build Tools to compile the native addon;
+      # without this the job fails with "could not find a version of Visual
+      # Studio 2017 or newer to use".
+      - uses: microsoft/setup-msbuild@v2
       - uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'

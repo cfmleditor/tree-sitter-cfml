@@ -8182,7 +8182,25 @@
       "value": "null"
     },
     "undefined": {
-      "type": "STRING",
+      "type": "ALIAS",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "Undefined"
+          },
+          {
+            "type": "STRING",
+            "value": "undefined"
+          },
+          {
+            "type": "STRING",
+            "value": "UNDEFINED"
+          }
+        ]
+      },
+      "named": false,
       "value": "undefined"
     },
     "arguments": {
@@ -9359,7 +9377,7 @@
         "members": [
           {
             "type": "STRING",
-            "value": "Instanceof"
+            "value": "InstanceOf"
           },
           {
             "type": "STRING",
@@ -9368,6 +9386,10 @@
           {
             "type": "STRING",
             "value": "INSTANCEOF"
+          },
+          {
+            "type": "STRING",
+            "value": "instanceOf"
           }
         ]
       },

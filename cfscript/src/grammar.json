@@ -2514,31 +2514,157 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "Any"
+              },
+              {
+                "type": "STRING",
+                "value": "any"
+              },
+              {
+                "type": "STRING",
+                "value": "ANY"
+              }
+            ]
+          },
+          "named": false,
           "value": "any"
         },
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "String"
+              },
+              {
+                "type": "STRING",
+                "value": "string"
+              },
+              {
+                "type": "STRING",
+                "value": "STRING"
+              }
+            ]
+          },
+          "named": false,
           "value": "string"
         },
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "Numeric"
+              },
+              {
+                "type": "STRING",
+                "value": "numeric"
+              },
+              {
+                "type": "STRING",
+                "value": "NUMERIC"
+              }
+            ]
+          },
+          "named": false,
           "value": "numeric"
         },
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "Xml"
+              },
+              {
+                "type": "STRING",
+                "value": "xml"
+              },
+              {
+                "type": "STRING",
+                "value": "XML"
+              }
+            ]
+          },
+          "named": false,
           "value": "xml"
         },
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "Binary"
+              },
+              {
+                "type": "STRING",
+                "value": "binary"
+              },
+              {
+                "type": "STRING",
+                "value": "BINARY"
+              }
+            ]
+          },
+          "named": false,
           "value": "binary"
         },
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "Boolean"
+              },
+              {
+                "type": "STRING",
+                "value": "boolean"
+              },
+              {
+                "type": "STRING",
+                "value": "BOOLEAN"
+              }
+            ]
+          },
+          "named": false,
           "value": "boolean"
         },
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "Date"
+              },
+              {
+                "type": "STRING",
+                "value": "date"
+              },
+              {
+                "type": "STRING",
+                "value": "DATE"
+              }
+            ]
+          },
+          "named": false,
           "value": "date"
         },
         {
@@ -2546,7 +2672,25 @@
           "name": "_kw_function"
         },
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "Guid"
+              },
+              {
+                "type": "STRING",
+                "value": "guid"
+              },
+              {
+                "type": "STRING",
+                "value": "GUID"
+              }
+            ]
+          },
+          "named": false,
           "value": "guid"
         },
         {
@@ -2572,7 +2716,25 @@
           "value": "query"
         },
         {
-          "type": "STRING",
+          "type": "ALIAS",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "Void"
+              },
+              {
+                "type": "STRING",
+                "value": "void"
+              },
+              {
+                "type": "STRING",
+                "value": "VOID"
+              }
+            ]
+          },
+          "named": false,
           "value": "void"
         },
         {
@@ -6406,11 +6568,26 @@
       "value": "null"
     },
     "undefined": {
-      "type": "TOKEN",
+      "type": "ALIAS",
       "content": {
-        "type": "STRING",
-        "value": "undefined"
-      }
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "Undefined"
+          },
+          {
+            "type": "STRING",
+            "value": "undefined"
+          },
+          {
+            "type": "STRING",
+            "value": "UNDEFINED"
+          }
+        ]
+      },
+      "named": false,
+      "value": "undefined"
     },
     "arguments": {
       "type": "SEQ",
@@ -8169,7 +8346,7 @@
         "members": [
           {
             "type": "STRING",
-            "value": "Instanceof"
+            "value": "InstanceOf"
           },
           {
             "type": "STRING",
@@ -8178,6 +8355,10 @@
           {
             "type": "STRING",
             "value": "INSTANCEOF"
+          },
+          {
+            "type": "STRING",
+            "value": "instanceOf"
           }
         ]
       },
