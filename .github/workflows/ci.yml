@@ -52,13 +52,14 @@ jobs:
       - run: npm run lint
 
   test_windows:
-    runs-on: windows-latest
+    # Pinned, not windows-latest: that image now ships Visual Studio 18, which
+    # node-gyp 11.x parses as version "undefined" and then rejects with
+    # "could not find a version of Visual Studio 2017 or newer to use", so the
+    # native addon fails to build. windows-2022 has VS 17. Revisit once
+    # node-gyp recognises VS 18.
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v5
-      # node-gyp needs Visual Studio Build Tools to compile the native addon;
-      # without this the job fails with "could not find a version of Visual
-      # Studio 2017 or newer to use".
-      - uses: microsoft/setup-msbuild@v2
       - uses: actions/setup-node@v6
         with:
           node-version-file: '.nvmrc'

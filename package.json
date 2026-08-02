@@ -32,19 +32,22 @@
     "common/define-grammar.js"
   ],
   "dependencies": {
-    "node-addon-api": "^8.8.0",
+    "node-addon-api": "^8.9.1",
     "node-gyp-build": "^4.8.4"
   },
   "devDependencies": {
-    "eslint": "^9.39.4",
+    "eslint": "^10.8.0",
     "eslint-config-treesitter": "^1.0.2",
-    "globals": "^17.6.0",
+    "globals": "^17.8.0",
     "prebuildify": "^6.0.1",
-    "tree-sitter": "0.25.0",
-    "tree-sitter-cli": "0.26.9"
+    "tree-sitter": "0.25.1",
+    "tree-sitter-cli": "0.26.11"
+  },
+  "overrides": {
+    "eslint-plugin-jsdoc": "^62.9.0"
   },
   "peerDependencies": {
-    "tree-sitter": "^0.25.0"
+    "tree-sitter": "^0.25.1"
   },
   "peerDependenciesMeta": {
     "tree-sitter": {
@@ -73,5 +76,9 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "allowScripts": {
+    "tree-sitter@0.25.1": true,
+    "tree-sitter-cli@0.26.11": true
   }
 }
