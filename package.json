@@ -59,6 +59,7 @@
     "parse": "node scripts/parse.js",
     "scan": "node scripts/scan.js",
     "test": "node scripts/test.js",
+    "test:update": "node scripts/test.js --update",
     "docswasm": "node scripts/docswasm.js",
     "install": "node-gyp-build",
     "postinstall": "node scripts/ensure-tree-sitter-cli-binary.js",

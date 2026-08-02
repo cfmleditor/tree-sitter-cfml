@@ -7,6 +7,14 @@ const {spawnTreeSitter, root} = require('./tree-sitter-cli.cjs');
 const only = process.env.DIALECT;
 const parsers = only ? [only] : ['cfml', 'cfscript', 'cfquery'];
 
+// `tree-sitter test --update` rewrites the expected trees in the corpus to match
+// whatever the parser currently produces, so it can never fail. Keep it opt-in
+// (`npm run test:update`) so that plain `npm test` actually asserts.
+const update = process.argv.includes('--update') || process.env.UPDATE_CORPUS === '1';
+if (update) {
+  console.log('running with --update: corpus expectations will be REWRITTEN\n');
+}
+
 // Create a temporary empty file for query validation (cross-platform)
 const emptyFile = join(root, '.query-validate-tmp');
 writeFileSync(emptyFile, '');
@@ -14,7 +22,7 @@ writeFileSync(emptyFile, '');
 for (const dir of parsers) {
   console.log(`testing ${dir}`);
   try {
-    const r = spawnTreeSitter(['test', '--update'], {cwd: join(root, dir)});
+    const r = spawnTreeSitter(update ? ['test', '--update'] : ['test'], {cwd: join(root, dir)});
     if (r.status !== 0) {
       process.exitCode |= parsers.indexOf(dir) + 1;
     }
