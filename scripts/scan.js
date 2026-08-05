@@ -222,4 +222,7 @@ if (totalErrors === 0) {
   console.log(`Found ${totalErrors} parse error(s) across ${filesWithErrors} file(s) (${totalFiles} files scanned, ${elapsed}s).`);
 }
 
-process.exit(totalErrors > 0 ? 1 : 0);
+// `process.exit()` discards whatever is still buffered when stdout is a pipe,
+// which silently truncated `npm run scan <dir> | ...` on large corpora. Set the
+// exit code instead and let Node drain stdout before exiting.
+process.exitCode = totalErrors > 0 ? 1 : 0;

@@ -1,0 +1,248 @@
+================================================================================
+real world: string and array slicing (Lucee LDEV4374)
+================================================================================
+
+mystring = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+writeOutput( mystring[4:13] );
+writeOutput( mystring[4:13:2] );
+writeOutput( mystring[-10:-4] );
+writeOutput( mystring[-10:-4:2] );
+
+--------------------------------------------------------------------------------
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (subscript_expression
+          (identifier)
+          (pair
+            (number)
+            (number))))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (subscript_expression
+          (identifier)
+          (pair
+            (number)
+            (pair
+              (number)
+              (number)))))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (subscript_expression
+          (identifier)
+          (unary_expression
+            (unary_operator)
+            (pair
+              (number)
+              (unary_expression
+                (unary_operator)
+                (number))))))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (subscript_expression
+          (identifier)
+          (unary_expression
+            (unary_operator)
+            (pair
+              (number)
+              (unary_expression
+                (unary_operator)
+                (pair
+                  (number)
+                  (number))))))))))
+
+================================================================================
+real world: function named after a keyword (ColdBox Matcher, TestBox Assertion)
+================================================================================
+
+component {
+
+	function instanceOf( required classPath ) {
+		variables.instanceOf = arguments.classPath;
+		return this;
+	}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (parameter_type
+            (identifier)))
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (member_expression
+                (identifier)
+                (property_identifier))))
+          (return_statement
+            (this)))))))
+
+================================================================================
+real world: keyword-shaped parameter types (Lucee AsynchronousEvents)
+================================================================================
+
+component accessors=true {
+
+	public function init( string id, Struct config, Component listener ) {
+		variables.listener = arguments.listener;
+		return this;
+	}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_attribute
+      (identifier)
+      (true))
+    (component_body
+      (function_declaration
+        (access_type)
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier)
+          (parameter_type
+            (identifier))
+          (identifier)
+          (parameter_type
+            (identifier))
+          (identifier))
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (member_expression
+                (identifier)
+                (property_identifier))))
+          (return_statement
+            (this)))))))
+
+================================================================================
+real world: static initialiser block (Lucee LDEV0280)
+================================================================================
+
+component {
+
+	static {
+		static.counter = 0;
+	}
+
+	function get() {
+		return static.counter;
+	}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_body
+      (static_initializer
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (number)))))
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (return_statement
+            (member_expression
+              (identifier)
+              (property_identifier))))))))
+
+================================================================================
+real world: padded parameter defaults (TestBox BaseSpec)
+================================================================================
+
+component {
+
+	function run(
+		boolean callLogging  =true,
+		string  label        ="x"
+	) {
+		return label;
+	}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (assignment_pattern
+            (identifier)
+            (true))
+          (parameter_type)
+          (assignment_pattern
+            (identifier)
+            (string
+              (string_fragment))))
+        (statement_block
+          (return_statement
+            (identifier)))))))
+
+================================================================================
+real world: javadoc block before the component (ColdBox PerformanceSuite)
+================================================================================
+
+/**
+ * A documented component.
+ */
+component {
+
+	function run() {
+		return 1;
+	}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (comment)
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (return_statement
+            (number)))))))
