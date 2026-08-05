@@ -22,7 +22,7 @@ writeOutput( mystring[-10:-4:2] );
       (arguments
         (subscript_expression
           (identifier)
-          (pair
+          (slice_expression
             (number)
             (number))))))
   (expression_statement
@@ -31,10 +31,22 @@ writeOutput( mystring[-10:-4:2] );
       (arguments
         (subscript_expression
           (identifier)
-          (pair
+          (slice_expression
             (number)
-            (pair
-              (number)
+            (number)
+            (number))))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (subscript_expression
+          (identifier)
+          (slice_expression
+            (unary_expression
+              (unary_operator)
+              (number))
+            (unary_expression
+              (unary_operator)
               (number)))))))
   (expression_statement
     (call_expression
@@ -42,28 +54,14 @@ writeOutput( mystring[-10:-4:2] );
       (arguments
         (subscript_expression
           (identifier)
-          (unary_expression
-            (unary_operator)
-            (pair
-              (number)
-              (unary_expression
-                (unary_operator)
-                (number))))))))
-  (expression_statement
-    (call_expression
-      (identifier)
-      (arguments
-        (subscript_expression
-          (identifier)
-          (unary_expression
-            (unary_operator)
-            (pair
-              (number)
-              (unary_expression
-                (unary_operator)
-                (pair
-                  (number)
-                  (number))))))))))
+          (slice_expression
+            (unary_expression
+              (unary_operator)
+              (number))
+            (unary_expression
+              (unary_operator)
+              (number))
+            (number)))))))
 
 ================================================================================
 real world: function named after a keyword (ColdBox Matcher, TestBox Assertion)

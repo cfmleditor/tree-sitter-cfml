@@ -720,8 +720,9 @@ required and function as case-insensitive keywords
 ===================================
 function f(REQUIRED string a) {}
 function g(Required numeric b) {}
-h = function.foo;
+h = x.function;
 i(function=1);
+function j(FUNCTION callback) {}
 
 ---
 
@@ -750,7 +751,13 @@ i(function=1);
       (arguments
         (assignment_expression
           (identifier)
-          (number))))))
+          (number)))))
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (identifier))
+    (statement_block)))
 
 ===================================
 all four casing forms

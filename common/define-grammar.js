@@ -1490,9 +1490,13 @@ module.exports = function defineGrammar(dialect) {
         $._kw_abstract,
       ),
 
+      // `Component listener` — `component` lexes as a keyword here because
+      // `_reserved_identifier` makes it valid at the start of a parameter, so it
+      // never reaches `$.identifier` below.
       parameter_type: ($) => choice(
         $.path,
         $.identifier,
+        alias($._kw_component, $.identifier),
       ),
 
       function_declaration: ($) => prec.right('declaration', seq(
@@ -1577,7 +1581,18 @@ module.exports = function defineGrammar(dialect) {
       subscript_expression: ($) => prec.right('member', seq(
         field('object', choice($.expression, $.primary_expression)),
         optional(field('optional_chain', $.optional_chain)),
-        '[', field('index', $._expressions), ']',
+        '[', field('index', choice($._expressions, $.slice_expression)), ']',
+      )),
+
+      // Lucee string / array slicing: `s[4:13]`, `s[4:13:2]`, `s[-10:-4]`.
+      // Bounds are optional (`s[:5]`, `s[3:]`). This used to fall out of `pair`
+      // being reachable inside a subscript through the expression conflicts;
+      // spelling it out keeps slicing working without that ambiguity.
+      slice_expression: ($) => prec.right(seq(
+        optional(field('start', $.expression)),
+        ':',
+        optional(field('end', $.expression)),
+        optional(seq(':', optional(field('step', $.expression)))),
       )),
 
       _lhs_expression: ($) => choice(
@@ -1587,6 +1602,13 @@ module.exports = function defineGrammar(dialect) {
         $.subscript_expression,
         $._identifier,
         alias($._reserved_identifier, $.identifier),
+        // `function` is a legal attribute / argument name in script-syntax tag
+        // calls (Lucee's `admin ... function="" ...`), so it has to be assignable.
+        // It is deliberately not in `_reserved_identifier`: as a general expression
+        // start it would make every binary operator valid straight after
+        // `function`, and keyword extraction would then lex the name in
+        // `function instanceOf( ... )` as the `instanceof` operator.
+        alias($._kw_function, $.identifier),
         $._destructuring_pattern,
       ),
 
@@ -2024,7 +2046,12 @@ module.exports = function defineGrammar(dialect) {
         $._kw_remote,
         $._kw_abstract,
         $._kw_final,
-        $._kw_function,
+        // `function` is deliberately absent. Listing it here made `function` a
+        // valid expression start, which in turn made every binary operator —
+        // including `instanceof` — valid immediately after it. Keyword
+        // extraction then lexed the name in `function instanceOf( ... )` as the
+        // operator instead of an identifier. See test/probes/cfscript/
+        // function_named_instanceof.cfc.
       ),
 
       _semicolon: ($) => choice($._automatic_semicolon, ';'),

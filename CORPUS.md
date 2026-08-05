@@ -35,16 +35,17 @@ re-parsed with the injected grammar, exactly as `injections.scm` describes.
 
 ## Results
 
-Scanned on `master` (v0.26.30) and on `claude/keyword-casing-and-test-harness`,
-the branch that makes keywords case-insensitive:
+Scanned on `master` (v0.26.30), on `claude/keyword-casing-and-test-harness` (the
+branch that makes keywords case-insensitive), and on this branch, which merges
+that work and fixes the regressions it introduced:
 
-| | `master` | casing branch |
-|---|---|---|
-| Files scanned | 12,549 | 12,549 |
-| Files with at least one error | 96 (0.8%) | 96 (0.8%) |
-| ERROR / MISSING nodes | 7,367 | 2,104 |
+| | `master` | casing branch | this branch |
+|---|---|---|---|
+| Files scanned | 12,549 | 12,549 | 12,549 |
+| Files with at least one error | 96 (0.8%) | 96 (0.8%) | 96 (0.8%) |
+| ERROR / MISSING nodes | 7,367 | 2,104 | 2,045 |
 
-Both branches parse **over 99% of real-world files cleanly**. Raw error counts
+All three parse **over 99% of real-world files cleanly**. Raw error counts
 overstate the number of distinct problems, because one early ERROR derails the
 rest of a file; `npm run corpus:report` clusters on the *first* error per file
 and reduces the 7,367 nodes to a few dozen distinct sites.
@@ -52,27 +53,54 @@ and reduces the 7,367 nodes to a few dozen distinct sites.
 The `cfquery` grammar came out strongest: of **2,247 `<cfquery>` bodies** in the
 corpus, only one construct fails (bitwise `&`, below).
 
-### What the casing branch changes
+### What the casing branch changed, and what this branch fixes
 
-It fixes mixed-case keywords wholesale (`Try`/`}Catch(Any e){`/`For`/`If`), which
-is what removes ~5,200 error nodes. It also introduces **three regressions**,
-each caught by a probe in `test/probes/`:
+The casing branch fixes mixed-case keywords wholesale (`Try`/`}Catch(Any e){`/
+`For`/`If`), which is what removes ~5,200 error nodes. It also introduced three
+regressions, each caught by a probe in `test/probes/` and each fixed here:
 
-| Construct | `master` | casing branch | Found in |
-|---|---|---|---|
-| `mystring[4:13]`, `[4:13:2]`, `[-10:-4]` — string/array slicing | parses | **ERROR** | Lucee `test/tickets/LDEV4374` |
-| `function instanceOf( required classPath ){}` — user function named like a keyword | parses | **ERROR** | ColdBox `system/aop/Matcher.cfc`, TestBox `system/Assertion.cfc`, WireBox, cfwheels, BoxLang |
-| `function init( string id, Struct config, Component listener )` — parameter typed `Component` | parses | **ERROR** | Lucee `context/gateway/AsynchronousEvents.cfc` |
+| Construct | `master` | casing branch | this branch | Found in |
+|---|---|---|---|---|
+| `mystring[4:13]`, `[4:13:2]`, `[-10:-4]` — string/array slicing | parses | **ERROR** | parses | Lucee `test/tickets/LDEV4374`, `LDEV1813` |
+| `function instanceOf( required classPath ){}` — user function named like a keyword | parses | **ERROR** | parses | ColdBox `system/aop/Matcher.cfc`, TestBox `system/Assertion.cfc`, WireBox, cfwheels, BoxLang |
+| `function init( string id, Struct config, Component listener )` — parameter typed `Component` | parses | **ERROR** | parses | Lucee `context/gateway/AsynchronousEvents.cfc`, `DummyGateway.cfc`, `TaskGateway.cfc` |
 
 The last two are the classic cost of `word: $.identifier` plus keyword tokens:
-once `instanceof` and `component` are lexed as keywords they stop being usable as
-ordinary identifiers, and CFML code uses both as names.
+once a word is lexed as a keyword it stops being usable as an ordinary
+identifier, and CFML code uses these words as names.
 
-## Known gaps (both branches)
+#### The fixes
 
-Every item below is reduced to a minimal file in `test/probes/`, with its current
-status recorded in `test/probes/expected.json`. `npm run probe` fails if any of
-them changes status, so a fix or a regression is impossible to miss.
+1. **Slicing** is now a rule of its own, `slice_expression`, instead of falling
+   out of `pair` being reachable inside a subscript through the expression
+   conflicts the casing branch removed. Bounds are optional, so Lucee's `s[:6]`
+   and `s[4:13:2]` parse too — `LDEV1813` fails on *both* earlier branches and
+   parses here.
+2. **`function` is no longer a `_reserved_identifier`.** Listing it there made
+   `function` a valid expression start, which made every binary operator valid
+   immediately after it; keyword extraction then lexed the name in
+   `function instanceOf( … )` as the `instanceof` operator. It is still accepted
+   as an assignable name via `_lhs_expression`, which is what Lucee's script-
+   syntax `admin … function="" …` tag calls need. This fixes not just
+   `instanceOf` but every keyword-shaped function name — `contains`, `eq`, `mod`,
+   `is`, `in`, `not`, `and`, `component`, `static`, `default`, `new`, `query`.
+3. **`parameter_type` accepts `component`**, which lexes as a keyword at the
+   start of a parameter because `_reserved_identifier` makes it valid there.
+
+Net effect against the casing branch: **15 files fixed, 0 newly broken.**
+
+One difference from `master` remains, and it predates these fixes: Slatwall's
+`ClientScriptWriter_jQuery.cfc` opens a `<script>` element in one
+`<cfsavecontent>` block and closes it in another. `script_element` requires its
+end tag, so the unclosed element is an ERROR. Making the end tag optional
+produces unresolvable grammar conflicts, so it stays a known limitation.
+
+## Known gaps
+
+Every item below still fails on this branch, and is reduced to a minimal file in
+`test/probes/` with its status recorded in `test/probes/expected.json`.
+`npm run probe` fails if any of them changes status, so a fix or a regression is
+impossible to miss.
 
 ### cfscript
 
@@ -85,7 +113,9 @@ them changes status, so a fix or a regression is impossible to miss.
 | Array return type | `IValidationError[] function getFieldErrors( ... )` | cbvalidation |
 | `final` / access-modifier member declarations | `final MEMBER = "value";`, `public prop = "prop";` | Lucee tests |
 | Empty struct literal | `var uniqueList = [=];` | CommandBox jmespath, lucee-docs |
-| Mixed-case keywords | `}Catch(Any e){` | cbfeeds, Lucee tests — **fixed on the casing branch** |
+
+Mixed-case keywords (`}Catch(Any e){`, cbfeeds and the Lucee test suite) were a
+gap on `master` and are fixed here by the merged casing work.
 
 ### cfml
 
@@ -131,9 +161,9 @@ the corpus tests so they cannot regress silently:
   join predicates.
 
 The first three of those cfscript cases are exactly the ones the casing branch
-breaks, so `npm test` on that branch now fails loudly instead of silently.
+broke, which is how the regressions were caught in the first place.
 
-One caveat worth recording: negative slice bounds (`mystring[-10:-4]`) parse
-without error but produce an odd tree — `unary_expression` wrapping a `pair`
-rather than a slice with two negative bounds. The corpus test pins current
-behaviour; the shape is worth revisiting if slicing ever gets a dedicated node.
+Slicing now has a dedicated `slice_expression` node with `start` / `end` / `step`
+fields. On `master` it parsed as a `pair` inside the subscript, and negative
+bounds produced an odd `unary_expression` wrapping that pair; the corpus test
+pins the new shape.

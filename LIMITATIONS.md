@@ -153,7 +153,10 @@ probe under `test/probes/`.
 - **Array return types** — `IValidationError[] function getFieldErrors( ... )` (cbvalidation).
 - **`final` and access-modifier member declarations** — `final MEMBER = "value";`, `public prop = "prop";` (Lucee tests).
 - **Empty struct literal** — `var uniqueList = [=];` (CommandBox, lucee-docs).
-- **Mixed-case keywords** — `}Catch(Any e){` (cbfeeds, Lucee tests).
+- **`function` as a bare value** — `h = function.foo;`. `function` is accepted as
+  an assignable name (`admin ... function="" ...`) and as a property
+  (`x.function`), but not as the object of a member expression. Making it a
+  general expression start is what previously broke `function instanceOf( ... )`.
 
 ### cfml
 
