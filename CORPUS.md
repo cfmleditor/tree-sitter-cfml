@@ -114,8 +114,48 @@ inside the noise.
 What does grow is the generated tables: `parser.c` totals 34.5 MB on `master`
 against 41.5 MB here (+20%), and the compiled Node addon 7.14 MB against
 8.82 MB (+23%). Resident memory after loading all three languages was 55 MB on
-every build. The playground WASM grows too: `tree-sitter-cfscript.wasm` 2.16 MB
-to 3.14 MB.
+every build.
+
+#### WASM size
+
+The playground WASM is the only place this growth reaches users. What they
+actually download is the *compressed* file, and the playground loads exactly one
+grammar, lazily, on selection:
+
+| `docs/…` | `master` raw | here raw | `master` gzip | here gzip |
+|---|---|---|---|---|
+| `tree-sitter-cfml.wasm` (the default) | 2,637 K | 2,940 K | 176 K | **170 K** |
+| `tree-sitter-cfscript.wasm` | 2,112 K | 3,067 K | 150 K | 174 K |
+| `tree-sitter-cfquery.wasm` | 2,354 K | 2,554 K | 165 K | **159 K** |
+
+So the default download is slightly *smaller* than `master`, and the worst case
+(`cfscript`, only fetched if you switch language) is +24 K compressed. Raw size
+is the wrong number to optimise; parse tables compress ~18:1.
+
+Two things that do **not** help, both measured rather than assumed:
+
+- `wasm-opt -Oz --strip-debug --strip-producers` shrinks `tree-sitter-cfscript.wasm`
+  by 1.1% and makes it *2 K larger* after gzip. 95% of the file is the data
+  section (parse tables) — 2,907 K of 3,068 K. There is no code to optimise.
+- Trimming unused casings. Across the corpus, lowercase appears for 53/53
+  keywords, PascalCase for 50/53, UPPERCASE for 47/53; camelCase differs from
+  lowercase only for the two multi-word keywords (`queryExecute`, `instanceOf`)
+  and `casings()` already dedupes the rest. Dropping the nine unobserved
+  variants would save ~4% of the enumeration and rest on a single corpus.
+
+What would help is changing *how* case-insensitivity is spelled. Regenerating
+`cfscript` with `casings()` returning lowercase only gives a 11.79 MB
+`parser.c`, against 16.25 MB as enumerated here and 12.86 MB on `master`. In
+other words the enumeration costs **4.5 MB of tables (+38%)**, while the rest of
+the branch's restructuring (keyword extraction via `word: $.identifier`, dropped
+JS residue, fewer conflicts) is worth **−1.1 MB on its own**. Classifying
+keywords case-insensitively in the external scanner — which already does exactly
+this for CF tag names in `common/tag.h` — would collapse the four tokens per
+keyword back to one and should land the tables below `master`. That is a
+substantial change, not a tweak: 53 keywords would become external tokens.
+
+`docs/tree-sitter-cfhtml.wasm` (1.78 MB) was removed here; it is left over from a
+grammar the repo no longer builds, and the playground never referenced it.
 
 Beware of measuring this by timing `scripts/scan.js`: it interleaves parsing
 with tree walking and text extraction, and error recovery dominates, so a build
