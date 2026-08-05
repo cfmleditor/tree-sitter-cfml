@@ -181,6 +181,13 @@ module.exports = function defineGrammar(dialect) {
     ],
 
     conflicts: ($) => [
+      // `new` doubles as an identifier (`<cfset var new = "">`), so at `new x`
+      // both the `new_expression` and the plain-identifier reading must stay
+      // alive until the parser sees what follows.
+      [$.primary_expression, $.new_expression],
+      [$.new_expression, $.pattern],
+      [$.primary_expression, $.new_expression, $._property_name],
+      [$.primary_expression, $.new_expression, $.pattern],
       [$.variable_declaration, $.access_type],
       [$.variable_declaration, $.primary_expression],
       [$.object, $.object_pattern],
@@ -2034,6 +2041,11 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       _reserved_identifier: ($) => choice(
+        // `new` is a legal variable name in CFML — `<cfset var new = "">`
+        // (Mura's fileWriter.cfc). The cfscript grammar already lists it; the
+        // tag grammar did not, so one such `<cfset>` cascaded into hundreds of
+        // ERROR nodes for the rest of the file.
+        $._kw_new,
         $._kw_get,
         $._kw_set,
         $._kw_static,

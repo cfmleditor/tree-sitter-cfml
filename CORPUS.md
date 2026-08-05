@@ -42,8 +42,8 @@ that work and fixes the regressions it introduced:
 | | `master` | casing branch | this branch |
 |---|---|---|---|
 | Files scanned | 12,549 | 12,549 | 12,549 |
-| Files with at least one error | 96 (0.8%) | 96 (0.8%) | 96 (0.8%) |
-| ERROR / MISSING nodes | 7,367 | 2,104 | 2,045 |
+| Files with at least one error | 96 (0.8%) | 96 (0.8%) | 95 (0.8%) |
+| ERROR / MISSING nodes | 7,367 | 2,104 | 1,743 |
 
 All three parse **over 99% of real-world files cleanly**. Raw error counts
 overstate the number of distinct problems, because one early ERROR derails the
@@ -86,8 +86,41 @@ identifier, and CFML code uses these words as names.
    `is`, `in`, `not`, `and`, `component`, `static`, `default`, `new`, `query`.
 3. **`parameter_type` accepts `component`**, which lexes as a keyword at the
    start of a parameter because `_reserved_identifier` makes it valid there.
+4. **`new` is a `_reserved_identifier` in the tag grammar too.** The casing
+   branch made `new` usable as an identifier in `cfscript/grammar.js` but not in
+   `common/define-grammar.js`, so `<cfset var new = "">` (Mura's
+   `core/mura/fileWriter.cfc`) cascaded into **305** ERROR nodes for the rest of
+   the file, against 7 on `master`. It now parses cleanly, and that file parses
+   in 3.1 ms instead of 13 ms — error recovery was the entire cost.
 
-Net effect against the casing branch: **15 files fixed, 0 newly broken.**
+Net effect against the casing branch: **16 files fixed, 0 newly broken.**
+
+### Performance
+
+Measured over the corpus with each grammar fed byte-identical inputs (whole
+files for `cfml`, extracted script regions for `cfscript`, query regions for
+`cfquery`), best of three repetitions, two samples per build:
+
+| | `master` | casing branch | this branch |
+|---|---|---|---|
+| `cfml` (54.4 MB) | 3,118–3,212 ms | 3,148 ms | 3,152–3,199 ms |
+| `cfscript` (39.7 MB) | 14,128–14,604 ms | 15,395 ms | 13,459–13,599 ms |
+| `cfquery` (0.8 MB) | 648–692 ms | 607 ms | 638–771 ms |
+
+Run-to-run spread on one build is 3–7% (20% for the much smaller `cfquery`
+input), so **no parse-time regression is measurable** — the differences are
+inside the noise.
+
+What does grow is the generated tables: `parser.c` totals 34.5 MB on `master`
+against 41.5 MB here (+20%), and the compiled Node addon 7.14 MB against
+8.82 MB (+23%). Resident memory after loading all three languages was 55 MB on
+every build. The playground WASM grows too: `tree-sitter-cfscript.wasm` 2.16 MB
+to 3.14 MB.
+
+Beware of measuring this by timing `scripts/scan.js`: it interleaves parsing
+with tree walking and text extraction, and error recovery dominates, so a build
+that produces *fewer* errors can look slower. Feed fixed inputs to each grammar
+instead.
 
 One difference from `master` remains, and it predates these fixes: Slatwall's
 `ClientScriptWriter_jQuery.cfc` opens a `<script>` element in one

@@ -11,6 +11,7 @@
     "cfml/param_named.cfm": "pass",
     "cfml/param_typed.cfm": "fail",
     "cfml/script_block_js.cfm": "pass",
+    "cfml/var_new_in_cfset.cfc": "pass",
     "cfquery/bitwise_and.cfm": "fail",
     "cfscript/array_return_type.cfc": "fail",
     "cfscript/empty_struct_literal.cfc": "fail",

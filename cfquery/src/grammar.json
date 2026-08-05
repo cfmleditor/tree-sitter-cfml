@@ -8992,6 +8992,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "_kw_new"
+        },
+        {
+          "type": "SYMBOL",
           "name": "_kw_get"
         },
         {
@@ -9865,6 +9869,24 @@
     }
   ],
   "conflicts": [
+    [
+      "primary_expression",
+      "new_expression"
+    ],
+    [
+      "new_expression",
+      "pattern"
+    ],
+    [
+      "primary_expression",
+      "new_expression",
+      "_property_name"
+    ],
+    [
+      "primary_expression",
+      "new_expression",
+      "pattern"
+    ],
     [
       "variable_declaration",
       "access_type"

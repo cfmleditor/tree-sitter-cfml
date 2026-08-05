@@ -190,3 +190,48 @@ real world: cfquery with cfqueryparam and conditional SQL (Mura, Slatwall)
             (identifier)
             (property_identifier)))))
     (cf_query_content)))
+
+================================================================================
+real world: `new` as a variable name in a tag component (Mura fileWriter.cfc)
+================================================================================
+
+<cfcomponent>
+	<cffunction name="write">
+		<cfset var new = "">
+		<cfset new = FileOpen( arguments.file, "write" )>
+		<cfreturn new>
+	</cffunction>
+</cfcomponent>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_component_open_tag
+    (cf_selfclose_void_tag_end))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_set_tag
+      (cf_var)
+      (assignment_expression
+        (identifier)
+        (string))
+      (cf_selfclose_void_tag_end))
+    (cf_set_tag
+      (assignment_expression
+        (identifier)
+        (call_expression
+          (identifier)
+          (arguments
+            (member_expression
+              (identifier)
+              (property_identifier))
+            (string
+              (string_fragment)))))
+      (cf_selfclose_void_tag_end))
+    (cf_return_tag
+      (identifier)
+      (cf_selfclose_void_tag_end)))
+  (cf_component_close_tag))
