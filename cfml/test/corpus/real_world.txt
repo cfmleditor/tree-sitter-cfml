@@ -1,0 +1,192 @@
+================================================================================
+real world: dynamic closing tag name (Taffy ArrayToXML)
+================================================================================
+
+<cfoutput><#arguments.node#>#arguments.value#</#arguments.node#></cfoutput>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_output_tag
+    (element
+      (start_tag
+        (tag_name
+          (hash_expression
+            (member_expression
+              (identifier)
+              (property_identifier)))))
+      (hash_expression
+        (member_expression
+          (identifier)
+          (property_identifier)))
+      (end_tag
+        (tag_name
+          (hash_expression
+            (member_expression
+              (identifier)
+              (property_identifier))))))))
+
+================================================================================
+real world: javascript inside a script block (Lucee form.cfm, Mura admin)
+================================================================================
+
+<cfoutput>
+<script>
+	var prv = {};
+	prv.validate = function( el, value ) {
+		if ( el.message && el.message.length > 0 ) prv.addError( el, el.message );
+		else prv.addError( el, "bad" );
+	};
+</script>
+</cfoutput>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_output_tag
+    (script_element
+      (start_tag
+        (tag_name))
+      (script_text)
+      (end_tag
+        (tag_name)))))
+
+================================================================================
+real world: param statement inside cfscript (Lucee LDEV4374)
+================================================================================
+
+<cfscript>
+	param name="FORM.scene" default="";
+</cfscript>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_script_tag
+    (cf_script_content)))
+
+================================================================================
+real world: cfcontinue inside cfloop inside cfoutput (TestBox mintext.cfm)
+================================================================================
+
+<cfoutput>#getHeaderBanner( testbox )#
+<cfloop array="#variables.bundleStats#" index="thisBundle">
+<cfif len( url.testBundles )>
+<cfcontinue>
+</cfif>
+#thisBundle.path#
+</cfloop>
+</cfoutput>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_output_tag
+    (hash_expression
+      (call_expression
+        (identifier)
+        (arguments
+          (identifier))))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (hash_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier))))))
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))))
+      (cf_if_tag
+        (call_expression
+          (identifier)
+          (arguments
+            (member_expression
+              (identifier)
+              (property_identifier))))
+        (cf_selfclose_tag
+          (cf_selfclose_void_tag_end)))
+      (html_text)
+      (hash_expression
+        (member_expression
+          (identifier)
+          (property_identifier)))
+      (cf_end_tag
+        (cf_tag_name)))))
+
+================================================================================
+real world: function call in a cfif condition (Lucee admin templates)
+================================================================================
+
+<cfloop array="#driver.getCustomFields()#" index="field">
+<cfif isInstanceOf( field, "Group" )>ok</cfif>
+</cfloop>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (hash_expression
+              (call_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (arguments))))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (cf_if_tag
+      (call_expression
+        (identifier)
+        (arguments
+          (identifier)
+          (string
+            (string_fragment))))
+      (html_text))
+    (cf_end_tag
+      (cf_tag_name))))
+
+================================================================================
+real world: cfquery with cfqueryparam and conditional SQL (Mura, Slatwall)
+================================================================================
+
+<cfquery name="rs" datasource="#application.dsn#">
+	SELECT contentid, title
+	FROM   tcontent
+	WHERE  siteid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.siteid#">
+	<cfif len( arguments.type )>
+	AND    type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.type#">
+	</cfif>
+	ORDER  BY #arguments.orderBy#
+</cfquery>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_query_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (hash_expression
+          (member_expression
+            (identifier)
+            (property_identifier)))))
+    (cf_query_content)))

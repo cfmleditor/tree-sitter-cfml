@@ -74,3 +74,7 @@ Thumbs.db
 tree-sitter.exe
 /tree-sitter
 /vendor
+
+# Real-world corpus fetched by `npm run corpus:fetch` (third-party code).
+# Anchored, so it does not also match cf*/test/corpus/.
+/corpus/

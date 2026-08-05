@@ -221,9 +221,12 @@ See **[Setup](#setup)** for `npm test`, `npm run lint`, and `npm run build`.
 
 ```bash
 npm run testbindings  # Node binding smoke test
+npm run probe         # real-world construct probes (test/probes/)
 ```
 
 One grammar only: run `test` via the CLI from that dialect’s directory ([above](#setup)), or `npm test` for all three.
+
+**Real-world corpus:** `npm run corpus:fetch` shallow-clones ~25 public CFML projects into a gitignored `corpus/`, `npm run scan corpus` reports every ERROR/MISSING node, and `npm run corpus:report` clusters those into distinct failure sites. See **[CORPUS.md](CORPUS.md)** for the current results and the known gaps they turned up.
 
 **Parse a file:** from the dialect folder (e.g. `cfml` for `.cfc`), use the `parse` subcommand with the same `node ../node_modules/.../cli.js` pattern.
 

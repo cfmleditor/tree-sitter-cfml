@@ -1,0 +1,30 @@
+{
+  "comment": "Current parse status of each real-world construct probe. `pass` = clean tree, `fail` = known grammar gap. Regenerate with `npm run probe -- --update`; see docs/real-world-corpus.md.",
+  "probes": {
+    "cfml/cfcontinue_in_cfloop.cfm": "pass",
+    "cfml/cfif_function_call.cfm": "pass",
+    "cfml/cfquery_hash_params.cfm": "pass",
+    "cfml/cfsetting_in_cfcomponent.cfc": "fail",
+    "cfml/dynamic_close_tag.cfc": "pass",
+    "cfml/gt_in_text.cfm": "fail",
+    "cfml/lt_in_text.cfm": "fail",
+    "cfml/param_named.cfm": "pass",
+    "cfml/param_typed.cfm": "fail",
+    "cfml/script_block_js.cfm": "pass",
+    "cfquery/bitwise_and.cfm": "fail",
+    "cfscript/array_return_type.cfc": "fail",
+    "cfscript/empty_struct_literal.cfc": "fail",
+    "cfscript/final_member_declaration.cfc": "fail",
+    "cfscript/function_named_instanceof.cfc": "pass",
+    "cfscript/keyword_shaped_param_types.cfc": "pass",
+    "cfscript/leading_javadoc.cfc": "pass",
+    "cfscript/mixed_case_keywords.cfc": "fail",
+    "cfscript/script_tag_call.cfc": "fail",
+    "cfscript/spaced_param_defaults.cfc": "pass",
+    "cfscript/static_block.cfc": "pass",
+    "cfscript/string_slice.cfc": "pass",
+    "cfscript/tag_comment_in_script_body.cfc": "fail",
+    "cfscript/typed_catch_with_var.cfc": "fail",
+    "cfscript/var_scoped_dotted_name.cfc": "fail"
+  }
+}
