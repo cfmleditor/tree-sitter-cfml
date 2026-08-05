@@ -1,5 +1,10 @@
 # Known Limitations
 
+Each limitation below that was found by scanning public CFML code has a minimal
+reproduction in `test/probes/`; see [CORPUS.md](CORPUS.md) for how that corpus is
+fetched and what it turned up. `npm run probe` reports the current status of all
+of them.
+
 ## cfscript
 
 ### Keyword casing coverage
@@ -134,6 +139,31 @@ These tags can be used with or without a body. When used without a closing tag, 
 
 The `+` concatenation operator allows an optional right operand to support patterns like `col1 + <cfif x>col2 + </cfif>col3`. This means a trailing `+` without a right operand won't produce a parse error.
 
+## Constructs found in public CFML that do not parse
+
+These come from the corpus scan described in [CORPUS.md](CORPUS.md). Each has a
+probe under `test/probes/`.
+
+### cfscript
+
+- **Typed `catch` with `var`** — `} catch( any var e ) {` (CommandBox endpoints).
+- **`var` with a scoped or dotted name** — `var local.result = ...;`, `var a.b.c.d = 1;` (ContentBox, CommandBox, Lucee tests).
+- **Tag comments in a script body** — `<!--- viewlets --->` inside `component { }` (Preside handlers).
+- **Script-syntax tag calls** — `cfdirectory( directory="#dir#" action="create" );`, `cfheader( statuscode="404" statustext="..." );` (Lucee).
+- **Array return types** — `IValidationError[] function getFieldErrors( ... )` (cbvalidation).
+- **`final` and access-modifier member declarations** — `final MEMBER = "value";`, `public prop = "prop";` (Lucee tests).
+- **Empty struct literal** — `var uniqueList = [=];` (CommandBox, lucee-docs).
+- **Mixed-case keywords** — `}Catch(Any e){` (cbfeeds, Lucee tests).
+
+### cfml
+
+- **Bare `>` or `<` in template text** — `<p>a > b</p>`, `#ratio#%  ==>`. Common in ordinary HTML; both produce ERROR nodes.
+- **`<cfsetting>` inside a tag-based component** — `<cfsetting showdebugoutput="false">` within `<cfcomponent>` (related to the `<cfsetting>` note above; `<cfset>` and `<cfinclude>` in the same position parse).
+- **Typed `param` statement** — `param string url.id default="0";`. The untyped `param name="url.id" default="0";` parses.
+
+### cfquery
+
+- **Bitwise `&` in SQL** — `AND status & 2048 = 2048` (Mura SQL Server DDL). Of 2,247 `<cfquery>` bodies in the corpus this is the only failing construct.
 ## Removed JavaScript constructs
 
 This grammar is a fork of `tree-sitter-javascript`, and some JS-only rules were

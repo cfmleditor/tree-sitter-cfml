@@ -1,0 +1,177 @@
+===================================
+real world: bracket identifiers and N-prefixed literal (Mura dbUpdates)
+===================================
+SELECT * FROM [dbo].[tplugins] WHERE id = object_id(N'[dbo].[tplugins]')
+---
+
+(program
+  (query_keyword)
+  (query_star
+    (star))
+  (query_keyword)
+  (query_alias
+    (bracketed_query_value
+      (query_value))
+    (bracketed_query_value
+      (query_value)))
+  (query_keyword)
+  (query_assignment_expression
+    (query_identifier)
+    (query_function
+      (query_function_name)
+      (parenthesized_query_node
+        (query_identifier)
+        (quoted_query_value
+          (query_value))))))
+
+===================================
+real world: T-SQL IF NOT EXISTS guard around DDL (Mura dbUpdates)
+===================================
+IF NOT EXISTS (SELECT 1 FROM sysindexes WHERE id = 1)
+ALTER TABLE [dbo].[tplugins] WITH NOCHECK ADD
+	CONSTRAINT [PK_tplugins_pluginID] PRIMARY KEY CLUSTERED ( [pluginID] ) ON [PRIMARY]
+---
+
+(program
+  (query_identifier)
+  (query_keyword)
+  (query_function
+    (query_function_name)
+    (parenthesized_query_node
+      (query_keyword)
+      (query_number
+        (number))
+      (query_keyword)
+      (query_identifier)
+      (query_keyword)
+      (query_assignment_expression
+        (query_identifier)
+        (query_number
+          (number)))))
+  (query_identifier)
+  (query_keyword)
+  (query_alias
+    (bracketed_query_value
+      (query_value))
+    (bracketed_query_value
+      (query_value)))
+  (query_keyword)
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (bracketed_query_value
+    (query_value))
+  (query_identifier)
+  (query_identifier)
+  (query_identifier)
+  (parenthesized_query_node
+    (bracketed_query_value
+      (query_value)))
+  (query_keyword)
+  (bracketed_query_value
+    (query_value)))
+
+===================================
+real world: hash expression in a join predicate (Mura, Slatwall)
+===================================
+SELECT c.contentid, c.title
+FROM tcontent c
+INNER JOIN tcontentstats s ON c.contentid = s.contentid
+WHERE c.siteid = #arguments.siteid#
+GROUP BY c.contentid, c.title
+HAVING count(*) > 1
+ORDER BY c.title DESC
+---
+
+(program
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (query_comma)
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (query_keyword)
+  (query_identifier)
+  (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (query_identifier)
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (query_alias
+        (query_identifier)
+        (query_identifier))))
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (hash_expression
+        (member_expression
+          (identifier)
+          (property_identifier)))))
+  (query_keyword)
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (query_comma)
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (query_keyword)
+  (query_comparison_expression
+    (query_function
+      (query_function_name)
+      (parenthesized_query_node
+        (query_star
+          (star))))
+    (query_number
+      (number)))
+  (query_keyword)
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_identifier))
+  (query_keyword))
+
+===================================
+real world: common table expression and case expression (qb, Preside)
+===================================
+WITH cte AS (SELECT id FROM t)
+SELECT CASE WHEN a = 1 THEN 2 ELSE 3 END AS x FROM cte
+---
+
+(program
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (parenthesized_query_node
+    (query_keyword)
+    (query_identifier)
+    (query_keyword)
+    (query_identifier))
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
+  (query_assignment_expression
+    (query_identifier)
+    (query_number
+      (number)))
+  (query_keyword)
+  (query_number
+    (number))
+  (query_keyword)
+  (query_number
+    (number))
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier))
