@@ -123,6 +123,49 @@ Their real triggers are the patterns already listed above. They are not a
 separate population of unknown defects, but neither has every one been traced,
 and that should not be implied.
 
+## Cost and risk of fixing each one
+
+Estimates below come from this repository's own history, not from general
+intuition. Two of these were attempted during the corpus work and backed out;
+several others are close relatives of changes that did land, and those landings
+needed follow-up fixes that the corpus scan caught. That record is the best
+available guide.
+
+Three properties of this grammar drive most of the risk:
+
+- **Keyword extraction is lexical.** With `word: $.identifier`, a rule that makes
+  a keyword valid in a new position changes how that word *lexes* everywhere in
+  that state. Adding `member_expression` to `variable_declarator` made
+  keyword-led expressions valid after `var`, which silently broke `var new = 1`
+  and `for ( var export in … )` until `_reserved_identifier` was named
+  explicitly. Any change touching declarations or parameters should expect this.
+- **`:` is heavily contested.** It already serves `pair`, `switch_case`,
+  `slice_expression` and the ternary. The casing branch removed conflicts around
+  it deliberately, and restoring them reintroduces the `case <expr> :` ambiguity.
+- **The scanner is shared, except where it is not.** `common/scanner.h` backs
+  `cfml` and `cfquery`; `cfscript` has its own hand-written `src/scanner.c`. A
+  scanner change means editing one or both, with no generator to check the
+  result — the corpus scan is the only safety net.
+
+| Pattern | Complexity | Risk | Basis |
+|---|---|---|---|
+| Empty struct literal `[=]` | **Low** | **Low** | `ordered_struct` already spells out the sibling form `[ : ]` as a fixed token sequence; `[ = ]` is the same shape |
+| Typed `param` statement | **Low** | **Low** | The untyped form already parses; this adds a type slot to an existing statement rule |
+| Bitwise `&` in SQL | **Low-Med** | **Med** | A query-side operator addition, but `&` is CFML's string concatenation, so the two readings meet inside `<cfquery>` |
+| Array return type `X[] function` | **Med** | **Med** | Touches the function return-type slot, which already competes with `parameter_type` and `primary_expression`; expect new conflicts, of the kind that took three iterations for member declarations |
+| Subscript as a `var` name | **Med** | **Med-High** | Directly extends the change that broke `var new = 1`. Same rule, same lexing hazard, and subscripts add `[` ambiguity on top |
+| Dotted key in a struct literal | **Med** | **Med-High** | `_property_name` is already in five conflict declarations; widening it to accept paths touches every struct literal and named-argument site |
+| Bare `>` or `<` in template text | **Med-High** | **High** | The character that would become text is the one the tag scanner uses to close tags. Getting it wrong destabilises all tag parsing, which is the grammar's core |
+| Function-listener `f():callback` | **Med-High** | **High** | Adds another `:` reading to the most contested character in the grammar, for a single-file Lucee feature |
+| Script-syntax tag call | **High** | **Med** | **Attempted and backed out.** `f( a=1 [x] )` is ambiguous between a subscript and a second argument; tree-sitter's suggested resolution is a single-rule conflict on `expression`, which cannot be declared. Needs a restricted attribute-value rule instead |
+| Subscript with more than one pair | **High** | **High** | Requires re-admitting `pair` inside subscripts, which is exactly the ambiguity the casing branch removed. One file, non-idiomatic syntax |
+| Prefixed / namespaced dynamic tag | **High** | **High** | `_start_tag_name` is an external token and open/close matching lives in the scanner's tag stack. Scanner work on the shared header, with no generator check |
+| `<script>` unclosed across CF blocks | **High** | **Low value** | **Attempted and backed out.** Making `script_element`'s end tag optional produces unresolvable conflicts. One file, and genuinely unbalanced HTML |
+
+Worth noting what "Low risk" does *not* mean here: every change in this session
+that looked self-contained still needed a corpus re-scan to confirm, and three of
+them were only saved by that scan. Budget for the scan, not just the edit.
+
 ## What this suggests about priorities
 
 1. **Prefixed and namespaced dynamic tag names** — 10 files, the largest genuine
@@ -136,3 +179,9 @@ and that should not be implied.
    ordinary HTML and the most likely of these to bite an editor user.
 4. Everything else is single-file or nearly so, and worth fixing only if the
    construct is cheap to express.
+
+Crossing that list with the cost table gives a different order for anyone wanting
+value per unit of risk: `[=]` and typed `param` are cheap and safe but affect few
+files; the script-syntax tag call is the widest-reaching fix that is *tractable*
+with grammar-only changes; and prefixed dynamic tag names are the largest cluster
+but the most dangerous, because they mean editing the shared scanner.
