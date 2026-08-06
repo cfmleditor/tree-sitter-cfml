@@ -3023,6 +3023,10 @@
       "required": true,
       "types": [
         {
+          "type": "access_type",
+          "named": true
+        },
+        {
           "type": "variable_declarator",
           "named": true
         }

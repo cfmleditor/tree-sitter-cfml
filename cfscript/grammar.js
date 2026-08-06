@@ -136,6 +136,13 @@ module.exports = grammar({
     [$.function_expression, $.function_declaration],
     [$.expression, $.function_expression, $.function_declaration],
     [$.primary_expression, $.path],
+    // `public(`, `private(` … — an access modifier starting a member
+    // declaration looks exactly like a call until the parser sees what follows.
+    // `final X` / `public X` — a member declaration and a function declaration
+    // (`final query function f()`) share their prefix.
+    [$.primary_expression, $.variable_declaration],
+    [$.variable_declaration, $.access_type],
+    [$.variable_declaration, $.primary_expression, $._property_name],
     [$.primary_expression, $.parameter_type],
     [$.primary_expression, $.parameter_type, $.pattern],
     [$.parameter_type, $.pattern],
@@ -338,10 +345,38 @@ module.exports = grammar({
       $._semicolon,
     ),
 
-    variable_declaration: ($) => seq(
-      $._kw_var,
-      commaSep1($.variable_declarator),
-      $._semicolon,
+    // `var x = 1`, and the Lucee member forms `final MEMBER = "value"` and
+    // `public prop = "prop"` inside a component body.
+    variable_declaration: ($) => choice(
+      seq(
+        choice(
+          $._kw_var,
+          $._kw_final,
+          seq($._kw_final, $._kw_var),
+          seq($._kw_var, $._kw_final),
+        ),
+        commaSep1($.variable_declarator),
+        $._semicolon,
+      ),
+      // `public prop = "prop"`. Access modifiers only — `static` and `abstract`
+      // are excluded because `static { … }` and `abstract component { … }` claim
+      // those words. The negative dynamic precedence keeps
+      // `private component function f()` a function declaration: there the
+      // modifier is followed by a return type, not a variable name.
+      prec.dynamic(-1, seq(
+        alias(choice($._kw_public, $._kw_private, $._kw_package, $._kw_remote), $.access_type),
+        commaSep1(alias($._plain_declarator, $.variable_declarator)),
+        $._semicolon,
+      )),
+    ),
+
+    // A member declaration's name is a plain identifier — no keywords and no
+    // scoped name. Accepting keywords here would make `component` after
+    // `public` lex as a keyword, and `public component function f()` is a
+    // function declaration with a return type, not a member.
+    _plain_declarator: ($) => seq(
+      field('name', $.identifier),
+      optional($._initializer),
     ),
 
     variable_declarator: ($) => seq(

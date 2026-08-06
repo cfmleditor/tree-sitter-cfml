@@ -18,7 +18,7 @@
     "cfquery/bitwise_and.cfm": "fail",
     "cfscript/array_return_type.cfc": "fail",
     "cfscript/empty_struct_literal.cfc": "fail",
-    "cfscript/final_member_declaration.cfc": "fail",
+    "cfscript/final_member_declaration.cfc": "pass",
     "cfscript/for_in_reserved_name.cfc": "pass",
     "cfscript/function_named_instanceof.cfc": "pass",
     "cfscript/keyword_shaped_param_types.cfc": "pass",
