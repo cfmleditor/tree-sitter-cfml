@@ -140,3 +140,180 @@ ORDER BY n
   (query_keyword)
   (query_keyword)
   (query_identifier))
+
+===================================
+common: line and block comments with escaped quotes
+===================================
+SELECT 'it''s' AS s -- trailing
+FROM t /* block */ WHERE a = 1
+---
+
+(program
+  (query_keyword)
+  (quoted_query_value
+    (query_value))
+  (quoted_query_value
+    (query_value))
+  (query_keyword)
+  (query_identifier)
+  (comment)
+  (query_keyword)
+  (query_identifier)
+  (comment)
+  (query_keyword)
+  (query_assignment_expression
+    (query_identifier)
+    (query_number
+      (number))))
+
+===================================
+common: top with multi-column order by
+===================================
+SELECT TOP 10 a FROM t ORDER BY a DESC, b ASC
+---
+
+(program
+  (query_keyword)
+  (query_keyword)
+  (query_number
+    (number))
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_comma)
+  (query_identifier)
+  (query_keyword))
+
+===================================
+common: cast, isnull and dateadd
+===================================
+SELECT CAST(a AS varchar(10)), ISNULL(b, 0), DATEADD(day, 1, c) FROM t
+---
+
+(program
+  (query_keyword)
+  (query_function
+    (query_function_name)
+    (parenthesized_query_node
+      (query_identifier)
+      (query_keyword)
+      (query_function
+        (query_function_name)
+        (parenthesized_query_node
+          (query_number
+            (number))))))
+  (query_comma)
+  (query_function
+    (query_function_name)
+    (parenthesized_query_node
+      (query_identifier)
+      (query_comma)
+      (query_number
+        (number))))
+  (query_comma)
+  (query_function
+    (query_function_name)
+    (parenthesized_query_node
+      (query_function_name)
+      (query_comma)
+      (query_number
+        (number))
+      (query_comma)
+      (query_identifier)))
+  (query_keyword)
+  (query_identifier))
+
+===================================
+common: union all
+===================================
+SELECT a FROM t UNION ALL SELECT b FROM u
+---
+
+(program
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier))
+
+===================================
+common: insert select with case expression
+===================================
+INSERT INTO t (a, b) SELECT CASE WHEN x > 1 THEN 'hi' ELSE 'lo' END, y FROM u WHERE z IS NOT NULL
+---
+
+(program
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (parenthesized_query_node
+    (query_identifier)
+    (query_comma)
+    (query_identifier))
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
+  (query_comparison_expression
+    (query_identifier)
+    (query_number
+      (number)))
+  (query_keyword)
+  (quoted_query_value
+    (query_value))
+  (query_keyword)
+  (quoted_query_value
+    (query_value))
+  (query_keyword)
+  (query_comma)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_identifier))
+
+===================================
+common: group by with having and ordered aggregate
+===================================
+SELECT a, COUNT(*) c FROM t GROUP BY a HAVING COUNT(*) > 1 ORDER BY c DESC
+---
+
+(program
+  (query_keyword)
+  (query_identifier)
+  (query_comma)
+  (query_function
+    (query_function_name)
+    (parenthesized_query_node
+      (query_star
+        (star))))
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_comparison_expression
+    (query_function
+      (query_function_name)
+      (parenthesized_query_node
+        (query_star
+          (star))))
+    (query_number
+      (number)))
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword))
