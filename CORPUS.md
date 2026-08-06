@@ -11,6 +11,7 @@ npm run corpus:fetch     # shallow-clone the curated repo list into ./corpus (~1
 npm run scan corpus      # one line per ERROR / MISSING node
 npm run corpus:report    # the same scan, clustered into distinct failure sites
 npm run probe            # minimal reductions of every construct found below
+npm run bench -- corpus  # parser throughput; add --out/--baseline to compare builds
 ```
 
 `corpus/` is gitignored — it is third-party code under a mix of licences and is
@@ -126,8 +127,10 @@ identifier names so `public component function init()` stayed a function.
 ### Performance
 
 Measured over the corpus with each grammar fed byte-identical inputs (whole
-files for `cfml`, extracted script regions for `cfscript`, query regions for
-`cfquery`), best of three repetitions, two samples per build:
+files for `cfml`, script components and `<cfscript>` regions for `cfscript`,
+query regions for `cfquery`), best of three repetitions, two samples per build.
+`npm run bench` is that measurement, committed so the numbers below can be
+reproduced and so the next comparison uses the same method:
 
 | | `master` | casing branch | this branch |
 |---|---|---|---|
@@ -138,6 +141,14 @@ files for `cfml`, extracted script regions for `cfscript`, query regions for
 Run-to-run spread on one build is 3–7% (20% for the much smaller `cfquery`
 input), so **no parse-time regression is measurable** — the differences are
 inside the noise.
+
+Timing `npm run scan` instead is the trap here, and it produced a confident
+"+65% regression" that did not exist: `scan.js` walks every tree collecting
+ERROR nodes and finds injected regions *by parsing them*, so both costs move
+with the error count. A change that fixes parse errors therefore reads as a
+large speed change for reasons unrelated to the parser. `bench.js` selects
+input by regex, reads it before the clock starts, and times only
+`parser.parse()`.
 
 What does grow is the generated tables: `parser.c` totals 34.5 MB on `master`
 against 41.5 MB here (+20%), and the compiled Node addon 7.14 MB against

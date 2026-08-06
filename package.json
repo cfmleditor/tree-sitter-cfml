@@ -62,6 +62,7 @@
     "parse": "node scripts/parse.js",
     "scan": "node scripts/scan.js",
     "probe": "node scripts/probe.js",
+    "bench": "node scripts/bench.js",
     "fuzz": "node scripts/fuzz.js",
     "corpus:fetch": "node scripts/fetch-corpus.js",
     "corpus:report": "node scripts/corpus-report.js",

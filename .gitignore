@@ -58,6 +58,10 @@ pnpm-debug.log*
 coverage/
 .nyc_output/
 
+# Per-developer Claude Code settings. `.claude/skills/` and any committed
+# `.claude/settings.json` are shared; this file is local permission grants.
+.claude/settings.local.json
+
 # OS / editor cruft
 .DS_Store
 Thumbs.db
