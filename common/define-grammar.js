@@ -187,7 +187,6 @@ module.exports = function defineGrammar(dialect) {
       [$.primary_expression, $.new_expression],
       [$.new_expression, $.pattern],
       [$.primary_expression, $.new_expression, $._property_name],
-      [$.primary_expression, $.new_expression, $.pattern],
       // `var`/`final` followed by a dotted name is a scoped declaration
       // (`var local.x = 1`), but the same prefix can also start an expression.
       [$.variable_declaration, $.primary_expression, $._property_name],
@@ -208,7 +207,6 @@ module.exports = function defineGrammar(dialect) {
       [$.assignment_expression, $.object_assignment_pattern],
       [$.labeled_statement, $._property_name],
       [$.computed_property_name, $.array],
-      [$.binary_expression, $._initializer],
       // `for ( var x = y in z )` — the initializer, an assignment and a binary
       // `in` expression all fit the same prefix.
       [$.assignment_expression, $._initializer, $.binary_expression],
@@ -218,9 +216,7 @@ module.exports = function defineGrammar(dialect) {
       // `array`, so `case <expr> :` is ambiguous with the start of a pair.
       [$.switch_case, $.expression],
       [$.expression, $.parenthesized_expression],
-      [$.primary_expression, $.function_expression, $._property_name],
       [$.function_expression, $.pattern],
-      [$.primary_expression, $.function_expression],
       [$.expression, $.expression_statement],
       [$.expression, $.arguments],
       // `throw ( x )` is ambiguous between `arguments` and a parenthesized expression.

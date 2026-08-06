@@ -9204,10 +9204,6 @@
       "array"
     ],
     [
-      "binary_expression",
-      "_initializer"
-    ],
-    [
       "assignment_expression",
       "_initializer",
       "binary_expression"
@@ -9260,20 +9256,6 @@
       "function_expression",
       "parameter_type",
       "pattern"
-    ],
-    [
-      "primary_expression",
-      "function_expression",
-      "parameter_type"
-    ],
-    [
-      "primary_expression",
-      "function_expression",
-      "_property_name"
-    ],
-    [
-      "primary_expression",
-      "function_expression"
     ],
     [
       "_property_name",

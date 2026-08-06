@@ -157,7 +157,6 @@ module.exports = grammar({
     [$.assignment_expression, $.object_assignment_pattern],
     [$.labeled_statement, $._property_name],
     [$.computed_property_name, $.array],
-    [$.binary_expression, $._initializer],
     // `for ( var x = y in z )` — the initializer, an assignment and a binary
     // `in` expression all fit the same prefix.
     [$.assignment_expression, $._initializer, $.binary_expression],
@@ -174,9 +173,6 @@ module.exports = grammar({
     [$.primary_expression, $.new_expression, $._property_name],
     [$.function_expression, $.pattern],
     [$.function_expression, $.parameter_type, $.pattern],
-    [$.primary_expression, $.function_expression, $.parameter_type],
-    [$.primary_expression, $.function_expression, $._property_name],
-    [$.primary_expression, $.function_expression],
     [$._property_name, $.primary_expression, $.query_tag],
     [$.primary_expression, $.query_expression],
     [$._property_name, $.primary_expression, $.query_expression],
