@@ -49,6 +49,12 @@ jobs:
           cache: 'npm'
       - run: npm install
       - run: npm test
+      # The probes are minimal reductions of constructs found in real CFML, with
+      # their current pass/fail status committed in test/probes/expected.json.
+      # This fails on drift in either direction, so a gap closing is as loud as a
+      # regression — but only if it actually runs, which until now it did not.
+      - run: npm run probe
+      - run: npm run testbindings
       - run: npm run lint
 
   test_windows:
@@ -66,4 +72,5 @@ jobs:
           cache: 'npm'
       - run: npm install
       - run: npm test
+      - run: npm run probe
       - run: npm run lint

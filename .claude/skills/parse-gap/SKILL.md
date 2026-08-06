@@ -92,7 +92,13 @@ by source-line shape when you want to see what is left.
 
 If the change touches either scanner, also run `npm run fuzz` — it applies
 random edits to every corpus test and re-parses, which is the only thing that
-exercises scanner state transitions systematically.
+exercises scanner state transitions systematically. CI runs it for grammar and
+scanner paths, but locally is where you want to find a hang.
+
+If someone asks whether the change costs performance, use `npm run bench`
+(baseline first, then compare) rather than timing `npm run scan`. Scan time
+moves with the error count, so a change that fixes parse errors reads as a huge
+speedup or slowdown that has nothing to do with the parser.
 
 ## 5. Land it
 

@@ -10,6 +10,13 @@ on:
       - "cfquery/src/scanner.c"
       - "common/scanner.h"
       - "common/tag.h"
+      # Grammar sources too, not just the scanners. Which external tokens are
+      # valid depends on the parse state, so a grammar change can put the
+      # scanner somewhere it has never been asked to scan before — and a
+      # zero-width token that repeats loops the parser with no scanner edit at
+      # all. The job costs ~30s per dialect; a hang costs 15 minutes.
+      - "common/define-grammar.js"
+      - "cfscript/grammar.js"
       # The fuzzer itself, so a change to it is validated by running it.
       - ".github/workflows/fuzz.yml"
       - "scripts/fuzz.js"
@@ -22,6 +29,13 @@ on:
       - "cfquery/src/scanner.c"
       - "common/scanner.h"
       - "common/tag.h"
+      # Grammar sources too, not just the scanners. Which external tokens are
+      # valid depends on the parse state, so a grammar change can put the
+      # scanner somewhere it has never been asked to scan before — and a
+      # zero-width token that repeats loops the parser with no scanner edit at
+      # all. The job costs ~30s per dialect; a hang costs 15 minutes.
+      - "common/define-grammar.js"
+      - "cfscript/grammar.js"
       # The fuzzer itself, so a change to it is validated by running it.
       - ".github/workflows/fuzz.yml"
       - "scripts/fuzz.js"

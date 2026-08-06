@@ -45,6 +45,19 @@ npm run scan corpus > scan.txt          # or any directory of .cfm/.cfc/.cfs fil
 npm run corpus:report -- --from scan.txt  # group failures by source-line shape
 ```
 
+Check a grammar or scanner change for a throughput regression:
+
+```bash
+npm run bench -- corpus --out before.json   # on the base commit
+npm run bench -- corpus --baseline before.json   # after the change
+```
+
+Do not time `npm run scan` for this. It walks every tree collecting ERROR nodes
+and locates injections *by parsing*, so both costs move with the error count —
+a change that fixes parse errors will look wildly faster or slower for reasons
+unrelated to parser speed. `bench.js` selects its input by regex, reads it up
+front, and times only `parser.parse()`.
+
 Playground (browser):
 
 ```bash
