@@ -111,19 +111,17 @@ them. The grammar is deliberately permissive here: these words must stay usable
 as ordinary identifiers (`static['key']`, `query.newQuery()`), and the parser
 does not distinguish the standalone case.
 
-### `<cfsetting>` without closing tag
-
-`<cfsetting showdebugoutput="no">` without a closing `</cfsetting>` or self-close `/>` will consume subsequent content as its body. Use `<cfsetting ... />` or `</cfsetting>` explicitly.
-
 ## cfml
 
 ### IE conditional comments
 
 `<!--[if gt IE 8]><!-->` is parsed as a comment node. The expression inside (`gt IE 8`) is not evaluated — it's treated as comment content.
 
-### `<cfsetting>` / `<cfprocessingdirective>` implicit close
+### `<cfprocessingdirective>` implicit close
 
-These tags can be used with or without a body. When used without a closing tag, the grammar treats them as paired tags and consumes content until EOF or another implicit close trigger. Use self-closing syntax (`/>`) for bodyless usage.
+`<cfprocessingdirective>` can be used with or without a body. When used without a closing tag, the grammar treats it as a paired tag and consumes content until EOF or another implicit close trigger. Use self-closing syntax (`/>`) for bodyless usage.
+
+`<cfsetting>` is now a void tag — `</cfsetting>` never appears in the 12,549-file corpus, while `<cfsetting …>` appears 336 times — so it no longer swallows the rest of the template.
 
 ### Dynamic tag names not fully evaluated
 
@@ -161,7 +159,6 @@ probe under `test/probes/`.
 ### cfml
 
 - **Bare `>` or `<` in template text** — `<p>a > b</p>`, `#ratio#%  ==>`. Common in ordinary HTML; both produce ERROR nodes.
-- **`<cfsetting>` inside a tag-based component** — `<cfsetting showdebugoutput="false">` within `<cfcomponent>` (related to the `<cfsetting>` note above; `<cfset>` and `<cfinclude>` in the same position parse).
 - **Typed `param` statement** — `param string url.id default="0";`. The untyped `param name="url.id" default="0";` parses.
 
 ### cfquery

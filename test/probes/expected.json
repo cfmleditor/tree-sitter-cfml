@@ -4,7 +4,7 @@
     "cfml/cfcontinue_in_cfloop.cfm": "pass",
     "cfml/cfif_function_call.cfm": "pass",
     "cfml/cfquery_hash_params.cfm": "pass",
-    "cfml/cfsetting_in_cfcomponent.cfc": "fail",
+    "cfml/cfsetting_void.cfc": "pass",
     "cfml/dynamic_close_tag.cfc": "pass",
     "cfml/gt_in_text.cfm": "fail",
     "cfml/hash_in_comment_in_script.cfm": "pass",
