@@ -698,7 +698,8 @@ module.exports = grammar({
       ']',
     ),
 
-    ordered_struct: ($) => prec(1, seq('[', ':', ']')),
+    // `[ : ]` and `[ = ]` are both empty ordered structs; Lucee accepts either.
+    ordered_struct: ($) => prec(1, choice(seq('[', ':', ']'), seq('[', '=', ']'))),
 
     array_pattern: ($) => seq(
       '[',
@@ -1420,6 +1421,22 @@ module.exports = grammar({
     ),
 
     tag_statement: $ => choice(
+      // `param string url.id default="0";` — the shorthand form names a type and
+      // the variable before the attributes. The attribute-only form
+      // (`param name="url.id" default="0";`) is the second branch below.
+      seq(
+        // Both the tag and the type stay plain identifiers. Spelling the type as
+        // a set of keyword tokens instead would make `array` lex as a keyword
+        // wherever this branch is live, which breaks the attribute form of every
+        // other tag statement — `loop array=data` loses its `array` identifier.
+        // What separates the two forms is what follows the type: a name here, an
+        // `=` in the attribute branch below.
+        field('tag', $.identifier),
+        field('type', alias($.identifier, $.parameter_type)),
+        field('name', choice($.identifier, $.member_expression)),
+        field('arguments', repeat(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
+        $._semicolon,
+      ),
       seq(
         field('tag', $.identifier),
         optional($.tag_linefeed),

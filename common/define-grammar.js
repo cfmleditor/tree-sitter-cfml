@@ -555,9 +555,12 @@ module.exports = function defineGrammar(dialect) {
           field('right', $._node),
         )),
 
+        // `&` is SQL Server's bitwise AND (`WHERE status & 2048 = 2048`). It is
+        // only an operator here — inside `#...#` it is CFML concatenation, which
+        // the hash expression grammar handles separately.
         query_math_expression: ($) => prec.left('binary_plus', seq(
           field('left', $._node),
-          field('operator', choice('-', '/', '%')),
+          field('operator', choice('-', '/', '%', '&', '|', '^')),
           field('right', $._node),
         )),
 
@@ -1477,7 +1480,8 @@ module.exports = function defineGrammar(dialect) {
         ']',
       ),
 
-      ordered_struct: ($) => prec(1, seq('[', ':', ']')),
+      // `[ : ]` and `[ = ]` are both empty ordered structs; Lucee accepts either.
+      ordered_struct: ($) => prec(1, choice(seq('[', ':', ']'), seq('[', '=', ']'))),
 
       array_pattern: ($) => seq(
         '[',

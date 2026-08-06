@@ -140,17 +140,15 @@ The `+` concatenation operator allows an optional right operand to support patte
 ## Constructs found in public CFML that do not parse
 
 These come from the corpus scan described in [CORPUS.md](CORPUS.md). Each has a
-probe under `test/probes/`.
+probe under `test/probes/`, and `npm run probe` reports the moment one is fixed
+or regresses. [`docs/FAILING-PATTERNS.md`](docs/FAILING-PATTERNS.md) has the full
+assessment, including how many files each affects and what fixing it would cost.
 
 ### cfscript
 
-- **Typed `catch` with `var`** — `} catch( any var e ) {` (CommandBox endpoints).
-- **`var` with a scoped or dotted name** — `var local.result = ...;`, `var a.b.c.d = 1;` (ContentBox, CommandBox, Lucee tests).
-- **Tag comments in a script body** — `<!--- viewlets --->` inside `component { }` (Preside handlers).
-- **Script-syntax tag calls** — `cfdirectory( directory="#dir#" action="create" );`, `cfheader( statuscode="404" statustext="..." );` (Lucee).
+- **Script-syntax tag calls** — `cfdirectory( directory="#dir#" action="create" );`, `cfheader( statuscode="404" statustext="..." );` (Lucee). The widest-spread remaining gap, at 17 files.
 - **Array return types** — `IValidationError[] function getFieldErrors( ... )` (cbvalidation).
-- **`final` and access-modifier member declarations** — `final MEMBER = "value";`, `public prop = "prop";` (Lucee tests).
-- **Empty struct literal** — `var uniqueList = [=];` (CommandBox, lucee-docs).
+- **Subscript index holding more than one pair** — `animals = $[ Aardwolf: "…", aardvark: "…" ];` (Lucee tests).
 - **`function` as a bare value** — `h = function.foo;`. `function` is accepted as
   an assignable name (`admin ... function="" ...`) and as a property
   (`x.function`), but not as the object of a member expression. Making it a
@@ -158,12 +156,18 @@ probe under `test/probes/`.
 
 ### cfml
 
-- **Bare `>` or `<` in template text** — `<p>a > b</p>`, `#ratio#%  ==>`. Common in ordinary HTML; both produce ERROR nodes.
-- **Typed `param` statement** — `param string url.id default="0";`. The untyped `param name="url.id" default="0";` parses.
+- **Dynamic tag name with a static prefix or namespace** — `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` (Lucee admin). The plain `<#expr#>` form parses. 10 files.
+
+The following were gaps and now parse: typed `catch` with `var`, `var` with a
+scoped or dotted name, tag comments in a script body, `final` and
+access-modifier member declarations, the empty struct literal `[=]`, bare `>` or
+`<` in template text, and the typed `param` statement.
 
 ### cfquery
 
-- **Bitwise `&` in SQL** — `AND status & 2048 = 2048` (Mura SQL Server DDL). Of 2,247 `<cfquery>` bodies in the corpus this is the only failing construct.
+No known gaps. Bitwise `&`, `|` and `^` were the last failing construct across
+the corpus's 2,247 `<cfquery>` bodies and now parse as `query_math_expression`.
+
 ## Removed JavaScript constructs
 
 This grammar is a fork of `tree-sitter-javascript`, and some JS-only rules were

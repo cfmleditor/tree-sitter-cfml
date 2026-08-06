@@ -1,5 +1,23 @@
 # Changelog
 
+## [Unreleased]
+
+### cfml & cfscript
+
+- Support the empty struct literal `[=]`, alongside the existing `[:]`
+
+### cfml
+
+- Treat a bare `>` or `<` in template text as text (`<p>a > b</p>`, `#ratio#%  ==>`) instead of an error
+
+### cfscript
+
+- Support the typed `param` statement (`param string url.id default="0";`), used in `.cfm` templates via `<cfscript>`
+
+### cfquery
+
+- Support the bitwise operators `&`, `|` and `^` in SQL (`WHERE status & 2048 = 2048`)
+
 ## [0.26.30]
 
 - Publish Python bindings to PyPI as part of the release workflow (wheels built via `cibuildwheel`, sdist via `build`, upload via trusted publishing)
