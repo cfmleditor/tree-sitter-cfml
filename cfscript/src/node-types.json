@@ -204,6 +204,10 @@
         "named": true
       },
       {
+        "type": "cf_comment",
+        "named": true
+      },
+      {
         "type": "cfml_template",
         "named": true
       },
@@ -3390,6 +3394,10 @@
   {
     "type": "catch",
     "named": false
+  },
+  {
+    "type": "cf_comment",
+    "named": true
   },
   {
     "type": "cfml",

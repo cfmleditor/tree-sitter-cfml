@@ -14,3 +14,4 @@
   body: (component_body) @class.inside) @class.around
 
 (comment) @comment.around
+(cf_comment) @comment.around

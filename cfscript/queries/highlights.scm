@@ -108,6 +108,7 @@
 ] @constant.builtin
 
 (comment) @comment
+(cf_comment) @comment
 
 [
   (string)

@@ -37,6 +37,7 @@ module.exports = grammar({
     $.query_text,
     $.tag_linefeed,
     $.cfml_template_content,
+    $.cf_comment,
   ],
 
   extras: ($) => [
@@ -299,6 +300,10 @@ module.exports = grammar({
 
     statement: ($) => choice(
       // $.export_statement,
+      // `<!--- … --->` between statements. Deliberately a statement rather than
+      // an extra: as an extra it also matched inside a string, so
+      // `reReplace( src, "<!---.*?--->", "" )` grew a comment node.
+      $.cf_comment,
       $.import_statement,
       $.debugger_statement,
       $.expression_statement,

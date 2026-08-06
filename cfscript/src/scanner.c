@@ -12,7 +12,8 @@ enum TokenType {
     REGEX_PATTERN,
     QUERY_TEXT,
     TAG_LINEFEED,
-    CFML_TEMPLATE_CONTENT
+    CFML_TEMPLATE_CONTENT,
+    CFML_COMMENT
 };
 
 void *tree_sitter_cfscript_external_scanner_create() { return NULL; }
@@ -414,6 +415,54 @@ static bool scan_cfml_template_content(TSLexer *lexer) {
     return false;
 }
 
+// `<!--- … --->` — a CFML tag comment. These turn up inside script component
+// bodies (Preside handlers, the Lucee test suite) and nest, which a token
+// regex cannot express, so they are scanned here.
+static bool scan_cfml_comment(TSLexer *lexer) {
+    if (lexer->lookahead != '<') return false;
+    advance(lexer);
+    if (lexer->lookahead != '!') return false;
+    advance(lexer);
+    for (int i = 0; i < 3; i++) {
+        if (lexer->lookahead != '-') return false;
+        advance(lexer);
+    }
+
+    unsigned depth = 1;
+    while (lexer->lookahead) {
+        if (lexer->lookahead == '<') {
+            advance(lexer);
+            if (lexer->lookahead != '!') continue;
+            advance(lexer);
+            unsigned dashes = 0;
+            while (lexer->lookahead == '-') {
+                dashes++;
+                advance(lexer);
+            }
+            if (dashes >= 3) depth++;
+            continue;
+        }
+        if (lexer->lookahead == '-') {
+            unsigned dashes = 0;
+            while (lexer->lookahead == '-') {
+                dashes++;
+                advance(lexer);
+            }
+            if (dashes >= 3 && lexer->lookahead == '>') {
+                advance(lexer);
+                if (--depth == 0) {
+                    lexer->result_symbol = CFML_COMMENT;
+                    lexer->mark_end(lexer);
+                    return true;
+                }
+            }
+            continue;
+        }
+        advance(lexer);
+    }
+    return false;
+}
+
 bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
     if (valid_symbols[CFML_TEMPLATE_CONTENT]) {
         return scan_cfml_template_content(lexer);
@@ -434,11 +483,25 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
         return true;
     }
 
+    // A CFML comment where no semicolon or ternary decision is pending. The
+    // whitespace has to be skipped here: the scanner is called before the
+    // internal lexer, so the lexer is parked on the whitespace, not on `<`.
+    // The semicolon branch below covers the other case — it skips whitespace
+    // itself, so by the time it declines the lexer is already on `<`.
+    if (valid_symbols[CFML_COMMENT] && !valid_symbols[AUTOMATIC_SEMICOLON] &&
+        !valid_symbols[TERNARY_QMARK] && !valid_symbols[ELVIS_OPERATOR]) {
+        while (iswspace(lexer->lookahead)) skip(lexer);
+        return lexer->lookahead == '<' && scan_cfml_comment(lexer);
+    }
+
     if (valid_symbols[AUTOMATIC_SEMICOLON] && !valid_symbols[TAG_LINEFEED]) {
         bool scanned_comment = false;
         bool ret = scan_automatic_semicolon(lexer, !valid_symbols[LOGICAL_OR], &scanned_comment);
         if (!ret && !scanned_comment && valid_symbols[TERNARY_QMARK] && lexer->lookahead == '?') {
             return scan_ternary_qmark(lexer);
+        }
+        if (!ret && valid_symbols[CFML_COMMENT] && lexer->lookahead == '<' && scan_cfml_comment(lexer)) {
+            return true;
         }
         return ret;
     }

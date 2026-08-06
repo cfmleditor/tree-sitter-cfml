@@ -396,6 +396,10 @@
       "members": [
         {
           "type": "SYMBOL",
+          "name": "cf_comment"
+        },
+        {
+          "type": "SYMBOL",
           "name": "import_statement"
         },
         {
@@ -9301,6 +9305,10 @@
     {
       "type": "SYMBOL",
       "name": "cfml_template_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "cf_comment"
     }
   ],
   "inline": [

@@ -29,7 +29,7 @@
     "cfscript/static_block.cfc": "pass",
     "cfscript/string_slice.cfc": "pass",
     "cfscript/subscript_multiple_pairs.cfc": "fail",
-    "cfscript/tag_comment_in_script_body.cfc": "fail",
+    "cfscript/tag_comment_in_script_body.cfc": "pass",
     "cfscript/typed_catch_with_var.cfc": "pass",
     "cfscript/var_scoped_dotted_name.cfc": "pass"
   }

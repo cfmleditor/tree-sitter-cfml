@@ -19,3 +19,4 @@
 
 ; Fold comments
 (comment) @fold
+(cf_comment) @fold
