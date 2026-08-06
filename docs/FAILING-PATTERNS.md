@@ -190,6 +190,9 @@ them were only saved by that scan. Budget for the scan, not just the edit.
 4. Everything else is single-file or nearly so, and worth fixing only if the
    construct is cheap to express.
 
+Work that is not a parse gap — tooling, queries, docs — is tracked separately in
+[`TODO.md`](TODO.md).
+
 Crossing that list with the cost table gave a different order for anyone wanting
 value per unit of risk, and that is the order actually taken: `[=]`, typed
 `param` and bitwise `&` were cheap and safe but affect few files; bare `>` was

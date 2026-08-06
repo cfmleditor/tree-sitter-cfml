@@ -133,6 +133,7 @@ Beyond the standard `highlights.scm`, `indents.scm`, `injections.scm`, `tags.scm
 - **Node version:** `>=18 <=24` (`.nvmrc` in repo root).
 - **`tree-sitter` CLI:** Scripts use the locally installed binary (`node_modules/tree-sitter-cli/`); a global install is not required.
 - **Known parser limitations** are documented in [`LIMITATIONS.md`](LIMITATIONS.md) — check there before investigating a surprising parse result. [`docs/FAILING-PATTERNS.md`](docs/FAILING-PATTERNS.md) has the longer version: every construct in the real-world corpus that still fails, how many files it affects, and an estimate of what fixing it would cost, calibrated against changes that have actually landed here.
+- **Open non-parser work** lives in [`docs/TODO.md`](docs/TODO.md), including a section on what was considered and deliberately left undone, so those decisions do not get re-argued.
 
 ## Skills
 
