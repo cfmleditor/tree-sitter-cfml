@@ -37,6 +37,7 @@ module.exports = grammar({
     $.query_text,
     $.tag_linefeed,
     $.cfml_template_content,
+    $.cf_comment,
   ],
 
   extras: ($) => [
@@ -54,6 +55,41 @@ module.exports = grammar({
   ],
 
   inline: ($) => [
+    $._kw_abstract,
+    $._kw_break,
+    $._kw_case,
+    $._kw_catch,
+    $._kw_component,
+    $._kw_continue,
+    $._kw_debugger,
+    $._kw_default,
+    $._kw_do,
+    $._kw_else,
+    $._kw_final,
+    $._kw_finally,
+    $._kw_for,
+    $._kw_function,
+    $._kw_if,
+    $._kw_import,
+    $._kw_in,
+    $._kw_include,
+    $._kw_instanceof,
+    $._kw_interface,
+    $._kw_new,
+    $._kw_of,
+    $._kw_package,
+    $._kw_private,
+    $._kw_property,
+    $._kw_public,
+    $._kw_remote,
+    $._kw_return,
+    $._kw_static,
+    $._kw_switch,
+    $._kw_throw,
+    $._kw_try,
+    $._kw_var,
+    $._kw_while,
+    $._kw_with,
     $._call_signature,
     $._formal_parameter,
     $._expressions,
@@ -91,21 +127,28 @@ module.exports = grammar({
     ['member', 'new', 'call', $.expression],
     ['declaration', 'literal'],
     [$.primary_expression, $.statement_block, 'object'],
-    [$.meta_property, $.import],
-    [$.import_statement, $.import],
   ],
 
   conflicts: ($) => [
     [$.object, $.object_pattern],
     [$.primary_expression, $.pattern],
     [$.assignment_expression, $.pattern],
-    [$.function_expression, $.parameter_type],
     [$.function_expression, $.function_declaration],
     [$.expression, $.function_expression, $.function_declaration],
     [$.primary_expression, $.path],
+    // `public(`, `private(` … — an access modifier starting a member
+    // declaration looks exactly like a call until the parser sees what follows.
+    // `final X` / `public X` — a member declaration and a function declaration
+    // (`final query function f()`) share their prefix.
+    [$.primary_expression, $.variable_declaration],
+    [$.variable_declaration, $.access_type],
+    [$.variable_declaration, $.primary_expression, $._property_name],
     [$.primary_expression, $.parameter_type],
     [$.primary_expression, $.parameter_type, $.pattern],
     [$.parameter_type, $.pattern],
+    // `( function ( ... ` is either a parameter typed `Function` or an
+    // anonymous function used as a parameter default.
+    [$.function_expression, $.parameter_type],
     [$.primary_expression, $._property_name],
     [$.primary_expression, $.method_definition],
     [$.primary_expression, $.rest_pattern],
@@ -115,18 +158,25 @@ module.exports = grammar({
     [$.labeled_statement, $._property_name],
     [$.computed_property_name, $.array],
     [$.binary_expression, $._initializer],
+    // `for ( var x = y in z )` — the initializer, an assignment and a binary
+    // `in` expression all fit the same prefix.
+    [$.assignment_expression, $._initializer, $.binary_expression],
     [$.method_definition, $.access_type],
-    [$.expression, $._property_name],
-    [$.expression, $.object],
-    [$.binary_expression, $.pair],
-    [$.member_expression, $.pair],
-    [$.subscript_expression, $.pair],
-    [$.member_expression, $.subscript_expression, $.pair],
-    [$.update_expression, $.pair],
-    [$.ternary_expression, $.pair],
-    [$.elvis_expression, $.pair],
-
+    // `pair` (expression ':' expression) is reachable from `arguments` and
+    // `array`, so `case <expr> :` is ambiguous with the start of a pair.
+    [$.switch_case, $.expression],
+    [$.primary_expression, $.new_expression],
     [$.primary_expression, $.query_tag],
+    [$._for_header, $.primary_expression, $.new_expression],
+    [$.primary_expression, $.new_expression, $.rest_pattern],
+    [$.new_expression, $.pattern],
+    [$.primary_expression, $.new_expression, $.pattern],
+    [$.primary_expression, $.new_expression, $._property_name],
+    [$.function_expression, $.pattern],
+    [$.function_expression, $.parameter_type, $.pattern],
+    [$.primary_expression, $.function_expression, $.parameter_type],
+    [$.primary_expression, $.function_expression, $._property_name],
+    [$.primary_expression, $.function_expression],
     [$._property_name, $.primary_expression, $.query_tag],
     [$.primary_expression, $.query_expression],
     [$._property_name, $.primary_expression, $.query_expression],
@@ -138,11 +188,9 @@ module.exports = grammar({
     [$.expression, $.assignment_expression],
     [$.expression, $.return_statement],
     [$.expression, $.throw_statement],
-    [$.expression, $.assignment_expression, $._property_name],
     [$.assignment_expression, $._property_name],
     [$.object_assignment_pattern, $._property_name],
     [$.object_assignment_pattern, $.assignment_expression, $._property_name],
-    [$.switch_case, $.expression, $._property_name],
     [$.call_expression, $._property_name],
     [$._for_header, $.expression],
     [$.expression, $.for_statement],
@@ -196,10 +244,8 @@ module.exports = grammar({
     // Import declarations
     //
 
-    import: (_) => token('import'),
-
     import_statement: ($) => seq(
-      'import',
+      $._kw_import,
       choice(
         seq($.import_clause, $._from_clause),
         field('source', $.string),
@@ -253,7 +299,7 @@ module.exports = grammar({
       ),
     ),
 
-    import_attribute: ($) => seq('with', $.object),
+    import_attribute: ($) => seq($._kw_with, $.object),
 
     //
     // Statements
@@ -261,6 +307,10 @@ module.exports = grammar({
 
     statement: ($) => choice(
       // $.export_statement,
+      // `<!--- … --->` between statements. Deliberately a statement rather than
+      // an extra: as an extra it also matched inside a string, so
+      // `reReplace( src, "<!---.*?--->", "" )` grew a comment node.
+      $.cf_comment,
       $.import_statement,
       $.debugger_statement,
       $.expression_statement,
@@ -295,14 +345,51 @@ module.exports = grammar({
       $._semicolon,
     ),
 
-    variable_declaration: ($) => seq(
-      'var',
-      commaSep1($.variable_declarator),
-      $._semicolon,
+    // `var x = 1`, and the Lucee member forms `final MEMBER = "value"` and
+    // `public prop = "prop"` inside a component body.
+    variable_declaration: ($) => choice(
+      seq(
+        choice(
+          $._kw_var,
+          $._kw_final,
+          seq($._kw_final, $._kw_var),
+          seq($._kw_var, $._kw_final),
+        ),
+        commaSep1($.variable_declarator),
+        $._semicolon,
+      ),
+      // `public prop = "prop"`. Access modifiers only — `static` and `abstract`
+      // are excluded because `static { … }` and `abstract component { … }` claim
+      // those words. The negative dynamic precedence keeps
+      // `private component function f()` a function declaration: there the
+      // modifier is followed by a return type, not a variable name.
+      prec.dynamic(-1, seq(
+        alias(choice($._kw_public, $._kw_private, $._kw_package, $._kw_remote), $.access_type),
+        commaSep1(alias($._plain_declarator, $.variable_declarator)),
+        $._semicolon,
+      )),
+    ),
+
+    // A member declaration's name is a plain identifier — no keywords and no
+    // scoped name. Accepting keywords here would make `component` after
+    // `public` lex as a keyword, and `public component function f()` is a
+    // function declaration with a return type, not a member.
+    _plain_declarator: ($) => seq(
+      field('name', $.identifier),
+      optional($._initializer),
     ),
 
     variable_declarator: ($) => seq(
-      field('name', choice($.identifier, $._destructuring_pattern)),
+      // A scoped name is legal in CFML: `var local.result = …`, `var a.b.c = 1`.
+      // `_reserved_identifier` has to be spelled out because allowing a
+      // `member_expression` here makes keyword-led expressions valid straight
+      // after `var`, so `var new = 1` would otherwise lex `new` as a keyword.
+      field('name', choice(
+        $.identifier,
+        alias($._reserved_identifier, $.identifier),
+        $.member_expression,
+        $._destructuring_pattern,
+      )),
       optional($._initializer),
     ),
 
@@ -313,23 +400,23 @@ module.exports = grammar({
       optional($._automatic_semicolon),
     )),
 
-    else_clause: ($) => seq('else', $.statement),
+    else_clause: ($) => seq($._kw_else, $.statement),
 
     if_statement: ($) => prec.right(seq(
-      'if',
+      $._kw_if,
       field('condition', $.parenthesized_expression),
       field('consequence', $.statement),
       optional(field('alternative', $.else_clause)),
     )),
 
     switch_statement: ($) => seq(
-      'switch',
+      $._kw_switch,
       field('value', $.parenthesized_expression),
       field('body', $.switch_body),
     ),
 
     for_statement: ($) => seq(
-      'for',
+      $._kw_for,
       '(',
       choice(
         field('initializer', $.variable_declaration),
@@ -346,7 +433,7 @@ module.exports = grammar({
     ),
 
     for_in_statement: ($) => seq(
-      'for',
+      $._kw_for,
       $._for_header,
       field('body', $.statement),
     ),
@@ -359,9 +446,13 @@ module.exports = grammar({
           $.parenthesized_expression,
         )),
         seq(
-          field('kind', 'var'),
+          field('kind', $._kw_var),
           field('left', choice(
+            // `for ( var export in … )` — a keyword-shaped loop variable. `var`
+            // now makes keywords valid here (see variable_declarator), so they
+            // have to be accepted rather than lexed as keywords.
             $.identifier,
+            alias($._reserved_identifier, $.identifier),
             $._destructuring_pattern,
           )),
           optional($._initializer),
@@ -375,69 +466,72 @@ module.exports = grammar({
           optional($._automatic_semicolon),
         ),
       ),
-      field('operator', choice('in', 'IN', 'In', 'of', 'OF', 'Of')),
+      field('operator', choice($._kw_in, $._kw_of)),
       field('right', $._expressions),
       ')',
     ),
 
     while_statement: ($) => seq(
-      'while',
+      $._kw_while,
       field('condition', $.parenthesized_expression),
       field('body', $.statement),
     ),
 
     do_statement: ($) => prec.right(seq(
-      'do',
+      $._kw_do,
       field('body', $.statement),
-      'while',
+      $._kw_while,
       field('condition', $.parenthesized_expression),
       optional($._semicolon),
     )),
 
     try_statement: ($) => seq(
-      'try',
+      $._kw_try,
       field('body', $.statement_block),
       repeat(field('handler', $.catch_clause)),
       optional(field('finalizer', $.finally_clause)),
     ),
 
     with_statement: ($) => seq(
-      'with',
+      $._kw_with,
       field('object', $.parenthesized_expression),
       field('body', $.statement),
     ),
 
     break_statement: ($) => seq(
-      'break',
+      $._kw_break,
       field('label', optional(alias($.identifier, $.statement_identifier))),
       $._semicolon,
     ),
 
     continue_statement: ($) => seq(
-      'continue',
+      $._kw_continue,
       field('label', optional(alias($.identifier, $.statement_identifier))),
       $._semicolon,
     ),
 
     debugger_statement: ($) => seq(
-      'debugger',
+      $._kw_debugger,
       $._semicolon,
     ),
 
     return_statement: ($) => seq(
-      'return',
+      $._kw_return,
       optional($._expressions),
       $._semicolon,
     ),
 
+    // `throw` takes an expression (`throw "msg";`) but is also called with
+    // named arguments (`throw(type="x", message="y")` / `throw(type:"x")`).
+    // `pair` is only reachable from `arguments`, so accept those explicitly.
     throw_statement: ($) => seq(
-      'throw',
-      $._expressions,
+      $._kw_throw,
+      choice(prec.dynamic(1, $.arguments), $._expressions),
       $._semicolon,
     ),
 
     include_statement: ($) => prec(1, seq(
-      'include',
+      $._kw_include,
       choice(
         seq(repeat1($.parameter_attribute), $._semicolon),
         seq($._expressions, $._semicolon),
@@ -463,24 +557,27 @@ module.exports = grammar({
     ),
 
     switch_case: ($) => seq(
-      'case',
+      $._kw_case,
       field('value', $._expressions),
       ':',
       field('body', repeat($.statement)),
     ),
 
     switch_default: ($) => seq(
-      'default',
+      $._kw_default,
       ':',
       field('body', repeat($.statement)),
     ),
 
     catch_clause: ($) => seq(
-      'catch',
+      $._kw_catch,
       optional(
         seq(
           '(',
           optional(field('type', alias(choice($.identifier, $.nested_identifier, $.string), $.catch_type))),
+          // `catch( any var e )` — CommandBox's endpoints scope the caught
+          // variable, which Lucee and ACF both accept.
+          optional($._kw_var),
           field('parameter', choice($.identifier, $.nested_identifier, $._destructuring_pattern)),
           ')',
         ),
@@ -489,7 +586,7 @@ module.exports = grammar({
     ),
 
     finally_clause: ($) => seq(
-      'finally',
+      $._kw_finally,
       field('body', $.statement_block),
     ),
 
@@ -519,7 +616,6 @@ module.exports = grammar({
       $.update_expression,
       $.new_expression,
       $._hash_always_eval,
-      $.pair,
       $.object_pattern,
       $.query_expression,
     ),
@@ -544,7 +640,6 @@ module.exports = grammar({
       $.ordered_struct,
       $.function_expression,
       $.arrow_function,
-      $.meta_property,
       $.call_expression,
     ),
 
@@ -597,6 +692,7 @@ module.exports = grammar({
       '[',
       commaSep(optional(choice(
         $.expression,
+        $.pair,
         $.spread_element,
       ))),
       ']',
@@ -620,10 +716,10 @@ module.exports = grammar({
     )),
 
     component: ($) => prec('literal', seq(
-      optional(choice('static', 'abstract', 'final')),
+      optional(choice($._kw_static, $._kw_abstract, $._kw_final)),
       choice(
-        'component',
-        'interface',
+        $._kw_component,
+        $._kw_interface,
       ),
       repeat(seq(optional($.tag_linefeed), $.component_attribute)),
       field('body', $.component_body),
@@ -644,43 +740,54 @@ module.exports = grammar({
     ),
 
     function_expression: ($) => prec('literal', seq(
-      'function',
+      $._kw_function,
       field('name', optional($.identifier)),
       $._call_signature,
       repeat(prec(1, $.assignment_expression)),
       field('body', $.statement_block),
     )),
 
+    // NOTE: these overlap with `_reserved_identifier` (they must stay usable as
+    // plain identifiers), so they cannot become `token(prec(1, ...))` keywords
+    // without breaking `static['key']` / `query.newQuery()`. Left case-sensitive.
     access_type: ($) => choice(
-      'public',
-      'private',
-      'package',
-      'remote',
-      'static',
-      'final',
-      'abstract',
+      $._kw_public,
+      $._kw_private,
+      $._kw_package,
+      $._kw_remote,
+      $._kw_static,
+      $._kw_final,
+      $._kw_abstract,
     ),
 
+    // CFML type names are spelled with the same words as several keywords
+    // (`Component listener`, `Static state`, `Final value`). Those words lex as
+    // keywords here because `_reserved_identifier` makes them valid at the start
+    // of a parameter, so accept them as a type name too.
     parameter_type: ($) => choice(
-      'any',
-      'string',
-      'numeric',
-      'xml',
-      'binary',
-      'boolean',
-      'date',
-      'function',
-      'guid',
-      'query',
-      'void',
+      keyword('Any'),
+      keyword('String'),
+      keyword('Numeric'),
+      keyword('Xml'),
+      keyword('Binary'),
+      keyword('Boolean'),
+      keyword('Date'),
+      $._kw_function,
+      keyword('Guid'),
+      keyword('Query'),
+      keyword('Void'),
+      // `Component listener` — `component` lexes as a keyword here because
+      // `_reserved_identifier` makes it valid at the start of a parameter, so it
+      // never reaches `$.identifier` below.
+      alias($._kw_component, $.identifier),
       $.path,
       $.identifier,
     ),
 
     function_declaration: ($) => prec.right('declaration', seq(
       repeat($.access_type),
-      optional(choice('function', 'query', $.path, $.identifier)),
-      'function',
+      optional(choice($._kw_function, keyword('Query'), $.path, $.identifier)),
+      $._kw_function,
       field('name', $.identifier),
       $._call_signature,
       repeat(prec(1, seq(optional($.tag_linefeed), choice($.assignment_expression, $.identifier)))),
@@ -709,13 +816,13 @@ module.exports = grammar({
     _call_signature: ($) => field('parameters', $.formal_parameters),
     _formal_parameter: ($) => choice(
       seq(
-        optional('required'),
+        optional(keyword('Required')),
         $.parameter_type,
         optional(choice($.pattern, $.assignment_pattern)),
         repeat($.parameter_attribute),
       ),
       seq(
-        optional('required'),
+        optional(keyword('Required')),
         choice($.pattern, $.assignment_pattern),
         repeat($.parameter_attribute),
       ),
@@ -732,7 +839,7 @@ module.exports = grammar({
 
     call_expression: ($) => choice(
       prec('call', seq(
-        field('function', choice($.primary_expression, $._hash_always_eval, $.import)),
+        field('function', choice($.primary_expression, $._hash_always_eval)),
         field('arguments', $.arguments),
       )),
       prec('member', seq(
@@ -744,13 +851,15 @@ module.exports = grammar({
 
     new_expression: ($) => prec.right('new', choice(
       seq(
-        'new',
-        /[Cc][Oo][Mm][Pp][Oo][Nn][Ee][Nn][Tt]/,
+        $._kw_new,
+        // Standalone token on purpose: inside `new <X>` the extracted keyword
+        // would lex as an identifier, breaking the inline-component form.
+        $._kw_component,
         repeat(seq(optional($.tag_linefeed), $.component_attribute)),
         field('body', $.component_body),
       ),
       seq(
-        'new',
+        $._kw_new,
         optional(field('prefix', seq(choice('java', 'cfml'), ':'))),
         optional(field('constructor', choice($.primary_expression, $.new_expression))),
         field('arguments', optional(prec.dynamic(1, $.arguments))),
@@ -758,21 +867,30 @@ module.exports = grammar({
     )),
 
     member_expression: $ => prec('member', seq(
-      field('object', choice($.expression, $.primary_expression, $.import)),
+      field('object', choice($.expression, $.primary_expression)),
       choice('.', field('optional_chain', $.optional_chain), field('static_chain', $.static_chain)),
       field('property', choice(
         $.private_property_identifier,
-        alias(
-          $.identifier,
-          $.property_identifier,
-        ),
+        alias($.identifier, $.property_identifier),
+        alias($._kw_new, $.property_identifier),
       )),
     )),
 
     subscript_expression: ($) => prec.right('member', seq(
       field('object', choice($.expression, $.primary_expression)),
       optional(field('optional_chain', $.optional_chain)),
-      '[', field('index', $._expressions), ']',
+      '[', field('index', choice($._expressions, $.slice_expression)), ']',
+    )),
+
+    // Lucee string / array slicing: `s[4:13]`, `s[4:13:2]`, `s[-10:-4]`.
+    // Bounds are optional (`s[:5]`, `s[3:]`). This used to fall out of `pair`
+    // being reachable inside a subscript through the expression conflicts;
+    // spelling it out keeps slicing working without that ambiguity.
+    slice_expression: ($) => prec.right(seq(
+      optional(field('start', $.expression)),
+      ':',
+      optional(field('end', $.expression)),
+      optional(seq(':', optional(field('step', $.expression)))),
     )),
 
     _lhs_expression: ($) => choice(
@@ -782,6 +900,13 @@ module.exports = grammar({
       $.subscript_expression,
       $._identifier,
       alias($._reserved_identifier, $.identifier),
+      // `function` is a legal attribute / argument name in script-syntax tag
+      // calls (Lucee's `admin ... function="" ...`), so it has to be assignable.
+      // It is deliberately not in `_reserved_identifier`: as a general expression
+      // start it would make every binary operator valid straight after
+      // `function`, and keyword extraction would then lex the name in
+      // `function instanceOf( ... )` as the `instanceof` operator.
+      alias($._kw_function, $.identifier),
       $._destructuring_pattern,
     ),
 
@@ -884,8 +1009,8 @@ module.exports = grammar({
         [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_relation'],
         [/[nN][oO][tT]\s+[eE][qQ][uU][aA][lL]/, 'binary_equality'],
         ['??', 'ternary'],
-        ['instanceof', 'binary_relation'],
-        ['in', 'binary_relation'],
+        [$._kw_instanceof, 'binary_relation'],
+        [$._kw_in, 'binary_relation'],
       ].map(([operator, precedence, associativity]) =>
         // @ts-ignore
         (associativity === 'right' ? prec.right : prec.left)(precedence, seq(
@@ -1062,14 +1187,13 @@ module.exports = grammar({
       return token(seq('~', alpha, repeat(alphanumeric)));
     },
 
-    meta_property: (_) => choice(seq('new', '.', 'target'), seq('import', '.', 'meta')),
 
-    this: (_) => token('this'),
-    super: (_) => token('super'),
-    true: (_) => token('true'),
-    false: (_) => token('false'),
-    null: (_) => token('null'),
-    undefined: (_) => token('undefined'),
+    this: (_) => keyword('This'),
+    super: (_) => keyword('Super'),
+    true: (_) => keyword('True'),
+    false: (_) => keyword('False'),
+    null: (_) => keyword('Null'),
+    undefined: (_) => keyword('Undefined'),
 
     //
     // Expression components
@@ -1077,7 +1201,7 @@ module.exports = grammar({
 
     arguments: ($) => seq(
       '(',
-      commaSep(optional(choice($.expression, $._hash_always_eval, $.spread_element))),
+      commaSep(optional(choice($.expression, $.pair, $._hash_always_eval, $.spread_element))),
       ')',
     ),
 
@@ -1113,10 +1237,10 @@ module.exports = grammar({
       '}',
     ),
 
-    static_initializer: ($) => seq('static', $.statement_block),
+    static_initializer: ($) => seq($._kw_static, $.statement_block),
 
     property_declaration: ($) => seq(
-      'property',
+      $._kw_property,
       choice(
         prec.dynamic(1, seq(
           optional(field('type', choice($.path, $.identifier))),
@@ -1130,7 +1254,7 @@ module.exports = grammar({
 
     field_definition: ($) => seq(
       repeat(field('decorator', $.decorator)),
-      optional('static'),
+      optional($._kw_static),
       field('property', $._property_name),
       optional($._initializer),
     ),
@@ -1160,8 +1284,8 @@ module.exports = grammar({
     method_definition: ($) => seq(
       repeat(field('decorator', $.decorator)),
       optional(choice(
-        'static',
-        alias(token(seq('static', /\s+/, 'get', /\s*\n/)), 'static get'),
+        $._kw_static,
+        alias(token(seq(/[sS][tT][aA][tT][iI][cC]/, /\s+/, /[gG][eE][tT]/, /\s*\n/)), 'static get'),
       )),
       // optional('async'),
       optional(choice('get', 'set', '*')),
@@ -1222,18 +1346,32 @@ module.exports = grammar({
       ']',
     ),
 
-    _reserved_identifier: (_) => choice(
+    // NOTE: these stay case-sensitive on purpose. They must remain usable as
+    // plain identifiers (`static['key']`, `query.newQuery()`), and a
+    // `token(prec(1, ...))` keyword would always win in the lexer.
+    _reserved_identifier: ($) => choice(
       'get',
       'set',
-      'static',
+      $._kw_static,
       'export',
       'let',
-      'component',
-      'private',
-      'public',
-      'include',
-      'query',
-      'queryExecute',
+      $._kw_component,
+      $._kw_private,
+      $._kw_public,
+      $._kw_include,
+      keyword('Query'),
+      keyword('QueryExecute'),
+      $._kw_new,
+      $._kw_package,
+      $._kw_remote,
+      $._kw_abstract,
+      $._kw_final,
+      // `function` is deliberately absent. Listing it here made `function` a
+      // valid expression start, which in turn made every binary operator —
+      // including `instanceof` — valid immediately after it. Keyword extraction
+      // then lexed the name in `function instanceOf( ... )` as the operator
+      // instead of an identifier. See
+      // test/probes/cfscript/function_named_instanceof.cfc.
     ),
 
     _semicolon: ($) => choice($._automatic_semicolon, ';'),
@@ -1253,7 +1391,7 @@ module.exports = grammar({
     cfml_template: ($) => seq('```', $.cfml_template_content, '```'),
 
     query_expression: ($) => seq(
-      'queryExecute',
+      keyword('QueryExecute'),
       '(',
       choice(
         seq('"', $.query_text, '"'),
@@ -1275,7 +1413,7 @@ module.exports = grammar({
     ),
 
     query_tag: ($) => seq(
-      'query',
+      keyword('Query'),
       repeat(prec(1, seq(optional($.tag_linefeed), field('arguments', $.assignment_expression)))),
       optional($.tag_linefeed),
       field('body', $.statement_block),
@@ -1297,5 +1435,91 @@ module.exports = grammar({
       ),
     ),
 
+    // Keyword tokens. Defined once here and referenced as `$._kw_<word>`
+    // so a keyword can never be spelled two different ways in two rules —
+    // that divergence is what previously produced two competing tokens for
+    // `component`. Hidden (leading `_`) so they add no node to the tree.
+    _kw_abstract: (_) => keyword('Abstract'),
+    _kw_break: (_) => keyword('Break'),
+    _kw_case: (_) => keyword('Case'),
+    _kw_catch: (_) => keyword('Catch'),
+    _kw_component: (_) => keyword('Component'),
+    _kw_continue: (_) => keyword('Continue'),
+    _kw_debugger: (_) => keyword('Debugger'),
+    _kw_default: (_) => keyword('Default'),
+    _kw_do: (_) => keyword('Do'),
+    _kw_else: (_) => keyword('Else'),
+    _kw_final: (_) => keyword('Final'),
+    _kw_finally: (_) => keyword('Finally'),
+    _kw_for: (_) => keyword('For'),
+    _kw_function: (_) => keyword('Function'),
+    _kw_if: (_) => keyword('If'),
+    _kw_import: (_) => keyword('Import'),
+    _kw_in: (_) => keyword('In'),
+    _kw_include: (_) => keyword('Include'),
+    _kw_instanceof: (_) => keyword('InstanceOf', 'instanceof'),
+    _kw_interface: (_) => keyword('Interface'),
+    _kw_new: (_) => keyword('New'),
+    _kw_of: (_) => keyword('Of'),
+    _kw_package: (_) => keyword('Package'),
+    _kw_private: (_) => keyword('Private'),
+    _kw_property: (_) => keyword('Property'),
+    _kw_public: (_) => keyword('Public'),
+    _kw_remote: (_) => keyword('Remote'),
+    _kw_return: (_) => keyword('Return'),
+    _kw_static: (_) => keyword('Static'),
+    _kw_switch: (_) => keyword('Switch'),
+    _kw_throw: (_) => keyword('Throw'),
+    _kw_try: (_) => keyword('Try'),
+    _kw_var: (_) => keyword('Var'),
+    _kw_while: (_) => keyword('While'),
+    _kw_with: (_) => keyword('With'),
+
   },
 });
+
+/**
+ * CFML keywords are case-insensitive. Keywords are written in PascalCase and
+ * matched in any of the accepted casings, then aliased back to a canonical node
+ * name so node names and `.scm` queries stay stable.
+ *
+ * @param {string} word PascalCase spelling of the keyword, e.g. `Break`.
+ * @param {string} [nodeName] Canonical node name. Defaults to `lowerFirst(word)`;
+ *   pass it explicitly for tokens starting with punctuation, e.g. `('<Cf', '<cf')`.
+ */
+function keyword(word, nodeName = lowerFirst(word)) {
+  return alias(choice(...casings(word)), nodeName);
+}
+
+/**
+ * Casings accepted for a keyword. Keywords are written in PascalCase
+ * (`Break`, `QueryExecute`, `<Cf`) so all four real-world forms fall out of the
+ * one spelling: PascalCase, lowercase, UPPERCASE and camelCase.
+ *
+ * Interior mixed casing such as `reTURN` is deliberately not matched — it does
+ * not occur in real code, and enumerating 2^n variants inflates the lexer.
+ *
+ * @param {string} word
+ * @returns {string[]}
+ */
+function casings(word) {
+  return [...new Set([
+    word,
+    word.toLowerCase(),
+    word.toUpperCase(),
+    lowerFirst(word),
+  ])];
+}
+
+/**
+ * Lowercase the first character. This is the canonical node name a keyword is
+ * aliased to, which keeps `.scm` queries matching regardless of the casing in
+ * the source. Tokens starting with punctuation (`<Cf`) must pass `nodeName`
+ * explicitly, since lowercasing `<` is a no-op.
+ *
+ * @param {string} word
+ * @returns {string}
+ */
+function lowerFirst(word) {
+  return word.charAt(0).toLowerCase() + word.slice(1);
+}

@@ -9,13 +9,15 @@ npm install        # install deps, build native addon, download tree-sitter CLI 
 npm run build      # regenerate parsers (tree-sitter generate) + rebuild native addon
 npm test           # run corpus tests for all three grammars
 npm run lint       # ESLint
+npm run lint:fix   # ESLint with auto-fix
 npm run testbindings  # Node binding smoke test
 ```
 
-Build a single grammar only:
+Build or test a single grammar only:
 
 ```bash
 DIALECT=cfml npm run build
+DIALECT=cfml npm test
 ```
 
 Run tests / generate from inside a dialect directory:
@@ -23,8 +25,15 @@ Run tests / generate from inside a dialect directory:
 ```bash
 cd cfml
 node ../node_modules/tree-sitter-cli/cli.js test
+node ../node_modules/tree-sitter-cli/cli.js test --filter "cfif"   # run tests matching a name
 node ../node_modules/tree-sitter-cli/cli.js generate
 node ../node_modules/tree-sitter-cli/cli.js parse path/to/file.cfc
+```
+
+Scan a directory of CFML files for parse errors:
+
+```bash
+npm run scan path/to/cfml/project
 ```
 
 Playground (browser):
@@ -34,7 +43,7 @@ npm run prestart   # build WASM (only needed when parsers change)
 npm start          # launch playground at repo root
 ```
 
-Release:
+Release (requires a `## [version]` or `## [Unreleased]` entry in `CHANGELOG.md`):
 
 ```bash
 npm run release -- 0.26.x   # bumps versions, builds, tests, commits, tags, pushes
@@ -54,7 +63,7 @@ Each dialect directory has:
 - `grammar.js` — one-liner that calls `require('../common/define-grammar')('cfml'|'cfscript'|'cfquery')`
 - `src/` — **generated** C files (`parser.c`, `scanner.c`); committed, not hand-edited
 - `queries/` — `.scm` query files (highlights, indents, injections, tags, etc.)
-- `test/corpus/` — plain-text corpus tests
+- `test/corpus/` — plain-text corpus tests in the format: `===title===` / CFML input / `---` / expected S-expression
 
 ### Shared code (`common/`)
 
@@ -79,3 +88,4 @@ Beyond the standard `highlights.scm`, `indents.scm`, `injections.scm`, `tags.scm
 - **CFML engine target:** Use [Lucee](https://lucee.org/) as the reference runtime. Avoid Adobe-only or Lucee-only constructs; prefer portable CFML.
 - **Node version:** `>=18 <=24` (`.nvmrc` in repo root).
 - **`tree-sitter` CLI:** Scripts use the locally installed binary (`node_modules/tree-sitter-cli/`); a global install is not required.
+- **Known parser limitations** are documented in [`LIMITATIONS.md`](LIMITATIONS.md) — check there before investigating a surprising parse result.

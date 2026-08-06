@@ -9,6 +9,32 @@ on:
       - "master"
 
 jobs:
+  # `npm test` compiles the *committed* cf*/src/parser.c, so a grammar change
+  # that was never regenerated would otherwise pass CI while shipping a stale
+  # parser. Regenerate here and fail if the result differs from what is checked in.
+  generated:
+    name: Generated parsers up to date
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm install
+      - name: Regenerate parsers
+        run: |
+          DIALECT=cfml npm run build
+          DIALECT=cfscript npm run build
+          DIALECT=cfquery npm run build
+      - name: Check for drift
+        run: |
+          if ! git diff --exit-code -- '*/src/'; then
+            echo "::error::Generated parsers are out of date. Run 'npm run build' and commit cf*/src/."
+            git diff --stat -- '*/src/'
+            exit 1
+          fi
+
   test:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -26,7 +52,12 @@ jobs:
       - run: npm run lint
 
   test_windows:
-    runs-on: windows-latest
+    # Pinned, not windows-latest: that image now ships Visual Studio 18, which
+    # node-gyp 11.x parses as version "undefined" and then rejects with
+    # "could not find a version of Visual Studio 2017 or newer to use", so the
+    # native addon fails to build. windows-2022 has VS 17. Revisit once
+    # node-gyp recognises VS 18.
+    runs-on: windows-2022
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v6

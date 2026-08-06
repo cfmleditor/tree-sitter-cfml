@@ -1,0 +1,923 @@
+===================================
+statement keywords are case-insensitive
+===================================
+IF (x) { y = 1; } ELSE { y = 2; }
+WHILE (x) { break; }
+DO { x = 1; } WHILE (x);
+FOR (i = 1; i < 2; i++) { CONTINUE; }
+TRY { x = 1; } CATCH (any e) { } FINALLY { }
+SWITCH (x) { CASE 1: BREAK; DEFAULT: BREAK; }
+RETURN 1;
+
+---
+
+(program
+  (if_statement
+    (parenthesized_expression
+      (identifier))
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (number))))
+    (else_clause
+      (statement_block
+        (expression_statement
+          (assignment_expression
+            (identifier)
+            (number))))))
+  (while_statement
+    (parenthesized_expression
+      (identifier))
+    (statement_block
+      (break_statement)))
+  (do_statement
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (number))))
+    (parenthesized_expression
+      (identifier)))
+  (for_statement
+    (assignment_expression
+      (identifier)
+      (number))
+    (binary_expression
+      (identifier)
+      (number))
+    (update_expression
+      (identifier))
+    (statement_block
+      (continue_statement)))
+  (try_statement
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (number))))
+    (catch_clause
+      (catch_type)
+      (identifier)
+      (statement_block))
+    (finally_clause
+      (statement_block)))
+  (switch_statement
+    (parenthesized_expression
+      (identifier))
+    (switch_body
+      (switch_case
+        (number)
+        (break_statement))
+      (switch_default
+        (break_statement))))
+  (return_statement
+    (number)))
+
+===================================
+mixed-case statement keywords
+===================================
+If (x) { Return 1; }
+While (x) { Break; }
+Try { } Catch (any e) { }
+Var y = New Foo();
+Throw "boom";
+
+---
+
+(program
+  (if_statement
+    (parenthesized_expression
+      (identifier))
+    (statement_block
+      (return_statement
+        (number))))
+  (while_statement
+    (parenthesized_expression
+      (identifier))
+    (statement_block
+      (break_statement)))
+  (try_statement
+    (statement_block)
+    (catch_clause
+      (catch_type)
+      (identifier)
+      (statement_block)))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (new_expression
+        (identifier)
+        (arguments))))
+  (throw_statement
+    (string
+      (string_fragment))))
+
+===================================
+access modifiers are case-insensitive
+===================================
+PUBLIC function a() {}
+Private function b() {}
+PACKAGE function c() {}
+Remote function d() {}
+PRIVATE STRING function e() {}
+public STATIC function f() {}
+ABSTRACT function g();
+FINAL function h() {}
+
+---
+
+(program
+  (function_declaration
+    (access_type)
+    (identifier)
+    (formal_parameters)
+    (statement_block))
+  (function_declaration
+    (access_type)
+    (identifier)
+    (formal_parameters)
+    (statement_block))
+  (function_declaration
+    (access_type)
+    (identifier)
+    (formal_parameters)
+    (statement_block))
+  (function_declaration
+    (access_type)
+    (identifier)
+    (formal_parameters)
+    (statement_block))
+  (function_declaration
+    (access_type)
+    (identifier)
+    (identifier)
+    (formal_parameters)
+    (statement_block))
+  (function_declaration
+    (access_type)
+    (access_type)
+    (identifier)
+    (formal_parameters)
+    (statement_block))
+  (function_declaration
+    (access_type)
+    (identifier)
+    (formal_parameters))
+  (function_declaration
+    (access_type)
+    (identifier)
+    (formal_parameters)
+    (statement_block)))
+
+===================================
+identifier-capable keywords still work as identifiers
+===================================
+static['key'] = 'newValue';
+query.newQuery().from("t").get();
+public = 1;
+private = 2;
+final = 3;
+abstract = 4;
+package = 5;
+remote = 6;
+component = 7;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (subscript_expression
+        (identifier)
+        (string
+          (string_fragment)))
+      (string
+        (string_fragment))))
+  (expression_statement
+    (call_expression
+      (member_expression
+        (call_expression
+          (member_expression
+            (call_expression
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (arguments))
+            (property_identifier))
+          (arguments
+            (string
+              (string_fragment))))
+        (property_identifier))
+      (arguments)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number))))
+
+===================================
+identifiers beginning with a keyword are not split
+===================================
+a = functionalImpact;
+b = returnValue;
+c = ifBlank;
+d = forEach;
+e = varName;
+f = newItem;
+g = includeAll;
+h = importData;
+i = whileLoop;
+j = tryIt;
+k = structNew;
+l = propertyList;
+m = staticValue;
+n = publicApi;
+o = privateKey;
+p = finalCount;
+q = abstractBase;
+r = componentName;
+s = packageName;
+t = remoteHost;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier))))
+
+===================================
+throw with named arguments
+===================================
+throw(testabc:"saml", message:"Error");
+throw(type="x", message="y");
+throw("plain");
+throw e;
+
+---
+
+(program
+  (throw_statement
+    (arguments
+      (pair
+        (property_identifier)
+        (string
+          (string_fragment)))
+      (pair
+        (property_identifier)
+        (string
+          (string_fragment)))))
+  (throw_statement
+    (arguments
+      (assignment_expression
+        (identifier)
+        (string
+          (string_fragment)))
+      (assignment_expression
+        (identifier)
+        (string
+          (string_fragment)))))
+  (throw_statement
+    (arguments
+      (string
+        (string_fragment))))
+  (throw_statement
+    (identifier)))
+
+===================================
+named arguments and pairs do not collide with switch case
+===================================
+f(a:1, b:2);
+x = [a:1, b:2];
+switch (v) { case 1: f(a:1); break; default: break; }
+
+---
+
+(program
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (pair
+          (property_identifier)
+          (number))
+        (pair
+          (property_identifier)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (array
+        (pair
+          (property_identifier)
+          (number))
+        (pair
+          (property_identifier)
+          (number)))))
+  (switch_statement
+    (parenthesized_expression
+      (identifier))
+    (switch_body
+      (switch_case
+        (number)
+        (expression_statement
+          (call_expression
+            (identifier)
+            (arguments
+              (pair
+                (property_identifier)
+                (number)))))
+        (break_statement))
+      (switch_default
+        (break_statement)))))
+
+===================================
+keyword-prefixed identifiers at statement start
+===================================
+while_value = 1;
+while2 = 1;
+whileXwhile = 1;
+if_block = 1;
+for_each = 1;
+return_code = 1;
+function_name = 1;
+component_id = 1;
+static_map = 1;
+new_item = 1;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number))))
+
+===================================
+component casing and component as identifier
+===================================
+COMPONENT { }
+Component { }
+component { }
+
+---
+
+(program
+  (component
+    (component_body))
+  (component
+    (component_body))
+  (component
+    (component_body)))
+
+===================================
+keywords as struct keys, members and strings
+===================================
+s = {if: 1, for: 2, return: 3};
+obj['while'] = 1;
+x = "a function b";
+y = 'component';
+z = a.staticName;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (object
+        (pair
+          (property_identifier)
+          (number))
+        (pair
+          (property_identifier)
+          (number))
+        (pair
+          (property_identifier)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (subscript_expression
+        (identifier)
+        (string
+          (string_fragment)))
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier)))))
+
+===================================
+new as an identifier
+===================================
+f(new=1);
+x = new.foo;
+var new = 1;
+y = a.new;
+
+---
+
+(program
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (assignment_expression
+          (identifier)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (new_expression)
+        (property_identifier))))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier)))))
+
+===================================
+import and new keep their statement meanings
+===================================
+import foo.Bar;
+x = new Foo();
+function g() {}
+
+---
+
+(program
+  (import_statement
+    (import_path
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (identifier)
+        (arguments))))
+  (function_declaration
+    (identifier)
+    (formal_parameters)
+    (statement_block)))
+
+===================================
+import as an ordinary identifier
+===================================
+x = import.foo;
+y = import;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier))))
+
+===================================
+value literals are case-insensitive
+===================================
+a = TRUE;
+b = False;
+c = NULL;
+d = THIS.foo;
+e = SUPER.f();
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (true)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (false)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (null)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (this)
+        (property_identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (member_expression
+          (super)
+          (property_identifier))
+        (arguments)))))
+
+===================================
+value literals as identifiers and properties
+===================================
+a = trueValue;
+b = x.true;
+c = {null: 1};
+d = thisThing;
+e = x.super;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (object
+        (pair
+          (null)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier)))))
+
+===================================
+required and function as case-insensitive keywords
+===================================
+function f(REQUIRED string a) {}
+function g(Required numeric b) {}
+h = x.function;
+i(function=1);
+function j(FUNCTION callback) {}
+
+---
+
+(program
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (identifier))
+    (statement_block))
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (identifier))
+    (statement_block))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (assignment_expression
+          (identifier)
+          (number)))))
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (identifier))
+    (statement_block)))
+
+===================================
+all four casing forms
+===================================
+Return 1;
+RETURN 2;
+return 3;
+
+---
+
+(program
+  (return_statement
+    (number))
+  (return_statement
+    (number))
+  (return_statement
+    (number)))
+
+===================================
+camelCase keyword accepts all four forms
+===================================
+a = queryExecute("SELECT 1");
+b = QueryExecute("SELECT 1");
+c = QUERYEXECUTE("SELECT 1");
+d = queryexecute("SELECT 1");
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text)))))
+
+===================================
+undefined literal casing
+===================================
+a = undefined;
+b = UNDEFINED;
+c = Undefined;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (undefined)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (undefined)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (undefined))))
+
+===================================
+parameter type casing
+===================================
+function a(string s, numeric n, boolean b, date d) {}
+function b(STRING s, NUMERIC n, BOOLEAN b, DATE d) {}
+function c(String s, Numeric n, Boolean b, Date d) {}
+function d(any a, xml x, binary bin, guid g, void v) {}
+
+---
+
+(program
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier))
+    (statement_block))
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier))
+    (statement_block))
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier))
+    (statement_block))
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier))
+    (statement_block)))
+
+===================================
+instanceOf operator casing
+===================================
+a = x instanceOf y;
+b = x instanceof y;
+c = x INSTANCEOF y;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier)))))

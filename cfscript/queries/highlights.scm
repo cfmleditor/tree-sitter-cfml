@@ -108,6 +108,7 @@
 ] @constant.builtin
 
 (comment) @comment
+(cf_comment) @comment
 
 [
   (string)
@@ -256,7 +257,6 @@
   "set"
   "static"
   "switch"
-  "target"
   "throw"
   "try"
   "var"

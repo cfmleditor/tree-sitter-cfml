@@ -50,10 +50,6 @@
         "named": true
       },
       {
-        "type": "pair",
-        "named": true
-      },
-      {
         "type": "primary_expression",
         "named": true
       },
@@ -139,10 +135,6 @@
       },
       {
         "type": "member_expression",
-        "named": true
-      },
-      {
-        "type": "meta_property",
         "named": true
       },
       {
@@ -295,6 +287,10 @@
           "named": true
         },
         {
+          "type": "pair",
+          "named": true
+        },
+        {
           "type": "spread_element",
           "named": true
         }
@@ -311,6 +307,10 @@
       "types": [
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "pair",
           "named": true
         },
         {
@@ -797,10 +797,6 @@
           },
           {
             "type": "hash_expression",
-            "named": true
-          },
-          {
-            "type": "import",
             "named": true
           },
           {
@@ -2351,11 +2347,6 @@
     }
   },
   {
-    "type": "import",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "import_attribute",
     "named": true,
     "fields": {},
@@ -2513,10 +2504,6 @@
           {
             "type": "expression",
             "named": true
-          },
-          {
-            "type": "import",
-            "named": true
           }
         ]
       },
@@ -2555,11 +2542,6 @@
         ]
       }
     }
-  },
-  {
-    "type": "meta_property",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "method_definition",
@@ -4893,6 +4875,42 @@
     }
   },
   {
+    "type": "slice_expression",
+    "named": true,
+    "fields": {
+      "end": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "start": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "step": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "spread_element",
     "named": true,
     "fields": {},
@@ -4960,6 +4978,10 @@
           {
             "type": "sequence_expression",
             "named": true
+          },
+          {
+            "type": "slice_expression",
+            "named": true
           }
         ]
       },
@@ -4984,6 +5006,11 @@
         ]
       }
     }
+  },
+  {
+    "type": "super",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "switch_body",
@@ -5113,6 +5140,11 @@
     }
   },
   {
+    "type": "this",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "throw_statement",
     "named": true,
     "fields": {},
@@ -5120,6 +5152,10 @@
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "arguments",
+          "named": true
+        },
         {
           "type": "expression",
           "named": true
@@ -5199,6 +5235,11 @@
     "fields": {}
   },
   {
+    "type": "undefined",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "update_expression",
     "named": true,
     "fields": {
@@ -5257,6 +5298,10 @@
           },
           {
             "type": "identifier",
+            "named": true
+          },
+          {
+            "type": "member_expression",
             "named": true
           }
         ]
@@ -5619,10 +5664,6 @@
     "named": true
   },
   {
-    "type": "cf_var",
-    "named": true
-  },
-  {
     "type": "component",
     "named": false
   },
@@ -5717,10 +5758,6 @@
   {
     "type": "logical_or",
     "named": true
-  },
-  {
-    "type": "meta",
-    "named": false
   },
   {
     "type": "new",
@@ -5852,14 +5889,10 @@
   },
   {
     "type": "super",
-    "named": true
-  },
-  {
-    "type": "switch",
     "named": false
   },
   {
-    "type": "target",
+    "type": "switch",
     "named": false
   },
   {
@@ -5868,7 +5901,7 @@
   },
   {
     "type": "this",
-    "named": true
+    "named": false
   },
   {
     "type": "throw",
@@ -5884,7 +5917,7 @@
   },
   {
     "type": "undefined",
-    "named": true
+    "named": false
   },
   {
     "type": "var",

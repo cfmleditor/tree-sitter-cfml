@@ -327,7 +327,11 @@ static const char *CF_VOID_TAGS[] = {
     "PROCPARAM", "PROCRESULT", "INVOKEARGUMENT", "SPREADSHEET", "PDFPARAM",
     "PDFFORMPARAM", "PDFSUBFORM", "MAILPARAM", "GRIDROW", "GRIDUPDATE", "IMAGE",
     "TREEITEM", "MENUITEM", "MAPLOCATION", "PRESENTERITEM", "IMPORT", "TRACE",
-    "GRIDCOLUMN", "OBJECT", NULL
+    "GRIDCOLUMN", "OBJECT",
+    // `<cfsetting>` never has a body — `</cfsetting>` does not appear once in
+    // the 12,549-file corpus — but it was treated as a paired tag, so one
+    // `<cfsetting showdebugoutput="false">` swallowed the rest of the template.
+    "SETTING", NULL
 };
 
 static inline bool cf_tag_name_in(const String *name, const char **list) {
