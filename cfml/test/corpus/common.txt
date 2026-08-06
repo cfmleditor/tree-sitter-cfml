@@ -318,3 +318,390 @@ common: custom tags and taglib imports
           (quoted_attribute_value
             (attribute_value))))
       (self_closing_tag_delimiter))))
+
+================================================================================
+common: cftry with typed cfcatch, cfrethrow and cffinally
+================================================================================
+
+<cftry><cfset x = 1><cfcatch type="database"><cfrethrow></cfcatch><cffinally><cfset y = 2></cffinally></cftry>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name))
+    (cf_set_tag
+      (assignment_expression
+        (identifier)
+        (number))
+      (cf_selfclose_void_tag_end))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))))
+      (cf_selfclose_tag
+        (cf_selfclose_void_tag_end))
+      (cf_end_tag
+        (cf_tag_name)))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name))
+      (cf_set_tag
+        (assignment_expression
+          (identifier)
+          (number))
+        (cf_selfclose_void_tag_end))
+      (cf_end_tag
+        (cf_tag_name)))
+    (cf_end_tag
+      (cf_tag_name))))
+
+================================================================================
+common: cfinvoke with cfinvokeargument
+================================================================================
+
+<cfinvoke component="svc" method="run" returnvariable="r"><cfinvokeargument name="a" value="1"></cfinvoke>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (cf_selfclose_tag
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_selfclose_void_tag_end))
+    (cf_end_tag
+      (cf_tag_name))))
+
+================================================================================
+common: cfhttp with cfhttpparam
+================================================================================
+
+<cfhttp url="https://x/y" method="post" result="res"><cfhttpparam type="formfield" name="a" value="1"></cfhttp>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (cf_selfclose_tag
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_selfclose_void_tag_end))
+    (cf_end_tag
+      (cf_tag_name))))
+
+================================================================================
+common: cfmail with cfmailparam
+================================================================================
+
+<cfmail to="a@b.c" from="d@e.f" subject="s"><cfmailparam name="X" value="1">body</cfmail>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (cf_selfclose_tag
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_selfclose_void_tag_end))
+    (html_text)
+    (cf_end_tag
+      (cf_tag_name))))
+
+================================================================================
+common: cfstoredproc with procparam and procresult
+================================================================================
+
+<cfstoredproc procedure="sp_x" datasource="ds"><cfprocparam type="in" cfsqltype="cf_sql_integer" value="1"><cfprocresult name="r"></cfstoredproc>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (cf_selfclose_tag
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_selfclose_void_tag_end))
+    (cf_selfclose_tag
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_selfclose_void_tag_end))
+    (cf_end_tag
+      (cf_tag_name))))
+
+================================================================================
+common: cfargument, cfparam and cfreturn in a tag component
+================================================================================
+
+<cfcomponent><cffunction name="f"><cfargument name="a" type="string" required="true" default=""><cfparam name="url.id" type="numeric" default="0"><cfreturn arguments.a & "!"></cffunction></cfcomponent>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_component_open_tag
+    (cf_selfclose_void_tag_end))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_selfclose_tag
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value))
+      (cf_selfclose_void_tag_end))
+    (cf_selfclose_tag
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_selfclose_void_tag_end))
+    (cf_return_tag
+      (binary_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (string
+          (string_fragment)))
+      (cf_selfclose_void_tag_end)))
+  (cf_component_close_tag))
+
+================================================================================
+common: query of queries with result and maxrows
+================================================================================
+
+<cfquery name="sub" dbtype="query" result="meta" maxrows="10">SELECT id FROM q WHERE id > 1</cfquery>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_query_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_query_content)))
+
+================================================================================
+common: cfqueryparam with a list
+================================================================================
+
+<cfquery name="q">SELECT * FROM t WHERE id IN (<cfqueryparam value="#ids#" list="yes" cfsqltype="cf_sql_integer">)</cfquery>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_query_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_query_content)))
+
+================================================================================
+common: cfmodule, cfinclude and cfabort
+================================================================================
+
+<cfmodule template="/t.cfm" attr="1"><cfinclude template="header.cfm"><cfif x><cfabort></cfif>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (cf_selfclose_tag
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value)))
+      (cf_selfclose_void_tag_end))
+    (cf_if_tag
+      (identifier)
+      (cf_selfclose_tag
+        (cf_selfclose_void_tag_end)))
+    (implicit_cf_end_tag)))
+
+================================================================================
+common: cfheader, cfcontent and cfcookie
+================================================================================
+
+<cfheader name="X" value="1"><cfcontent type="application/json"><cfcookie name="c" value="v" expires="never">
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_selfclose_void_tag_end))
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_selfclose_void_tag_end))
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_selfclose_void_tag_end)))

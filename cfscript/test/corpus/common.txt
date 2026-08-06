@@ -385,3 +385,484 @@ cfg = {
                   (pair
                     (property_identifier)
                     (number)))))))))))
+
+================================================================================
+common: script-syntax lock, transaction and thread
+================================================================================
+
+function f() {
+	lock name="l" timeout=10 type="exclusive" {
+		x = 1;
+	}
+	transaction {
+		save();
+	}
+	thread name="t" {
+		work();
+	}
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (function_declaration
+    (identifier)
+    (formal_parameters)
+    (statement_block
+      (tag_statement
+        (identifier)
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (assignment_expression
+          (identifier)
+          (number))
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (number)))))
+      (tag_statement
+        (identifier)
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments)))))
+      (tag_statement
+        (identifier)
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments))))))))
+
+================================================================================
+common: script-syntax savecontent
+================================================================================
+
+function f() {
+	savecontent variable="s" {
+		writeOutput( "hi" );
+	}
+	return s;
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (function_declaration
+    (identifier)
+    (formal_parameters)
+    (statement_block
+      (tag_statement
+        (identifier)
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (string
+                  (string_fragment)))))))
+      (return_statement
+        (identifier)))))
+
+================================================================================
+common: script-syntax loop forms
+================================================================================
+
+function f() {
+	loop from=1 to=10 index="i" { echo( i ); }
+	loop array=data item="x" { echo( x ); }
+	loop query=q { echo( q.id ); }
+	loop list="a,b" index="v" { echo( v ); }
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (function_declaration
+    (identifier)
+    (formal_parameters)
+    (statement_block
+      (tag_statement
+        (identifier)
+        (assignment_expression
+          (identifier)
+          (number))
+        (assignment_expression
+          (identifier)
+          (number))
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier))))))
+      (tag_statement
+        (identifier)
+        (assignment_expression
+          (identifier)
+          (identifier))
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier))))))
+      (tag_statement
+        (identifier)
+        (assignment_expression
+          (identifier)
+          (identifier))
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (member_expression
+                  (identifier)
+                  (property_identifier)))))))
+      (tag_statement
+        (identifier)
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier)))))))))
+
+================================================================================
+common: for, for-in, while and do-while
+================================================================================
+
+for ( var i = 1; i <= 10; i++ ) { x(); }
+for ( var k in data ) { y( k ); }
+while ( a ) { b(); }
+do { c(); } while ( d );
+
+--------------------------------------------------------------------------------
+
+(program
+  (for_statement
+    (variable_declaration
+      (variable_declarator
+        (identifier)
+        (number)))
+    (binary_expression
+      (identifier)
+      (number))
+    (update_expression
+      (identifier))
+    (statement_block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (arguments)))))
+  (for_in_statement
+    (identifier)
+    (identifier)
+    (statement_block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (arguments
+            (identifier))))))
+  (while_statement
+    (parenthesized_expression
+      (identifier))
+    (statement_block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (arguments)))))
+  (do_statement
+    (statement_block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (arguments))))
+    (parenthesized_expression
+      (identifier))))
+
+================================================================================
+common: named arguments and argumentCollection
+================================================================================
+
+f( a = 1, b = "x" );
+g( argumentCollection = args );
+h( "positional", named = true );
+
+--------------------------------------------------------------------------------
+
+(program
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (assignment_expression
+          (identifier)
+          (number))
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment))))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (assignment_expression
+          (identifier)
+          (identifier)))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (string
+          (string_fragment))
+        (assignment_expression
+          (identifier)
+          (true))))))
+
+================================================================================
+common: new and createObject
+================================================================================
+
+a = new Foo();
+b = new path.to.Bar( 1, 2 );
+c = createObject( "component", "path.Baz" );
+d = createObject( "java", "java.lang.String" );
+
+--------------------------------------------------------------------------------
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (identifier)
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments
+          (number)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (string
+            (string_fragment))
+          (string
+            (string_fragment))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (string
+            (string_fragment))
+          (string
+            (string_fragment)))))))
+
+================================================================================
+common: throw with named arguments
+================================================================================
+
+try {
+	x();
+} catch ( any e ) {
+	throw( type = "Custom", message = "bad", detail = e.message );
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (try_statement
+    (statement_block
+      (expression_statement
+        (call_expression
+          (identifier)
+          (arguments))))
+    (catch_clause
+      (catch_type)
+      (identifier)
+      (statement_block
+        (throw_statement
+          (arguments
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))
+            (assignment_expression
+              (identifier)
+              (member_expression
+                (identifier)
+                (property_identifier)))))))))
+
+================================================================================
+common: import and include statements
+================================================================================
+
+import foo.Bar;
+include "header.cfm";
+
+--------------------------------------------------------------------------------
+
+(program
+  (import_statement
+    (import_path
+      (identifier)
+      (identifier)))
+  (include_statement
+    (string
+      (string_fragment))))
+
+================================================================================
+common: javadoc annotations before a function
+================================================================================
+
+/**
+ * @hint Does a thing
+ * @arg.hint The argument
+ */
+function doThing( required string arg ) {
+	return arg;
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (comment)
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (identifier))
+    (statement_block
+      (return_statement
+        (identifier)))))
+
+================================================================================
+common: hash interpolation inside strings
+================================================================================
+
+msg  = "Hello #user.name#, you have #count# items";
+path = "/a/#b#/c";
+
+--------------------------------------------------------------------------------
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)
+        (hash_expression
+          (member_expression
+            (identifier)
+            (property_identifier)))
+        (string_fragment)
+        (hash_expression
+          (identifier))
+        (string_fragment))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)
+        (hash_expression
+          (identifier))
+        (string_fragment)))))
+
+================================================================================
+common: nested ternary
+================================================================================
+
+x = a ? ( b ? 1 : 2 ) : 3;
+
+--------------------------------------------------------------------------------
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ternary_expression
+        (identifier)
+        (parenthesized_expression
+          (ternary_expression
+            (identifier)
+            (number)
+            (number)))
+        (number)))))
+
+================================================================================
+common: abstract and final functions
+================================================================================
+
+component {
+
+	abstract function a();
+	final function b() { return 1; }
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (access_type)
+        (identifier)
+        (formal_parameters))
+      (function_declaration
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (return_statement
+            (number)))))))
