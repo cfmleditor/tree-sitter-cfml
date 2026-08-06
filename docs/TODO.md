@@ -9,9 +9,26 @@ calibrated against changes that have actually landed. Duplicating it here would
 guarantee the two drift apart. The two clusters worth doing next are named at the
 bottom of that document.
 
-## Audit query coverage, then write the query skill
+## Audit query coverage, then write the query skill — **deferred**
 
-**Why now:** `.claude/skills/parse-gap/` covers grammar and scanner work, which
+**Deferred pending the `zed-cfml` audit**, which is covering the same ground from
+the other end. Do not start this one in parallel; fold that audit's findings in
+when it lands, then decide what is left.
+
+Its evidence is better than what is below. Working through a real editor shows
+what actually *looks* wrong — a construct rendering flat, indentation landing in
+the wrong column, a fold that will not close. The static check below only shows
+what is unreferenced, which is a proxy for that and an imperfect one in both
+directions: it flags nodes that need no rule, and it cannot flag a rule that
+exists but captures the wrong thing. It also exercises the Zed-specific variants
+(`brackets-zed.scm`, `indents-zed.scm`) against the editor that consumes them,
+which nothing here does.
+
+What follows stays as the baseline to check the audit against, not as a work
+list to start from.
+
+**Why it is worth doing at all:** `.claude/skills/parse-gap/` covers grammar and
+scanner work, which
 is where most of the churn is (52 changes to `define-grammar.js`,
 `cfscript/grammar.js` and `common/scanner.h` over 18 months, against 42 across
 all 29 `.scm` files). Query files are the largest part of the repo that no skill
@@ -49,6 +66,14 @@ Separating genuine gaps from those three categories is the work. It is judgement
 not a script — though a script with a curated allowlist for structural nodes
 would make the result repeatable, and is probably the right artefact to leave
 behind alongside the skill.
+
+One confirmed gap, as a worked example of what the triage is looking for: CDATA
+support was added to the grammar in 0.26.24 and 0.26.25 (`<![CDATA[#expr#]]>`,
+hash expressions included), but `cdata_section` and `cdata_text` appear in no
+query file in any of the three grammars. The parser understands the construct
+and an editor renders it as unstyled text — the grammar half shipped and the
+query half did not. `xml_decl`, `slice_expression` and `statement_identifier`
+look like the same story and are unconfirmed.
 
 **Scope note:** 29 files — ten query types per grammar, nine for `cfquery`,
 which has no `injections.scm`. That count includes the Zed-specific variants
