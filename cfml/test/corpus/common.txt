@@ -1,0 +1,320 @@
+================================================================================
+common: cfloop in its five forms
+================================================================================
+
+<cfloop index="i" from="1" to="10" step="2">#i#</cfloop>
+<cfloop collection="#data#" item="key">#key#</cfloop>
+<cfloop query="q" startrow="1" endrow="5">#q.id#</cfloop>
+<cfloop list="a,b,c" index="x" delimiters=",">#x#</cfloop>
+<cfloop condition="i LT 5"><cfset i++></cfloop>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (hash_single)
+    (html_text)
+    (hash_single)
+    (cf_end_tag
+      (cf_tag_name)))
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (hash_expression
+              (identifier)))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (hash_single)
+    (html_text)
+    (hash_single)
+    (cf_end_tag
+      (cf_tag_name)))
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (hash_single)
+    (html_text)
+    (hash_single)
+    (cf_end_tag
+      (cf_tag_name)))
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (hash_single)
+    (html_text)
+    (hash_single)
+    (cf_end_tag
+      (cf_tag_name)))
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (cf_set_tag
+      (update_expression
+        (identifier))
+      (cf_selfclose_void_tag_end))
+    (cf_end_tag
+      (cf_tag_name))))
+
+================================================================================
+common: cfoutput with query and group
+================================================================================
+
+<cfoutput query="q" group="category">#category#<cfoutput>#q.name#</cfoutput></cfoutput>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_output_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (hash_expression
+      (identifier))
+    (cf_output_tag
+      (hash_expression
+        (member_expression
+          (identifier)
+          (property_identifier))))))
+
+================================================================================
+common: word operators in a cfif
+================================================================================
+
+<cfif a EQ b AND c NEQ d OR e CONTAINS "x" AND NOT f GTE g>ok</cfif>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_if_tag
+    (binary_expression
+      (binary_expression
+        (binary_expression
+          (identifier)
+          (identifier))
+        (binary_expression
+          (identifier)
+          (identifier)))
+      (binary_expression
+        (binary_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (binary_expression
+          (unary_expression
+            (unary_operator)
+            (identifier))
+          (identifier))))
+    (html_text)))
+
+================================================================================
+common: cfswitch with delimited cfcase and default
+================================================================================
+
+<cfswitch expression="#x#">
+<cfcase value="a,b" delimiters=",">A</cfcase>
+<cfdefaultcase>D</cfdefaultcase>
+</cfswitch>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (hash_expression
+              (identifier))))))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value))))
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))))
+      (html_text)
+      (cf_end_tag
+        (cf_tag_name)))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name))
+      (html_text)
+      (cf_end_tag
+        (cf_tag_name)))
+    (cf_end_tag
+      (cf_tag_name))))
+
+================================================================================
+common: cflock and cfthread
+================================================================================
+
+<cflock name="l" timeout="10" type="exclusive"><cfset y = 2></cflock>
+<cfthread name="t" action="run"><cfset x = 1></cfthread>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (cf_set_tag
+      (assignment_expression
+        (identifier)
+        (number))
+      (cf_selfclose_void_tag_end))
+    (cf_end_tag
+      (cf_tag_name)))
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value))))
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (cf_set_tag
+      (assignment_expression
+        (identifier)
+        (number))
+      (cf_selfclose_void_tag_end))
+    (cf_end_tag
+      (cf_tag_name))))
+
+================================================================================
+common: custom tags and taglib imports
+================================================================================
+
+<cfimport prefix="ui" taglib="/tags">
+<cf_mytag attr="1">body</cf_mytag>
+<ui:button label="Go" />
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_selfclose_void_tag_end))
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (html_text)
+    (cf_end_tag
+      (cf_tag_name)))
+  (element
+    (self_closing_tag
+      (tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value))))
+      (self_closing_tag_delimiter))))
