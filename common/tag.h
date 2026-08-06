@@ -320,7 +320,7 @@ static inline Tag tag_new() {
 }
 
 static const char *CF_VOID_TAGS[] = {
-    "COMPONENT", "PARAM", "ARGUMENT", "PROPERTY", "RETHROW", "THROW", "SCHEDULE", "HTTPPARAM", "QUERYPARAM", "TIMER", "FLUSH", "LOGOUT", "ZIPELEMENT",
+    "COMPONENT", "PARAM", "ARGUMENT", "PROPERTY", "RETHROW", "THROW", "SCHEDULE", "HTTPPARAM", "QUERYPARAM", "FLUSH", "LOGOUT", "ZIPELEMENT",
     "BREAK", "CONTINUE", "ABORT", "EXIT", "INCLUDE", "LOCATION", "HEADER", "DUMP",
     "CONTENT", "COOKIE", "LOG", "FILE", "DIRECTORY", "WDDX",
     "AUTHENTICATE", "NTAUTHENTICATE", "REPORTPARAM",
@@ -331,7 +331,13 @@ static const char *CF_VOID_TAGS[] = {
     // `<cfsetting>` never has a body — `</cfsetting>` does not appear once in
     // the 12,549-file corpus — but it was treated as a paired tag, so one
     // `<cfsetting showdebugoutput="false">` swallowed the rest of the template.
-    "SETTING", NULL
+    "SETTING",
+    // `TIMER` is deliberately absent: `<cftimer>` times the code between its
+    // start and end tags, so listing it here made `<cftimer label="t">…
+    // </cftimer>` fail. The corpus is silent on this one — `<cftimer` appears
+    // in none of the 12,549 files — so the call rests on the tag's semantics
+    // rather than on usage.
+    NULL
 };
 
 static inline bool cf_tag_name_in(const String *name, const char **list) {

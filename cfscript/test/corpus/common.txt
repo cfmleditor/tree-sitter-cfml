@@ -866,3 +866,201 @@ component {
         (statement_block
           (return_statement
             (number)))))))
+
+================================================================================
+common: ORM property attributes
+================================================================================
+
+component persistent="true" table="users" {
+
+	property name="id" fieldtype="id" generator="native";
+	property name="posts" fieldtype="one-to-many" cfc="Post" fkcolumn="userId" inverse="true";
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    (component_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    (component_body
+      (property_declaration
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment))))
+      (property_declaration
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))
+        (component_attribute
+          (identifier)
+          (string
+            (string_fragment)))))))
+
+================================================================================
+common: remote function attributes
+================================================================================
+
+component {
+
+	remote struct function api( required string q ) returnformat="json" access="remote" {
+		return {};
+	}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (access_type)
+        (identifier)
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier))
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (assignment_expression
+          (identifier)
+          (string
+            (string_fragment)))
+        (statement_block
+          (return_statement
+            (object_pattern)))))))
+
+================================================================================
+common: component metadata attributes
+================================================================================
+
+component output="false" serializable="false" hint="A service" displayname="Svc" {
+
+	function f() {}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    (component_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    (component_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    (component_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block)))))
+
+================================================================================
+common: script-syntax cfdocument and cfhttp
+================================================================================
+
+function f() {
+	cfdocument( format="pdf" ) {
+		writeOutput( "hi" );
+	}
+	cfhttp( url="https://x", method="get", result="r" ) {
+		cfhttpparam( type="header", name="A", value="1" );
+	}
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (function_declaration
+    (identifier)
+    (formal_parameters)
+    (statement_block
+      (tag_statement
+        (identifier)
+        (arguments
+          (assignment_expression
+            (identifier)
+            (string
+              (string_fragment))))
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (string
+                  (string_fragment)))))))
+      (tag_statement
+        (identifier)
+        (arguments
+          (assignment_expression
+            (identifier)
+            (string
+              (string_fragment)))
+          (assignment_expression
+            (identifier)
+            (string
+              (string_fragment)))
+          (assignment_expression
+            (identifier)
+            (string
+              (string_fragment))))
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))))))))))
