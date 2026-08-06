@@ -452,7 +452,8 @@ static void skip_cfml_comment_body(TSLexer *lexer) {
     }
 }
 
-static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context) {
+static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context,
+                           const bool *valid_symbols, unsigned count) {
     // Check if we're inside a script/style tag
     bool in_script_style = false;
     if (scanner->tags.size > 0) {
@@ -538,8 +539,52 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
         return saw_text || (saw_any && lexer->lookahead == '#');
     }
 
-    while (lexer->lookahead != 0 && lexer->lookahead != '<' && lexer->lookahead != '>' && lexer->lookahead != '{' &&
+    // `>` only ends a tag when the parser is actually inside one, which it
+    // signals by making a closing delimiter valid. Anywhere else — `<p>a > b</p>`,
+    // `#ratio#% ==>` — it is ordinary text.
+    bool tag_delimiter_expected =
+        VS(valid_symbols, CLOSE_TAG_DELIM, count) ||
+        VS(valid_symbols, CLOSE_CF_TAG_DELIM, count) ||
+        VS(valid_symbols, SELF_CLOSING_TAG_DELIMITER, count) ||
+        VS(valid_symbols, CF_SELF_CLOSING_TAG_DELIMITER, count) ||
+        VS(valid_symbols, CF_SELF_CLOSING_VOID_TAG_DELIMITER, count);
+
+    while (lexer->lookahead != 0 && lexer->lookahead != '{' &&
            lexer->lookahead != '}' && lexer->lookahead != '#') {
+        if (lexer->lookahead == '<') {
+            // Peeking past `<` consumes it, and this scanner cannot rewind: if
+            // the function then returns false the dispatcher below is left
+            // looking at the character *after* the `<` and never sees the tag or
+            // comment. Only peek once some text has been collected, which
+            // guarantees a `true` return; a `<` at the very start of a text run
+            // is left to the tag rules as before.
+            if (!saw_text) {
+                break;
+            }
+            // A `<` starts a tag only when a name, `/`, `!`, `?` or a dynamic
+            // `#name#` can follow it. `5 < 6` is text, the same rule browsers
+            // apply. mark_end first: on a real tag the token has to end here.
+            lexer->mark_end(lexer);
+            advance(lexer);
+            if (lexer->lookahead == 0 || iswalpha(lexer->lookahead) || lexer->lookahead == '/' ||
+                lexer->lookahead == '!' || lexer->lookahead == '?' || lexer->lookahead == '#') {
+                break;
+            }
+            saw_text = true;
+            saw_any = true;
+            lexer->mark_end(lexer);
+            continue;
+        }
+        if (lexer->lookahead == '>') {
+            if (tag_delimiter_expected) {
+                break;
+            }
+            advance(lexer);
+            saw_text = true;
+            saw_any = true;
+            lexer->mark_end(lexer);
+            continue;
+        }
         if (lexer->lookahead == '&') {
             // Peek ahead to determine if this is an entity
             lexer->mark_end(lexer);
@@ -600,6 +645,7 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
         }
         saw_any = true;
         advance(lexer);
+        lexer->mark_end(lexer);
     }
 
     lexer->result_symbol = HTML_TEXT;
@@ -1709,7 +1755,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
     }
 
 
-    if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(scanner, lexer, is_cfquery_context)) {
+    if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(scanner, lexer, is_cfquery_context, valid_symbols, count)) {
         return true;
     }
 
