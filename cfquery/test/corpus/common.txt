@@ -1,0 +1,142 @@
+===================================
+common: insert
+===================================
+INSERT INTO t (a, b) VALUES (1, 2)
+---
+
+(program
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (parenthesized_query_node
+    (query_identifier)
+    (query_comma)
+    (query_identifier))
+  (query_keyword)
+  (parenthesized_query_node
+    (query_number
+      (number))
+    (query_comma)
+    (query_number
+      (number))))
+
+===================================
+common: update with where
+===================================
+UPDATE t SET a = 1, b = 'x' WHERE id = 3
+---
+
+(program
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_assignment_expression
+    (query_identifier)
+    (query_number
+      (number)))
+  (query_comma)
+  (query_assignment_expression
+    (query_identifier)
+    (quoted_query_value
+      (query_value)))
+  (query_keyword)
+  (query_assignment_expression
+    (query_identifier)
+    (query_number
+      (number))))
+
+===================================
+common: delete with where
+===================================
+DELETE FROM t WHERE id = 3
+---
+
+(program
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_assignment_expression
+    (query_identifier)
+    (query_number
+      (number))))
+
+===================================
+common: subquery with exists and in
+===================================
+SELECT a FROM t
+WHERE EXISTS (SELECT 1 FROM u WHERE u.id = t.id)
+AND b IN (SELECT c FROM v)
+---
+
+(program
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_function
+    (query_function_name)
+    (parenthesized_query_node
+      (query_keyword)
+      (query_number
+        (number))
+      (query_keyword)
+      (query_identifier)
+      (query_keyword)
+      (query_alias
+        (query_identifier)
+        (query_assignment_expression
+          (query_identifier)
+          (query_alias
+            (query_identifier)
+            (query_identifier))))))
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (parenthesized_query_node
+    (query_keyword)
+    (query_identifier)
+    (query_keyword)
+    (query_identifier)))
+
+===================================
+common: left outer join with coalesce
+===================================
+SELECT COALESCE(a.name, b.name) AS n
+FROM a
+LEFT OUTER JOIN b ON a.id = b.id
+ORDER BY n
+---
+
+(program
+  (query_keyword)
+  (query_function
+    (query_function_name)
+    (parenthesized_query_node
+      (query_alias
+        (query_identifier)
+        (query_identifier))
+      (query_comma)
+      (query_alias
+        (query_identifier)
+        (query_identifier))))
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_keyword)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_alias
+    (query_identifier)
+    (query_assignment_expression
+      (query_identifier)
+      (query_alias
+        (query_identifier)
+        (query_identifier))))
+  (query_keyword)
+  (query_keyword)
+  (query_identifier))
