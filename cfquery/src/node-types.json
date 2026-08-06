@@ -5299,6 +5299,10 @@
           {
             "type": "identifier",
             "named": true
+          },
+          {
+            "type": "member_expression",
+            "named": true
           }
         ]
       },

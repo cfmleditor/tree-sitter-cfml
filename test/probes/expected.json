@@ -19,6 +19,7 @@
     "cfscript/array_return_type.cfc": "fail",
     "cfscript/empty_struct_literal.cfc": "fail",
     "cfscript/final_member_declaration.cfc": "fail",
+    "cfscript/for_in_reserved_name.cfc": "pass",
     "cfscript/function_named_instanceof.cfc": "pass",
     "cfscript/keyword_shaped_param_types.cfc": "pass",
     "cfscript/leading_javadoc.cfc": "pass",
@@ -29,7 +30,7 @@
     "cfscript/string_slice.cfc": "pass",
     "cfscript/subscript_multiple_pairs.cfc": "fail",
     "cfscript/tag_comment_in_script_body.cfc": "fail",
-    "cfscript/typed_catch_with_var.cfc": "fail",
-    "cfscript/var_scoped_dotted_name.cfc": "fail"
+    "cfscript/typed_catch_with_var.cfc": "pass",
+    "cfscript/var_scoped_dotted_name.cfc": "pass"
   }
 }

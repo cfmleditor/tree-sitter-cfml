@@ -150,6 +150,9 @@ module.exports = grammar({
     [$.labeled_statement, $._property_name],
     [$.computed_property_name, $.array],
     [$.binary_expression, $._initializer],
+    // `for ( var x = y in z )` — the initializer, an assignment and a binary
+    // `in` expression all fit the same prefix.
+    [$.assignment_expression, $._initializer, $.binary_expression],
     [$.method_definition, $.access_type],
     // `pair` (expression ':' expression) is reachable from `arguments` and
     // `array`, so `case <expr> :` is ambiguous with the start of a pair.
@@ -337,7 +340,16 @@ module.exports = grammar({
     ),
 
     variable_declarator: ($) => seq(
-      field('name', choice($.identifier, $._destructuring_pattern)),
+      // A scoped name is legal in CFML: `var local.result = …`, `var a.b.c = 1`.
+      // `_reserved_identifier` has to be spelled out because allowing a
+      // `member_expression` here makes keyword-led expressions valid straight
+      // after `var`, so `var new = 1` would otherwise lex `new` as a keyword.
+      field('name', choice(
+        $.identifier,
+        alias($._reserved_identifier, $.identifier),
+        $.member_expression,
+        $._destructuring_pattern,
+      )),
       optional($._initializer),
     ),
 
@@ -396,7 +408,11 @@ module.exports = grammar({
         seq(
           field('kind', $._kw_var),
           field('left', choice(
+            // `for ( var export in … )` — a keyword-shaped loop variable. `var`
+            // now makes keywords valid here (see variable_declarator), so they
+            // have to be accepted rather than lexed as keywords.
             $.identifier,
+            alias($._reserved_identifier, $.identifier),
             $._destructuring_pattern,
           )),
           optional($._initializer),
@@ -519,6 +535,9 @@ module.exports = grammar({
         seq(
           '(',
           optional(field('type', alias(choice($.identifier, $.nested_identifier, $.string), $.catch_type))),
+          // `catch( any var e )` — CommandBox's endpoints scope the caught
+          // variable, which Lucee and ACF both accept.
+          optional($._kw_var),
           field('parameter', choice($.identifier, $.nested_identifier, $._destructuring_pattern)),
           ')',
         ),

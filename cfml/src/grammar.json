@@ -2684,6 +2684,19 @@
                 "name": "identifier"
               },
               {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_reserved_identifier"
+                },
+                "named": true,
+                "value": "identifier"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "member_expression"
+              },
+              {
                 "type": "SYMBOL",
                 "name": "_destructuring_pattern"
               }
@@ -2996,6 +3009,15 @@
                       {
                         "type": "SYMBOL",
                         "name": "identifier"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "_reserved_identifier"
+                        },
+                        "named": true,
+                        "value": "identifier"
                       },
                       {
                         "type": "SYMBOL",
@@ -3559,6 +3581,18 @@
                         "named": true,
                         "value": "catch_type"
                       }
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_kw_var"
                     },
                     {
                       "type": "BLANK"
@@ -9834,6 +9868,11 @@
     ],
     [
       "variable_declaration",
+      "primary_expression",
+      "_property_name"
+    ],
+    [
+      "variable_declaration",
       "access_type"
     ],
     [
@@ -9904,6 +9943,11 @@
     [
       "binary_expression",
       "_initializer"
+    ],
+    [
+      "assignment_expression",
+      "_initializer",
+      "binary_expression"
     ],
     [
       "assignment_expression",

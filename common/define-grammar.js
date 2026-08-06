@@ -188,6 +188,9 @@ module.exports = function defineGrammar(dialect) {
       [$.new_expression, $.pattern],
       [$.primary_expression, $.new_expression, $._property_name],
       [$.primary_expression, $.new_expression, $.pattern],
+      // `var`/`final` followed by a dotted name is a scoped declaration
+      // (`var local.x = 1`), but the same prefix can also start an expression.
+      [$.variable_declaration, $.primary_expression, $._property_name],
       [$.variable_declaration, $.access_type],
       [$.variable_declaration, $.primary_expression],
       [$.object, $.object_pattern],
@@ -206,6 +209,9 @@ module.exports = function defineGrammar(dialect) {
       [$.labeled_statement, $._property_name],
       [$.computed_property_name, $.array],
       [$.binary_expression, $._initializer],
+      // `for ( var x = y in z )` — the initializer, an assignment and a binary
+      // `in` expression all fit the same prefix.
+      [$.assignment_expression, $._initializer, $.binary_expression],
       [$.assignment_expression, $._hash_always_eval],
       [$.method_definition, $.access_type],
       // `pair` (expression ':' expression) is reachable from `arguments` and
@@ -1163,7 +1169,16 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       variable_declarator: ($) => seq(
-        field('name', choice($.identifier, $._destructuring_pattern)),
+        // A scoped name is legal in CFML: `var local.result = …`, `var a.b.c = 1`.
+        // `_reserved_identifier` has to be spelled out because allowing a
+        // `member_expression` here makes keyword-led expressions valid straight
+        // after `var`, so `var new = 1` would otherwise lex `new` as a keyword.
+        field('name', choice(
+          $.identifier,
+          alias($._reserved_identifier, $.identifier),
+          $.member_expression,
+          $._destructuring_pattern,
+        )),
         optional($._initializer),
       ),
 
@@ -1222,7 +1237,11 @@ module.exports = function defineGrammar(dialect) {
           seq(
             field('kind', $._kw_var),
             field('left', choice(
+              // `for ( var export in … )` — a keyword-shaped loop variable. `var`
+              // now makes keywords valid here (see variable_declarator), so they
+              // have to be accepted rather than lexed as keywords.
               $.identifier,
+              alias($._reserved_identifier, $.identifier),
               $._destructuring_pattern,
             )),
             optional($._initializer),
@@ -1337,6 +1356,9 @@ module.exports = function defineGrammar(dialect) {
           seq(
             '(',
             optional(field('type', alias(choice($.identifier, $.nested_identifier, $.string), $.catch_type))),
+            // `catch( any var e )` — CommandBox's endpoints scope the caught
+            // variable, which Lucee and ACF both accept.
+            optional($._kw_var),
             field('parameter', choice($.identifier, $._destructuring_pattern)),
             ')',
           ),
