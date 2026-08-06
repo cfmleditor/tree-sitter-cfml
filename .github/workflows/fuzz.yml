@@ -10,6 +10,9 @@ on:
       - "cfquery/src/scanner.c"
       - "common/scanner.h"
       - "common/tag.h"
+      # The fuzzer itself, so a change to it is validated by running it.
+      - ".github/workflows/fuzz.yml"
+      - "scripts/fuzz.js"
   push:
     branches:
       - "master"
@@ -19,20 +22,33 @@ on:
       - "cfquery/src/scanner.c"
       - "common/scanner.h"
       - "common/tag.h"
+      # The fuzzer itself, so a change to it is validated by running it.
+      - ".github/workflows/fuzz.yml"
+      - "scripts/fuzz.js"
   workflow_dispatch:
 
 jobs:
+  # Uses the tree-sitter CLI's own fuzzer, the same binary `postinstall`
+  # downloads. The previous third-party action built a Docker image that cloned
+  # upstream tree-sitter and ran `cargo install --path cli/`; upstream moved that
+  # directory, so the image build failed and this workflow was red on every
+  # master push from May 2026 onwards without ever fuzzing anything.
   fuzz:
     name: Fuzz ${{ matrix.language }}
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         language: [cfml, cfscript, cfquery]
     steps:
       - uses: actions/checkout@v5
-      - uses: vigoux/tree-sitter-fuzz-action@v1
+      - uses: actions/setup-node@v6
         with:
-          language: ${{ matrix.language }}
-          external-scanner: ${{ matrix.language }}/src/scanner.c
-          time: 60
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - run: npm install
+      - name: Fuzz ${{ matrix.language }}
+        run: npm run fuzz
+        env:
+          DIALECT: ${{ matrix.language }}
