@@ -7,6 +7,7 @@
     "cfml/cfsetting_in_cfcomponent.cfc": "fail",
     "cfml/dynamic_close_tag.cfc": "pass",
     "cfml/gt_in_text.cfm": "fail",
+    "cfml/hash_in_comment_in_script.cfm": "pass",
     "cfml/hash_in_script_string.cfm": "fail",
     "cfml/lt_in_text.cfm": "fail",
     "cfml/param_named.cfm": "pass",

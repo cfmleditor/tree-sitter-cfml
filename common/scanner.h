@@ -418,6 +418,40 @@ static WhitespaceResult scan_whitespace_and_comments(TSLexer *lexer, bool *scann
 }
 
 
+// Consume the body of a CFML comment, the lexer sitting just past the opening
+// `<!---`. CFML comments nest, so track depth. Stops at EOF on an unterminated
+// comment rather than spinning.
+static void skip_cfml_comment_body(TSLexer *lexer) {
+    unsigned depth = 1;
+    while (lexer->lookahead) {
+        if (lexer->lookahead == '<') {
+            advance(lexer);
+            if (lexer->lookahead != '!') continue;
+            advance(lexer);
+            unsigned dashes = 0;
+            while (lexer->lookahead == '-') {
+                dashes++;
+                advance(lexer);
+            }
+            if (dashes >= 3) depth++;
+            continue;
+        }
+        if (lexer->lookahead == '-') {
+            unsigned dashes = 0;
+            while (lexer->lookahead == '-') {
+                dashes++;
+                advance(lexer);
+            }
+            if (dashes >= 3 && lexer->lookahead == '>') {
+                advance(lexer);
+                if (--depth == 0) return;
+            }
+            continue;
+        }
+        advance(lexer);
+    }
+}
+
 static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context) {
     // Check if we're inside a script/style tag
     bool in_script_style = false;
@@ -467,6 +501,23 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
                     } else if (towupper(lexer->lookahead) == 'S') {
                         // Potential </script or </style - stop
                         break;
+                    }
+                    lexer->mark_end(lexer);
+                    saw_text = true;
+                    saw_any = true;
+                    continue;
+                } else if (lexer->lookahead == '!') {
+                    // See scan_raw_text: `#` inside a CFML comment is never
+                    // interpolated, so the comment is consumed whole.
+                    advance(lexer);
+                    if (lexer->lookahead == '-') {
+                        advance(lexer);
+                        if (lexer->lookahead == '-') {
+                            advance(lexer);
+                            if (lexer->lookahead == '-') {
+                                skip_cfml_comment_body(lexer);
+                            }
+                        }
                     }
                     lexer->mark_end(lexer);
                     saw_text = true;
@@ -878,6 +929,29 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_cont
                         delimiter_index = 3;
                         advance(lexer);
                         continue;
+                    }
+                    lexer->mark_end(lexer);
+                    has_content = true;
+                    continue;
+                } else if (lexer->lookahead == '!') {
+                    // A CFML comment is stripped by the engine before anything
+                    // inside it is evaluated, so a `#` in there never starts a
+                    // hash expression. Swallow the whole comment as raw text so
+                    // the `#` in `<!--- see http://x/#anchor --->` cannot open
+                    // one. Extras are not reachable inside a script element, so
+                    // it cannot be tokenised as a comment node here.
+                    advance(lexer);
+                    if (lexer->lookahead == '-') {
+                        advance(lexer);
+                        if (lexer->lookahead == '-') {
+                            advance(lexer);
+                            if (lexer->lookahead == '-') {
+                                skip_cfml_comment_body(lexer);
+                                lexer->mark_end(lexer);
+                                has_content = true;
+                                continue;
+                            }
+                        }
                     }
                     lexer->mark_end(lexer);
                     has_content = true;
