@@ -162,11 +162,44 @@ with tree walking and text extraction, and error recovery dominates, so a build
 that produces *fewer* errors can look slower. Feed fixed inputs to each grammar
 instead.
 
-One difference from `master` remains, and it predates these fixes: Slatwall's
-`ClientScriptWriter_jQuery.cfc` opens a `<script>` element in one
-`<cfsavecontent>` block and closes it in another. `script_element` requires its
-end tag, so the unclosed element is an ERROR. Making the end tag optional
-produces unresolvable grammar conflicts, so it stays a known limitation.
+### The 14 files that are worse than `master`
+
+87 files improve by 5,735 error nodes; 14 get worse by 115. Every one of those
+14 was reduced to a standalone repro and run against both builds:
+
+**Twelve are recovery cascades, not new gaps.** The construct fails on `master`
+too; what differs is how far the damage spreads. In isolation this branch is
+usually *better* — a dynamic tag inside a `<cfloop>` gives 4 errors on `master`
+and 2 here; add a custom CF tag around it and it is 4 against 1. But nest the
+same failure inside `<cffunction>` / `<cfsavecontent>` and the branch's ERROR
+node can swallow the enclosing tag, so every later `</cfif>`, `</cfloop>` and
+`</cffunction>` becomes an error too (2 errors on `master`, 3 here, and in the
+real files 1 against 7). Error recovery is table-driven and heuristic, so this
+moved when the tables did; it is not something the grammar states directly.
+
+The constructs behind those cascades, none of which parse on either branch:
+
+| Construct | Files | Example |
+|---|---|---|
+| Dynamic tag name with a static prefix or namespace | 9 | `<h#field.getLevel()#>`, `<dc:#container#>` |
+| Bare `#` in a cfscript string (invalid CFML — needs `##`) | 1 | `md.append( "# ColdBox Performance Analysis Report" )` |
+| `#` inside a CFML comment inside `<script>` | 1 | `<!--- see https://gist.github.com/…/#comment-592093 --->` |
+| `<script>` opened in one `<cfsavecontent>` and closed in another | 1 | Slatwall `ClientScriptWriter_jQuery.cfc` |
+
+The plain `<#expr#>` dynamic tag form does parse — it is only the prefixed and
+namespaced variants that do not, and `_start_tag_name` is an external token, so
+supporting them means scanner work rather than a grammar rule.
+
+**One is a genuine gap:** a subscript index holding more than one pair,
+`a[ b: "c", d: "e" ]` — which is how Lucee's `$[ … ]` ordered-struct syntax
+reaches the parser in `test/tickets/LDEV3133`. `master` parsed it as a sequence
+of pairs; the explicit `slice_expression` covers the single-colon form only.
+Three error nodes in one file, on syntax Lucee itself only uses in a parser
+ticket, so it is recorded as a probe rather than chased.
+
+Making `script_element`'s end tag optional — the obvious fix for the unclosed
+`<script>` — produces unresolvable grammar conflicts, so that one stays a known
+limitation as well.
 
 ## Known gaps
 
@@ -197,6 +230,8 @@ gap on `master` and are fixed here by the merged casing work.
 | Bare `>` or `<` in template text | `<p>a > b</p>`, `#ratio#%  ==>` | ColdBox `CacheReport.cfm` and ordinary HTML everywhere |
 | `<cfsetting>` inside a tag-based component | `<cfsetting showdebugoutput="false">` in `<cfcomponent>` | ColdBox test apps, Mura — related to the `<cfsetting>` note in [LIMITATIONS.md](LIMITATIONS.md) |
 | Typed `param` statement | `param string url.id default="0";` | common CFML idiom (the untyped `param name="x" default="";` parses) |
+| Dynamic tag name with a prefix or namespace | `<h#field.getLevel()#>`, `<dc:#container#>` | Lucee admin, cbfeeds — the plain `<#expr#>` form parses |
+| Bare `#` in a cfscript string | `"# ColdBox Performance Analysis Report"` | ColdBox perf harness — invalid CFML too, probe pins the blast radius |
 
 ### cfquery
 
