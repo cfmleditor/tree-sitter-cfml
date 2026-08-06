@@ -42,8 +42,8 @@ that work and fixes the regressions it introduced:
 | | `master` | casing branch | this branch |
 |---|---|---|---|
 | Files scanned | 12,549 | 12,549 | 12,549 |
-| Files with at least one error | 96 (0.8%) | 96 (0.8%) | 95 (0.8%) |
-| ERROR / MISSING nodes | 7,367 | 2,104 | 1,743 |
+| Files with at least one error | 96 (0.8%) | 96 (0.8%) | 93 (0.7%) |
+| ERROR / MISSING nodes | 7,367 | 2,104 | 1,352 |
 
 All three parse **over 99% of real-world files cleanly**. Raw error counts
 overstate the number of distinct problems, because one early ERROR derails the
@@ -94,6 +94,34 @@ identifier, and CFML code uses these words as names.
    in 3.1 ms instead of 13 ms — error recovery was the entire cost.
 
 Net effect against the casing branch: **16 files fixed, 0 newly broken.**
+
+### Gaps closed from the corpus
+
+With the regressions out of the way, the largest remaining clusters were worth
+fixing on their own merits. Each was found by `npm run corpus:report`, reduced
+to a probe, and re-scanned to confirm nothing else moved:
+
+| Fix | Files | Construct |
+|---|---|---|
+| `catch` takes an optional `var` | 42 | `} catch( any var e ) {` (CommandBox) |
+| Scoped declaration names | 29 | `var local.result = …`, `var a.b.c.d = 1` |
+| CFML comments in script bodies | 13 | `<!--- VIEWLETS --->` between statements (Preside, Lucee) |
+| `final` / access-modifier members | 5 | `final MEMBER = "value";`, `public prop = "prop";` |
+| Semicolon inserted before `}` | 4 | `rethrow` with no semicolon (ColdBox style) |
+| `#` inside a CFML comment | 1 | `<!--- see …/#comment-592093 --->` inside `<script>` (Mura) |
+| `<cfsetting>` is a void tag | 1 | `<cfsetting showdebugoutput="false">` swallowed the template |
+
+That is 1,743 error nodes down to **1,352**, and 95 failing files down to 93 —
+the file count barely moves because these clusters are spread across files that
+still fail on something else.
+
+Three of those fixes needed a second pass after the corpus scan showed them
+breaking something: allowing a member expression after `var` made keyword-led
+expressions valid there (so `var new = 1` and `for ( var export in … )` had to
+name `_reserved_identifier` explicitly); the CFML comment token had to become a
+statement rather than an extra, because as an extra it matched inside string
+literals; and the member-declaration form had to be restricted to plain
+identifier names so `public component function init()` stayed a function.
 
 ### Performance
 
