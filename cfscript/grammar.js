@@ -157,7 +157,6 @@ module.exports = grammar({
     [$.assignment_expression, $.object_assignment_pattern],
     [$.labeled_statement, $._property_name],
     [$.computed_property_name, $.array],
-    [$.binary_expression, $._initializer],
     // `for ( var x = y in z )` — the initializer, an assignment and a binary
     // `in` expression all fit the same prefix.
     [$.assignment_expression, $._initializer, $.binary_expression],
@@ -174,9 +173,6 @@ module.exports = grammar({
     [$.primary_expression, $.new_expression, $._property_name],
     [$.function_expression, $.pattern],
     [$.function_expression, $.parameter_type, $.pattern],
-    [$.primary_expression, $.function_expression, $.parameter_type],
-    [$.primary_expression, $.function_expression, $._property_name],
-    [$.primary_expression, $.function_expression],
     [$._property_name, $.primary_expression, $.query_tag],
     [$.primary_expression, $.query_expression],
     [$._property_name, $.primary_expression, $.query_expression],
@@ -698,7 +694,8 @@ module.exports = grammar({
       ']',
     ),
 
-    ordered_struct: ($) => prec(1, seq('[', ':', ']')),
+    // `[ : ]` and `[ = ]` are both empty ordered structs; Lucee accepts either.
+    ordered_struct: ($) => prec(1, choice(seq('[', ':', ']'), seq('[', '=', ']'))),
 
     array_pattern: ($) => seq(
       '[',
@@ -1420,6 +1417,22 @@ module.exports = grammar({
     ),
 
     tag_statement: $ => choice(
+      // `param string url.id default="0";` — the shorthand form names a type and
+      // the variable before the attributes. The attribute-only form
+      // (`param name="url.id" default="0";`) is the second branch below.
+      seq(
+        // Both the tag and the type stay plain identifiers. Spelling the type as
+        // a set of keyword tokens instead would make `array` lex as a keyword
+        // wherever this branch is live, which breaks the attribute form of every
+        // other tag statement — `loop array=data` loses its `array` identifier.
+        // What separates the two forms is what follows the type: a name here, an
+        // `=` in the attribute branch below.
+        field('tag', $.identifier),
+        field('type', alias($.identifier, $.parameter_type)),
+        field('name', choice($.identifier, $.member_expression)),
+        field('arguments', repeat(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
+        $._semicolon,
+      ),
       seq(
         field('tag', $.identifier),
         optional($.tag_linefeed),

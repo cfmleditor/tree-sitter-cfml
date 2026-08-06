@@ -1360,3 +1360,45 @@ common: deeply nested tag chains
               (cf_tag_name))))
         (cf_end_tag
           (cf_tag_name))))))
+
+================================================================================
+common: bare angle brackets in template text
+================================================================================
+
+<p>a > b</p>
+<p>5 < 6</p>
+<cfoutput>#a# > #b#</cfoutput>
+<em>Hit Ratio:</em> #ratio#%  ==>
+
+--------------------------------------------------------------------------------
+
+(program
+  (element
+    (start_tag
+      (tag_name))
+    (html_text)
+    (end_tag
+      (tag_name)))
+  (element
+    (start_tag
+      (tag_name))
+    (html_text)
+    (end_tag
+      (tag_name)))
+  (cf_output_tag
+    (hash_expression
+      (identifier))
+    (html_text)
+    (hash_expression
+      (identifier)))
+  (element
+    (start_tag
+      (tag_name))
+    (html_text)
+    (end_tag
+      (tag_name)))
+  (html_text)
+  (hash_single)
+  (html_text)
+  (hash_single)
+  (html_text))

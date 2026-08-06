@@ -11,13 +11,13 @@
  *
  * The fuzzer applies random edits to every corpus test and checks that an
  * incremental re-parse matches a fresh one, which is what exercises the
- * external scanner. `cfscript` runs with fewer edits than the others: at 2 or
- * more edits a run does not finish in minutes, while at 1 it completes in a
- * tenth of a second. That cliff is not explained yet. It does not reproduce
- * outside the fuzzer — 7,000 random mutations of the same corpus inputs, parsed
- * both fresh and incrementally through the Node bindings, all complete in
- * single-digit milliseconds — and individual tests pass at 2 edits, so it only
- * shows up across a whole run. Raise FUZZ_EDITS when digging into it.
+ * external scanner.
+ *
+ * `cfscript` used to run at a reduced budget because runs hung. That was a real
+ * parser bug, not a fuzzer quirk: `scan_query_text` looped until the closing
+ * quote with no EOF check, so `queryExecute("` spun forever. Fixed, and the
+ * budget is back in line with the other two — a 30-iteration, 5-edit soak now
+ * finishes in under a second.
  */
 
 const {join} = require('path');
@@ -27,7 +27,7 @@ const {spawnTreeSitter, root} = require('./tree-sitter-cli.cjs');
 const BUDGETS = {
   cfml: [10, 3],
   cfquery: [10, 3],
-  cfscript: [2, 1],
+  cfscript: [10, 3],
 };
 
 const only = process.env.DIALECT;

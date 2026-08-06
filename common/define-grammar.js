@@ -187,7 +187,6 @@ module.exports = function defineGrammar(dialect) {
       [$.primary_expression, $.new_expression],
       [$.new_expression, $.pattern],
       [$.primary_expression, $.new_expression, $._property_name],
-      [$.primary_expression, $.new_expression, $.pattern],
       // `var`/`final` followed by a dotted name is a scoped declaration
       // (`var local.x = 1`), but the same prefix can also start an expression.
       [$.variable_declaration, $.primary_expression, $._property_name],
@@ -208,7 +207,6 @@ module.exports = function defineGrammar(dialect) {
       [$.assignment_expression, $.object_assignment_pattern],
       [$.labeled_statement, $._property_name],
       [$.computed_property_name, $.array],
-      [$.binary_expression, $._initializer],
       // `for ( var x = y in z )` — the initializer, an assignment and a binary
       // `in` expression all fit the same prefix.
       [$.assignment_expression, $._initializer, $.binary_expression],
@@ -218,9 +216,7 @@ module.exports = function defineGrammar(dialect) {
       // `array`, so `case <expr> :` is ambiguous with the start of a pair.
       [$.switch_case, $.expression],
       [$.expression, $.parenthesized_expression],
-      [$.primary_expression, $.function_expression, $._property_name],
       [$.function_expression, $.pattern],
-      [$.primary_expression, $.function_expression],
       [$.expression, $.expression_statement],
       [$.expression, $.arguments],
       // `throw ( x )` is ambiguous between `arguments` and a parenthesized expression.
@@ -555,9 +551,12 @@ module.exports = function defineGrammar(dialect) {
           field('right', $._node),
         )),
 
+        // `&` is SQL Server's bitwise AND (`WHERE status & 2048 = 2048`). It is
+        // only an operator here — inside `#...#` it is CFML concatenation, which
+        // the hash expression grammar handles separately.
         query_math_expression: ($) => prec.left('binary_plus', seq(
           field('left', $._node),
-          field('operator', choice('-', '/', '%')),
+          field('operator', choice('-', '/', '%', '&', '|', '^')),
           field('right', $._node),
         )),
 
@@ -1477,7 +1476,8 @@ module.exports = function defineGrammar(dialect) {
         ']',
       ),
 
-      ordered_struct: ($) => prec(1, seq('[', ':', ']')),
+      // `[ : ]` and `[ = ]` are both empty ordered structs; Lucee accepts either.
+      ordered_struct: ($) => prec(1, choice(seq('[', ':', ']'), seq('[', '=', ']'))),
 
       array_pattern: ($) => seq(
         '[',

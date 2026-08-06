@@ -9,6 +9,14 @@ npm run corpus:fetch && npm run scan corpus > scan.txt
 npm run corpus:report -- --from scan.txt
 ```
 
+> **Since this assessment**, four of the patterns below have been fixed — bare
+> `>` / `<` in template text, the empty struct literal `[=]`, the typed `param`
+> statement, and bitwise operators in SQL. They are marked **Fixed** in the
+> tables and are covered by `npm run probe`. The corpus now reports **1,006**
+> error nodes; the counts in this section are the original snapshot and have not
+> been rebaselined, because the relative sizes are what the priorities below are
+> argued from.
+
 ## The numbers
 
 | | |
@@ -82,7 +90,7 @@ or regresses.
 |---|---|---|---|
 | Script-syntax tag call with space-separated attributes | 17 | `cfdirectory( directory="#dir#" action="create" mode="777" );` | `script_tag_call.cfc` |
 | Array return type | 9 | `IValidationError[] function getFieldErrors( required string field );` | `array_return_type.cfc` |
-| Empty struct literal | 5 | `var uniqueList = [=];` | `empty_struct_literal.cfc` |
+| ~~Empty struct literal~~ **Fixed** | 5 | `var uniqueList = [=];` | `empty_struct_literal.cfc` |
 | Subscript as a `var` declaration name | 1 | `var loadArgs[ getPrimaryKey() ] = getValue( x );` | — |
 | Dotted key in a struct literal | 1 | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
 | Function-listener callback syntax | 1 | `var t = mySuccess():function( result, error ) { … };` | — |
@@ -98,8 +106,8 @@ name but not a bracket subscript.
 | Pattern | Files | Example | Probe |
 |---|---|---|---|
 | Dynamic tag name with a static prefix or namespace | 10 | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
-| Bare `>` or `<` in template text | — | `<p>a > b</p>`, `#ratio#%  ==>` | `gt_in_text.cfm`, `lt_in_text.cfm` |
-| Typed `param` statement | — | `param string url.id default="0";` | `param_typed.cfm` |
+| ~~Bare `>` or `<` in template text~~ **Fixed** | — | `<p>a > b</p>`, `#ratio#%  ==>` | `gt_in_text.cfm`, `lt_in_text.cfm` |
+| ~~Typed `param` statement~~ **Fixed** | — | `param string url.id default="0";` | `param_typed.cfm` |
 | `<script>` opened in one `<cfsavecontent>`, closed in another | 1 | Slatwall `ClientScriptWriter_jQuery.cfc` | — |
 
 The plain `<#expr#>` dynamic tag form parses; only the prefixed and namespaced
@@ -111,7 +119,7 @@ rule — which is also why this is the largest remaining real cluster.
 
 | Pattern | Files | Example | Probe |
 |---|---|---|---|
-| Bitwise `&` in SQL | 1 | `AND status & 2048 = 2048` | `bitwise_and.cfm` |
+| ~~Bitwise `&` in SQL~~ **Fixed** | 1 | `AND status & 2048 = 2048` | `bitwise_and.cfm` |
 
 ## What is left over
 
@@ -149,13 +157,13 @@ Three properties of this grammar drive most of the risk:
 
 | Pattern | Complexity | Risk | Basis |
 |---|---|---|---|
-| Empty struct literal `[=]` | **Low** | **Low** | `ordered_struct` already spells out the sibling form `[ : ]` as a fixed token sequence; `[ = ]` is the same shape |
-| Typed `param` statement | **Low** | **Low** | The untyped form already parses; this adds a type slot to an existing statement rule |
-| Bitwise `&` in SQL | **Low-Med** | **Med** | A query-side operator addition, but `&` is CFML's string concatenation, so the two readings meet inside `<cfquery>` |
+| Empty struct literal `[=]` — **fixed** | **Low** | **Low** | `ordered_struct` already spells out the sibling form `[ : ]` as a fixed token sequence; `[ = ]` is the same shape. Landed as estimated: one `choice` arm, no conflicts |
+| Typed `param` statement — **fixed** | **Low** | **Low** | The untyped form already parses; this adds a type slot to an existing statement rule. Cost the estimate twice over: spelling the type as keyword tokens made `array` lex as a keyword wherever the branch was live, breaking `loop array=data`. A plain identifier in the type slot, distinguished by what follows it, works |
+| Bitwise `&` in SQL — **fixed** | **Low-Med** | **Med** | A query-side operator addition, but `&` is CFML's string concatenation, so the two readings meet inside `<cfquery>`. The two never actually met: concatenation only occurs inside `#...#`, which the hash expression grammar handles. `&`, `\|` and `^` joined `query_math_expression` with no fallout |
 | Array return type `X[] function` | **Med** | **Med** | Touches the function return-type slot, which already competes with `parameter_type` and `primary_expression`; expect new conflicts, of the kind that took three iterations for member declarations |
 | Subscript as a `var` name | **Med** | **Med-High** | Directly extends the change that broke `var new = 1`. Same rule, same lexing hazard, and subscripts add `[` ambiguity on top |
 | Dotted key in a struct literal | **Med** | **Med-High** | `_property_name` is already in five conflict declarations; widening it to accept paths touches every struct literal and named-argument site |
-| Bare `>` or `<` in template text | **Med-High** | **High** | The character that would become text is the one the tag scanner uses to close tags. Getting it wrong destabilises all tag parsing, which is the grammar's core |
+| Bare `>` or `<` in template text — **fixed** | **Med-High** | **High** | The character that would become text is the one the tag scanner uses to close tags. Getting it wrong destabilises all tag parsing, which is the grammar's core. It did: peeking past `<` consumes it and the scanner cannot rewind, so the first attempt broke every CFML comment. Guarding the peek behind "some text already collected" fixed it, and the corpus scan is what caught it |
 | Function-listener `f():callback` | **Med-High** | **High** | Adds another `:` reading to the most contested character in the grammar, for a single-file Lucee feature |
 | Script-syntax tag call | **High** | **Med** | **Attempted and backed out.** `f( a=1 [x] )` is ambiguous between a subscript and a second argument; tree-sitter's suggested resolution is a single-rule conflict on `expression`, which cannot be declared. Needs a restricted attribute-value rule instead |
 | Subscript with more than one pair | **High** | **High** | Requires re-admitting `pair` inside subscripts, which is exactly the ambiguity the casing branch removed. One file, non-idiomatic syntax |
@@ -175,13 +183,17 @@ them were only saved by that scan. Budget for the scan, not just the edit.
    backed out: space-separated arguments are ambiguous with subscripts
    (`f( a=1 [x] )`), and tree-sitter's suggested resolution is a single-rule
    conflict that cannot be declared. Needs a restricted attribute-value rule.
-3. **Bare `>` in template text** — no corpus file fails on this alone, but it is
-   ordinary HTML and the most likely of these to bite an editor user.
+3. ~~**Bare `>` in template text**~~ — **done.** No corpus file failed on this
+   alone, but it is ordinary HTML and was the likeliest of these to bite an
+   editor user. It also turned out to be the single largest win in the corpus:
+   329 nodes and 31 files, because a stray `>` derails the rest of a template.
 4. Everything else is single-file or nearly so, and worth fixing only if the
    construct is cheap to express.
 
-Crossing that list with the cost table gives a different order for anyone wanting
-value per unit of risk: `[=]` and typed `param` are cheap and safe but affect few
-files; the script-syntax tag call is the widest-reaching fix that is *tractable*
-with grammar-only changes; and prefixed dynamic tag names are the largest cluster
-but the most dangerous, because they mean editing the shared scanner.
+Crossing that list with the cost table gave a different order for anyone wanting
+value per unit of risk, and that is the order actually taken: `[=]`, typed
+`param` and bitwise `&` were cheap and safe but affect few files; bare `>` was
+riskier and paid for itself many times over. What remains is the script-syntax
+tag call — the widest-reaching fix still tractable with grammar-only changes —
+and prefixed dynamic tag names, the largest cluster but the most dangerous,
+because they mean editing the shared scanner.

@@ -4260,19 +4260,41 @@
       "type": "PREC",
       "value": 1,
       "content": {
-        "type": "SEQ",
+        "type": "CHOICE",
         "members": [
           {
-            "type": "STRING",
-            "value": "["
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "["
+              },
+              {
+                "type": "STRING",
+                "value": ":"
+              },
+              {
+                "type": "STRING",
+                "value": "]"
+              }
+            ]
           },
           {
-            "type": "STRING",
-            "value": ":"
-          },
-          {
-            "type": "STRING",
-            "value": "]"
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "["
+              },
+              {
+                "type": "STRING",
+                "value": "="
+              },
+              {
+                "type": "STRING",
+                "value": "]"
+              }
+            ]
           }
         ]
       }
@@ -9862,11 +9884,6 @@
       "_property_name"
     ],
     [
-      "primary_expression",
-      "new_expression",
-      "pattern"
-    ],
-    [
       "variable_declaration",
       "primary_expression",
       "_property_name"
@@ -9941,10 +9958,6 @@
       "array"
     ],
     [
-      "binary_expression",
-      "_initializer"
-    ],
-    [
       "assignment_expression",
       "_initializer",
       "binary_expression"
@@ -9966,17 +9979,8 @@
       "parenthesized_expression"
     ],
     [
-      "primary_expression",
-      "function_expression",
-      "_property_name"
-    ],
-    [
       "function_expression",
       "pattern"
-    ],
-    [
-      "primary_expression",
-      "function_expression"
     ],
     [
       "expression",

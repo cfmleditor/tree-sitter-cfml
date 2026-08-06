@@ -317,3 +317,31 @@ SELECT a, COUNT(*) c FROM t GROUP BY a HAVING COUNT(*) > 1 ORDER BY c DESC
   (query_keyword)
   (query_identifier)
   (query_keyword))
+
+===================================
+common: bitwise operators in a predicate
+===================================
+SELECT a FROM t WHERE status & 2048 = 2048 AND flags | 4 > 0
+---
+
+(program
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_identifier)
+  (query_keyword)
+  (query_assignment_expression
+    (query_math_expression
+      (query_identifier)
+      (query_number
+        (number)))
+    (query_number
+      (number)))
+  (query_keyword)
+  (query_comparison_expression
+    (query_math_expression
+      (query_identifier)
+      (query_number
+        (number)))
+    (query_number
+      (number))))

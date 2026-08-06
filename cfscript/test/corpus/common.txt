@@ -1064,3 +1064,81 @@ function f() {
                   (identifier)
                   (string
                     (string_fragment)))))))))))
+
+================================================================================
+common: empty struct and empty ordered struct literals
+================================================================================
+
+x = [=];
+y = [:];
+z = [];
+
+--------------------------------------------------------------------------------
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (array))))
+
+================================================================================
+common: typed param statement
+================================================================================
+
+param string url.id default="0";
+param numeric url.page default=1;
+param name="url.sort" default="asc";
+
+--------------------------------------------------------------------------------
+
+(program
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (member_expression
+      (identifier)
+      (property_identifier))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (member_expression
+      (identifier)
+      (property_identifier))
+    (assignment_expression
+      (identifier)
+      (number)))
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))))
+
+================================================================================
+common: unterminated queryExecute string
+================================================================================
+
+q = queryExecute("SELECT 1
+
+--------------------------------------------------------------------------------
+
+(program
+  (ERROR
+    (identifier)
+    (query_text)))
