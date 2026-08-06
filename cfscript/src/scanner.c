@@ -376,7 +376,10 @@ static bool scan_query_text(TSLexer *lexer) {
     bool saw_text = false;
     bool at_newline = false;
 
-    while (lexer->lookahead != '"') {
+    // The EOF check is not optional: `advance` is a no-op once `lookahead` is 0,
+    // so a loop that only stops at the closing quote spins forever on an
+    // unterminated string — `queryExecute("` on its own hung the parser.
+    while (lexer->lookahead != 0 && lexer->lookahead != '"') {
         bool is_wspace = iswspace(lexer->lookahead);
         if (lexer->lookahead == '\n') {
             at_newline = true;

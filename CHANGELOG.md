@@ -13,6 +13,7 @@
 ### cfscript
 
 - Support the typed `param` statement (`param string url.id default="0";`), used in `.cfm` templates via `<cfscript>`
+- Fix an infinite loop on an unterminated query string: `queryExecute("` hung the parser, because `scan_query_text` looped to the closing quote with no EOF check
 
 ### cfquery
 

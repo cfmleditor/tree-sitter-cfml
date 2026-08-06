@@ -1129,3 +1129,16 @@ param name="url.sort" default="asc";
       (identifier)
       (string
         (string_fragment)))))
+
+================================================================================
+common: unterminated queryExecute string
+================================================================================
+
+q = queryExecute("SELECT 1
+
+--------------------------------------------------------------------------------
+
+(program
+  (ERROR
+    (identifier)
+    (query_text)))
