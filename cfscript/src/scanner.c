@@ -506,6 +506,20 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
         return ret;
     }
 
+    // A tag statement (`admin action="…" type="server";`) spans lines, which is
+    // why the semicolon branch above stands down while TAG_LINEFEED is live. It
+    // cannot continue past `}` or EOF, though, so a statement that ends there
+    // still needs its semicolon — ColdBox writes `rethrow` with no semicolon
+    // before the closing brace.
+    if (valid_symbols[AUTOMATIC_SEMICOLON] && valid_symbols[TAG_LINEFEED]) {
+        lexer->mark_end(lexer);
+        while (iswspace(lexer->lookahead)) skip(lexer);
+        if (lexer->lookahead == '}' || lexer->lookahead == 0) {
+            lexer->result_symbol = AUTOMATIC_SEMICOLON;
+            return true;
+        }
+    }
+
     if (valid_symbols[TERNARY_QMARK] || valid_symbols[ELVIS_OPERATOR]) {
         return scan_ternary_qmark(lexer);
     }
