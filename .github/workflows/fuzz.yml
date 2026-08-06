@@ -10,6 +10,9 @@ on:
       - "cfquery/src/scanner.c"
       - "common/scanner.h"
       - "common/tag.h"
+      # The fuzzer itself, so a change to it is validated by running it.
+      - ".github/workflows/fuzz.yml"
+      - "scripts/fuzz.js"
   push:
     branches:
       - "master"
@@ -19,6 +22,9 @@ on:
       - "cfquery/src/scanner.c"
       - "common/scanner.h"
       - "common/tag.h"
+      # The fuzzer itself, so a change to it is validated by running it.
+      - ".github/workflows/fuzz.yml"
+      - "scripts/fuzz.js"
   workflow_dispatch:
 
 jobs:
