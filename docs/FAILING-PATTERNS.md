@@ -9,11 +9,11 @@ npm run corpus:fetch && npm run scan corpus > scan.txt
 npm run corpus:report -- --from scan.txt
 ```
 
-> **Since this assessment**, five of the patterns below have been fixed — bare
+> **Since this assessment**, six of the patterns below have been fixed — bare
 > `>` / `<` in template text, the empty struct literal `[=]`, the typed `param`
-> statement, bitwise operators in SQL, and array return types. They are marked
-> **Fixed** in the tables and are covered by `npm run probe`. The corpus now
-> reports **990** error nodes; the counts in this section are the original snapshot and have not
+> statement, bitwise operators in SQL, array return types, and script-syntax tag
+> calls. They are marked **Fixed** in the tables and are covered by
+> `npm run probe`. The corpus now reports **889** error nodes; the counts in this section are the original snapshot and have not
 > been rebaselined, because the relative sizes are what the priorities below are
 > argued from.
 
@@ -88,7 +88,7 @@ or regresses.
 
 | Pattern | Files | Example | Probe |
 |---|---|---|---|
-| Script-syntax tag call with space-separated attributes | 17 | `cfdirectory( directory="#dir#" action="create" mode="777" );` | `script_tag_call.cfc` |
+| ~~Script-syntax tag call with space-separated attributes~~ **Fixed** | 17 | `cfdirectory( directory="#dir#" action="create" mode="777" );` | `script_tag_call.cfc` |
 | ~~Array return type~~ **Fixed** | 9 | `IValidationError[] function getFieldErrors( required string field );` | `array_return_type.cfc` |
 | ~~Empty struct literal~~ **Fixed** | 5 | `var uniqueList = [=];` | `empty_struct_literal.cfc` |
 | Subscript as a `var` declaration name | 1 | `var loadArgs[ getPrimaryKey() ] = getValue( x );` | — |
@@ -165,7 +165,7 @@ Three properties of this grammar drive most of the risk:
 | Dotted key in a struct literal | **Med** | **Med-High** | `_property_name` is already in five conflict declarations; widening it to accept paths touches every struct literal and named-argument site |
 | Bare `>` or `<` in template text — **fixed** | **Med-High** | **High** | The character that would become text is the one the tag scanner uses to close tags. Getting it wrong destabilises all tag parsing, which is the grammar's core. It did: peeking past `<` consumes it and the scanner cannot rewind, so the first attempt broke every CFML comment. Guarding the peek behind "some text already collected" fixed it, and the corpus scan is what caught it |
 | Function-listener `f():callback` | **Med-High** | **High** | Adds another `:` reading to the most contested character in the grammar, for a single-file Lucee feature |
-| Script-syntax tag call | **High** | **Med** | **Attempted and backed out.** `f( a=1 [x] )` is ambiguous between a subscript and a second argument; tree-sitter's suggested resolution is a single-rule conflict on `expression`, which cannot be declared. Needs a restricted attribute-value rule instead |
+| Script-syntax tag call — **fixed** | **High** | **Med** | **Attempted and backed out** once. `f( a=1 [x] )` is ambiguous between a subscript and a second argument; tree-sitter's suggested resolution is a single-rule conflict on `expression`, which cannot be declared. The restricted attribute-value rule works: values are limited to the shapes real tag calls use (string, number, boolean, variable, dotted path, `#hash#`), none of which a `[` can follow, so the ambiguity never arises. Accurate at **High/Med** — seven declared conflicts across six generate-and-read iterations, and one design reversal when a rule allowing a leading comma-run proved ambiguous with every named call in the language |
 | Subscript with more than one pair | **High** | **High** | Requires re-admitting `pair` inside subscripts, which is exactly the ambiguity the casing branch removed. One file, non-idiomatic syntax |
 | Prefixed / namespaced dynamic tag | **High** | **High** | `_start_tag_name` is an external token and open/close matching lives in the scanner's tag stack. Scanner work on the shared header, with no generator check |
 | `<script>` unclosed across CF blocks | **High** | **Low value** | **Attempted and backed out.** Making `script_element`'s end tag optional produces unresolvable conflicts. One file, and genuinely unbalanced HTML |

@@ -85,10 +85,31 @@ npm run scan corpus > after.txt
 diff <(sort before.txt) <(sort after.txt)
 ```
 
-Take `before.txt` *before* you edit. **A clean fix produces a diff of deletions
-only.** Any added line is a regression: back the change out and find a narrower
-formulation. `npm run corpus:report -- --from after.txt` clusters what remains
-by source-line shape when you want to see what is left.
+Take `before.txt` *before* you edit. `npm run corpus:report -- --from after.txt`
+clusters what remains by source-line shape when you want to see what is left.
+
+**Read the diff by per-file totals, not by added lines.** A raw diff of
+deletions only is the ideal, but added lines are not automatically a regression:
+in a file the parser cannot recover in either case, a grammar change shifts
+*where* recovery gives up, so old error lines are replaced by different ones.
+Count instead:
+
+```bash
+for f in $(cat before.txt after.txt | grep -oE '^[^:]+\.cf[cms]?' | sort -u); do
+  b=$(grep -cF "$f:" before.txt); a=$(grep -cF "$f:" after.txt)
+  [ "$b" != "$a" ] && printf "  %5s -> %-5s %s\n" "$b" "$a" "$f"
+done
+```
+
+Every file should improve or hold level. If one gets worse, reduce its
+construct to a one-liner and parse it in isolation before concluding anything —
+the script-syntax tag call change made `PerformanceSuite.cfc` go 186 → 198 while
+fixing 101 nodes elsewhere, and the lines it "broke" turned out to parse cleanly
+on their own. That file is invalid CFML (a bare `#` where the language needs
+`##`), cascades from line 1 both before and after, and is documented as such in
+`docs/FAILING-PATTERNS.md`. A file already in that category shifting its
+recovery shape is not a reason to back out a fix; a file that *parses* getting
+worse is.
 
 If the change touches either scanner, also run `npm run fuzz` — it applies
 random edits to every corpus test and re-parses, which is the only thing that
