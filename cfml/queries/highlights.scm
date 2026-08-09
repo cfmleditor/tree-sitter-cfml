@@ -186,6 +186,9 @@
 ;------
 
 (parameter_type) @type
+; `User[] function getUsers()` — one token, so the anonymous "[" / "]"
+; rule below cannot reach it.
+(array_return_suffix) @punctuation.bracket
 (catch_clause
   type: (catch_type) @type)
 

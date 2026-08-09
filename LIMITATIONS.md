@@ -147,7 +147,6 @@ assessment, including how many files each affects and what fixing it would cost.
 ### cfscript
 
 - **Script-syntax tag calls** — `cfdirectory( directory="#dir#" action="create" );`, `cfheader( statuscode="404" statustext="..." );` (Lucee). The widest-spread remaining gap, at 17 files.
-- **Array return types** — `IValidationError[] function getFieldErrors( ... )` (cbvalidation).
 - **Subscript index holding more than one pair** — `animals = $[ Aardwolf: "…", aardvark: "…" ];` (Lucee tests).
 - **`function` as a bare value** — `h = function.foo;`. `function` is accepted as
   an assignable name (`admin ... function="" ...`) and as a property
@@ -161,7 +160,8 @@ assessment, including how many files each affects and what fixing it would cost.
 The following were gaps and now parse: typed `catch` with `var`, `var` with a
 scoped or dotted name, tag comments in a script body, `final` and
 access-modifier member declarations, the empty struct literal `[=]`, bare `>` or
-`<` in template text, and the typed `param` statement.
+`<` in template text, the typed `param` statement, and array return types
+(`User[] function getUsers()`).
 
 ### cfquery
 

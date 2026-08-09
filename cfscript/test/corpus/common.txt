@@ -1142,3 +1142,58 @@ q = queryExecute("SELECT 1
   (ERROR
     (identifier)
     (query_text)))
+
+================================================================================
+common: array return types
+================================================================================
+
+component {
+
+	IValidationError[] function getFieldErrors( required string field ) {
+		return [];
+	}
+
+	private Sample[] function returnArrayOfSamples( required array samples ) {
+		return samples;
+	}
+
+	User function getUser() {
+		return user;
+	}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (array_return_suffix)
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier))
+        (statement_block
+          (return_statement
+            (array))))
+      (function_declaration
+        (access_type)
+        (identifier)
+        (array_return_suffix)
+        (identifier)
+        (formal_parameters
+          (parameter_type
+            (identifier))
+          (identifier))
+        (statement_block
+          (return_statement
+            (identifier))))
+      (function_declaration
+        (identifier)
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (return_statement
+            (identifier)))))))
