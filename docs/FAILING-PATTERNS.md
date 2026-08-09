@@ -77,7 +77,7 @@ that.
 |---|---|---|---|---|
 | 71 | 1 | CSS in `<style>` with many `#` tokens | Lucee's `debug/Simple.cfc`: 42 `#` across ID selectors and hex colours | — |
 | 48 | 10 | Dynamic tag name with a static prefix or namespace | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
-| 30 | 1 | Dotted key in a struct literal — **fixed, then reverted on cost** | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
+| 30 | 1 | Dotted key in a struct literal — **tractable, rejected on cost** | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
 | 19 | 13 | Dynamic tag opened and closed in different blocks | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | — |
 | 19 | 1 | Function-listener callback syntax | `var t = mySuccess():function( result, error ) { … };` | — |
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
@@ -122,7 +122,7 @@ Since the `d06ff66` baseline, in rough order of value delivered:
 ## Cost and risk of what remains
 
 Estimates come from this repository's own history. That history now includes
-seven predictions with known outcomes, and the calibration is mixed — see
+eight predictions with known outcomes, and the calibration is mixed — see
 [Predictions checked against outcomes](#predictions-checked-against-outcomes).
 
 Three properties of this grammar drive most of the risk:
@@ -184,6 +184,7 @@ watch for.
 | Bare `>` / `<` in text | Med-High / High | Accurate — the first attempt broke every CFML comment |
 | Script-syntax tag call | High / Med | Accurate — seven conflicts and one design reversal |
 | Subscript as a `var` name | Med / Med-High | **Over-estimated risk, under-counted scale 9×.** One line, no conflicts; 9 files, not 1 |
+| Dotted key in a struct literal | Med / Med-High | **Over-estimated the cost of writing it, and missed the cost of running it.** One conflict, not five — but that conflict is live at every member access, and the table had no column for that. The reason the section above exists |
 
 The pattern in the misses: risk is over-estimated when an earlier fix has
 already installed the guard the new change needs, and file counts are too low

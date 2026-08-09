@@ -156,7 +156,7 @@ assessment, including how many files each affects and what fixing it would cost.
 ### cfscript
 
 - **Script-syntax tag calls where the *first* separator is a comma** — `cfdirectory(action="list", directory=trg, name="x" recurse=true)` (Lucee tests). The space-separated form parses, including calls that switch to commas after the first junction (`cflog(file="#n#" text="t", type="error")`). Requiring the space at the first junction is what keeps the rule unambiguous with an ordinary comma-separated call; 11 calls across 4 files put a comma there instead.
-- **Dotted key in a struct literal** — `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` (Preside tests). The largest remaining grammar-only gap.
+- **Dotted key in a struct literal** — `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` (Preside tests). Cheap to implement and implemented once, but the conflict it needs is live at every member access and cost 1.8× on cfscript parse time for 30 nodes in one file, so it was reverted. See the cost table in [`docs/FAILING-PATTERNS.md`](docs/FAILING-PATTERNS.md).
 - **Subscript index holding more than one pair** — `animals = $[ Aardwolf: "…", aardvark: "…" ];` (Lucee tests).
 - **Function-listener callback** — `var t = mySuccess():function( result, error ) { … };` (Lucee `FunctionListener.cfc`).
 - **`function` as a bare value** — `h = function.foo;`. `function` is accepted as
