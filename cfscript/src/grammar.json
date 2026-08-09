@@ -8423,8 +8423,22 @@
                   "type": "FIELD",
                   "name": "arguments",
                   "content": {
-                    "type": "SYMBOL",
-                    "name": "arguments"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "arguments"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "tag_call_arguments"
+                        },
+                        "named": true,
+                        "value": "arguments"
+                      }
+                    ]
                   }
                 },
                 {

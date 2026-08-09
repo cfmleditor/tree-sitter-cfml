@@ -1546,7 +1546,14 @@ module.exports = grammar({
       seq(
         field('tag', $.identifier),
         optional($.tag_linefeed),
-        optional(field('arguments', $.arguments)),
+        // The space-separated attribute form reaches the bodyless call through
+        // `call_expression`, but a tag call with a body is a statement, so it
+        // needs the alternative spelled out here too. `cfquery( name="q"
+        // datasource="d" ) { ... }` is the common shape.
+        optional(field('arguments', choice(
+          $.arguments,
+          alias($.tag_call_arguments, $.arguments),
+        ))),
         field('body', $.statement_block),
         $._semicolon,
       ),
