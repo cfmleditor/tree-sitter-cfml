@@ -170,8 +170,9 @@ The following were gaps and now parse: typed `catch` with `var`, `var` with a
 scoped or dotted name, tag comments in a script body, `final` and
 access-modifier member declarations, the empty struct literal `[=]`, bare `>` or
 `<` in template text, the typed `param` statement, array return types
-(`User[] function getUsers()`), and script-syntax tag calls with space-separated
-attributes.
+(`User[] function getUsers()`), script-syntax tag calls with space-separated
+attributes, and a subscript as a `var` declaration name
+(`var mappings[ key ] = value`).
 
 ### cfquery
 

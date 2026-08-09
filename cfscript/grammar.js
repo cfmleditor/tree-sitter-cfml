@@ -402,10 +402,14 @@ module.exports = grammar({
       // `_reserved_identifier` has to be spelled out because allowing a
       // `member_expression` here makes keyword-led expressions valid straight
       // after `var`, so `var new = 1` would otherwise lex `new` as a keyword.
+      // `var mappings[ key ] = value` is the same idea one step further —
+      // declare and index in one statement. Kept next to `member_expression`
+      // because CFML treats `a.b` and `a["b"]` as the same access.
       field('name', choice(
         $.identifier,
         alias($._reserved_identifier, $.identifier),
         $.member_expression,
+        $.subscript_expression,
         $._destructuring_pattern,
       )),
       optional($._initializer),

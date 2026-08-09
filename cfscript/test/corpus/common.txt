@@ -1288,3 +1288,52 @@ component {
                 (assignment_expression
                   (identifier)
                   (identifier))))))))))
+
+================================================================================
+common: subscript as a var declaration name
+================================================================================
+
+component {
+
+	function run() {
+		var loadArgs[ getPrimaryKey() ] = getValue( "x" );
+		var mappings[ "/sue" ] = sue;
+		var local.other = 1;
+	}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (variable_declaration
+            (variable_declarator
+              (subscript_expression
+                (identifier)
+                (call_expression
+                  (identifier)
+                  (arguments)))
+              (call_expression
+                (identifier)
+                (arguments
+                  (string
+                    (string_fragment))))))
+          (variable_declaration
+            (variable_declarator
+              (subscript_expression
+                (identifier)
+                (string
+                  (string_fragment)))
+              (identifier)))
+          (variable_declaration
+            (variable_declarator
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (number))))))))

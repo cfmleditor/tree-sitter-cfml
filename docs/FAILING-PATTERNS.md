@@ -9,11 +9,12 @@ npm run corpus:fetch && npm run scan corpus > scan.txt
 npm run corpus:report -- --from scan.txt
 ```
 
-> **Since this assessment**, six of the patterns below have been fixed — bare
+> **Since this assessment**, seven of the patterns below have been fixed — bare
 > `>` / `<` in template text, the empty struct literal `[=]`, the typed `param`
-> statement, bitwise operators in SQL, array return types, and script-syntax tag
-> calls. They are marked **Fixed** in the tables and are covered by
-> `npm run probe`. The corpus now reports **889** error nodes; the counts in this section are the original snapshot and have not
+> statement, bitwise operators in SQL, array return types, script-syntax tag
+> calls, and a subscript as a `var` name. They are marked **Fixed** in the
+> tables and are covered by `npm run probe`. The corpus now reports **766**
+> error nodes; the counts in this section are the original snapshot and have not
 > been rebaselined, because the relative sizes are what the priorities below are
 > argued from.
 
@@ -91,15 +92,19 @@ or regresses.
 | ~~Script-syntax tag call with space-separated attributes~~ **Fixed** | 17 | `cfdirectory( directory="#dir#" action="create" mode="777" );` | `script_tag_call.cfc` |
 | ~~Array return type~~ **Fixed** | 9 | `IValidationError[] function getFieldErrors( required string field );` | `array_return_type.cfc` |
 | ~~Empty struct literal~~ **Fixed** | 5 | `var uniqueList = [=];` | `empty_struct_literal.cfc` |
-| Subscript as a `var` declaration name | 1 | `var loadArgs[ getPrimaryKey() ] = getValue( x );` | — |
+| ~~Subscript as a `var` declaration name~~ **Fixed** | ~~1~~ **9** | `var loadArgs[ getPrimaryKey() ] = getValue( x );` | `subscript_var_name.cfc` |
 | Dotted key in a struct literal | 1 | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
 | Function-listener callback syntax | 1 | `var t = mySuccess():function( result, error ) { … };` | — |
 | Subscript index holding more than one pair | 1 | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
 
-The last four are single-file patterns. The subscript-name case is the largest of
-them at 71 nodes (Mura's `beanORM.cfc`) and is the same family as the scoped
-`var local.x` support added in `d06ff66` — a `var` declarator accepts a dotted
-name but not a bracket subscript.
+The remaining three are single-file patterns.
+
+The subscript-name row is a caution about this table's method. It was recorded
+as one file and 71 nodes; it was **9 files and 111 nodes**, and fixing it was
+the single largest drop of the whole exercise. The count came from clustering
+*first* errors, and eight of those nine files cascade from line 1, so their real
+trigger never reached the cluster. Where a file's first error is at 1:1, the
+number here is a lower bound on the pattern that caused it.
 
 ### cfml
 
@@ -161,7 +166,7 @@ Three properties of this grammar drive most of the risk:
 | Typed `param` statement — **fixed** | **Low** | **Low** | The untyped form already parses; this adds a type slot to an existing statement rule. Cost the estimate twice over: spelling the type as keyword tokens made `array` lex as a keyword wherever the branch was live, breaking `loop array=data`. A plain identifier in the type slot, distinguished by what follows it, works |
 | Bitwise `&` in SQL — **fixed** | **Low-Med** | **Med** | A query-side operator addition, but `&` is CFML's string concatenation, so the two readings meet inside `<cfquery>`. The two never actually met: concatenation only occurs inside `#...#`, which the hash expression grammar handles. `&`, `\|` and `^` joined `query_math_expression` with no fallout |
 | Array return type `X[] function` — **fixed** | **Med** | **Med** | Touches the function return-type slot, which already competes with `parameter_type` and `primary_expression`; expect new conflicts, of the kind that took three iterations for member declarations. **Over-estimated**: no conflicts, no iterations. Lexing `[]` as one `token(seq('[', ']'))` rather than two settles subscript-versus-suffix in the lexer, so the ambiguity the estimate feared never reaches the parser |
-| Subscript as a `var` name | **Med** | **Med-High** | Directly extends the change that broke `var new = 1`. Same rule, same lexing hazard, and subscripts add `[` ambiguity on top |
+| Subscript as a `var` name — **fixed** | **Med** | **Med-High** | Directly extends the change that broke `var new = 1`. Same rule, same lexing hazard, and subscripts add `[` ambiguity on top. **Both the risk and the file count were wrong.** One line adding `subscript_expression` to `variable_declarator`, no new conflicts, and none of the feared lexing damage — `_reserved_identifier` was already named explicitly there from the earlier fix, which is exactly what protects it. And it was 9 files, not 1: the original count came from signal-matching first errors, and 8 of the 9 were cascading from line 1 so their real trigger was never attributed |
 | Dotted key in a struct literal | **Med** | **Med-High** | `_property_name` is already in five conflict declarations; widening it to accept paths touches every struct literal and named-argument site |
 | Bare `>` or `<` in template text — **fixed** | **Med-High** | **High** | The character that would become text is the one the tag scanner uses to close tags. Getting it wrong destabilises all tag parsing, which is the grammar's core. It did: peeking past `<` consumes it and the scanner cannot rewind, so the first attempt broke every CFML comment. Guarding the peek behind "some text already collected" fixed it, and the corpus scan is what caught it |
 | Function-listener `f():callback` | **Med-High** | **High** | Adds another `:` reading to the most contested character in the grammar, for a single-file Lucee feature |
