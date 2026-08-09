@@ -26,11 +26,12 @@
     "cfscript/leading_javadoc.cfc": "pass",
     "cfscript/mixed_case_keywords.cfc": "pass",
     "cfscript/no_semicolon_before_brace.cfc": "pass",
-    "cfscript/script_tag_call.cfc": "fail",
+    "cfscript/script_tag_call.cfc": "pass",
     "cfscript/spaced_param_defaults.cfc": "pass",
     "cfscript/static_block.cfc": "pass",
     "cfscript/string_slice.cfc": "pass",
     "cfscript/subscript_multiple_pairs.cfc": "fail",
+    "cfscript/subscript_var_name.cfc": "pass",
     "cfscript/tag_comment_in_script_body.cfc": "pass",
     "cfscript/typed_catch_with_var.cfc": "pass",
     "cfscript/var_scoped_dotted_name.cfc": "pass"

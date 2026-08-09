@@ -111,6 +111,15 @@ them. The grammar is deliberately permissive here: these words must stay usable
 as ordinary identifiers (`static['key']`, `query.newQuery()`), and the parser
 does not distinguish the standalone case.
 
+### Space-separated arguments are accepted on any call
+
+`f( a=1 b=2 )` parses even though `f` is not a CF tag, and a CFML engine would
+reject it. Restricting the form to `cf`-prefixed callees would need a token
+matching `cf\w+`, which is a subset of `identifier` and would out-lex ordinary
+identifiers wherever it is valid — the hazard described above under
+`keyword()` vs. regex. The grammar is deliberately permissive here, as it is
+with bare reserved words.
+
 ## cfml
 
 ### IE conditional comments
@@ -146,7 +155,7 @@ assessment, including how many files each affects and what fixing it would cost.
 
 ### cfscript
 
-- **Script-syntax tag calls** — `cfdirectory( directory="#dir#" action="create" );`, `cfheader( statuscode="404" statustext="..." );` (Lucee). The widest-spread remaining gap, at 17 files.
+- **Script-syntax tag calls where the *first* separator is a comma** — `cfdirectory(action="list", directory=trg, name="x" recurse=true)` (Lucee tests). The space-separated form parses, including calls that switch to commas after the first junction (`cflog(file="#n#" text="t", type="error")`). Requiring the space at the first junction is what keeps the rule unambiguous with an ordinary comma-separated call; 11 calls across 4 files put a comma there instead.
 - **Subscript index holding more than one pair** — `animals = $[ Aardwolf: "…", aardvark: "…" ];` (Lucee tests).
 - **`function` as a bare value** — `h = function.foo;`. `function` is accepted as
   an assignable name (`admin ... function="" ...`) and as a property
@@ -160,8 +169,10 @@ assessment, including how many files each affects and what fixing it would cost.
 The following were gaps and now parse: typed `catch` with `var`, `var` with a
 scoped or dotted name, tag comments in a script body, `final` and
 access-modifier member declarations, the empty struct literal `[=]`, bare `>` or
-`<` in template text, the typed `param` statement, and array return types
-(`User[] function getUsers()`).
+`<` in template text, the typed `param` statement, array return types
+(`User[] function getUsers()`), script-syntax tag calls with space-separated
+attributes, and a subscript as a `var` declaration name
+(`var mappings[ key ] = value`).
 
 ### cfquery
 

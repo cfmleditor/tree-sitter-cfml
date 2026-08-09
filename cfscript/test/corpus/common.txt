@@ -1197,3 +1197,143 @@ component {
         (statement_block
           (return_statement
             (identifier)))))))
+
+================================================================================
+common: script-syntax tag calls with space-separated attributes
+================================================================================
+
+component {
+
+	function run() {
+		cfdirectory( directory="#getTempDirectory()#" action="create" mode="777" );
+		cfheader( statuscode="404" statustext="Invalid access" );
+		cflog( file="#logname#" text="load test", type="error", async=false );
+		cfquery( name="qTest" dbtype="query" params=p );
+	}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (hash_expression
+                      (call_expression
+                        (identifier)
+                        (arguments)))))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment))))))
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment))))))
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (hash_expression
+                      (identifier))))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))
+                (assignment_expression
+                  (identifier)
+                  (false)))))
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))
+                (assignment_expression
+                  (identifier)
+                  (identifier))))))))))
+
+================================================================================
+common: subscript as a var declaration name
+================================================================================
+
+component {
+
+	function run() {
+		var loadArgs[ getPrimaryKey() ] = getValue( "x" );
+		var mappings[ "/sue" ] = sue;
+		var local.other = 1;
+	}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (variable_declaration
+            (variable_declarator
+              (subscript_expression
+                (identifier)
+                (call_expression
+                  (identifier)
+                  (arguments)))
+              (call_expression
+                (identifier)
+                (arguments
+                  (string
+                    (string_fragment))))))
+          (variable_declaration
+            (variable_declarator
+              (subscript_expression
+                (identifier)
+                (string
+                  (string_fragment)))
+              (identifier)))
+          (variable_declaration
+            (variable_declarator
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (number))))))))

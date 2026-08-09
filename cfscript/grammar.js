@@ -197,7 +197,29 @@ module.exports = grammar({
     [$.expression, $.tag_statement],
     [$.tag_statement, $.expression],
     [$.program, $.statement],
-    [$.primary_expression, $.tag_statement, $._property_name],
+    // `cfdirectory( ... )` — at `identifier (` the parser cannot yet tell a
+    // script-syntax tag call from an ordinary call or from a tag statement with
+    // a parenthesised first argument. Resolvable because all three are named
+    // rules; the first attempt at this feature failed on a conflict between
+    // `expression` and itself, which has no such escape.
+    [$.primary_expression, $.call_expression, $.tag_statement],
+    // The same decision inside a struct literal, where `identifier (` could
+    // also be starting a key.
+    [$.primary_expression, $.call_expression, $._property_name, $.tag_statement],
+    // And in a parameter list, where `identifier (` could be a parameter typed
+    // with a component name followed by a default.
+    [$.primary_expression, $.parameter_type, $.call_expression],
+    // The general form of the same decision, reached from array literals and
+    // anywhere else an expression can start.
+    [$.primary_expression, $.call_expression],
+    // The heart of it: at `f( a •= ` the parser cannot tell a tag-call
+    // attribute from an ordinary named argument. It only finds out on reaching
+    // the value, and on whether a second `name=` follows.
+    [$.assignment_expression, $.tag_call_attribute, $.pattern],
+    // `function f() attr="x" ...` — a function declaration's trailing
+    // attributes are identifiers too, so the same `identifier (` decision
+    // appears after the parameter list.
+    [$.primary_expression, $.function_declaration, $.call_expression],
     [$.sequence_expression, $.arguments],
     [$.component_attribute, $.property_declaration],
     [$.parameter_attribute, $.assignment_expression, $.pattern],
@@ -380,10 +402,14 @@ module.exports = grammar({
       // `_reserved_identifier` has to be spelled out because allowing a
       // `member_expression` here makes keyword-led expressions valid straight
       // after `var`, so `var new = 1` would otherwise lex `new` as a keyword.
+      // `var mappings[ key ] = value` is the same idea one step further —
+      // declare and index in one statement. Kept next to `member_expression`
+      // because CFML treats `a.b` and `a["b"]` as the same access.
       field('name', choice(
         $.identifier,
         alias($._reserved_identifier, $.identifier),
         $.member_expression,
+        $.subscript_expression,
         $._destructuring_pattern,
       )),
       optional($._initializer),
@@ -852,6 +878,10 @@ module.exports = grammar({
         field('function', choice($.primary_expression, $._hash_always_eval)),
         field('arguments', $.arguments),
       )),
+      prec('call', seq(
+        field('function', $.identifier),
+        field('arguments', alias($.tag_call_arguments, $.arguments)),
+      )),
       prec('member', seq(
         field('function', $.primary_expression),
         field('optional_chain', $.optional_chain),
@@ -1215,6 +1245,77 @@ module.exports = grammar({
       ')',
     ),
 
+    // Script-syntax tag calls: `cfdirectory( directory="#d#" action="create" )`.
+    //
+    // The commas are optional rather than absent. Real code mixes both in one
+    // call — Lucee has `cflog(file="#n#" text="load test", type="error",
+    // async=false)` and `cfdirectory(action="list", directory=trg, name="x"
+    // recurse=true)` — so a rule that required all-spaces would miss most of
+    // the corpus cases.
+    //
+    // Two restrictions keep this from colliding with an ordinary call:
+    //
+    // 1. Values are narrower than `expression`. With a general expression,
+    //    `f( a=1 [x] )` is ambiguous between a second argument and a subscript
+    //    on `1`, and tree-sitter's resolution for that is a conflict on
+    //    `expression` with itself, which cannot be declared. That ambiguity is
+    //    what sank the first attempt at this rule. Every value shape below was
+    //    taken from real tag calls in the corpus; none of them is a subscript
+    //    or an array literal, so no `[` can ever follow a complete value.
+    // 2. At least two arguments are required. A single `f( a=1 )` already
+    //    parses through `arguments` above, so admitting it here would add an
+    //    ambiguity that buys nothing.
+    tag_call_arguments: ($) => seq(
+      '(',
+      // The first two arguments have no comma between them; after that commas
+      // are optional, because real calls mix the two — Lucee writes
+      // `cflog(file="#n#" text="load test", type="error", async=false)`.
+      //
+      // Requiring the space at the *first* junction rather than anywhere is
+      // what keeps this tractable. A rule that allowed a leading comma-run
+      // would be ambiguous with ordinary `arguments` from the opening paren
+      // until the first space, so every comma-separated named call in the
+      // language would carry two live GLR stacks — in a grammar that has
+      // already had to fix a GLR state explosion once (0.26.29).
+      //
+      // The corpus says the trade is worth it: of the calls this feature
+      // targets, 74 across 32 files put a space at the first junction and 11
+      // across 4 files put a comma there. Those 4 files stay unparsed, and are
+      // recorded in LIMITATIONS.md.
+      $._tag_call_argument,
+      $._tag_call_argument,
+      repeat(seq(optional(','), $._tag_call_argument)),
+      optional(','),
+      ')',
+    ),
+
+    // Aliased to `assignment_expression` so that `cfdirectory( a="1" b="2" )`
+    // and `cfdirectory( a="1", b="2" )` produce identical trees. They mean the
+    // same thing, and every highlight query, indent rule and downstream
+    // consumer already handles the comma form.
+    _tag_call_argument: ($) => alias($.tag_call_attribute, $.assignment_expression),
+
+    tag_call_attribute: ($) => seq(
+      field('left', $.identifier),
+      '=',
+      field('right', $._tag_call_value),
+    ),
+
+    // Shapes observed in the corpus: quoted strings with and without `#hash#`
+    // interpolation, bare variables (`params=p`), dotted paths
+    // (`returnType=form.returnType`), booleans (`recurse=true`), numbers, and
+    // bare hash expressions.
+    _tag_call_value: ($) => choice(
+      $.string,
+      $.number,
+      $.true,
+      $.false,
+      $.null,
+      $.identifier,
+      $.member_expression,
+      $._hash_always_eval,
+    ),
+
     decorator: ($) => seq(
       '@',
       choice(
@@ -1449,7 +1550,14 @@ module.exports = grammar({
       seq(
         field('tag', $.identifier),
         optional($.tag_linefeed),
-        optional(field('arguments', $.arguments)),
+        // The space-separated attribute form reaches the bodyless call through
+        // `call_expression`, but a tag call with a body is a statement, so it
+        // needs the alternative spelled out here too. `cfquery( name="q"
+        // datasource="d" ) { ... }` is the common shape.
+        optional(field('arguments', choice(
+          $.arguments,
+          alias($.tag_call_arguments, $.arguments),
+        ))),
         field('body', $.statement_block),
         $._semicolon,
       ),

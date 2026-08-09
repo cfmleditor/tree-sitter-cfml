@@ -6,6 +6,11 @@
 
 - Support array return types on function declarations (`User[] function getUsers()`)
 
+### cfscript
+
+- Support script-syntax tag calls with space-separated attributes (`cfdirectory( directory="#dir#" action="create" mode="777" )`), including calls that switch to commas after the first attribute
+- Support a subscript as a `var` declaration name (`var mappings[ key ] = value`)
+
 ## [0.26.31]
 
 ### cfml & cfscript
