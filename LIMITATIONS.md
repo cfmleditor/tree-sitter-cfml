@@ -156,7 +156,8 @@ assessment, including how many files each affects and what fixing it would cost.
 ### cfscript
 
 - **Script-syntax tag calls where the *first* separator is a comma** — `cfdirectory(action="list", directory=trg, name="x" recurse=true)` (Lucee tests). The space-separated form parses, including calls that switch to commas after the first junction (`cflog(file="#n#" text="t", type="error")`). Requiring the space at the first junction is what keeps the rule unambiguous with an ordinary comma-separated call; 11 calls across 4 files put a comma there instead.
-- **Dotted key in a struct literal** — `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` (Preside tests). The largest remaining grammar-only gap.
+- **`new` with a dotted Java path of three or more segments** — `new java.util.prefs.BackingStoreException( "x" )` (Lucee LDEV5120). Two segments parse.
+- **A `thread { … }` statement followed by a tag island** — a ` ``` ` block after `thread name="x" { … }` (Lucee LDEV4157). Each parses on its own.
 - **Subscript index holding more than one pair** — `animals = $[ Aardwolf: "…", aardvark: "…" ];` (Lucee tests).
 - **Function-listener callback** — `var t = mySuccess():function( result, error ) { … };` (Lucee `FunctionListener.cfc`).
 - **`function` as a bare value** — `h = function.foo;`. `function` is accepted as
@@ -175,8 +176,9 @@ scoped or dotted name, tag comments in a script body, `final` and
 access-modifier member declarations, the empty struct literal `[=]`, bare `>` or
 `<` in template text, the typed `param` statement, array return types
 (`User[] function getUsers()`), script-syntax tag calls with space-separated
-attributes, and a subscript as a `var` declaration name
-(`var mappings[ key ] = value`).
+attributes, a subscript as a `var` declaration name
+(`var mappings[ key ] = value`), and a dotted key in a struct literal
+(`{ obj_a.meta = { … } }`).
 
 ### cfquery
 

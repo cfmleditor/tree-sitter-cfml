@@ -1337,3 +1337,40 @@ component {
                 (identifier)
                 (property_identifier))
               (number))))))))
+
+================================================================================
+common: dotted key in a struct literal
+================================================================================
+
+x = {
+	  a.b = 1
+	, c.d.e = 2
+	, plain = 3
+	, "quoted.key" = 4
+};
+
+--------------------------------------------------------------------------------
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (object_pattern
+        (cf_pair
+          (path
+            (identifier)
+            (identifier))
+          (number))
+        (cf_pair
+          (path
+            (identifier)
+            (identifier)
+            (identifier))
+          (number))
+        (object_assignment_pattern
+          (shorthand_property_identifier_pattern)
+          (number))
+        (cf_pair
+          (string
+            (string_fragment))
+          (number))))))

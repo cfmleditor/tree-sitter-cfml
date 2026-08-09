@@ -212,6 +212,13 @@ module.exports = grammar({
     // The general form of the same decision, reached from array literals and
     // anywhere else an expression can start.
     [$.primary_expression, $.call_expression],
+    // `{ obj_a.meta = { … } }` — a dotted key, reusing the `path` rule that
+    // already spells `identifier ('.' identifier)+` for imports. At `a •.` the
+    // key is indistinguishable from an ordinary member expression used as a
+    // value; only the `=` or `:` that follows settles it. Declared on `path`
+    // rather than widening `_property_name`, which is reachable from twenty
+    // places that must not start accepting dotted names.
+    [$.path, $.primary_expression],
     // The heart of it: at `f( a •= ` the parser cannot tell a tag-call
     // attribute from an ordinary named argument. It only finds out on reaching
     // the value, and on whether a second `name=` follows.
@@ -1406,13 +1413,13 @@ module.exports = grammar({
     ),
 
     pair: ($) => seq(
-      field('key', $._property_name),
+      field('key', choice($._property_name, $.path)),
       ':',
       field('value', $.expression),
     ),
 
     cf_pair: ($) => seq(
-      field('key', $._property_name),
+      field('key', choice($._property_name, $.path)),
       '=',
       field('value', $.expression),
     ),

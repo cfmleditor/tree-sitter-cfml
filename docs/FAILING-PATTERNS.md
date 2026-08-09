@@ -20,9 +20,9 @@ than quietly corrected.
 | | |
 |---|---|
 | Files scanned | 12,549 |
-| Files parsed with no error at all | 12,388 (**98.7%**) |
-| ERROR / MISSING nodes | 766 |
-| Files carrying at least one | 161 |
+| Files parsed with no error at all | 12,390 (**98.7%**) |
+| ERROR / MISSING nodes | 736 |
+| Files carrying at least one | 159 |
 | …of which carry exactly one | 92 |
 
 Split by grammar: **cfscript 484**, **cfml 281**, **cfquery 1**. The `cfquery`
@@ -71,16 +71,21 @@ Listed first so they do not distort the rest.
 `<script>` element parses fine — `test/probes/cfml/script_block_js.cfm` covers
 that.
 
-## Genuine gaps — 191 nodes, 27 files
+## Genuine gaps — 163 nodes, 28 files
 
 | Nodes | Files | Pattern | Example | Probe |
 |---|---|---|---|---|
 | 71 | 1 | CSS in `<style>` with many `#` tokens | Lucee's `debug/Simple.cfc`: 42 `#` across ID selectors and hex colours | — |
 | 48 | 10 | Dynamic tag name with a static prefix or namespace | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
-| 30 | 1 | Dotted key in a struct literal | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
 | 19 | 13 | Dynamic tag opened and closed in different blocks | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | — |
 | 19 | 1 | Function-listener callback syntax | `var t = mySuccess():function( result, error ) { … };` | — |
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
+| 2 | 1 | `new` with a dotted Java path of 3+ segments | `new java.util.prefs.BackingStoreException( "x" )` | — |
+| 2 | 1 | `thread { … }` followed by a tag island | a ` ``` ` block after a `thread name="x" { … }` statement | — |
+
+The last two were found while validating the dotted-key fix, not by clustering —
+both files were already failing and their existing error simply moved. Neither
+appears in any earlier baseline.
 
 The plain `<#expr#>` dynamic tag form parses when open and close sit in the same
 block; the prefixed, namespaced and split-across-blocks variants do not.
@@ -113,6 +118,7 @@ Since the `d06ff66` baseline, in rough order of value delivered:
 | Pattern | Files | Effect |
 |---|---|---|
 | Bare `>` or `<` in template text | 31 | 329 nodes — the largest single improvement |
+| Dotted key in a struct literal | 1 | 30 nodes |
 | Subscript as a `var` declaration name | 9 | 111 nodes; every affected file to zero |
 | Script-syntax tag call with space-separated attributes | 40 | 113 nodes, including the with-a-body form |
 | Array return type `X[] function` | 9 | 16 nodes |
@@ -122,7 +128,7 @@ Since the `d06ff66` baseline, in rough order of value delivered:
 ## Cost and risk of what remains
 
 Estimates come from this repository's own history. That history now includes
-seven predictions with known outcomes, and the calibration is mixed — see
+eight predictions with known outcomes, and the calibration is mixed — see
 [Predictions checked against outcomes](#predictions-checked-against-outcomes).
 
 Three properties of this grammar drive most of the risk:
@@ -140,7 +146,6 @@ Three properties of this grammar drive most of the risk:
 
 | Pattern | Complexity | Risk | Basis |
 |---|---|---|---|
-| Dotted key in a struct literal | **Med** | **Med-High** | `_property_name` is in five conflict declarations; widening it to accept paths touches every struct literal and named-argument site. 30 nodes in one file |
 | CSS in `<style>` with many `#` | **Med-High** | **Med** | Does not reduce below 20 lines, so the mechanism is not yet understood — understand it before estimating again. One file, but a whole stylesheet is a plausible shape for any CFML admin template |
 | Dynamic tag opened and closed in different blocks | **High** | **High** | Scanner tag-stack work on the shared header. 13 files but only 19 nodes: the surrounding markup still recovers, so the errors stay small |
 | Prefixed / namespaced dynamic tag | **High** | **High** | Same tag stack, same shared header. Called the largest cluster at the last baseline; now 48 nodes |
@@ -158,10 +163,15 @@ Three properties of this grammar drive most of the risk:
 | Bare `>` / `<` in text | Med-High / High | Accurate — the first attempt broke every CFML comment |
 | Script-syntax tag call | High / Med | Accurate — seven conflicts and one design reversal |
 | Subscript as a `var` name | Med / Med-High | **Over-estimated risk, under-counted scale 9×.** One line, no conflicts; 9 files, not 1 |
+| Dotted key in a struct literal | Med / Med-High | **Over-estimated.** Reusing the existing `path` rule in `pair` and `cf_pair` — rather than widening `_property_name` as the estimate assumed — needed one conflict declaration, not five |
 
-The pattern in the misses: risk is over-estimated when an earlier fix has
-already installed the guard the new change needs, and file counts are too low
-wherever the affected files cascade from line 1.
+The pattern in the misses is consistent and worth applying to the rows above:
+risk reads high when an earlier fix already installed the guard the new change
+needs, or when the estimate assumed a wider edit than the change actually
+requires. File counts read low wherever the affected files cascade from line 1.
+Of the eight: three accurate, four over-estimated, one (typed `param`)
+under-estimated — its cost doubled when keyword tokens in the type slot broke an
+unrelated rule.
 
 ## What this suggests about priorities
 
@@ -169,10 +179,8 @@ wherever the affected files cascade from line 1.
    nodes in one file, and the two scanner clusters are 67 nodes between them.
    Against 12,549 files at 98.7% clean, what remains is maintenance rather than
    a backlog.
-2. If something is picked up anyway, **dotted keys in struct literals** is the
-   best value per unit of risk — 30 nodes, grammar-only, no scanner.
-3. **The two dynamic-tag clusters share a mechanism** — the scanner's tag stack —
+2. **The two dynamic-tag clusters share a mechanism** — the scanner's tag stack —
    and would sensibly be done together or not at all. 67 nodes across 23 files
    for the riskiest change available is a poor trade on its own.
-4. The 304-node tail is not a project. It is 126 files of individually odd code,
+3. The 304-node tail is not a project. It is 126 files of individually odd code,
    81 of them carrying a single error node.

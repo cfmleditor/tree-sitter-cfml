@@ -7724,8 +7724,17 @@
           "type": "FIELD",
           "name": "key",
           "content": {
-            "type": "SYMBOL",
-            "name": "_property_name"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_property_name"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "path"
+              }
+            ]
           }
         },
         {
@@ -7749,8 +7758,17 @@
           "type": "FIELD",
           "name": "key",
           "content": {
-            "type": "SYMBOL",
-            "name": "_property_name"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_property_name"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "path"
+              }
+            ]
           }
         },
         {
@@ -9577,6 +9595,10 @@
     [
       "primary_expression",
       "call_expression"
+    ],
+    [
+      "path",
+      "primary_expression"
     ],
     [
       "assignment_expression",
