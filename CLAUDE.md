@@ -61,9 +61,15 @@ front, and times only `parser.parse()`.
 Playground (browser):
 
 ```bash
-npm run prestart   # build WASM (only needed when parsers change)
-npm start          # launch playground at repo root
+npm start                      # build the cfml WASM, then serve the playground
+DIALECT=cfscript npm start     # or one of the other two
 ```
+
+One dialect at a time — `tree-sitter playground` serves and blocks, and it must
+run from the dialect's own directory: from the repo root the CLI cannot find a
+`grammar.js` and panics with "Failed to get Wasm filename". `prestart` builds
+the WASM beside that grammar, which is a *different* output from
+`npm run docswasm`, which writes to `docs/` for the published static page.
 
 Release (requires a `## [version]` or `## [Unreleased]` entry in `CHANGELOG.md`):
 

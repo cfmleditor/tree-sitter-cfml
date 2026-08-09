@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 
-const {spawnTreeSitter, root} = require('./tree-sitter-cli.cjs');
+/**
+ * `npm start` — the same thing as `npm run playground`, kept because `start` is
+ * the conventional name and `prestart` builds the WASM it needs.
+ *
+ * It used to run `tree-sitter playground` from the repo root, which panics:
+ * the CLI derives the WASM filename from the grammar in the current directory,
+ * and there is no grammar at the root of a three-grammar repo.
+ */
 
-const r = spawnTreeSitter(['playground'], {cwd: root});
-process.exit(r.status === null ? 1 : r.status);
+require('./playground.js');
