@@ -197,29 +197,18 @@ module.exports = grammar({
     [$.expression, $.tag_statement],
     [$.tag_statement, $.expression],
     [$.program, $.statement],
-    // `cfdirectory( ... )` — at `identifier (` the parser cannot yet tell a
-    // script-syntax tag call from an ordinary call or from a tag statement with
-    // a parenthesised first argument. Resolvable because all three are named
-    // rules; the first attempt at this feature failed on a conflict between
-    // `expression` and itself, which has no such escape.
-    [$.primary_expression, $.call_expression, $.tag_statement],
-    // The same decision inside a struct literal, where `identifier (` could
-    // also be starting a key.
-    [$.primary_expression, $.call_expression, $._property_name, $.tag_statement],
-    // And in a parameter list, where `identifier (` could be a parameter typed
-    // with a component name followed by a default.
-    [$.primary_expression, $.parameter_type, $.call_expression],
-    // The general form of the same decision, reached from array literals and
-    // anywhere else an expression can start.
-    [$.primary_expression, $.call_expression],
     // The heart of it: at `f( a •= ` the parser cannot tell a tag-call
     // attribute from an ordinary named argument. It only finds out on reaching
     // the value, and on whether a second `name=` follows.
     [$.assignment_expression, $.tag_call_attribute, $.pattern],
-    // `function f() attr="x" ...` — a function declaration's trailing
-    // attributes are identifiers too, so the same `identifier (` decision
-    // appears after the parameter list.
-    [$.primary_expression, $.function_declaration, $.call_expression],
+    // `cfdirectory( … )` at statement position: `identifier (` could start a
+    // tag call, an ordinary call, or a tag statement. Confined to statement
+    // position, so unlike the previous formulation it is not live at every
+    // call site in the language.
+    [$.primary_expression, $._tag_call, $.tag_statement],
+    // The same decision at the start of a `{`, where a struct-literal key is
+    // also possible.
+    [$.primary_expression, $._tag_call, $._property_name, $.tag_statement],
     [$.sequence_expression, $.arguments],
     [$.component_attribute, $.property_declaration],
     [$.parameter_attribute, $.assignment_expression, $.pattern],
@@ -329,6 +318,7 @@ module.exports = grammar({
       // an extra: as an extra it also matched inside a string, so
       // `reReplace( src, "<!---.*?--->", "" )` grew a comment node.
       $.cf_comment,
+      alias($.tag_call_statement, $.expression_statement),
       $.import_statement,
       $.debugger_statement,
       $.expression_statement,
@@ -878,10 +868,6 @@ module.exports = grammar({
         field('function', choice($.primary_expression, $._hash_always_eval)),
         field('arguments', $.arguments),
       )),
-      prec('call', seq(
-        field('function', $.identifier),
-        field('arguments', alias($.tag_call_arguments, $.arguments)),
-      )),
       prec('member', seq(
         field('function', $.primary_expression),
         field('optional_chain', $.optional_chain),
@@ -1265,6 +1251,28 @@ module.exports = grammar({
     // 2. At least two arguments are required. A single `f( a=1 )` already
     //    parses through `arguments` above, so admitting it here would add an
     //    ambiguity that buys nothing.
+    // A script-syntax tag call is only ever a **statement**. The corpus has 61
+    // space-separated tag calls and not one is a sub-expression — no
+    // `x = cfdirectory( a="1" b="2" )`, none nested inside another call.
+    //
+    // That matters for cost, not just tidiness. While this form lived in
+    // `call_expression` it was reachable from every expression, so its
+    // conflicts were live at every call site in the language, and a large
+    // script component (cfwheels `Global.cfc`) went 144 ms -> 401 ms.
+    // Aliased to `expression_statement` at the use site, so
+    // `cfdirectory( a="1" b="2" );` and `cfdirectory( a="1", b="2" );` produce
+    // identical trees — the comma form is an ordinary call in an expression
+    // statement, and nothing downstream should have to tell them apart.
+    tag_call_statement: ($) => seq(
+      alias($._tag_call, $.call_expression),
+      $._semicolon,
+    ),
+
+    _tag_call: ($) => prec('call', seq(
+      field('function', $.identifier),
+      field('arguments', alias($.tag_call_arguments, $.arguments)),
+    )),
+
     tag_call_arguments: ($) => seq(
       '(',
       // The first two arguments have no comma between them; after that commas

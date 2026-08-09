@@ -1204,6 +1204,10 @@
       "required": true,
       "types": [
         {
+          "type": "call_expression",
+          "named": true
+        },
+        {
           "type": "expression",
           "named": true
         },
