@@ -127,6 +127,7 @@ Beyond the standard `highlights.scm`, `indents.scm`, `injections.scm`, `tags.scm
 ## Key constraints
 
 - **Grammar conflicts:** `tree-sitter generate` warns about "unnecessary conflicts" when a declared conflict is no longer reachable. Prune them rather than living with them — a stale declaration hides a real ambiguity behind a warning nobody reads. Removing one is safe exactly when `npm run build`, `npm test` and `npm run probe` all stay green.
+- **A declared conflict has a runtime cost proportional to how common its prefix is.** Two GLR stacks are carried until something disambiguates, so a conflict on `identifier` followed by `(` or `.` is live across the whole language — one such conflict cost 2.8× on cfscript before it was narrowed to statement position. `npm test`, `npm run probe` and the corpus scan cannot see this. Run `npm run bench` (baseline first) on any change that adds a conflict.
 - **Keyword extraction is lexical.** With `word: $.identifier`, making a keyword token valid in a new position changes how that word *lexes* in that state — including in rules you did not touch. This is the single most common way a change here breaks something unrelated. See the skill below before editing declarations, parameters or statement heads.
 - **Generated files are committed** — `cf*/src/` must be up to date at release time; interim work does not need them regenerated.
 - **CFML engine target:** Use [Lucee](https://lucee.org/) as the reference runtime. Avoid Adobe-only or Lucee-only constructs; prefer portable CFML.

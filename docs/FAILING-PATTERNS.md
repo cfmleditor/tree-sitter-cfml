@@ -77,7 +77,7 @@ that.
 |---|---|---|---|---|
 | 71 | 1 | CSS in `<style>` with many `#` tokens | Lucee's `debug/Simple.cfc`: 42 `#` across ID selectors and hex colours | — |
 | 48 | 10 | Dynamic tag name with a static prefix or namespace | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
-| 30 | 1 | Dotted key in a struct literal | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
+| 30 | 1 | Dotted key in a struct literal — **fixed, then reverted on cost** | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
 | 19 | 13 | Dynamic tag opened and closed in different blocks | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | — |
 | 19 | 1 | Function-listener callback syntax | `var t = mySuccess():function( result, error ) { … };` | — |
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
@@ -140,12 +140,38 @@ Three properties of this grammar drive most of the risk:
 
 | Pattern | Complexity | Risk | Basis |
 |---|---|---|---|
-| Dotted key in a struct literal | **Med** | **Med-High** | `_property_name` is in five conflict declarations; widening it to accept paths touches every struct literal and named-argument site. 30 nodes in one file |
+| Dotted key in a struct literal | **Low** | **Low** to write, **rejected on runtime cost** | Cheap to implement — one conflict, not the five the estimate assumed, by putting the dotted form in `pair` and `cf_pair` instead of widening `_property_name`. Rejected anyway: that one conflict is live at **every member access in the language**, and measured a 1.8× slowdown on cfscript for 30 nodes in one file. Lexing the key as a single token, the trick that made array return types free, is five times worse again and breaks `f( a.b )`. See [#42](https://github.com/cfmleditor/tree-sitter-cfml/pull/42) |
 | CSS in `<style>` with many `#` | **Med-High** | **Med** | Does not reduce below 20 lines, so the mechanism is not yet understood — understand it before estimating again. One file, but a whole stylesheet is a plausible shape for any CFML admin template |
 | Dynamic tag opened and closed in different blocks | **High** | **High** | Scanner tag-stack work on the shared header. 13 files but only 19 nodes: the surrounding markup still recovers, so the errors stay small |
 | Prefixed / namespaced dynamic tag | **High** | **High** | Same tag stack, same shared header. Called the largest cluster at the last baseline; now 48 nodes |
 | Function-listener `f():callback` | **Med-High** | **High** | Another `:` reading in the most contested character in the grammar, for a single-file Lucee feature |
 | Subscript with more than one pair | **High** | **High** | Re-admits `pair` inside subscripts — the ambiguity the casing branch removed. One file, non-idiomatic syntax |
+
+### Implementation risk is not runtime cost
+
+The table above rates how likely a change is to *break* something. It says
+nothing about what the change costs at parse time, and those are independent —
+which is how two changes shipped green while carrying a combined 6× penalty on
+the most-used grammar before anyone measured.
+
+The mechanism in both cases was a **conflict declared on a construct that occurs
+everywhere**. A conflict makes the parser carry two live GLR stacks until
+something disambiguates, so its cost is proportional to how often the ambiguous
+prefix appears:
+
+| Conflict | Ambiguous prefix | Live at | Measured |
+|---|---|---|---|
+| `[$.primary_expression, $.call_expression]` | `identifier (` | every call | 144 → 401 ms on one file |
+| `[$.path, $.primary_expression]` | `identifier .` | every member access | 471 → 861 ms |
+
+Both were fixable without giving up the feature or accepting the cost — the tag
+call was confined to statement position, where its conflicts are live only where
+tag calls actually occur, which took the file back to 110 ms. The dotted key had
+no such escape and was dropped.
+
+So: **run `npm run bench` on any change that declares a conflict**, baseline
+first. A conflict on `identifier` followed by a common character is the shape to
+watch for.
 
 ### Predictions checked against outcomes
 
@@ -169,8 +195,10 @@ wherever the affected files cascade from line 1.
    nodes in one file, and the two scanner clusters are 67 nodes between them.
    Against 12,549 files at 98.7% clean, what remains is maintenance rather than
    a backlog.
-2. If something is picked up anyway, **dotted keys in struct literals** is the
-   best value per unit of risk — 30 nodes, grammar-only, no scanner.
+2. **Dotted keys in struct literals is no longer the recommendation** it was at
+   the start of this baseline. It is cheap to write and was written, but the one
+   conflict it needs is live at every member access and costs 1.8× on cfscript
+   parse time for 30 nodes in one file. Implemented, measured, reverted.
 3. **The two dynamic-tag clusters share a mechanism** — the scanner's tag stack —
    and would sensibly be done together or not at all. 67 nodes across 23 files
    for the riskiest change available is a poor trade on its own.

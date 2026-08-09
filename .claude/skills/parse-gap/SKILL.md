@@ -116,10 +116,38 @@ random edits to every corpus test and re-parses, which is the only thing that
 exercises scanner state transitions systematically. CI runs it for grammar and
 scanner paths, but locally is where you want to find a hang.
 
-If someone asks whether the change costs performance, use `npm run bench`
-(baseline first, then compare) rather than timing `npm run scan`. Scan time
-moves with the error count, so a change that fixes parse errors reads as a huge
-speedup or slowdown that has nothing to do with the parser.
+**If the change declares a conflict, benchmark it — do not wait to be asked.**
+
+```bash
+npm run bench -- corpus --out before.json    # on the base commit
+npm run bench -- corpus --baseline before.json
+```
+
+A declared conflict makes the parser carry two live GLR stacks until something
+disambiguates, so its cost is proportional to how often the ambiguous prefix
+occurs. A conflict on `identifier` followed by a common character is the shape
+to watch: `[$.primary_expression, $.call_expression]` is live at every call in
+the language and cost 2.8× on a large script component;
+`[$.path, $.primary_expression]` is live at every member access and cost 1.8×.
+Both passed tests, probes, fuzz and a corpus scan — none of the steps above can
+see a slowdown, which is why this needs its own.
+
+Neither cost was inherent to the feature. The tag call was confined to statement
+position, where the conflicts are live only where tag calls occur, and the file
+went back to its pre-feature time. So when a benchmark shows a regression, ask
+where the ambiguity is *reachable from* before giving up on the feature — and do
+not reach for a single `token()` covering the ambiguous prefix, which looks like
+the same trick that made array return types free but out-lexes `identifier`
+wherever it is valid. Tried on the dotted struct key, it was five times worse
+again and broke `f( a.b )`.
+
+This is a local gate, not a CI one: the benchmark needs the 100 MB corpus, and
+shared runners are too noisy for it — `bench.js` will tell you when the machine
+is too busy to conclude anything.
+
+Use `bench` rather than timing `npm run scan`: scan time moves with the error
+count, so a change that fixes parse errors reads as a huge speedup or slowdown
+that has nothing to do with the parser.
 
 ## 5. Land it
 
