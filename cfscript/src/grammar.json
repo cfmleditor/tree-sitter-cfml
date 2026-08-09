@@ -399,6 +399,15 @@
           "name": "cf_comment"
         },
         {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "tag_call_statement"
+          },
+          "named": true,
+          "value": "expression_statement"
+        },
+        {
           "type": "SYMBOL",
           "name": "import_statement"
         },
@@ -3407,36 +3416,6 @@
                 "content": {
                   "type": "SYMBOL",
                   "name": "arguments"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "PREC",
-          "value": "call",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "FIELD",
-                "name": "function",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "identifier"
-                }
-              },
-              {
-                "type": "FIELD",
-                "name": "arguments",
-                "content": {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "tag_call_arguments"
-                  },
-                  "named": true,
-                  "value": "arguments"
                 }
               }
             ]
@@ -7056,6 +7035,54 @@
         }
       ]
     },
+    "tag_call_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "_tag_call"
+          },
+          "named": true,
+          "value": "call_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_semicolon"
+        }
+      ]
+    },
+    "_tag_call": {
+      "type": "PREC",
+      "value": "call",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "function",
+            "content": {
+              "type": "SYMBOL",
+              "name": "identifier"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "arguments",
+            "content": {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "tag_call_arguments"
+              },
+              "named": true,
+              "value": "arguments"
+            }
+          }
+        ]
+      }
+    },
     "tag_call_arguments": {
       "type": "SEQ",
       "members": [
@@ -9559,34 +9586,20 @@
       "statement"
     ],
     [
-      "primary_expression",
-      "call_expression",
-      "tag_statement"
-    ],
-    [
-      "primary_expression",
-      "call_expression",
-      "_property_name",
-      "tag_statement"
-    ],
-    [
-      "primary_expression",
-      "parameter_type",
-      "call_expression"
-    ],
-    [
-      "primary_expression",
-      "call_expression"
-    ],
-    [
       "assignment_expression",
       "tag_call_attribute",
       "pattern"
     ],
     [
       "primary_expression",
-      "function_declaration",
-      "call_expression"
+      "_tag_call",
+      "tag_statement"
+    ],
+    [
+      "primary_expression",
+      "_tag_call",
+      "_property_name",
+      "tag_statement"
     ],
     [
       "sequence_expression",
