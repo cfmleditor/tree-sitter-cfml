@@ -9,11 +9,11 @@ npm run corpus:fetch && npm run scan corpus > scan.txt
 npm run corpus:report -- --from scan.txt
 ```
 
-> **Since this assessment**, four of the patterns below have been fixed — bare
+> **Since this assessment**, five of the patterns below have been fixed — bare
 > `>` / `<` in template text, the empty struct literal `[=]`, the typed `param`
-> statement, and bitwise operators in SQL. They are marked **Fixed** in the
-> tables and are covered by `npm run probe`. The corpus now reports **1,006**
-> error nodes; the counts in this section are the original snapshot and have not
+> statement, bitwise operators in SQL, and array return types. They are marked
+> **Fixed** in the tables and are covered by `npm run probe`. The corpus now
+> reports **990** error nodes; the counts in this section are the original snapshot and have not
 > been rebaselined, because the relative sizes are what the priorities below are
 > argued from.
 
@@ -89,7 +89,7 @@ or regresses.
 | Pattern | Files | Example | Probe |
 |---|---|---|---|
 | Script-syntax tag call with space-separated attributes | 17 | `cfdirectory( directory="#dir#" action="create" mode="777" );` | `script_tag_call.cfc` |
-| Array return type | 9 | `IValidationError[] function getFieldErrors( required string field );` | `array_return_type.cfc` |
+| ~~Array return type~~ **Fixed** | 9 | `IValidationError[] function getFieldErrors( required string field );` | `array_return_type.cfc` |
 | ~~Empty struct literal~~ **Fixed** | 5 | `var uniqueList = [=];` | `empty_struct_literal.cfc` |
 | Subscript as a `var` declaration name | 1 | `var loadArgs[ getPrimaryKey() ] = getValue( x );` | — |
 | Dotted key in a struct literal | 1 | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
@@ -160,7 +160,7 @@ Three properties of this grammar drive most of the risk:
 | Empty struct literal `[=]` — **fixed** | **Low** | **Low** | `ordered_struct` already spells out the sibling form `[ : ]` as a fixed token sequence; `[ = ]` is the same shape. Landed as estimated: one `choice` arm, no conflicts |
 | Typed `param` statement — **fixed** | **Low** | **Low** | The untyped form already parses; this adds a type slot to an existing statement rule. Cost the estimate twice over: spelling the type as keyword tokens made `array` lex as a keyword wherever the branch was live, breaking `loop array=data`. A plain identifier in the type slot, distinguished by what follows it, works |
 | Bitwise `&` in SQL — **fixed** | **Low-Med** | **Med** | A query-side operator addition, but `&` is CFML's string concatenation, so the two readings meet inside `<cfquery>`. The two never actually met: concatenation only occurs inside `#...#`, which the hash expression grammar handles. `&`, `\|` and `^` joined `query_math_expression` with no fallout |
-| Array return type `X[] function` | **Med** | **Med** | Touches the function return-type slot, which already competes with `parameter_type` and `primary_expression`; expect new conflicts, of the kind that took three iterations for member declarations |
+| Array return type `X[] function` — **fixed** | **Med** | **Med** | Touches the function return-type slot, which already competes with `parameter_type` and `primary_expression`; expect new conflicts, of the kind that took three iterations for member declarations. **Over-estimated**: no conflicts, no iterations. Lexing `[]` as one `token(seq('[', ']'))` rather than two settles subscript-versus-suffix in the lexer, so the ambiguity the estimate feared never reaches the parser |
 | Subscript as a `var` name | **Med** | **Med-High** | Directly extends the change that broke `var new = 1`. Same rule, same lexing hazard, and subscripts add `[` ambiguity on top |
 | Dotted key in a struct literal | **Med** | **Med-High** | `_property_name` is already in five conflict declarations; widening it to accept paths touches every struct literal and named-argument site |
 | Bare `>` or `<` in template text — **fixed** | **Med-High** | **High** | The character that would become text is the one the tag scanner uses to close tags. Getting it wrong destabilises all tag parsing, which is the grammar's core. It did: peeking past `<` consumes it and the scanner cannot rewind, so the first attempt broke every CFML comment. Guarding the peek behind "some text already collected" fixed it, and the corpus scan is what caught it |
@@ -196,7 +196,8 @@ Work that is not a parse gap — tooling, queries, docs — is tracked separatel
 Crossing that list with the cost table gave a different order for anyone wanting
 value per unit of risk, and that is the order actually taken: `[=]`, typed
 `param` and bitwise `&` were cheap and safe but affect few files; bare `>` was
-riskier and paid for itself many times over. What remains is the script-syntax
-tag call — the widest-reaching fix still tractable with grammar-only changes —
-and prefixed dynamic tag names, the largest cluster but the most dangerous,
-because they mean editing the shared scanner.
+riskier and paid for itself many times over; array return types were the best of
+what was left, at 9 files for a two-line change. What remains is the
+script-syntax tag call — the widest-reaching fix still tractable with
+grammar-only changes — and prefixed dynamic tag names, the largest cluster but
+the most dangerous, because they mean editing the shared scanner.

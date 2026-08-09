@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### cfml & cfscript
+
+- Support array return types on function declarations (`User[] function getUsers()`)
+
 ## [0.26.31]
 
 ### cfml & cfscript

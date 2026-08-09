@@ -783,7 +783,13 @@ module.exports = grammar({
 
     function_declaration: ($) => prec.right('declaration', seq(
       repeat($.access_type),
-      optional(choice($._kw_function, keyword('Query'), $.path, $.identifier)),
+      optional(seq(
+        choice($._kw_function, keyword('Query'), $.path, $.identifier),
+        // `IValidationError[] function getFieldErrors()` — an array of that
+        // type (cbvalidation). The brackets must be empty and adjacent: that is
+        // the only thing separating this from a subscript, `User[0]`.
+        optional($.array_return_suffix),
+      )),
       $._kw_function,
       field('name', $.identifier),
       $._call_signature,
@@ -793,6 +799,13 @@ module.exports = grammar({
         $._semicolon,
       ),
     )),
+
+    // A single token, not `seq('[', ']')`: as two tokens the `[` is reachable
+    // from `subscript_expression` and `array` in the same state, and the parser
+    // cannot tell which until it has read the `]`. Lexing the pair together
+    // moves that decision into the lexer, where one character of lookahead
+    // settles it.
+    array_return_suffix: (_) => token(seq('[', ']')),
 
     arrow_function: ($) => seq(
       // optional('async'),

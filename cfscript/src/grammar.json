@@ -2972,41 +2972,58 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "CHOICE",
+                "type": "SEQ",
                 "members": [
                   {
-                    "type": "SYMBOL",
-                    "name": "_kw_function"
-                  },
-                  {
-                    "type": "ALIAS",
-                    "content": {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "STRING",
-                          "value": "Query"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_kw_function"
+                      },
+                      {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "STRING",
+                              "value": "Query"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "query"
+                            },
+                            {
+                              "type": "STRING",
+                              "value": "QUERY"
+                            }
+                          ]
                         },
-                        {
-                          "type": "STRING",
-                          "value": "query"
-                        },
-                        {
-                          "type": "STRING",
-                          "value": "QUERY"
-                        }
-                      ]
-                    },
-                    "named": false,
-                    "value": "query"
+                        "named": false,
+                        "value": "query"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "path"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "identifier"
+                      }
+                    ]
                   },
                   {
-                    "type": "SYMBOL",
-                    "name": "path"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "identifier"
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "array_return_suffix"
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
                   }
                 ]
               },
@@ -3113,6 +3130,22 @@
                 "name": "_semicolon"
               }
             ]
+          }
+        ]
+      }
+    },
+    "array_return_suffix": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "["
+          },
+          {
+            "type": "STRING",
+            "value": "]"
           }
         ]
       }

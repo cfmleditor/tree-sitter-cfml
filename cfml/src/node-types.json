@@ -2855,6 +2855,10 @@
           "named": true
         },
         {
+          "type": "array_return_suffix",
+          "named": true
+        },
+        {
           "type": "assignment_expression",
           "named": true
         },
@@ -4978,6 +4982,10 @@
   {
     "type": "abstract",
     "named": false
+  },
+  {
+    "type": "array_return_suffix",
+    "named": true
   },
   {
     "type": "as",

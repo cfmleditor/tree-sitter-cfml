@@ -17,7 +17,7 @@
     "cfml/script_block_js.cfm": "pass",
     "cfml/var_new_in_cfset.cfc": "pass",
     "cfquery/bitwise_and.cfm": "pass",
-    "cfscript/array_return_type.cfc": "fail",
+    "cfscript/array_return_type.cfc": "pass",
     "cfscript/empty_struct_literal.cfc": "pass",
     "cfscript/final_member_declaration.cfc": "pass",
     "cfscript/for_in_reserved_name.cfc": "pass",
