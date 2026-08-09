@@ -122,7 +122,9 @@ function parseInjection(parser, grammar, sourceText, startRow, filePath) {
   }
   if (errors.length > 0) {
     reportErrors(filePath, grammar, errors);
+    return true;
   }
+  return false;
 }
 
 /**
@@ -169,33 +171,37 @@ function scanFile(filePath) {
     const scriptNodes = [];
     findInjectionNodes(tree.rootNode, 'cf_script_content', scriptNodes);
     for (const node of scriptNodes) {
-      parseInjection(
+      // `|| hadErrors`, not plain assignment: a later clean injection must not
+      // clear an error already found in the outer parse or an earlier region.
+      hadErrors = parseInjection(
         parserCfscript, 'cfscript',
         node.text, node.startPosition.row,
         filePath,
-      );
+      ) || hadErrors;
     }
 
     // Injection: cf_component_content → cfscript (component files)
     const componentNodes = [];
     findInjectionNodes(tree.rootNode, 'cf_component_content', componentNodes);
     for (const node of componentNodes) {
-      parseInjection(
+      // `|| hadErrors`, not plain assignment: a later clean injection must not
+      // clear an error already found in the outer parse or an earlier region.
+      hadErrors = parseInjection(
         parserCfscript, 'cfscript',
         node.text, node.startPosition.row,
         filePath,
-      );
+      ) || hadErrors;
     }
 
     // Injection: cf_query_content → cfquery
     const queryNodes = [];
     findInjectionNodes(tree.rootNode, 'cf_query_content', queryNodes);
     for (const node of queryNodes) {
-      parseInjection(
+      hadErrors = parseInjection(
         parserCfquery, 'cfquery',
         node.text, node.startPosition.row,
         filePath,
-      );
+      ) || hadErrors;
     }
   }
 

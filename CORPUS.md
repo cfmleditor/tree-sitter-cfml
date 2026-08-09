@@ -36,6 +36,17 @@ re-parsed with the injected grammar, exactly as `injections.scm` describes.
 
 ## Results
 
+> These are the results of the original exercise, kept because the method and
+> the comparison are what the document is about. For the **current** state of
+> the corpus — 766 error nodes across 161 files, attributed by root cause — see
+> [`docs/FAILING-PATTERNS.md`](docs/FAILING-PATTERNS.md), which is re-baselined
+> against `82cc7dc`.
+>
+> Note that the file counts below come from `scan.js` before `82cc7dc`, where a
+> file whose only errors were inside an injected `<cfscript>` or `<cfquery>`
+> region was printed but never counted. They are too low. Node counts are
+> unaffected.
+
 Scanned on `master` (v0.26.30), on `claude/keyword-casing-and-test-harness` (the
 branch that makes keywords case-insensitive), and on this branch, which merges
 that work and fixes the regressions it introduced:

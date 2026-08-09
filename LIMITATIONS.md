@@ -156,7 +156,9 @@ assessment, including how many files each affects and what fixing it would cost.
 ### cfscript
 
 - **Script-syntax tag calls where the *first* separator is a comma** — `cfdirectory(action="list", directory=trg, name="x" recurse=true)` (Lucee tests). The space-separated form parses, including calls that switch to commas after the first junction (`cflog(file="#n#" text="t", type="error")`). Requiring the space at the first junction is what keeps the rule unambiguous with an ordinary comma-separated call; 11 calls across 4 files put a comma there instead.
+- **Dotted key in a struct literal** — `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` (Preside tests). The largest remaining grammar-only gap.
 - **Subscript index holding more than one pair** — `animals = $[ Aardwolf: "…", aardvark: "…" ];` (Lucee tests).
+- **Function-listener callback** — `var t = mySuccess():function( result, error ) { … };` (Lucee `FunctionListener.cfc`).
 - **`function` as a bare value** — `h = function.foo;`. `function` is accepted as
   an assignable name (`admin ... function="" ...`) and as a property
   (`x.function`), but not as the object of a member expression. Making it a
@@ -164,7 +166,9 @@ assessment, including how many files each affects and what fixing it would cost.
 
 ### cfml
 
-- **Dynamic tag name with a static prefix or namespace** — `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` (Lucee admin). The plain `<#expr#>` form parses. 10 files.
+- **Dynamic tag name with a static prefix or namespace** — `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` (Lucee admin). 10 files.
+- **Dynamic tag opened and closed in different blocks** — `<cfoutput>#t()#</#g(n)#></cfoutput>` where the matching open tag is in an earlier `<cfoutput>` (Taffy examples). The plain `<#expr#>` form parses when open and close sit together. 13 files.
+- **A `<style>` block with many `#` tokens** — Lucee's `debug/Simple.cfc`, 42 `#` across CSS ID selectors and hex colours. Each of those constructs parses on its own; the failure only appears in accumulation, and the shortest failing extract is 20 lines.
 
 The following were gaps and now parse: typed `catch` with `var`, `var` with a
 scoped or dotted name, tag comments in a script body, `final` and

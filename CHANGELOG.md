@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Tooling
+
+- Fix the file count in `npm run scan`: a file whose only parse errors came from an injected `<cfscript>` or `<cfquery>` region had them printed but was never counted, so the summary under-reported affected files (62 against a true 161 on the reference corpus). Node counts were unaffected
+
 ### cfml & cfscript
 
 - Support array return types on function declarations (`User[] function getUsers()`)

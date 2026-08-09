@@ -1,7 +1,7 @@
 # Failing patterns
 
 An assessment of every ERROR / MISSING node the three grammars produce over the
-real-world corpus, as of `d06ff66`. Method and corpus are described in
+real-world corpus, as of `82cc7dc`. Method and corpus are described in
 [`../CORPUS.md`](../CORPUS.md); reproduce with:
 
 ```bash
@@ -9,200 +9,170 @@ npm run corpus:fetch && npm run scan corpus > scan.txt
 npm run corpus:report -- --from scan.txt
 ```
 
-> **Since this assessment**, seven of the patterns below have been fixed — bare
-> `>` / `<` in template text, the empty struct literal `[=]`, the typed `param`
-> statement, bitwise operators in SQL, array return types, script-syntax tag
-> calls, and a subscript as a `var` name. They are marked **Fixed** in the
-> tables and are covered by `npm run probe`. The corpus now reports **766**
-> error nodes; the counts in this section are the original snapshot and have not
-> been rebaselined, because the relative sizes are what the priorities below are
-> argued from.
+This is the second baseline. The first, at `d06ff66`, is what the fixes under
+[What has been fixed](#what-has-been-fixed) were argued from. Two things about
+that document turned out to be wrong in ways worth carrying forward; both are
+described under [How to read these numbers](#how-to-read-these-numbers) rather
+than quietly corrected.
 
 ## The numbers
 
 | | |
 |---|---|
 | Files scanned | 12,549 |
-| Files parsed with no error at all | 12,456 (**99.3%**) |
-| ERROR / MISSING nodes | 1,352 |
-| File + grammar pairs carrying at least one | 243 |
-| …of which carry exactly one node | 128 |
+| Files parsed with no error at all | 12,388 (**98.7%**) |
+| ERROR / MISSING nodes | 766 |
+| Files carrying at least one | 161 |
+| …of which carry exactly one | 92 |
 
-Split by grammar: **cfscript 729**, **cfml 598**, **cfquery 1**. The `cfquery`
-figure is the standout — 2,247 `<cfquery>` bodies in the corpus and a single
-failing construct in all of them.
+Split by grammar: **cfscript 484**, **cfml 281**, **cfquery 1**. The `cfquery`
+figure has been 1 or 0 since bitwise operators landed — 2,247 `<cfquery>` bodies
+and a single failing construct in all of them.
 
-Two properties of this distribution matter more than the total:
+Still concentrated, though less than before: the top 10 files hold 445 nodes,
+58% of the total.
 
-**It is extremely concentrated.** Ten files hold 699 nodes — 52% of everything.
-A single Mura file (`admin/assets/js/frontendtools.js.cfm`) accounts for 192,
-and ColdBox's `PerformanceSuite.cfc` for 186. Fixing either construct would move
-the headline number more than fixing the eight most *common* gaps combined.
+## How to read these numbers
+
+**A file's first error usually is not its cause.** Where the first ERROR is
+reported at `1:1`, the parser lost the document early and the position tells you
+nothing. Clustering on first errors is what made the previous baseline record
+the subscript-`var` pattern as **one file with 71 nodes** when it was **nine
+files with 111** — eight of the nine cascaded from line 1, so their real trigger
+was never counted. The file counts below come from signature-matching the
+*source* rather than the error position.
+
+**The file count in `scan.js` was wrong until `82cc7dc`.** `hadErrors` was set
+by the three top-level parse branches but never by `parseInjection`, so a file
+whose only errors came from an injected `<cfscript>` or `<cfquery>` region had
+its lines printed and was never counted. Every "N files" figure quoted during
+the first round of fixes was too low — the previous baseline's 62 was really
+161. Node counts were never affected.
 
 **Node counts measure blast radius, not defect count.** One unparseable
-construct near the top of a file leaves the rest of it unrecoverable, so a
-100-node file usually means one defect, not a hundred. Judge a pattern by the
-*files* it affects, not by its node count.
+construct near the top of a file leaves the rest unrecoverable, so a 100-node
+file usually means one defect. The inverse also happens: a fix that improves
+recovery can *raise* a file's count by replacing one document-wide ERROR with
+several small ones. `DirectoryCreate.cfc` went 5 → 6 that way, while its first
+error moved from `1:1` to `13:11`. Judge a change by per-file totals, and reduce
+any suspect line to a one-liner before concluding anything.
 
-## Not grammar defects
+## Not grammar defects — 271 nodes, 8 files (35%)
 
-Roughly a third of all nodes come from inputs no grammar could reasonably
-handle. These are listed first so they do not distort the rest.
+Listed first so they do not distort the rest.
 
-### JavaScript served from a `.cfm` template — 279 nodes, 6 files (21%)
-
-```cfml
-<cfcontent type="text/javascript"><cfheader name="Expires" value="#getHttpTimeString( now() )#">
-/**
-* represent a cfform
-*/
-function LuceeForms( form, onError ) {
-	var pub = this;
-	...
-```
-
-Lucee's `context/form.cfm` and Mura's `*.js.cfm` files are JavaScript delivered
-through a CFML template, with no `<script>` element anywhere. Nothing in the text
-marks it as JavaScript, so the grammar reads it as template markup and fails on
-almost every line. JavaScript inside a real `<script>` element parses fine —
-`test/probes/cfml/script_block_js.cfm` covers that.
-
-### Input the CFML engines reject too
-
-```cfml
-md.append( "# ColdBox Performance Analysis Report" );   // bare # needs ##
-struct persistStruct = structNew()                       // ColdBox Controller.cfc:
-boolean ssl,                                             //   missing comma
-```
-
-`PerformanceSuite.cfc` alone is 186 nodes from unescaped `#` inside strings. A
-CFML engine errors on these as well, so parsing them would mean accepting invalid
-input.
-
-## Genuine gaps
-
-Each has a minimal reduction under `test/probes/`, with its status recorded in
-`test/probes/expected.json`, so `npm run probe` reports the moment one is fixed
-or regresses.
-
-### cfscript
-
-| Pattern | Files | Example | Probe |
+| Nodes | Files | Cause | Example |
 |---|---|---|---|
-| ~~Script-syntax tag call with space-separated attributes~~ **Fixed** | 17 | `cfdirectory( directory="#dir#" action="create" mode="777" );` | `script_tag_call.cfc` |
-| ~~Array return type~~ **Fixed** | 9 | `IValidationError[] function getFieldErrors( required string field );` | `array_return_type.cfc` |
-| ~~Empty struct literal~~ **Fixed** | 5 | `var uniqueList = [=];` | `empty_struct_literal.cfc` |
-| ~~Subscript as a `var` declaration name~~ **Fixed** | ~~1~~ **9** | `var loadArgs[ getPrimaryKey() ] = getValue( x );` | `subscript_var_name.cfc` |
-| Dotted key in a struct literal | 1 | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
-| Function-listener callback syntax | 1 | `var t = mySuccess():function( result, error ) { … };` | — |
-| Subscript index holding more than one pair | 1 | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
+| 199 | 2 | Bare `#` inside a cfscript string | `md.append( "# ColdBox Performance Analysis Report" )` — CFML needs `##`, and the engines reject this too |
+| 43 | 5 | JavaScript served from a `.cfm` template | Lucee's `context/form.cfm`, Mura's `*.js.cfm` — no `<script>` element anywhere, and nothing marks the content as JavaScript |
+| 29 | 1 | Generator template with placeholders | cfwheels' `basic-model.cfc`, containing `{{ModelName}}` and `{{#associations}}` |
 
-The remaining three are single-file patterns.
+`PerformanceSuite.cfc` alone is 198 of the 199. JavaScript inside a real
+`<script>` element parses fine — `test/probes/cfml/script_block_js.cfm` covers
+that.
 
-The subscript-name row is a caution about this table's method. It was recorded
-as one file and 71 nodes; it was **9 files and 111 nodes**, and fixing it was
-the single largest drop of the whole exercise. The count came from clustering
-*first* errors, and eight of those nine files cascade from line 1, so their real
-trigger never reached the cluster. Where a file's first error is at 1:1, the
-number here is a lower bound on the pattern that caused it.
+## Genuine gaps — 191 nodes, 27 files
 
-### cfml
+| Nodes | Files | Pattern | Example | Probe |
+|---|---|---|---|---|
+| 71 | 1 | CSS in `<style>` with many `#` tokens | Lucee's `debug/Simple.cfc`: 42 `#` across ID selectors and hex colours | — |
+| 48 | 10 | Dynamic tag name with a static prefix or namespace | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
+| 30 | 1 | Dotted key in a struct literal | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
+| 19 | 13 | Dynamic tag opened and closed in different blocks | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | — |
+| 19 | 1 | Function-listener callback syntax | `var t = mySuccess():function( result, error ) { … };` | — |
+| 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
 
-| Pattern | Files | Example | Probe |
-|---|---|---|---|
-| Dynamic tag name with a static prefix or namespace | 10 | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
-| ~~Bare `>` or `<` in template text~~ **Fixed** | — | `<p>a > b</p>`, `#ratio#%  ==>` | `gt_in_text.cfm`, `lt_in_text.cfm` |
-| ~~Typed `param` statement~~ **Fixed** | — | `param string url.id default="0";` | `param_typed.cfm` |
-| `<script>` opened in one `<cfsavecontent>`, closed in another | 1 | Slatwall `ClientScriptWriter_jQuery.cfc` | — |
+The plain `<#expr#>` dynamic tag form parses when open and close sit in the same
+block; the prefixed, namespaced and split-across-blocks variants do not.
+`_start_tag_name` is an external token and open/close matching happens in the
+scanner's tag stack, so all three are scanner work rather than grammar rules.
 
-The plain `<#expr#>` dynamic tag form parses; only the prefixed and namespaced
-variants fail. `_start_tag_name` is an external token and open/close matching
-happens in the scanner, so supporting them is scanner work rather than a grammar
-rule — which is also why this is the largest remaining real cluster.
+`Simple.cfc` resists reduction. Hex colours, ID selectors and `<cfif>` inside
+`<style>` all parse individually, and the shortest failing extract is 20 lines
+of its stylesheet — whatever the trigger is, it emerges from accumulation.
 
-### cfquery
+## What is left over — 304 nodes, 126 files
 
-| Pattern | Files | Example | Probe |
-|---|---|---|---|
-| ~~Bitwise `&` in SQL~~ **Fixed** | 1 | `AND status & 2048 = 2048` | `bitwise_and.cfm` |
+The remainder resists signature-matching, and 81 of those 126 files carry a
+single node. Spot-checking finds no further cluster: they are individually odd
+constructs, plus cascades whose triggers are already listed above.
 
-## What is left over
+One worked example of a false lead, because it is the shape these take:
+Slatwall's `menu.cfm` (36 nodes) is full of `<cf_SlatwallActionCaller …>` custom
+tags, which look like an obvious cause and are not — they parse correctly in
+paired, unpaired and self-closing forms, and several other files merely contain
+them incidentally.
 
-Signal-matching the failing files by root cause leaves roughly 750 nodes across
-188 files unattributed. Spot-checking those shows they are overwhelmingly
-*cascades* — the first error is reported at line 1 spanning the whole document,
-because an unparseable construct further down cost the parser its tag nesting.
-Their real triggers are the patterns already listed above. They are not a
-separate population of unknown defects, but neither has every one been traced,
-and that should not be implied.
+This is the honest shape of the tail: long, thin, and not worth attacking as a
+group.
 
-## Cost and risk of fixing each one
+## What has been fixed
 
-Estimates below come from this repository's own history, not from general
-intuition. Two of these were attempted during the corpus work and backed out;
-several others are close relatives of changes that did land, and those landings
-needed follow-up fixes that the corpus scan caught. That record is the best
-available guide.
+Since the `d06ff66` baseline, in rough order of value delivered:
+
+| Pattern | Files | Effect |
+|---|---|---|
+| Bare `>` or `<` in template text | 31 | 329 nodes — the largest single improvement |
+| Subscript as a `var` declaration name | 9 | 111 nodes; every affected file to zero |
+| Script-syntax tag call with space-separated attributes | 40 | 113 nodes, including the with-a-body form |
+| Array return type `X[] function` | 9 | 16 nodes |
+| Empty struct `[=]`, typed `param`, bitwise `&` in SQL | 6+ | 17 nodes |
+| `queryExecute("` infinite loop | — | not a node count: the parser hung forever |
+
+## Cost and risk of what remains
+
+Estimates come from this repository's own history. That history now includes
+seven predictions with known outcomes, and the calibration is mixed — see
+[Predictions checked against outcomes](#predictions-checked-against-outcomes).
 
 Three properties of this grammar drive most of the risk:
 
 - **Keyword extraction is lexical.** With `word: $.identifier`, a rule that makes
   a keyword valid in a new position changes how that word *lexes* everywhere in
-  that state. Adding `member_expression` to `variable_declarator` made
-  keyword-led expressions valid after `var`, which silently broke `var new = 1`
-  and `for ( var export in … )` until `_reserved_identifier` was named
-  explicitly. Any change touching declarations or parameters should expect this.
+  that state. This has bitten twice — but note that each time, the fix (naming
+  `_reserved_identifier` explicitly) then protected every later change to the
+  same rule.
 - **`:` is heavily contested.** It already serves `pair`, `switch_case`,
-  `slice_expression` and the ternary. The casing branch removed conflicts around
-  it deliberately, and restoring them reintroduces the `case <expr> :` ambiguity.
+  `slice_expression` and the ternary.
 - **The scanner is shared, except where it is not.** `common/scanner.h` backs
-  `cfml` and `cfquery`; `cfscript` has its own hand-written `src/scanner.c`. A
-  scanner change means editing one or both, with no generator to check the
-  result — the corpus scan is the only safety net.
+  `cfml` and `cfquery`; `cfscript` has its own hand-written `src/scanner.c`. No
+  generator checks scanner work — the corpus scan is the only safety net.
 
 | Pattern | Complexity | Risk | Basis |
 |---|---|---|---|
-| Empty struct literal `[=]` — **fixed** | **Low** | **Low** | `ordered_struct` already spells out the sibling form `[ : ]` as a fixed token sequence; `[ = ]` is the same shape. Landed as estimated: one `choice` arm, no conflicts |
-| Typed `param` statement — **fixed** | **Low** | **Low** | The untyped form already parses; this adds a type slot to an existing statement rule. Cost the estimate twice over: spelling the type as keyword tokens made `array` lex as a keyword wherever the branch was live, breaking `loop array=data`. A plain identifier in the type slot, distinguished by what follows it, works |
-| Bitwise `&` in SQL — **fixed** | **Low-Med** | **Med** | A query-side operator addition, but `&` is CFML's string concatenation, so the two readings meet inside `<cfquery>`. The two never actually met: concatenation only occurs inside `#...#`, which the hash expression grammar handles. `&`, `\|` and `^` joined `query_math_expression` with no fallout |
-| Array return type `X[] function` — **fixed** | **Med** | **Med** | Touches the function return-type slot, which already competes with `parameter_type` and `primary_expression`; expect new conflicts, of the kind that took three iterations for member declarations. **Over-estimated**: no conflicts, no iterations. Lexing `[]` as one `token(seq('[', ']'))` rather than two settles subscript-versus-suffix in the lexer, so the ambiguity the estimate feared never reaches the parser |
-| Subscript as a `var` name — **fixed** | **Med** | **Med-High** | Directly extends the change that broke `var new = 1`. Same rule, same lexing hazard, and subscripts add `[` ambiguity on top. **Both the risk and the file count were wrong.** One line adding `subscript_expression` to `variable_declarator`, no new conflicts, and none of the feared lexing damage — `_reserved_identifier` was already named explicitly there from the earlier fix, which is exactly what protects it. And it was 9 files, not 1: the original count came from signal-matching first errors, and 8 of the 9 were cascading from line 1 so their real trigger was never attributed |
-| Dotted key in a struct literal | **Med** | **Med-High** | `_property_name` is already in five conflict declarations; widening it to accept paths touches every struct literal and named-argument site |
-| Bare `>` or `<` in template text — **fixed** | **Med-High** | **High** | The character that would become text is the one the tag scanner uses to close tags. Getting it wrong destabilises all tag parsing, which is the grammar's core. It did: peeking past `<` consumes it and the scanner cannot rewind, so the first attempt broke every CFML comment. Guarding the peek behind "some text already collected" fixed it, and the corpus scan is what caught it |
-| Function-listener `f():callback` | **Med-High** | **High** | Adds another `:` reading to the most contested character in the grammar, for a single-file Lucee feature |
-| Script-syntax tag call — **fixed** | **High** | **Med** | **Attempted and backed out** once. `f( a=1 [x] )` is ambiguous between a subscript and a second argument; tree-sitter's suggested resolution is a single-rule conflict on `expression`, which cannot be declared. The restricted attribute-value rule works: values are limited to the shapes real tag calls use (string, number, boolean, variable, dotted path, `#hash#`), none of which a `[` can follow, so the ambiguity never arises. Accurate at **High/Med** — seven declared conflicts across six generate-and-read iterations, and one design reversal when a rule allowing a leading comma-run proved ambiguous with every named call in the language |
-| Subscript with more than one pair | **High** | **High** | Requires re-admitting `pair` inside subscripts, which is exactly the ambiguity the casing branch removed. One file, non-idiomatic syntax |
-| Prefixed / namespaced dynamic tag | **High** | **High** | `_start_tag_name` is an external token and open/close matching lives in the scanner's tag stack. Scanner work on the shared header, with no generator check |
-| `<script>` unclosed across CF blocks | **High** | **Low value** | **Attempted and backed out.** Making `script_element`'s end tag optional produces unresolvable conflicts. One file, and genuinely unbalanced HTML |
+| Dotted key in a struct literal | **Med** | **Med-High** | `_property_name` is in five conflict declarations; widening it to accept paths touches every struct literal and named-argument site. 30 nodes in one file |
+| CSS in `<style>` with many `#` | **Med-High** | **Med** | Does not reduce below 20 lines, so the mechanism is not yet understood — understand it before estimating again. One file, but a whole stylesheet is a plausible shape for any CFML admin template |
+| Dynamic tag opened and closed in different blocks | **High** | **High** | Scanner tag-stack work on the shared header. 13 files but only 19 nodes: the surrounding markup still recovers, so the errors stay small |
+| Prefixed / namespaced dynamic tag | **High** | **High** | Same tag stack, same shared header. Called the largest cluster at the last baseline; now 48 nodes |
+| Function-listener `f():callback` | **Med-High** | **High** | Another `:` reading in the most contested character in the grammar, for a single-file Lucee feature |
+| Subscript with more than one pair | **High** | **High** | Re-admits `pair` inside subscripts — the ambiguity the casing branch removed. One file, non-idiomatic syntax |
 
-Worth noting what "Low risk" does *not* mean here: every change in this session
-that looked self-contained still needed a corpus re-scan to confirm, and three of
-them were only saved by that scan. Budget for the scan, not just the edit.
+### Predictions checked against outcomes
+
+| Pattern | Predicted | Actual |
+|---|---|---|
+| Empty struct `[=]` | Low / Low | Accurate — one `choice` arm |
+| Typed `param` | Low / Low | **Cost doubled.** Keyword tokens in the type slot broke `loop array=data` |
+| Bitwise `&` in SQL | Low-Med / Med | **Over-estimated.** Concatenation only occurs inside `#...#`, so the two readings never meet |
+| Array return type | Med / Med | **Over-estimated.** Lexing `[]` as one token moved the decision into the lexer; no conflicts |
+| Bare `>` / `<` in text | Med-High / High | Accurate — the first attempt broke every CFML comment |
+| Script-syntax tag call | High / Med | Accurate — seven conflicts and one design reversal |
+| Subscript as a `var` name | Med / Med-High | **Over-estimated risk, under-counted scale 9×.** One line, no conflicts; 9 files, not 1 |
+
+The pattern in the misses: risk is over-estimated when an earlier fix has
+already installed the guard the new change needs, and file counts are too low
+wherever the affected files cascade from line 1.
 
 ## What this suggests about priorities
 
-1. **Prefixed and namespaced dynamic tag names** — 10 files, the largest genuine
-   cluster, and the one that produces the worst cascades in Lucee's admin
-   templates. Scanner work.
-2. **Script-syntax tag calls** — 17 files, the widest spread. Attempted once and
-   backed out: space-separated arguments are ambiguous with subscripts
-   (`f( a=1 [x] )`), and tree-sitter's suggested resolution is a single-rule
-   conflict that cannot be declared. Needs a restricted attribute-value rule.
-3. ~~**Bare `>` in template text**~~ — **done.** No corpus file failed on this
-   alone, but it is ordinary HTML and was the likeliest of these to bite an
-   editor user. It also turned out to be the single largest win in the corpus:
-   329 nodes and 31 files, because a stray `>` derails the rest of a template.
-4. Everything else is single-file or nearly so, and worth fixing only if the
-   construct is cheap to express.
-
-Work that is not a parse gap — tooling, queries, docs — is tracked separately in
-[`TODO.md`](TODO.md).
-
-Crossing that list with the cost table gave a different order for anyone wanting
-value per unit of risk, and that is the order actually taken: `[=]`, typed
-`param` and bitwise `&` were cheap and safe but affect few files; bare `>` was
-riskier and paid for itself many times over; array return types were the best of
-what was left, at 9 files for a two-line change. What remains is the
-script-syntax tag call — the widest-reaching fix still tractable with
-grammar-only changes — and prefixed dynamic tag names, the largest cluster but
-the most dangerous, because they mean editing the shared scanner.
+1. **Nothing here is now clearly worth the risk.** The largest genuine gap is 71
+   nodes in one file, and the two scanner clusters are 67 nodes between them.
+   Against 12,549 files at 98.7% clean, what remains is maintenance rather than
+   a backlog.
+2. If something is picked up anyway, **dotted keys in struct literals** is the
+   best value per unit of risk — 30 nodes, grammar-only, no scanner.
+3. **The two dynamic-tag clusters share a mechanism** — the scanner's tag stack —
+   and would sensibly be done together or not at all. 67 nodes across 23 files
+   for the riskiest change available is a poor trade on its own.
+4. The 304-node tail is not a project. It is 126 files of individually odd code,
+   81 of them carrying a single error node.
