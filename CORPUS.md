@@ -36,10 +36,13 @@ signatures — smaller, more specialised code bases chosen for breadth of idiom
 rather than size. It scanned at **23 error nodes across 6 of 1,228 files**
 (99.5% clean), and turned up two constructs no earlier scan had shown:
 
-- **`->` lambdas.** `x = t -> t.b()` and every other `->` form fail; only `=>`
-  is in the grammar. Valid Lucee syntax, but genuinely rare — one real use in
+- **`->` lambdas.** `x = t -> t.b()` and every other `->` form failed; only `=>`
+  was in the grammar. Valid Lucee syntax, but genuinely rare — one real use in
   all 13,777 files, in `cbjavaloader`. (A naive `grep` suggests 312 uses; all
-  but one are `->` in comments and prose.)
+  but one are `->` in comments and prose.) **Fixed** — `arrow_function` now takes
+  `choice('=>', '->')` in both grammars, which turned out to be free: identical
+  state counts, identical conflict counts, and no measurable throughput change.
+  Took the second wave from 8 errors across 4 files to **7 across 3**.
 - **`debugger` as an identifier.** `debugger.log( … )` and `debugger = 1` failed
   at statement start, where the keyword out-lexed the identifier, though
   `x = debugger.foo` always parsed. Two files in `preside-ext-saml2-sso`.

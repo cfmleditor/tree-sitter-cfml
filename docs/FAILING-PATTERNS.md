@@ -119,6 +119,8 @@ Since the `d06ff66` baseline, in rough order of value delivered:
 | Script-syntax tag call with space-separated attributes | 40 | 113 nodes, including the with-a-body form |
 | Array return type `X[] function` | 9 | 16 nodes |
 | Empty struct `[=]`, typed `param`, bitwise `&` in SQL | 6+ | 17 nodes |
+| `debugger` as an ordinary identifier | 2 | 15 nodes across the second corpus wave |
+| Thin-arrow lambda `t -> t.b()` | 1 | 1 node; free — no new states, no new conflicts |
 | `queryExecute("` infinite loop | — | not a node count: the parser hung forever |
 
 ## Cost and risk of what remains
@@ -187,10 +189,17 @@ watch for.
 | Script-syntax tag call | High / Med | Accurate — seven conflicts and one design reversal |
 | Subscript as a `var` name | Med / Med-High | **Over-estimated risk, under-counted scale 9×.** One line, no conflicts; 9 files, not 1 |
 | Dotted key in a struct literal | Med / Med-High | **Over-estimated the cost of writing it, and missed the cost of running it.** One conflict, not five — but that conflict is live at every member access, and the table had no column for that. The reason the section above exists |
+| Thin-arrow lambda | not rated; recorded as "genuinely rare", implicitly not worth doing | **Wrong axis.** Prevalence was right — one real use in 13,777 files — but it was treated as the deciding factor. The change is `choice('=>', '->')` in two files: identical state counts, identical conflict counts, no measurable throughput change. Prevalence tells you what a fix is *worth*, not what it *costs*, and a one-line fix needs almost no worth to clear the bar |
 
 The pattern in the misses: risk is over-estimated when an earlier fix has
 already installed the guard the new change needs, and file counts are too low
 wherever the affected files cascade from line 1.
+
+One further miss has a different shape. Low prevalence was allowed to stand in
+for low value on the thin arrow, and the cost was never estimated at all. Cheap
+constructs deserve a cost estimate even when they look not worth doing —
+prevalence and cost are independent, and this grammar's cheapest fixes have been
+one-line `choice` arms with no measurable effect.
 
 ## What this suggests about priorities
 

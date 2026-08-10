@@ -177,9 +177,17 @@ access-modifier member declarations, the empty struct literal `[=]`, bare `>` or
 `<` in template text, the typed `param` statement, array return types
 (`User[] function getUsers()`), script-syntax tag calls with space-separated
 attributes, a subscript as a `var` declaration name
-(`var mappings[ key ] = value`), and `new` with a dotted Java path
-(`new java.util.Properties()`). The `new java:` / `new cfml:` type prefix now
+(`var mappings[ key ] = value`), `new` with a dotted Java path
+(`new java.util.Properties()`), `debugger` as an ordinary identifier, and the
+thin-arrow lambda (`t -> t.b()`). The `new java:` / `new cfml:` type prefix now
 works in both CFScript grammars, where it had been `cfscript`-only.
+
+### `=>` and `->` produce the same node
+
+Lucee distinguishes them at runtime — `=>` is a closure, `->` is a lambda, and
+they capture scope differently — but they are syntactically identical, so both
+produce an `arrow_function`. A consumer that needs to tell them apart can read
+the operator token itself; `highlights.scm` matches both.
 
 ### cfquery
 

@@ -837,7 +837,10 @@ module.exports = grammar({
         )),
         $._call_signature,
       ),
-      '=>',
+      // Lucee spells a closure `=>` and a lambda `->`. The two differ in how
+      // they capture scope at runtime, not in shape, so one rule covers both
+      // and the token itself records which was written.
+      choice('=>', '->'),
       field('body', choice(
         $.expression,
         $.statement_block,

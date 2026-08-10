@@ -11,6 +11,7 @@
 - Support array return types on function declarations (`User[] function getUsers()`)
 - Support the `new java:` / `new cfml:` type prefix in the shared grammar as well as `cfscript`, so `<cfset x = new java:java.io.File(p)>` parses
 - Allow `debugger` as an ordinary identifier (`debugger.log( … )`, `debugger = 1`), which previously failed at statement start because the keyword out-lexed the identifier. The bare `debugger;` statement still parses as `debugger_statement`
+- Support the thin-arrow lambda (`t -> t.b()`, `( x, y ) -> x + y`) alongside the existing `=>` closure. Both produce an `arrow_function`; `->` is added to the operator list in each `highlights.scm`
 
 ### cfscript
 

@@ -36,6 +36,7 @@
     "cfscript/subscript_multiple_pairs.cfc": "fail",
     "cfscript/subscript_var_name.cfc": "pass",
     "cfscript/tag_comment_in_script_body.cfc": "pass",
+    "cfscript/thin_arrow_lambda.cfc": "pass",
     "cfscript/typed_catch_with_var.cfc": "pass",
     "cfscript/var_scoped_dotted_name.cfc": "pass"
   }
