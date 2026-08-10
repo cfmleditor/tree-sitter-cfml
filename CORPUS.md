@@ -20,7 +20,7 @@ extra repositories can be passed as arguments.
 
 ## The corpus
 
-25 public repositories, **12,549 CFML files** (`.cfc`, `.cfm`, `.cfml`, `.cfs`),
+46 public repositories, **13,777 CFML files** (`.cfc`, `.cfm`, `.cfml`, `.cfs`),
 spanning tag-based templates, script components, and embedded SQL:
 
 | Area | Repositories |
@@ -29,6 +29,20 @@ spanning tag-based templates, script components, and embedded SQL:
 | Frameworks | `ColdBox/coldbox-platform`, `cfwheels/cfwheels`, `framework-one/fw1`, `atuttle/Taffy`, `Ortus-Solutions/TestBox`, `Ortus-Solutions/DocBox` |
 | Applications / CMS | `pixl8/preside-cms`, `MSU-NatSci/MuraCMS`, `Ortus-Solutions/ContentBox`, `valtech-cfml/Slatwall`, `ColdBox/coldbox-samples` |
 | Tooling / modules | `Ortus-Solutions/commandbox`, `coldbox-modules/{qb,cborm,cbfs,cbsecurity,cbi18n}`, `cfsimplicity/spreadsheet-cfml`, `foundeo/cfdocs`, `cfmleditor/cfmleditor` |
+| Second wave (21 repos, 1,228 files) | `coldbox-modules/{cbvalidation,cbstreams,cbmailservices,cbdebugger,hyper,cbwire,cbmarkdown,cbmessagebox,cbq,cfmigrations,cbSwagger,cbjavaloader,cbantisamy,cbfeeds}`, `Ortus-Solutions/coldbox-elixir`, `pixl8/preside-ext-saml2-sso`, `lucee/extension-{image,redis,s3,esapi,pdf}` |
+
+The second wave was added once the first 25 repos stopped producing new failure
+signatures — smaller, more specialised code bases chosen for breadth of idiom
+rather than size. It scanned at **23 error nodes across 6 of 1,228 files**
+(99.5% clean), and turned up two constructs no earlier scan had shown:
+
+- **`->` lambdas.** `x = t -> t.b()` and every other `->` form fail; only `=>`
+  is in the grammar. Valid Lucee syntax, but genuinely rare — one real use in
+  all 13,777 files, in `cbjavaloader`. (A naive `grep` suggests 312 uses; all
+  but one are `->` in comments and prose.)
+- **`debugger` as an identifier.** `debugger.log( … )` and `debugger = 1` fail
+  at statement start, where the keyword out-lexes the identifier, though
+  `x = debugger.foo` parses. Two files in `preside-ext-saml2-sso`.
 
 Files are scanned with the `cfml` grammar (or `cfscript` for `.cfs`), then every
 `cf_script_content`, `cf_component_content` and `cf_query_content` region is
