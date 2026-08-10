@@ -886,11 +886,19 @@ module.exports = grammar({
       ),
       seq(
         $._kw_new,
-        optional(field('prefix', seq(choice('java', 'cfml'), ':'))),
+        // One token including the `:`, not `seq(choice('java','cfml'), ':')`.
+        // As separate tokens the bare `java` and `cfml` out-lex `identifier`
+        // straight after `new`, so `new java.util.Properties()` lexed `java` as
+        // the prefix and then demanded a colon. Requiring the colon inside the
+        // token means `java.` simply fails to match it and falls back to an
+        // identifier, which is what CFML's Java interop needs.
+        optional(field('prefix', alias($._new_type_prefix, $.type_prefix))),
         optional(field('constructor', choice($.primary_expression, $.new_expression))),
         field('arguments', optional(prec.dynamic(1, $.arguments))),
       ),
     )),
+
+    _new_type_prefix: (_) => token(seq(choice('java', 'cfml'), ':')),
 
     member_expression: $ => prec('member', seq(
       field('object', choice($.expression, $.primary_expression)),

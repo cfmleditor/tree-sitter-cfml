@@ -2002,20 +2002,12 @@
         ]
       },
       "prefix": {
-        "multiple": true,
+        "multiple": false,
         "required": false,
         "types": [
           {
-            "type": ":",
-            "named": false
-          },
-          {
-            "type": "cfml",
-            "named": false
-          },
-          {
-            "type": "java",
-            "named": false
+            "type": "type_prefix",
+            "named": true
           }
         ]
       }
@@ -3472,10 +3464,6 @@
     "named": true
   },
   {
-    "type": "cfml",
-    "named": false
-  },
-  {
     "type": "cfml_template_content",
     "named": true
   },
@@ -3582,10 +3570,6 @@
   },
   {
     "type": "interface",
-    "named": false
-  },
-  {
-    "type": "java",
     "named": false
   },
   {
@@ -3743,6 +3727,10 @@
   {
     "type": "try",
     "named": false
+  },
+  {
+    "type": "type_prefix",
+    "named": true
   },
   {
     "type": "undefined",
