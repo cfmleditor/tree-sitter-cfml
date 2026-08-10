@@ -11,6 +11,7 @@
     "cfml/hash_in_comment_in_script.cfm": "pass",
     "cfml/hash_in_script_string.cfm": "fail",
     "cfml/lt_in_text.cfm": "pass",
+    "cfml/new_java_prefix.cfm": "pass",
     "cfml/param_named.cfm": "pass",
     "cfml/param_typed.cfm": "pass",
     "cfml/prefixed_dynamic_tag.cfm": "fail",

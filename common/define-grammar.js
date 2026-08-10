@@ -1606,9 +1606,20 @@ module.exports = function defineGrammar(dialect) {
 
       new_expression: ($) => prec.right('new', seq(
         $._kw_new,
+        // `<cfset x = new java:java.io.File( p )>` — the same type prefix
+        // `cfscript` accepts. It was only ever in that grammar, so the two
+        // CFScript rule sets disagreed about a construct valid in both.
+        //
+        // One token including the colon, not `seq(choice('java','cfml'), ':')`.
+        // As bare strings those become tokens that out-lex `identifier` right
+        // after `new`, which is what made `new java.util.Properties()` fail in
+        // `cfscript` until it was fixed the same way.
+        optional(field('prefix', alias($._new_type_prefix, $.type_prefix))),
         field('constructor', choice($.primary_expression, $.new_expression)),
         field('arguments', optional(prec.dynamic(1, $.arguments))),
       )),
+
+      _new_type_prefix: (_) => token(seq(choice('java', 'cfml'), ':')),
 
       member_expression: $ => prec('member', seq(
         field('object', choice($.expression, $.primary_expression)),

@@ -9,6 +9,7 @@
 ### cfml & cfscript
 
 - Support array return types on function declarations (`User[] function getUsers()`)
+- Support the `new java:` / `new cfml:` type prefix in the shared grammar as well as `cfscript`, so `<cfset x = new java:java.io.File(p)>` parses
 
 ### cfscript
 

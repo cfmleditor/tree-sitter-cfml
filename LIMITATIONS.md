@@ -159,7 +159,6 @@ assessment, including how many files each affects and what fixing it would cost.
 - **Dotted key in a struct literal** — `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` (Preside tests). Cheap to implement and implemented once, but the conflict it needs is live at every member access and cost 1.8× on cfscript parse time for 30 nodes in one file, so it was reverted. See the cost table in [`docs/FAILING-PATTERNS.md`](docs/FAILING-PATTERNS.md).
 - **Subscript index holding more than one pair** — `animals = $[ Aardwolf: "…", aardvark: "…" ];` (Lucee tests).
 - **A `thread { … }` statement followed by a tag island** — a ` ``` ` block after `thread name="x" { … }` (Lucee LDEV4157). Each parses on its own; only the combination fails.
-- **`new java:` / `new cfml:` type prefixes are cfscript-only** — `<cfset x = new java:java.io.File(p)>` does not parse, because the prefix exists in `cfscript/grammar.js` but not in the copy in `common/define-grammar.js`. A drift between the two CFScript grammars rather than a gap in either; the corpus uses the prefix 7 times, none inside a tag.
 - **Function-listener callback** — `var t = mySuccess():function( result, error ) { … };` (Lucee `FunctionListener.cfc`).
 - **`function` as a bare value** — `h = function.foo;`. `function` is accepted as
   an assignable name (`admin ... function="" ...`) and as a property
@@ -179,7 +178,8 @@ access-modifier member declarations, the empty struct literal `[=]`, bare `>` or
 (`User[] function getUsers()`), script-syntax tag calls with space-separated
 attributes, a subscript as a `var` declaration name
 (`var mappings[ key ] = value`), and `new` with a dotted Java path
-(`new java.util.Properties()`).
+(`new java.util.Properties()`). The `new java:` / `new cfml:` type prefix now
+works in both CFScript grammars, where it had been `cfscript`-only.
 
 ### cfquery
 
