@@ -81,6 +81,7 @@ that.
 | 19 | 13 | Dynamic tag opened and closed in different blocks | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | — |
 | 19 | 1 | Function-listener callback syntax | `var t = mySuccess():function( result, error ) { … };` | — |
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
+| 2 | 1 | `thread { … }` followed by a tag island | a ` ``` ` block after `thread name="x" { … }`; each parses alone | — |
 
 The plain `<#expr#>` dynamic tag form parses when open and close sit in the same
 block; the prefixed, namespaced and split-across-blocks variants do not.
@@ -113,6 +114,7 @@ Since the `d06ff66` baseline, in rough order of value delivered:
 | Pattern | Files | Effect |
 |---|---|---|
 | Bare `>` or `<` in template text | 31 | 329 nodes — the largest single improvement |
+| `new` with a dotted Java path | 5 | 5 nodes; `java` and `cfml` were out-lexing the identifier after `new` |
 | Subscript as a `var` declaration name | 9 | 111 nodes; every affected file to zero |
 | Script-syntax tag call with space-separated attributes | 40 | 113 nodes, including the with-a-body form |
 | Array return type `X[] function` | 9 | 16 nodes |

@@ -3299,6 +3299,16 @@
             "named": true
           }
         ]
+      },
+      "prefix": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "type_prefix",
+            "named": true
+          }
+        ]
       }
     }
   },
@@ -5295,6 +5305,10 @@
   {
     "type": "try",
     "named": false
+  },
+  {
+    "type": "type_prefix",
+    "named": true
   },
   {
     "type": "undefined",

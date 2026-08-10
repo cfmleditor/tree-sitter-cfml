@@ -1339,6 +1339,48 @@ component {
               (number))))))))
 
 ================================================================================
+common: new with a dotted java path, and the java: prefix
+================================================================================
+
+a = new java.util.Properties();
+b = new cfml.Widget();
+c = new java:java.io.File( path );
+
+--------------------------------------------------------------------------------
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments
+          (identifier))))))
+
+================================================================================
 common: debugger as an ordinary identifier
 ================================================================================
 

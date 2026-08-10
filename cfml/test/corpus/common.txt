@@ -1404,6 +1404,41 @@ common: bare angle brackets in template text
   (html_text))
 
 ================================================================================
+common: new with a java: type prefix and a dotted java path
+================================================================================
+
+<cfset x = new java:java.io.File( p )>
+<cfset y = new java.util.Properties()>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments
+          (identifier))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments)))
+    (cf_selfclose_void_tag_end)))
+
+================================================================================
 common: debugger as an ordinary identifier
 ================================================================================
 
