@@ -48,6 +48,33 @@ const REPOS = [
   'valtech-cfml/Slatwall', // commerce platform, ORM + queries
   'framework-one/fw1', // FW/1
   'atuttle/Taffy', // REST framework
+
+  // Second wave, added once the first 25 repos stopped producing new failure
+  // signatures: smaller and more specialised code bases, chosen for breadth of
+  // idiom rather than size. Modules exercise script components heavily; the
+  // Lucee extensions add tag templates and Java interop.
+  'coldbox-modules/cbvalidation', // vendored copies of this were already the
+  //                                 source of the array-return-type gap
+  'coldbox-modules/cbstreams', // Java streams interop, `new java:` heavy
+  'coldbox-modules/cbmailservices',
+  'coldbox-modules/cbdebugger',
+  'coldbox-modules/hyper', // HTTP client
+  'coldbox-modules/cbwire', // reactive components, newer idioms
+  'coldbox-modules/cbmarkdown',
+  'coldbox-modules/cbmessagebox',
+  'coldbox-modules/cbq',
+  'coldbox-modules/cfmigrations',
+  'coldbox-modules/cbSwagger',
+  'coldbox-modules/cbjavaloader', // Java interop
+  'coldbox-modules/cbantisamy',
+  'coldbox-modules/cbfeeds',
+  'Ortus-Solutions/coldbox-elixir',
+  'pixl8/preside-ext-saml2-sso',
+  'lucee/extension-image', // Lucee extensions: tag templates + Java interop
+  'lucee/extension-redis',
+  'lucee/extension-s3',
+  'lucee/extension-esapi',
+  'lucee/extension-pdf',
   'cfsimplicity/spreadsheet-cfml',
   'foundeo/cfdocs', // documentation examples
   'ortus-boxlang/BoxLang', // BoxLang's CFML compatibility fixtures
