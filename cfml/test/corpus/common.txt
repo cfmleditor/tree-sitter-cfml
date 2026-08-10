@@ -1402,3 +1402,65 @@ common: bare angle brackets in template text
   (html_text)
   (hash_single)
   (html_text))
+
+================================================================================
+common: debugger as an ordinary identifier
+================================================================================
+
+<cfset debugger = 1>
+<cfset debugger.log( argumentCollection=logArgs )>
+<cfset handler = function() {
+	debugger.log();
+	debugger.a.b = 2;
+	return debugger.enabled;
+}>
+<cfoutput>#debugger.enabled#</cfoutput>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (call_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (arguments
+        (assignment_expression
+          (identifier)
+          (identifier))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (function_expression
+        (formal_parameters)
+        (statement_block
+          (expression_statement
+            (call_expression
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (arguments)))
+          (expression_statement
+            (assignment_expression
+              (member_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (property_identifier))
+              (number)))
+          (return_statement
+            (member_expression
+              (identifier)
+              (property_identifier))))))
+    (cf_selfclose_void_tag_end))
+  (cf_output_tag
+    (hash_expression
+      (member_expression
+        (identifier)
+        (property_identifier)))))

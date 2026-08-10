@@ -9,6 +9,7 @@
 ### cfml & cfscript
 
 - Support array return types on function declarations (`User[] function getUsers()`)
+- Allow `debugger` as an ordinary identifier (`debugger.log( … )`, `debugger = 1`), which previously failed at statement start because the keyword out-lexed the identifier. The bare `debugger;` statement still parses as `debugger_statement`
 
 ### cfscript
 

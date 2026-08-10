@@ -40,9 +40,14 @@ rather than size. It scanned at **23 error nodes across 6 of 1,228 files**
   is in the grammar. Valid Lucee syntax, but genuinely rare — one real use in
   all 13,777 files, in `cbjavaloader`. (A naive `grep` suggests 312 uses; all
   but one are `->` in comments and prose.)
-- **`debugger` as an identifier.** `debugger.log( … )` and `debugger = 1` fail
-  at statement start, where the keyword out-lexes the identifier, though
-  `x = debugger.foo` parses. Two files in `preside-ext-saml2-sso`.
+- **`debugger` as an identifier.** `debugger.log( … )` and `debugger = 1` failed
+  at statement start, where the keyword out-lexed the identifier, though
+  `x = debugger.foo` always parsed. Two files in `preside-ext-saml2-sso`.
+  **Fixed** — `debugger` joined `_reserved_identifier` in both grammars, and
+  `debugger_statement` took a `prec(1, …)` so the bare `debugger;` form still
+  wins over the expression statement it now also matches. That took the second
+  wave from 23 errors across 6 files to **8 across 4**, with no movement on the
+  original corpus (760 → 760, per-file diff identical).
 
 Files are scanned with the `cfml` grammar (or `cfscript` for `.cfs`), then every
 `cf_script_content`, `cf_component_content` and `cf_query_content` region is

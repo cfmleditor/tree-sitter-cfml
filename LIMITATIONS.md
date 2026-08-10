@@ -201,3 +201,14 @@ an ordinary member expression. `"target"` was dropped from
 Other JS leftovers still present and *not* valid CFML: `debugger_statement`,
 `with_statement`, `template_string`, `regex`, `namespace_import`,
 `_from_clause`, `export`.
+
+`debugger_statement` is the one that had a cost. Because keyword extraction is
+lexical, the `debugger` token out-lexed `identifier` at statement start, so
+`debugger.log( … )` and `debugger = 1` failed — while `x = debugger.foo`, which
+is not statement position, parsed. Preside's SAML module uses `debugger` as an
+ordinary scope. The fix is to put `debugger` in `_reserved_identifier` like
+`new`, `static` and `final`, which makes `debugger;` ambiguous between the
+statement and a bare expression statement; `debugger_statement` carries a
+`prec(1, …)` so the statement still wins. This costs no declared conflict.
+Covered by `test/probes/cfscript/debugger_identifier.cfc` and the
+`debugger as an ordinary identifier` corpus tests in both grammars.

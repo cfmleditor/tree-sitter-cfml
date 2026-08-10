@@ -1298,10 +1298,15 @@ module.exports = function defineGrammar(dialect) {
         $._semicolon,
       ),
 
-      debugger_statement: ($) => seq(
+      // `prec`, not a declared conflict: with `debugger` now a reserved
+      // identifier, `debugger;` parses both as this statement and as a bare
+      // expression. The statement is the right reading and precedence settles
+      // it at generation time, where a conflict would carry two GLR stacks
+      // every time the word appears.
+      debugger_statement: ($) => prec(1, seq(
         $._kw_debugger,
         $._semicolon,
-      ),
+      )),
 
       return_statement: ($) => seq(
         $._kw_return,
@@ -2093,6 +2098,11 @@ module.exports = function defineGrammar(dialect) {
         $._kw_remote,
         $._kw_abstract,
         $._kw_final,
+        // `debugger.log( … )` and `debugger = 1` — Preside's SAML module uses
+        // `debugger` as an ordinary scope. Without this the keyword out-lexes
+        // the identifier at statement start, though `x = debugger.foo` always
+        // parsed because no statement keyword is valid there.
+        $._kw_debugger,
         // `function` is deliberately absent. Listing it here made `function` a
         // valid expression start, which in turn made every binary operator —
         // including `instanceof` — valid immediately after it. Keyword

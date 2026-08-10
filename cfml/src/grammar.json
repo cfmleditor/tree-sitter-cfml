@@ -3337,17 +3337,21 @@
       ]
     },
     "debugger_statement": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_kw_debugger"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_semicolon"
-        }
-      ]
+      "type": "PREC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_kw_debugger"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_semicolon"
+          }
+        ]
+      }
     },
     "return_statement": {
       "type": "SEQ",
@@ -9075,6 +9079,10 @@
         {
           "type": "SYMBOL",
           "name": "_kw_final"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_kw_debugger"
         }
       ]
     },
