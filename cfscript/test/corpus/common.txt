@@ -1433,3 +1433,98 @@ component {
                 (identifier)
                 (property_identifier))))
           (debugger_statement))))))
+
+================================================================================
+common: thin-arrow lambda
+================================================================================
+
+component {
+
+	function run() {
+		var a = t -> t.b();
+		var b = ( x, y ) -> x + y;
+		var c = t -> { return t.b(); };
+		var d = getURLs().map( target -> target.toString() );
+		var e = t => t.b();
+		var f = i-- > 0;
+	}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (arrow_function
+                (identifier)
+                (call_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier))
+                  (arguments)))))
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (arrow_function
+                (formal_parameters
+                  (parameter_type
+                    (identifier))
+                  (parameter_type
+                    (identifier)))
+                (binary_expression
+                  (identifier)
+                  (identifier)))))
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (arrow_function
+                (identifier)
+                (statement_block
+                  (return_statement
+                    (call_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier))
+                      (arguments)))))))
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (call_expression
+                (member_expression
+                  (call_expression
+                    (identifier)
+                    (arguments))
+                  (property_identifier))
+                (arguments
+                  (arrow_function
+                    (identifier)
+                    (call_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier))
+                      (arguments)))))))
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (arrow_function
+                (identifier)
+                (call_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier))
+                  (arguments)))))
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (binary_expression
+                (update_expression
+                  (identifier))
+                (number)))))))))

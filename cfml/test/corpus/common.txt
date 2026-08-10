@@ -1499,3 +1499,69 @@ common: debugger as an ordinary identifier
       (member_expression
         (identifier)
         (property_identifier)))))
+
+================================================================================
+common: thin-arrow lambda
+================================================================================
+
+<cfset a = t -> t.b()>
+<cfset b = ( x, y ) -> x + y>
+<cfset c = getURLs().map( target -> target.toString() )>
+<cfset d = t => t.b()>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (arrow_function
+        (identifier)
+        (call_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (arguments))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (arrow_function
+        (formal_parameters
+          (parameter_type
+            (identifier))
+          (parameter_type
+            (identifier)))
+        (binary_expression
+          (identifier)
+          (identifier))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (member_expression
+          (call_expression
+            (identifier)
+            (arguments))
+          (property_identifier))
+        (arguments
+          (arrow_function
+            (identifier)
+            (call_expression
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (arguments))))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (arrow_function
+        (identifier)
+        (call_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (arguments))))
+    (cf_selfclose_void_tag_end)))
