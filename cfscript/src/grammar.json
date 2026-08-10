@@ -3521,26 +3521,13 @@
                     "type": "FIELD",
                     "name": "prefix",
                     "content": {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "CHOICE",
-                          "members": [
-                            {
-                              "type": "STRING",
-                              "value": "java"
-                            },
-                            {
-                              "type": "STRING",
-                              "value": "cfml"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "STRING",
-                          "value": ":"
-                        }
-                      ]
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_new_type_prefix"
+                      },
+                      "named": true,
+                      "value": "type_prefix"
                     }
                   },
                   {
@@ -3594,6 +3581,31 @@
                 }
               }
             ]
+          }
+        ]
+      }
+    },
+    "_new_type_prefix": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "java"
+              },
+              {
+                "type": "STRING",
+                "value": "cfml"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": ":"
           }
         ]
       }

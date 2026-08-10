@@ -9,11 +9,13 @@
 ### cfml & cfscript
 
 - Support array return types on function declarations (`User[] function getUsers()`)
+- Support the `new java:` / `new cfml:` type prefix in the shared grammar as well as `cfscript`, so `<cfset x = new java:java.io.File(p)>` parses
 
 ### cfscript
 
 - Support script-syntax tag calls with space-separated attributes (`cfdirectory( directory="#dir#" action="create" mode="777" )`), including calls that switch to commas after the first attribute
 - Support a subscript as a `var` declaration name (`var mappings[ key ] = value`)
+- Fix `new` with a dotted Java path (`new java.util.Properties()`): `java` and `cfml` are also the `new java:` type prefixes, and their bare tokens out-lexed the identifier straight after `new`
 
 ## [0.26.31]
 
