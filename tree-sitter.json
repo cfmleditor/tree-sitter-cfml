@@ -39,11 +39,13 @@
     ],
     "links": {
       "repository": "https://github.com/cfmleditor/tree-sitter-cfml"
-    }
+    },
+    "namespace": "io.github.cfmleditor"
   },
   "bindings": {
     "c": true,
     "go": true,
+    "java": true,
     "node": true,
     "python": true,
     "rust": true,

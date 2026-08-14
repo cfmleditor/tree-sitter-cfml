@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Bindings
+
+- Add a Java binding (`bindings/java/`, `pom.xml`): `TreeSitterCfml`, `TreeSitterCfscript` and `TreeSitterCfquery` under `io.github.cfmleditor.jtreesitter.*`, built on [jtreesitter](https://github.com/tree-sitter/java-tree-sitter) and the Foreign Function & Memory API. Needs JDK 23+. Unlike the other bindings it does not compile the C: it resolves `tree_sitter_*` out of shared libraries at runtime
+- Add `npm run build:native`, which builds the three grammars *and* the tree-sitter runtime (from the copy vendored by the `tree-sitter` npm package, so the version is pinned by `package-lock.json`) into `build/native/` — the libraries the Java binding loads
+- Fix `make -C cfscript` and `make -C cfquery` building a library named `libtree-sitter-cfml`: `common/common.mak` reassigned `LANGUAGE_NAME` after the including Makefile had set it, so both dialects produced a `libtree-sitter-cfml.{a,so}` and a `tree-sitter-cfml.pc` holding the wrong parser. The last dialect to be installed won
+- Fix `make install` failing to find the C header: it looked for `bindings/c/…` relative to the dialect directory rather than the repository root. Add the missing `tree_sitter/tree-sitter-cfquery.h`, and move `tree-sitter-cfscript.h` alongside the other two in `bindings/c/tree_sitter/`
+- Fix the hardcoded `VERSION` in `common/common.mak`, stale at 0.26.17, which was written into every generated `.pc` file. It now comes from `tree-sitter.json`, and `.pc` descriptions are no longer empty for cfscript and cfquery
+
 ### Tooling
 
 - Fix the file count in `npm run scan`: a file whose only parse errors came from an injected `<cfscript>` or `<cfquery>` region had them printed but was never counted, so the summary under-reported affected files (62 against a true 161 on the reference corpus). Node counts were unaffected
