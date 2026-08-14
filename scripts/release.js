@@ -120,6 +120,7 @@ async function release() {
   if (dryRun) {
     console.log('==> Would update package.json');
     console.log('==> Would update Cargo.toml');
+    console.log('==> Would update pom.xml');
   } else {
     // 1. Update package.json
     console.log('==> Updating package.json');
@@ -144,7 +145,14 @@ async function release() {
     const tsJson = readFileSync(tsJsonPath, 'utf8');
     writeFileSync(tsJsonPath, tsJson.replace(/"version": ".*?"/, `"version": "${version}"`));
 
-    // 5. Update README.md and bindings/rust/README.md version references
+    // 5. Update pom.xml (the project version is the first <version> in the
+    // file; the dependency versions further down are pinned separately)
+    console.log('==> Updating pom.xml');
+    const pomPath = join(root, 'pom.xml');
+    const pom = readFileSync(pomPath, 'utf8');
+    writeFileSync(pomPath, pom.replace(/<version>[^<]*<\/version>/, `<version>${version}</version>`));
+
+    // 6. Update README.md and bindings/rust/README.md version references
     console.log('==> Updating README.md version references');
     const readmePath = join(root, 'README.md');
     const readme = readFileSync(readmePath, 'utf8');

@@ -13,6 +13,8 @@ npm run fuzz       # tree-sitter's own fuzzer over the corpus tests
 npm run lint       # ESLint
 npm run lint:fix   # ESLint with auto-fix
 npm run testbindings  # Node binding smoke test
+npm run build:native  # build/native/: the three grammars + the tree-sitter runtime, as shared libraries
+mvn test              # Java binding smoke test (needs JDK 23+ and build:native first)
 ```
 
 Build or test a single grammar only:
@@ -124,7 +126,9 @@ Three layers, each catching what the one above misses:
 
 ### Bindings (`bindings/`)
 
-Multi-language bindings (Node, Rust, Python, Go, Swift, C) are under `bindings/`. The `tree-sitter.json` at the repo root is the multi-grammar CLI config and declares which query files each grammar exposes.
+Multi-language bindings (Node, Rust, Python, Go, Swift, C, Java) are under `bindings/`. The `tree-sitter.json` at the repo root is the multi-grammar CLI config and declares which query files each grammar exposes.
+
+The Java binding is the odd one out: every other binding compiles `cf*/src/parser.c` as part of its own build, so a grammar change reaches it automatically. Java resolves `tree_sitter_*` out of shared libraries at runtime instead, so it only sees a change once those are rebuilt (`npm run build:native`, or `make`). Its version lives in `pom.xml` — a fifth place `scripts/release.js` has to bump.
 
 ### Query files
 

@@ -121,3 +121,48 @@ jobs:
         with:
           name: ${{ github.ref_name }}
           body: ${{ steps.changelog.outputs.notes }}
+
+  # Off by default, so a tag push cannot fail on credentials that do not exist
+  # yet. Turning it on needs, once: the io.github.cfmleditor namespace verified
+  # on Maven Central, the four secrets below, and the repository variable
+  # PUBLISH_MAVEN set to 'true'. Until then the Java binding is built from
+  # source (`npm run build:native && mvn test`) rather than consumed from a
+  # published artifact.
+  publish-maven:
+    name: Publish to Maven Central
+    if: vars.PUBLISH_MAVEN == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: "temurin"
+          java-version: "25"
+          cache: "maven"
+          server-id: central
+          server-username: MAVEN_CENTRAL_USERNAME
+          server-password: MAVEN_CENTRAL_PASSWORD
+          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }}
+          gpg-passphrase: MAVEN_GPG_PASSPHRASE
+
+      # The tests load the grammars out of shared libraries, so build those first.
+      - name: Build native libraries
+        run: |
+          npm install
+          npm run build:native
+
+      - name: Publish
+        env:
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
+        run: mvn -B --no-transfer-progress -Prelease deploy

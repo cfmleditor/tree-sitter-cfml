@@ -100,6 +100,60 @@ parser.SetLanguage(sitter.NewLanguage(tree_sitter_cfml.LanguageCfscript()))
 parser.SetLanguage(sitter.NewLanguage(tree_sitter_cfml.LanguageCfquery()))
 ```
 
+### Java
+
+Needs **JDK 23+** — the binding is built on the Foreign Function & Memory API, through [jtreesitter](https://github.com/tree-sitter/java-tree-sitter).
+
+```xml
+<dependency>
+  <groupId>io.github.cfmleditor</groupId>
+  <artifactId>tree-sitter-cfml</artifactId>
+  <version>0.26.31</version>
+</dependency>
+```
+
+```java
+import io.github.cfmleditor.jtreesitter.cfml.TreeSitterCfml;
+import io.github.cfmleditor.jtreesitter.cfscript.TreeSitterCfscript;
+import io.github.cfmleditor.jtreesitter.cfquery.TreeSitterCfquery;
+import io.github.treesitter.jtreesitter.Language;
+import io.github.treesitter.jtreesitter.Parser;
+
+// cfml for .cfc and .cfm files
+try (var parser = new Parser(new Language(TreeSitterCfml.language()))) {
+    var tree = parser.parse("<cfif x GT 0>#x#</cfif>").orElseThrow();
+}
+
+// cfscript for .cfs pure script files
+var cfscript = new Language(TreeSitterCfscript.language());
+
+// cfquery SQL dialect (embedded)
+var cfquery = new Language(TreeSitterCfquery.language());
+```
+
+Unlike the other bindings, this one does not compile the C for you. It loads
+four shared libraries at runtime — `libtree-sitter` plus one per grammar — so
+they have to be somewhere the loader looks (`LD_LIBRARY_PATH`,
+`java.library.path`, or a system library directory). Either install them:
+
+```bash
+make && sudo make install    # libtree-sitter-{cfml,cfscript,cfquery}
+```
+
+or, from a checkout, build all four (including the tree-sitter runtime, pinned
+by `package-lock.json`) into `build/native/`:
+
+```bash
+npm install && npm run build:native
+java --enable-native-access=ALL-UNNAMED -Djava.library.path=build/native …
+```
+
+Run the binding's own tests with `mvn test` — it points `java.library.path` at
+both locations.
+
+The artifact is not on Maven Central yet; see the note on `publish-maven` in
+[`.github/workflows/release.yml`](.github/workflows/release.yml).
+
 ## Development
 
 Each dialect has `grammar.js`, generated C under `src/`, corpus tests under `test/corpus/`, and queries under `queries/`. Shared scanner code is under `common/`. The multi-grammar CLI and playground config is [`tree-sitter.json`](tree-sitter.json). Upstream docs: [Creating parsers](https://tree-sitter.github.io/tree-sitter/creating-parsers), [CLI](https://tree-sitter.github.io/tree-sitter/cli/overview.html).
@@ -198,6 +252,8 @@ Pinned in `package.json` / `tree-sitter.json`; approximate roles:
 | Native addon                | `node-gyp-build`  | `^4.8.4`     |
 | Prebuild                    | `prebuildify`     | `^6.0.1`     |
 | Runtime                     | Node.js           | `>=18` `<24` |
+| Java binding (`pom.xml`)    | `jtreesitter`     | `0.26.1`     |
+| Java binding                | JDK               | `>=23`       |
 
 ### CFML engines
 
@@ -222,6 +278,7 @@ See **[Setup](#setup)** for `npm test`, `npm run lint`, and `npm run build`.
 ```bash
 npm run testbindings  # Node binding smoke test
 npm run probe         # real-world construct probes (test/probes/)
+npm run build:native && mvn test  # Java binding smoke test (JDK 23+)
 ```
 
 One grammar only: run `test` via the CLI from that dialect’s directory ([above](#setup)), or `npm test` for all three.
@@ -250,7 +307,7 @@ The release script (`scripts/release.js`) will:
 2. Ensure the working tree is clean and local branch is not behind remote
 3. Verify tag `v<version>` doesn't already exist
 4. Verify `CHANGELOG.md` has a `## [<version>]` or `## [Unreleased]` entry with notes
-5. Update the version in `package.json` and `Cargo.toml`
+5. Update the version in `package.json`, `Cargo.toml`, `pyproject.toml`, `tree-sitter.json` and `pom.xml`
 6. Run `npm run build` (regenerate parsers)
 7. Run `npm run lint` (ESLint)
 8. Run `npm test` (all three grammars)
@@ -259,7 +316,7 @@ The release script (`scripts/release.js`) will:
 11. Commit all changes and create a `v<version>` tag (prompted)
 12. Push commit and tag (prompted)
 
-Once the tag is pushed, the GitHub Release workflow (`.github/workflows/release.yml`) will automatically publish to npm, crates.io, and create a GitHub Release with the changelog notes.
+Once the tag is pushed, the GitHub Release workflow (`.github/workflows/release.yml`) will automatically publish to npm, PyPI, crates.io, and create a GitHub Release with the changelog notes. Maven Central is wired up but disabled — see `publish-maven` in that workflow.
 
 ## Grammar structure
 

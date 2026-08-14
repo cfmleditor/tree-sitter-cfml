@@ -57,6 +57,29 @@ jobs:
       - run: npm run testbindings
       - run: npm run lint
 
+  # The Java binding is pure Java: it resolves `tree_sitter_*` out of shared
+  # libraries at runtime, so nothing here is checked by `npm test`. Build the
+  # libraries (grammars plus the tree-sitter runtime vendored by the `tree-sitter`
+  # npm package) and parse a sample of each dialect through jtreesitter.
+  test_java:
+    name: Java binding
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '25'
+          cache: 'maven'
+      - run: npm install
+      - run: npm run build:native
+      # No -Prelease, so the GPG signing and Maven Central steps stay skipped.
+      - run: mvn -B --no-transfer-progress test
+
   test_windows:
     # Pinned, not windows-latest: that image now ships Visual Studio 18, which
     # node-gyp 11.x parses as version "undefined" and then rejects with

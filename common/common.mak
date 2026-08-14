@@ -2,9 +2,16 @@ ifeq ($(OS),Windows_NT)
 $(error Windows is not supported)
 endif
 
-LANGUAGE_NAME := tree-sitter-cfml
+# LANGUAGE_NAME and DESCRIPTION come from the including dialect Makefile — do
+# not set them here. Assigning LANGUAGE_NAME at this point overrides the value
+# the dialect set before the include, which is how `make -C cfscript` used to
+# build a libtree-sitter-cfml.so holding the cfscript parser.
 HOMEPAGE_URL := https://github.com/cfmleditor/tree-sitter-cfml
-VERSION := 0.26.17
+VERSION := $(shell sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' ../tree-sitter.json | head -n1)
+
+ifeq ($(LANGUAGE_NAME),)
+$(error LANGUAGE_NAME is not set — include this from a dialect Makefile)
+endif
 
 # repository
 SRC_DIR := src
@@ -70,7 +77,7 @@ $(PARSER): $(SRC_DIR)/grammar.json
 
 install: all
 	install -d '$(DESTDIR)$(INCLUDEDIR)'/tree_sitter '$(DESTDIR)$(PCLIBDIR)' '$(DESTDIR)$(LIBDIR)'
-	install -m644 bindings/c/$(LANGUAGE_NAME).h '$(DESTDIR)$(INCLUDEDIR)'/tree_sitter/$(LANGUAGE_NAME).h
+	install -m644 ../bindings/c/tree_sitter/$(LANGUAGE_NAME).h '$(DESTDIR)$(INCLUDEDIR)'/tree_sitter/$(LANGUAGE_NAME).h
 	install -m644 $(LANGUAGE_NAME).pc '$(DESTDIR)$(PCLIBDIR)'/$(LANGUAGE_NAME).pc
 	install -m644 lib$(LANGUAGE_NAME).a '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).a
 	install -m755 lib$(LANGUAGE_NAME).$(SOEXT) '$(DESTDIR)$(LIBDIR)'/lib$(LANGUAGE_NAME).$(SOEXTVER)
