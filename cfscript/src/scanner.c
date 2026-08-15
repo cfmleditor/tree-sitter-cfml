@@ -28,6 +28,36 @@ static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 
 static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 
+// `iswspace` and friends are out-of-line, locale-aware library calls, and this
+// scanner asks them about every character it skips. Answer for ASCII inline and
+// keep the library call for the non-ASCII tail, where its answer is the one
+// that counts. `common/scanner.h` carries its own copy of these — the two
+// scanners share no code by design.
+static inline bool cf_isspace(int32_t c) {
+    return c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '\v' || c == '\f' ||
+           (c > 127 && iswspace((wint_t)c));
+}
+
+static inline bool cf_isalpha(int32_t c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+           (c > 127 && iswalpha((wint_t)c));
+}
+
+// `iswdigit` answers only for the ASCII digits in every locale, so this one
+// needs no fallback at all.
+static inline bool cf_isdigit(int32_t c) { return c >= '0' && c <= '9'; }
+
+static inline bool cf_isalnum(int32_t c) {
+    return cf_isdigit(c) || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+           (c > 127 && iswalnum((wint_t)c));
+}
+
+static inline int32_t cf_tolower(int32_t c) {
+    if (c >= 'A' && c <= 'Z') return c + ('a' - 'A');
+    if (c > 127) return (int32_t)towlower((wint_t)c);
+    return c;
+}
+
 static bool scan_template_chars(TSLexer *lexer) {
     lexer->result_symbol = TEMPLATE_CHARS;
     for (bool has_content = false;; has_content = true) {
@@ -64,7 +94,7 @@ static WhitespaceResult scan_whitespace_and_comments(TSLexer *lexer, bool *scann
     bool saw_block_newline = false;
 
     for (;;) {
-        while (iswspace(lexer->lookahead) ) {
+        while (cf_isspace(lexer->lookahead) ) {
             skip(lexer);
         }
 
@@ -115,11 +145,11 @@ static bool scan_cfml_word_operator(TSLexer *lexer) {
     // Collect up to 10 chars to identify the operator
     char buf[11] = {0};
     int len = 0;
-    for (; len < 10 && iswalpha(lexer->lookahead); len++) {
-        buf[len] = towlower(lexer->lookahead);
+    for (; len < 10 && cf_isalpha(lexer->lookahead); len++) {
+        buf[len] = cf_tolower(lexer->lookahead);
         skip(lexer);
     }
-    bool at_end = !iswalnum(lexer->lookahead);
+    bool at_end = !cf_isalnum(lexer->lookahead);
     if (!at_end) return false;
 
     // Match against known word operators
@@ -177,7 +207,7 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
             break;
         }
 
-        if (!iswspace(lexer->lookahead)) {
+        if (!cf_isspace(lexer->lookahead)) {
             return false;
         }
 
@@ -212,7 +242,7 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
         // Insert a semicolon before decimals literals but not otherwise.
         case '.':
             skip(lexer);
-            return iswdigit(lexer->lookahead);
+            return cf_isdigit(lexer->lookahead);
 
         // Insert a semicolon before `--` and `++`, but not before binary `+` or `-`.
         case '+':
@@ -248,7 +278,7 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
 
 static bool scan_ternary_qmark(TSLexer *lexer) {
     for (;;) {
-        if (!iswspace(lexer->lookahead)) {
+        if (!cf_isspace(lexer->lookahead)) {
             break;
         }
         skip(lexer);
@@ -279,7 +309,7 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
 
         if (lexer->lookahead == '.') {
             advance(lexer);
-            if (iswdigit(lexer->lookahead)) {
+            if (cf_isdigit(lexer->lookahead)) {
                 return true;
             }
             return false;
@@ -291,7 +321,7 @@ static bool scan_ternary_qmark(TSLexer *lexer) {
 
 /*
 static bool scan_html_comment(TSLexer *lexer) {
-    while (iswspace(lexer->lookahead) || lexer->lookahead == 0x2028 || lexer->lookahead == 0x2029) {
+    while (cf_isspace(lexer->lookahead) || lexer->lookahead == 0x2028 || lexer->lookahead == 0x2029) {
         skip(lexer);
     }
 
@@ -339,7 +369,7 @@ static bool scan_jsx_text(TSLexer *lexer) {
 
     while (lexer->lookahead != 0 && lexer->lookahead != '<' && lexer->lookahead != '>' && lexer->lookahead != '{' &&
            lexer->lookahead != '}' && lexer->lookahead != '&') {
-        bool is_wspace = iswspace(lexer->lookahead);
+        bool is_wspace = cf_isspace(lexer->lookahead);
         if (lexer->lookahead == '\n') {
             at_newline = true;
         } else {
@@ -380,7 +410,7 @@ static bool scan_query_text(TSLexer *lexer) {
     // so a loop that only stops at the closing quote spins forever on an
     // unterminated string — `queryExecute("` on its own hung the parser.
     while (lexer->lookahead != 0 && lexer->lookahead != '"') {
-        bool is_wspace = iswspace(lexer->lookahead);
+        bool is_wspace = cf_isspace(lexer->lookahead);
         if (lexer->lookahead == '\n') {
             at_newline = true;
         } else {
@@ -467,7 +497,19 @@ static bool scan_cfml_comment(TSLexer *lexer) {
 }
 
 bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
+    // `cfml_template_content` is only reachable straight after a ``` fence, a
+    // state in which no other external token is valid — so AUTOMATIC_SEMICOLON
+    // being valid alongside it means the parser is in error recovery, where
+    // tree-sitter marks every external token valid. Scanning there runs to EOF
+    // looking for a closing fence that ordinary CFML does not contain, and then
+    // returns false having consumed the file for nothing. Over 400 script
+    // components (2.2 MB) that happened 3,060 times and accounted for 25.1M of
+    // the scanner's 25.13M character advances — 52% of every instruction the
+    // parse retired. TEMPLATE_CHARS below already stands down the same way.
     if (valid_symbols[CFML_TEMPLATE_CONTENT]) {
+        if (valid_symbols[AUTOMATIC_SEMICOLON]) {
+            return false;
+        }
         return scan_cfml_template_content(lexer);
     }
 
@@ -493,7 +535,7 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
     // itself, so by the time it declines the lexer is already on `<`.
     if (valid_symbols[CFML_COMMENT] && !valid_symbols[AUTOMATIC_SEMICOLON] &&
         !valid_symbols[TERNARY_QMARK] && !valid_symbols[ELVIS_OPERATOR]) {
-        while (iswspace(lexer->lookahead)) skip(lexer);
+        while (cf_isspace(lexer->lookahead)) skip(lexer);
         return lexer->lookahead == '<' && scan_cfml_comment(lexer);
     }
 
@@ -516,7 +558,7 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
     // before the closing brace.
     if (valid_symbols[AUTOMATIC_SEMICOLON] && valid_symbols[TAG_LINEFEED]) {
         lexer->mark_end(lexer);
-        while (iswspace(lexer->lookahead)) skip(lexer);
+        while (cf_isspace(lexer->lookahead)) skip(lexer);
         if (lexer->lookahead == '}' || lexer->lookahead == 0) {
             lexer->result_symbol = AUTOMATIC_SEMICOLON;
             return true;
