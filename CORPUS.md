@@ -11,8 +11,27 @@ npm run corpus:fetch     # shallow-clone the curated repo list into ./corpus (~1
 npm run scan corpus      # one line per ERROR / MISSING node
 npm run corpus:report    # the same scan, clustered into distinct failure sites
 npm run probe            # minimal reductions of every construct found below
+npm run scan:examples    # the committed examples/, isolated, against its baseline
 npm run bench -- corpus  # parser throughput; add --out/--baseline to compare builds
 ```
+
+### `examples/` and `--isolate`
+
+`examples/` holds pathological inputs rather than sample code, and until it was
+wired into CI nothing scanned it — not a script, not a workflow, and ESLint
+ignored it. One of its two files, `deeply-nested-custom.cfm`, **segfaults the
+parser**: ~1,200 nested `<xyz>` elements, and an unknown element nests, so each
+one is a level. The threshold is 119 (118 parses). Known HTML tags do not
+accumulate depth and survive 1,500; unpaired *CF* custom tags produce an ERROR
+instead of crashing, which is the milder half of the same mechanism.
+
+A crash cannot be scanned in-process, because it takes the scan down with it.
+`--isolate` parses each file in a child process and turns a fatal signal into a
+reported result; it costs a process per file, so it is for `examples/`, not the
+14k-file corpus. `--expect <file>` compares the run against a committed baseline
+(`examples/expected.json`) and fails on drift **in either direction**, the same
+contract `npm run probe` has — so the known crash does not redden CI, and both a
+new crash and a fix do. Re-baseline with `npm run scan:examples -- --update`.
 
 `corpus/` is gitignored — it is third-party code under a mix of licences and is
 never committed. `npm run corpus:fetch -- --list` prints the repository list;

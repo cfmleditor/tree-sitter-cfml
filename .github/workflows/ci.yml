@@ -54,6 +54,12 @@ jobs:
       # This fails on drift in either direction, so a gap closing is as loud as a
       # regression — but only if it actually runs, which until now it did not.
       - run: npm run probe
+      # `examples/` was scanned by nothing — not a script, not a workflow, and
+      # eslint ignored it — so the fact that one of its two files segfaults the
+      # parser went unnoticed. It runs isolated (a process per file) because an
+      # in-process scan dies with the parser, and against a committed baseline
+      # so the known crash does not redden CI while any change to it does.
+      - run: npm run scan:examples
       - run: npm run testbindings
       - run: npm run lint
 

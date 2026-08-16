@@ -16,6 +16,8 @@
 
 ### Tooling
 
+- Scan `examples/` in CI (`npm run scan:examples`). Nothing scanned it before — no script, no workflow, and ESLint ignored it — which is why nobody had noticed that `examples/deeply-nested-custom.cfm` **segfaults the parser**: ~1,200 nested `<xyz>` elements, and an unknown element nests, so the 119th level kills the process. Known HTML tags do not accumulate depth and survive 1,500
+- Add `--isolate` to `npm run scan`, which parses each file in a child process so a crash is reported instead of ending the scan, and `--expect <file>`, which compares the result against a committed baseline and fails on drift in either direction — the same contract `npm run probe` has. `examples/expected.json` records the known crash, so CI stays green until the behaviour changes either way. Re-baseline with `npm run scan:examples -- --update`
 - Ignore `corpus/**` in `eslint.config.mjs`. The directory is gitignored but was still linted, so `npm run lint` reported errors in third-party JavaScript pulled in by `npm run corpus:fetch` — 53 of them from one repository in the list
 - Fix the file count in `npm run scan`: a file whose only parse errors came from an injected `<cfscript>` or `<cfquery>` region had them printed but was never counted, so the summary under-reported affected files (62 against a true 161 on the reference corpus). Node counts were unaffected
 
