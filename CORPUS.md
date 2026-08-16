@@ -91,22 +91,22 @@ grammar parsed cleanly a moment earlier.
 - **Comma-less function parameters** — a newline between parameters as a soft
   separator, `function f( boolean a = false ⏎ boolean b = true )`. Lucee, ACF and
   BoxLang all tolerate the missing comma; TestBox's `BaseSpec.cfc` `createMock`
-  relies on it. `cfscript/commaless_params.cfc`.
+  relies on it. `cfscript/commaless_params.cfc`, [#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49).
 - **A type in front of a reserved-word parameter name** — `function f( array in )`.
   The untyped `function f( in )` parses, and `do`, `for`, `eq` and `is` take a
   type fine; only `in` is affected. ColdBox's `coldbox.system.core.util.Util`
   declares `<cfargument name="in" type="array">`.
-  `cfscript/typed_reserved_param.cfc`.
+  `cfscript/typed_reserved_param.cfc`, [#50](https://github.com/cfmleditor/tree-sitter-cfml/issues/50).
 - **An array type in parameter position** — `function f( string[] v )`, and the
   nested `string[][]` form. The exact mirror of `array_return_type.cfc`, which
   parses: `X[]` was made to work in return position and never in parameter
-  position. `cfscript/array_param_type.cfc`.
+  position. `cfscript/array_param_type.cfc`, [#51](https://github.com/cfmleditor/tree-sitter-cfml/issues/51).
 - **`param <type> <name> = <value>;`** — `param numeric shortBad = "abc";`. The
   `default=` spelling of the same shorthand (`param_typed.cfm`) parses; the `=`
-  spelling does not. `cfscript/param_typed_assignment.cfc`.
+  spelling does not. `cfscript/param_typed_assignment.cfc`, [#52](https://github.com/cfmleditor/tree-sitter-cfml/issues/52).
 - **`for ( var <dotted> in … )`** — `for ( var local.package in items )`. A dotted
   loop variable parses without `var`, and a plain name parses with it; only the
-  combination fails. `cfscript/for_in_var_dotted.cfc`.
+  combination fails. `cfscript/for_in_var_dotted.cfc`, [#53](https://github.com/cfmleditor/tree-sitter-cfml/issues/53).
 
 The remaining three are `cfml`:
 
@@ -115,7 +115,7 @@ The remaining three are `cfml`:
   single-quoted one, because `quoted_cf_attribute_value` lists `'""'` as an
   alternative in its double-quoted branch and has no `"''"` counterpart in the
   other. The narrowest of the eight — a one-line asymmetry.
-  `cfml/single_quoted_attribute_escape.cfm`.
+  `cfml/single_quoted_attribute_escape.cfm`, [#54](https://github.com/cfmleditor/tree-sitter-cfml/issues/54).
 - **A run of unpaired custom tags deeper than ~71** — an unpaired `<cf_foo>` opens
   a block that the next one nests inside, so N in a row is N levels deep. At 72
   levels a *following* tag can no longer be parsed and the whole document
@@ -123,11 +123,11 @@ The remaining three are `cfml`:
   depth, since implicit end tags close it cheaply at EOF, so it is the trailing
   tag that exposes the limit. RustCFML's `runner.cfm` drives its suite with ~700
   unpaired `<cf_runtest>` tags and then calls `printSummary()`, which is exactly
-  that shape. `cfml/deep_unpaired_custom_tags.cfm`.
+  that shape. `cfml/deep_unpaired_custom_tags.cfm`, [#55](https://github.com/cfmleditor/tree-sitter-cfml/issues/55).
 - **`</cfscript>` inside a string literal** — closes the script block early, so
   the rest of the block is parsed as template text and the real closing tag
   becomes a stray end tag. The scanner scans raw script text for the close tag
-  without tracking string literals. `cfml/close_tag_in_script_string.cfm`.
+  without tracking string literals. `cfml/close_tag_in_script_string.cfm`, [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56).
 
 Files are scanned with the `cfml` grammar (or `cfscript` for `.cfs`), then every
 `cf_script_content`, `cf_component_content` and `cf_query_content` region is
