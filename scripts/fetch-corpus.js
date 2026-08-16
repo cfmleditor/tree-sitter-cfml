@@ -84,10 +84,12 @@ const REPOS = [
   'cfmleditor/cfmleditor', // editor fixtures
 
   // Third wave: an engine test suite rather than an application. RustCFML is a
-  // CFML interpreter written in Rust; its `tests/` tree is 1,180 files of
-  // deliberately edge-case CFML, each one written to pin a single language
-  // behaviour. Density of unusual constructs per file is far higher than in
-  // application code, which is exactly why it is here.
+  // CFML interpreter written in Rust; 1,188 CFML files, of which the `tests/`
+  // tree is 1,108 — deliberately edge-case CFML, each file written to pin a
+  // single language behaviour. Density of unusual constructs per file is far
+  // higher than in application code, which is exactly why it is here. The
+  // other 80 (`examples/`, `crates/`, `bench/`) are ordinary CFML and all
+  // parse cleanly.
   'RustCFML/RustCFML',
 ];
 

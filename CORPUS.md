@@ -54,14 +54,24 @@ rather than size. It scanned at **23 error nodes across 6 of 1,228 files**
   original corpus (760 → 760, per-file diff identical).
 
 The third wave is an **engine test suite**, not an application: RustCFML is a
-CFML interpreter written in Rust, and its `tests/` tree is 1,188 files of
-deliberately edge-case CFML, each written to pin one language behaviour. Density
-of unusual constructs per file is far higher than in application code, which is
-the whole reason it is here — it found eight new gaps in 1,188 files where the
-second wave found two in 1,228.
+CFML interpreter written in Rust, and 1,108 of its 1,188 CFML files are the
+`tests/` tree — deliberately edge-case CFML, each file written to pin one
+language behaviour. Density of unusual constructs per file is far higher than in
+application code, which is the whole reason it is here: it found eight new gaps
+where the second wave found two in a comparable 1,228 files.
 
-It scanned at **40 error nodes across 15 of 1,188 files** (98.7% of files clean),
-attributed as:
+It scanned at **40 error nodes across 15 of 1,188 files** (98.7% of files clean).
+Every one of the 40 is in `tests/`; the rest of the repository is ordinary CFML
+and parses clean:
+
+| Directory | Files | Errors |
+|---|---|---|
+| `tests/` | 1,108 | 40 across 15 files |
+| `examples/` — demo apps, incl. `miniapp`, `taffytest`, `websocket_chat` | 39 | none |
+| `crates/` — CLI test fixtures | 37 | none |
+| `bench/` | 4 | none |
+
+The 40 are attributed as:
 
 | Nodes | Files | Cause | Status |
 |---|---|---|---|

@@ -12,7 +12,7 @@
 
 ### Corpus
 
-- Add `RustCFML/RustCFML` to the corpus repository list — a CFML interpreter written in Rust whose `tests/` tree is 1,188 files of deliberately edge-case CFML. It scans at 40 error nodes across 15 files (98.7% of files clean) and turned up eight constructs no earlier scan had shown, recorded in [`CORPUS.md`](CORPUS.md), [`LIMITATIONS.md`](LIMITATIONS.md) and [`docs/FAILING-PATTERNS.md`](docs/FAILING-PATTERNS.md) with a probe each. No grammar changes — five of the eight already parse in the embedded CFScript of `common/define-grammar.js` and fail only in the standalone `cfscript/grammar.js`, which `injections.scm` is what makes user-visible
+- Add `RustCFML/RustCFML` to the corpus repository list — a CFML interpreter written in Rust, 1,188 CFML files of which the `tests/` tree is 1,108, each file written to pin one edge-case language behaviour. It scans at 40 error nodes across 15 of 1,188 files (98.7% of files clean), all 40 in `tests/`, and turned up eight constructs no earlier scan had shown, recorded in [`CORPUS.md`](CORPUS.md), [`LIMITATIONS.md`](LIMITATIONS.md) and [`docs/FAILING-PATTERNS.md`](docs/FAILING-PATTERNS.md) with a probe each. No grammar changes — five of the eight already parse in the embedded CFScript of `common/define-grammar.js` and fail only in the standalone `cfscript/grammar.js`, which `injections.scm` is what makes user-visible
 
 ### Tooling
 
