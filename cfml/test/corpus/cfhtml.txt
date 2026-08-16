@@ -327,3 +327,43 @@ script element hash without cfoutput is raw text
     (script_text)
     (end_tag
       (tag_name))))
+
+===================================
+cfsavecontent with an xml declaration
+===================================
+<cfsavecontent variable="x"><?xml version="1.0" encoding="UTF-8"?>
+<root><node>#foo#</node></root></cfsavecontent>
+
+---
+
+(program
+  (cf_savecontent_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_savecontent_body
+      (xml_decl
+        (tag_attributes
+          (attribute
+            (attribute_name)
+            (quoted_attribute_value
+              (attribute_value))))
+        (tag_attributes
+          (attribute
+            (attribute_name)
+            (quoted_attribute_value
+              (attribute_value)))))
+      (element
+        (start_tag
+          (tag_name))
+        (element
+          (start_tag
+            (tag_name))
+          (hash_single)
+          (html_text)
+          (hash_single)
+          (end_tag
+            (tag_name)))
+        (end_tag
+          (tag_name))))))

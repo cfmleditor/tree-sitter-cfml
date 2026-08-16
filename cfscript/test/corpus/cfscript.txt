@@ -2246,3 +2246,26 @@ var s = [name = "Alice", age = 30];
         (assignment_expression
           left: (identifier)
           right: (number))))))
+
+===================================
+component as a call and as a declaration
+===================================
+component( "x" );
+component {
+  function f() {}
+}
+---
+
+(program
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (string
+          (string_fragment)))))
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block)))))
