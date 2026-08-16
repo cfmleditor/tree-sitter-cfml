@@ -2269,3 +2269,28 @@ component {
         (identifier)
         (formal_parameters)
         (statement_block)))))
+
+===================================
+array type in parameter position
+===================================
+function f( string[] v, User[][] w, required numeric[] x = [] ) {}
+---
+
+(program
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (array_return_suffix)
+      (identifier)
+      (parameter_type
+        (identifier))
+      (array_return_suffix)
+      (array_return_suffix)
+      (identifier)
+      (parameter_type)
+      (array_return_suffix)
+      (assignment_pattern
+        (identifier)
+        (array)))
+    (statement_block)))

@@ -165,17 +165,31 @@ assessment, including how many files each affects and what fixing it would cost.
   (`x.function`), but not as the object of a member expression. Making it a
   general expression start is what previously broke `function instanceOf( ... )`.
 
-#### Present in the embedded CFScript, missing from the standalone grammar
+#### Constructs that fail in both CFScript grammars
 
-The five below parse in the embedded CFScript of `common/define-grammar.js` and
-fail only in `cfscript/grammar.js`. Because `injections.scm` sends every
-`<cfscript>` block and every `component` body to the standalone grammar, an
-editor flags them even though the `cfml` grammar accepted the same source. All
-five came from the RustCFML engine test suite; see [CORPUS.md](CORPUS.md).
+These came from the RustCFML engine test suite; see [CORPUS.md](CORPUS.md).
+
+**Correction.** This section previously said the constructs below "parse in the
+embedded CFScript of `common/define-grammar.js` and fail only in
+`cfscript/grammar.js`", and `docs/FAILING-PATTERNS.md` costed them as a port of
+rules that already existed. That was wrong, and it under-rated all of them.
+
+The `cfml` grammar does not parse CFScript bodies at all: `<cfscript>` becomes
+`cf_script_content` and a component body becomes `cf_component_content`, both
+raw text handed to the standalone grammar by `injections.scm`. So "the `cfml`
+grammar accepted the same source" only ever meant it had not looked at it.
+`common/define-grammar.js` *does* carry a copy of the CFScript rules, reachable
+through an expression context such as `<cfset f = function( … ) { … }>` — and
+reached that way, every construct below fails there too. `_formal_parameter` and
+`formal_parameters` are byte-identical between the two files, which is the
+direct confirmation that there was nothing to port.
+
+Each is therefore a real grammar change, needed in **both** files, in the area
+where keyword extraction is lexical. Verify a fix in both — a `.cfs` file for
+`cfscript/grammar.js`, and a `<cfset>` closure for `common/define-grammar.js`.
 
 - **Comma-less function parameters** — `function f( boolean a = false ⏎ boolean b = true )`. A newline between parameters is a soft separator on Lucee, ACF and BoxLang; TestBox's `BaseSpec.cfc` `createMock` depends on it. [#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49).
 - **A type in front of a reserved-word parameter name** — `function f( array in )`. Untyped `function f( in )` parses, and `do`, `for`, `eq`, `is` take a type fine; only `in` is affected. ColdBox's `Util.cfc` declares `<cfargument name="in" type="array">`. [#50](https://github.com/cfmleditor/tree-sitter-cfml/issues/50).
-- **An array type in parameter position** — `function f( string[] v )`, and nested `string[][]`. The mirror of the array *return* type, which parses. [#51](https://github.com/cfmleditor/tree-sitter-cfml/issues/51).
 - **`param <type> <name> = <value>;`** — `param numeric shortBad = "abc";`. The `default=` spelling of the same shorthand parses; the `=` spelling does not. [#52](https://github.com/cfmleditor/tree-sitter-cfml/issues/52).
 - **`for ( var <dotted> in … )`** — `for ( var local.package in items )`. Dotted without `var` parses, plain name with `var` parses; only the combination fails. [#53](https://github.com/cfmleditor/tree-sitter-cfml/issues/53).
 
@@ -195,9 +209,11 @@ access-modifier member declarations, the empty struct literal `[=]`, bare `>` or
 attributes, a subscript as a `var` declaration name
 (`var mappings[ key ] = value`), `new` with a dotted Java path
 (`new java.util.Properties()`), `debugger` as an ordinary identifier, the
-thin-arrow lambda (`t -> t.b()`), and the `''` escape inside a single-quoted tag
-attribute value (`default='x ''y'' z'`). The `new java:` / `new cfml:` type
-prefix now works in both CFScript grammars, where it had been `cfscript`-only.
+thin-arrow lambda (`t -> t.b()`), the `''` escape inside a single-quoted tag
+attribute value (`default='x ''y'' z'`), and an array type in parameter position
+(`function f( string[] v )`, nested `string[][]`). The `new java:` / `new cfml:`
+type prefix now works in both CFScript grammars, where it had been
+`cfscript`-only.
 
 ### `=>` and `->` produce the same node
 

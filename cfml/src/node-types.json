@@ -2793,6 +2793,10 @@
       "required": false,
       "types": [
         {
+          "type": "array_return_suffix",
+          "named": true
+        },
+        {
           "type": "assignment_pattern",
           "named": true
         },

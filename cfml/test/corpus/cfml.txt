@@ -3039,3 +3039,28 @@ doubled-quote escape in tag attribute values
       (cf_attribute_name)
       (quoted_cf_attribute_value))
     (cf_selfclose_void_tag_end)))
+
+===================================
+array type in parameter position
+===================================
+<cfset f = function( string[] v, User[][] w ) {}>
+
+---
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (function_expression
+        (formal_parameters
+          (parameter_type
+            (identifier))
+          (array_return_suffix)
+          (identifier)
+          (parameter_type
+            (identifier))
+          (array_return_suffix)
+          (array_return_suffix)
+          (identifier))
+        (statement_block)))
+    (cf_selfclose_void_tag_end)))

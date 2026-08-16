@@ -852,6 +852,13 @@ module.exports = grammar({
       seq(
         optional(keyword('Required')),
         $.parameter_type,
+        // `string[] v`, and nested `string[][] v` — the mirror of the array
+        // return type above, reusing its single `[]` token for the same
+        // reason: as two tokens the `[` is reachable from `array_pattern` in
+        // this state, and the parser cannot tell which until it has read the
+        // `]`. The node keeps its `array_return_suffix` name so the existing
+        // `@punctuation.bracket` highlight covers both positions.
+        repeat($.array_return_suffix),
         optional(choice($.pattern, $.assignment_pattern)),
         repeat($.parameter_attribute),
       ),

@@ -21,7 +21,7 @@
     "cfml/single_quoted_attribute_escape.cfm": "pass",
     "cfml/var_new_in_cfset.cfc": "pass",
     "cfquery/bitwise_and.cfm": "pass",
-    "cfscript/array_param_type.cfc": "fail",
+    "cfscript/array_param_type.cfc": "pass",
     "cfscript/array_return_type.cfc": "pass",
     "cfscript/cfml_template_after_bare_statement.cfc": "fail",
     "cfscript/commaless_params.cfc": "fail",

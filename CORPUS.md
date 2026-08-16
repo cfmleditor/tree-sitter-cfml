@@ -173,13 +173,23 @@ expression; and one bare identifier used as a statement with no semicolon.
 Every construct below is exercised by a file that RustCFML's own `runner.cfm`
 loads, so each is CFML that at least one engine accepts. Each has a probe.
 
-**Five are `cfscript`-grammar-only** — they already parse in the embedded
-CFScript of `common/define-grammar.js` and fail only in the standalone
-`cfscript/grammar.js`. That is the drift the architecture note in
-[`CLAUDE.md`](CLAUDE.md) warns about, and it is user-visible rather than
-cosmetic: `injections.scm` routes every `<cfscript>` block and every `component`
-body to the standalone grammar, so an editor reports errors on source the `cfml`
-grammar parsed cleanly a moment earlier.
+**Five were recorded as `cfscript`-grammar-only** — as already parsing in the
+embedded CFScript of `common/define-grammar.js` and failing only in the
+standalone `cfscript/grammar.js`. **That was wrong**, and it under-rated all
+five; the corrected assessment is in
+[`LIMITATIONS.md`](LIMITATIONS.md) and [`docs/FAILING-PATTERNS.md`](docs/FAILING-PATTERNS.md).
+
+The `cfml` grammar never parses CFScript. `<cfscript>` is `cf_script_content`
+and a component body is `cf_component_content` — raw text that `injections.scm`
+routes to the standalone grammar. Testing one of these constructs inside
+`<cfscript>` therefore proves nothing: the body was not parsed. The copy of the
+CFScript rules in `common/define-grammar.js` is real and is reachable through an
+expression context such as `<cfset f = function( … ) { … }>`, and reached that
+way all five fail there too.
+
+The mistake is worth keeping written down because it is easy to repeat: **a
+claim that a construct already parses somewhere has to name the input that
+reaches the rule.** Otherwise it measures raw text.
 
 - **Comma-less function parameters** — a newline between parameters as a soft
   separator, `function f( boolean a = false ⏎ boolean b = true )`. Lucee, ACF and
@@ -193,7 +203,10 @@ grammar parsed cleanly a moment earlier.
 - **An array type in parameter position** — `function f( string[] v )`, and the
   nested `string[][]` form. The exact mirror of `array_return_type.cfc`, which
   parses: `X[]` was made to work in return position and never in parameter
-  position. `cfscript/array_param_type.cfc`, [#51](https://github.com/cfmleditor/tree-sitter-cfml/issues/51).
+  position. **Fixed** — `repeat($.array_return_suffix)` after `parameter_type`
+  in both grammars, reusing the return type's single `[]` token. 12 nodes across
+  3 files, two of them Lucee rather than RustCFML.
+  `cfscript/array_param_type.cfc`, [#51](https://github.com/cfmleditor/tree-sitter-cfml/issues/51).
 - **`param <type> <name> = <value>;`** — `param numeric shortBad = "abc";`. The
   `default=` spelling of the same shorthand (`param_typed.cfm`) parses; the `=`
   spelling does not. `cfscript/param_typed_assignment.cfc`, [#52](https://github.com/cfmleditor/tree-sitter-cfml/issues/52).

@@ -3282,6 +3282,13 @@
               "name": "parameter_type"
             },
             {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "array_return_suffix"
+              }
+            },
+            {
               "type": "CHOICE",
               "members": [
                 {
