@@ -151,8 +151,14 @@ typedef enum {
 
 typedef Array(char) String;
 
+// The name field is a fixed, NUL-padded array rather than a pointer on purpose:
+// it lets `tag_type_for_name` test an entry's length by reading one byte
+// (`tag_name[size] == '\0'`) instead of calling `strlen` on it. Every name in
+// the table has to stay shorter than the field for that test to hold.
+#define TAG_NAME_FIELD 16
+
 typedef struct {
-    char tag_name[16];
+    char tag_name[TAG_NAME_FIELD];
     TagType tag_type;
 } TagMapEntry;
 
@@ -298,12 +304,25 @@ static const TagType TAG_TYPES_NOT_ALLOWED_IN_PARAGRAPHS[] = {
     NAV,      OL,         P,      PRE,        SECTION,
 };
 
+#define TAG_TYPE_COUNT (sizeof(TAG_TYPES_BY_TAG_NAME) / sizeof(TAG_TYPES_BY_TAG_NAME[0]))
+
+// Called for every HTML tag name the scanner reads, and it walks the whole
+// table. The `strlen` it used to run per entry was 2.2% of every instruction a
+// corpus parse retired with `cfml` — 126 library calls to reject one name.
+// Comparing the first byte rejects almost every entry in a single load; the
+// NUL-padded name field supplies the length without a call.
 static TagType tag_type_for_name(const String *tag_name) {
-    for (int i = 0; i < 126; i++) {
+    unsigned size = tag_name->size;
+    if (size == 0 || size >= TAG_NAME_FIELD) {
+        return CUSTOM;
+    }
+    char first = tag_name->contents[0];
+    for (unsigned i = 0; i < TAG_TYPE_COUNT; i++) {
         const TagMapEntry *entry = &TAG_TYPES_BY_TAG_NAME[i];
         if (
-            strlen(entry->tag_name) == tag_name->size &&
-            memcmp(tag_name->contents, entry->tag_name, tag_name->size) == 0
+            entry->tag_name[0] == first &&
+            entry->tag_name[size] == '\0' &&
+            memcmp(entry->tag_name, tag_name->contents, size) == 0
         ) {
             return entry->tag_type;
         }
@@ -319,7 +338,10 @@ static inline Tag tag_new() {
     return tag;
 }
 
-static const char *CF_VOID_TAGS[] = {
+// Fixed-width and NUL-padded for the same reason as TAG_TYPES_BY_TAG_NAME: the
+// lookup reads the length out of the padding instead of calling `strlen` on
+// every entry. Names must stay shorter than TAG_NAME_FIELD.
+static const char CF_VOID_TAGS[][TAG_NAME_FIELD] = {
     "COMPONENT", "PARAM", "ARGUMENT", "PROPERTY", "RETHROW", "THROW", "SCHEDULE", "HTTPPARAM", "QUERYPARAM", "FLUSH", "LOGOUT", "ZIPELEMENT",
     "BREAK", "CONTINUE", "ABORT", "EXIT", "INCLUDE", "LOCATION", "HEADER", "DUMP",
     "CONTENT", "COOKIE", "LOG", "FILE", "DIRECTORY", "WDDX",
@@ -337,13 +359,19 @@ static const char *CF_VOID_TAGS[] = {
     // </cftimer>` fail. The corpus is silent on this one — `<cftimer` appears
     // in none of the 12,549 files — so the call rests on the tag's semantics
     // rather than on usage.
-    NULL
 };
 
-static inline bool cf_tag_name_in(const String *name, const char **list) {
-    for (int i = 0; list[i] != NULL; i++) {
-        if (strlen(list[i]) == name->size &&
-            memcmp(name->contents, list[i], name->size) == 0) {
+#define CF_VOID_TAG_COUNT (sizeof(CF_VOID_TAGS) / sizeof(CF_VOID_TAGS[0]))
+
+static inline bool cf_tag_name_in(const String *name, const char list[][TAG_NAME_FIELD], unsigned count) {
+    unsigned size = name->size;
+    if (size == 0 || size >= TAG_NAME_FIELD) {
+        return false;
+    }
+    char first = name->contents[0];
+    for (unsigned i = 0; i < count; i++) {
+        if (list[i][0] == first && list[i][size] == '\0' &&
+            memcmp(list[i], name->contents, size) == 0) {
             return true;
         }
     }
@@ -375,7 +403,7 @@ static inline Tag cf_tag_for_name(String name) {
         tag.type = CF_SCRIPT;
     } else if (name.size == 11 && memcmp(name.contents, "SAVECONTENT", 11) == 0) {
         tag.type = CF_SAVECONTENT;
-    } else if (cf_tag_name_in(&name, CF_VOID_TAGS)) {
+    } else if (cf_tag_name_in(&name, CF_VOID_TAGS, CF_VOID_TAG_COUNT)) {
         tag.type = CF_VOID;
     } else {
         tag.type = CFML;
@@ -395,10 +423,13 @@ static inline Tag tag_for_name(String name) {
     return tag;
 }
 
+// Every Tag owns its name buffer, whether or not its type carries a name — a
+// type that does not simply holds an empty (or emptied-but-still-allocated)
+// array. Freeing unconditionally is what makes it safe for `deserialize` to
+// overwrite a Tag in place and keep the buffer it already has, which is where
+// the scanner's allocator traffic used to come from.
 static inline void tag_free(Tag *tag) {
-    if (tag->type == CUSTOM || tag->type == CFML || tag->type == CF_VOID || tag->type == CF_XML || tag->type == CF_QUERY || tag->type == CF_SCRIPT || tag->type == CF_SAVECONTENT || tag->type == CF_OUTPUT || tag->type == CF_FUNCTION || tag->type == CF_SET || tag->type == CF_RETURN || tag->type == CF_IF || tag->type == CF_ELSEIF || tag->type == CF_ELSE) {
-        array_delete(&tag->tag_name);
-    }
+    array_delete(&tag->tag_name);
 }
 
 static inline bool tag_is_void(const Tag *self) {

@@ -100,6 +100,48 @@ static inline void advance(TSLexer *lexer) { lexer->advance(lexer, false); }
 
 static inline void skip(TSLexer *lexer) { lexer->advance(lexer, true); }
 
+// `iswspace` and friends are out-of-line, locale-aware library calls, and this
+// scanner asks them about every character it reads. CFML source is ASCII in the
+// parts that matter, so answer for ASCII inline and keep the library call for
+// the non-ASCII tail, where its answer is the one that counts. In the "C"
+// locale a parser embedded in an editor or a Node addon runs under, the two
+// agree for ASCII by definition; a locale that classified an ASCII character
+// differently would change these answers, but no locale in practice does.
+static inline bool cf_isspace(int32_t c) {
+    return c == ' ' || c == '\n' || c == '\t' || c == '\r' || c == '\v' || c == '\f' ||
+           (c > 127 && iswspace((wint_t)c));
+}
+
+static inline bool cf_isalpha(int32_t c) {
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+           (c > 127 && iswalpha((wint_t)c));
+}
+
+// `iswdigit` and `iswxdigit` answer only for the ASCII digits in every locale,
+// so these need no fallback at all.
+static inline bool cf_isdigit(int32_t c) { return c >= '0' && c <= '9'; }
+
+static inline bool cf_isxdigit(int32_t c) {
+    return cf_isdigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+}
+
+static inline bool cf_isalnum(int32_t c) {
+    return cf_isdigit(c) || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+           (c > 127 && iswalnum((wint_t)c));
+}
+
+static inline int32_t cf_toupper(int32_t c) {
+    if (c >= 'a' && c <= 'z') return c - ('a' - 'A');
+    if (c > 127) return (int32_t)towupper((wint_t)c);
+    return c;
+}
+
+static inline int32_t cf_tolower(int32_t c) {
+    if (c >= 'A' && c <= 'Z') return c + ('a' - 'A');
+    if (c > 127) return (int32_t)towlower((wint_t)c);
+    return c;
+}
+
 static inline bool tag_has_name(TagType type, bool is_cfquery_context) {
     return type == CUSTOM || type == CFML || type == CF_VOID || type == CF_SET ||
            type == CF_XML || type == CF_SCRIPT || type == CF_SAVECONTENT ||
@@ -189,7 +231,7 @@ static inline bool implicit_cf_end_tag_valid(const bool *vs, unsigned count) {
             if ((size) + 2 + _len + sizeof(_tag.html_depth) > _limit) break; \
             (buffer)[(size)++] = (char)_tag.type; \
             (buffer)[(size)++] = (char)_len; \
-            strncpy(&(buffer)[(size)], _tag.tag_name.contents, _len); \
+            memcpy(&(buffer)[(size)], _tag.tag_name.contents, _len); \
             (size) += _len; \
             memcpy(&(buffer)[(size)], &_tag.html_depth, sizeof(_tag.html_depth)); \
             (size) += sizeof(_tag.html_depth); \
@@ -223,41 +265,67 @@ static unsigned serialize(Scanner *scanner, char *buffer, bool is_cfquery_contex
     return size;
 }
 
-// Every read is bounded by `length`. The counts and lengths driving this loop
-// come out of the buffer itself, so trusting them is trusting the input: before
-// the #57 fix an over-long `_serialized` walked straight off the end of the
-// heap block and segfaulted the process. A truncated or foreign buffer now
-// costs scanner state, not memory safety — the loop stops and the remaining
-// tags are padded as empty, exactly as a serialize-side truncation is.
+// Deserialize runs once per external-token lex — 85,213 times over 300 corpus
+// templates — which made rebuilding the tag stack from scratch the scanner's
+// most expensive operation: a free and a malloc for every tag on it, on every
+// call. The stack barely changes between calls, so the slots already in the
+// array are reused in place and keep the name buffers they hold; only a change
+// in depth touches the allocator now. Reuse is safe because every Tag owns its
+// name buffer regardless of type (see `tag_free`), so overwriting a slot never
+// strands one.
+//
+// Every read is bounded by `length` (#57). The counts and lengths driving this
+// loop are read out of the buffer, so trusting them is trusting the input: an
+// over-long `_serialized` used to walk straight off the end of the heap block
+// and segfault the process. When a read would not fit, `_stop` latches and the
+// remaining slots are emptied — the same state a serialize-side truncation
+// leaves, so a short or foreign buffer costs scanner state, not memory safety.
 #define DESERIALIZE_TAGS(tags_field, buffer, size, length, is_cfquery_context) do { \
-    for (unsigned _i = 0; _i < (tags_field).size; _i++) tag_free(&(tags_field).contents[_i]); \
-    array_clear(&(tags_field)); \
     uint16_t _serialized = 0, _count = 0; \
-    if ((size) + TAGS_HEADER_SIZE > (length)) break; \
-    memcpy(&_serialized, &(buffer)[(size)], sizeof(_serialized)); (size) += sizeof(_serialized); \
-    memcpy(&_count, &(buffer)[(size)], sizeof(_count)); (size) += sizeof(_count); \
-    array_reserve(&(tags_field), _count); \
-    unsigned _iter = 0; \
-    for (_iter = 0; _iter < _serialized; _iter++) { \
-        if ((size) + 1 > (length)) break; \
-        Tag _tag = tag_new(); \
-        _tag.type = (TagType)(unsigned char)(buffer)[(size)++]; \
-        if (tag_has_name(_tag.type, is_cfquery_context)) { \
-            if ((size) + 1 > (length)) { tag_free(&_tag); break; } \
-            uint16_t _len = (uint8_t)(buffer)[(size)++]; \
-            if ((size) + _len + sizeof(_tag.html_depth) > (length)) { tag_free(&_tag); break; } \
-            array_reserve(&_tag.tag_name, _len); \
-            _tag.tag_name.size = _len; \
-            /* A zero-length name leaves `contents` NULL, and memcpy(NULL, …, 0) */ \
-            /* is undefined even though every implementation tolerates it. */ \
-            if (_len) memcpy(_tag.tag_name.contents, &(buffer)[(size)], _len); \
-            (size) += _len; \
-            memcpy(&_tag.html_depth, &(buffer)[(size)], sizeof(_tag.html_depth)); \
-            (size) += sizeof(_tag.html_depth); \
-        } \
-        array_push(&(tags_field), _tag); \
+    if ((size) + TAGS_HEADER_SIZE <= (length)) { \
+        memcpy(&_serialized, &(buffer)[(size)], sizeof(_serialized)); (size) += sizeof(_serialized); \
+        memcpy(&_count, &(buffer)[(size)], sizeof(_count)); (size) += sizeof(_count); \
     } \
-    for (; _iter < _count; _iter++) array_push(&(tags_field), tag_new()); \
+    for (unsigned _i = _count; _i < (tags_field).size; _i++) tag_free(&(tags_field).contents[_i]); \
+    if ((tags_field).size > _count) (tags_field).size = _count; \
+    array_reserve(&(tags_field), _count); \
+    while ((tags_field).size < _count) array_push(&(tags_field), tag_new()); \
+    bool _stop = false; \
+    for (unsigned _i = 0; _i < _count; _i++) { \
+        Tag *_tag = &(tags_field).contents[_i]; \
+        bool _filled = false; \
+        if (!_stop && _i < _serialized && (size) + 1 <= (length)) { \
+            TagType _type = (TagType)(unsigned char)(buffer)[(size)]; \
+            if (!tag_has_name(_type, is_cfquery_context)) { \
+                (size) += 1; \
+                _tag->type = _type; \
+                _tag->tag_name.size = 0; \
+                _tag->html_depth = 0; \
+                _filled = true; \
+            } else if ((size) + 2 <= (length)) { \
+                uint16_t _len = (uint8_t)(buffer)[(size) + 1]; \
+                if ((size) + 2 + _len + sizeof(_tag->html_depth) <= (length)) { \
+                    (size) += 2; \
+                    _tag->type = _type; \
+                    array_reserve(&_tag->tag_name, _len); \
+                    /* memcpy(NULL, …, 0) is undefined; a zero-length name */ \
+                    /* can leave `contents` NULL. */ \
+                    if (_len) memcpy(_tag->tag_name.contents, &(buffer)[(size)], _len); \
+                    _tag->tag_name.size = _len; \
+                    (size) += _len; \
+                    memcpy(&_tag->html_depth, &(buffer)[(size)], sizeof(_tag->html_depth)); \
+                    (size) += sizeof(_tag->html_depth); \
+                    _filled = true; \
+                } \
+            } \
+        } \
+        if (!_filled) { \
+            _stop = true; \
+            _tag->type = END_; \
+            _tag->tag_name.size = 0; \
+            _tag->html_depth = 0; \
+        } \
+    } \
 } while(0)
 
 static void deserialize(Scanner *scanner, const char *buffer, unsigned length, bool is_cfquery_context) {
@@ -298,9 +366,13 @@ static TagNameResult scan_tag_name(TSLexer *lexer, bool is_cfquery_context) {
     String tag_name = array_new();
     bool is_cf_tag = false;
 
+    // One allocation instead of the four `array_push` would make growing from
+    // empty to a typical tag name a byte at a time. Longer names still grow.
+    array_reserve(&tag_name, TAG_NAME_FIELD);
+
     // ColdFusion tags might start with 'C', ie. <cfcomponent or <cfcontinue
     if ( lexer->lookahead == 'c' || lexer->lookahead == 'C' ) {
-        array_push(&tag_name, towupper(lexer->lookahead));
+        array_push(&tag_name, cf_toupper(lexer->lookahead));
         advance(lexer);
         if (lexer->lookahead == 'f' || lexer->lookahead == 'F') {
             is_cf_tag = true;
@@ -309,8 +381,8 @@ static TagNameResult scan_tag_name(TSLexer *lexer, bool is_cfquery_context) {
         }
     }
 
-    while (( iswalnum(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '_' || lexer->lookahead == ':' )) {
-        array_push(&tag_name, towupper(lexer->lookahead));
+    while (( cf_isalnum(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '_' || lexer->lookahead == ':' )) {
+        array_push(&tag_name, cf_toupper(lexer->lookahead));
         advance(lexer);
     }
 
@@ -406,7 +478,7 @@ static bool scan_comment(TSLexer *lexer, bool is_cfquery_context) {
 static WhitespaceResult scan_whitespace_and_comments(TSLexer *lexer, bool *scanned_comment, bool consume, bool is_cfquery_context) {
     bool saw_block_newline = false;
     for (;;) {
-        while (iswspace(lexer->lookahead)) {
+        while (cf_isspace(lexer->lookahead)) {
             skip(lexer);
         }
 
@@ -512,9 +584,9 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
             if (lexer->lookahead == '<') {
                 // Peek for <cf or </cf or </script|</style
                 advance(lexer);
-                if (towupper(lexer->lookahead) == 'C') {
+                if (cf_toupper(lexer->lookahead) == 'C') {
                     advance(lexer);
-                    if (towupper(lexer->lookahead) == 'F') {
+                    if (cf_toupper(lexer->lookahead) == 'F') {
                         break;
                     }
                     lexer->mark_end(lexer);
@@ -523,16 +595,16 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
                     continue;
                 } else if (lexer->lookahead == '/') {
                     advance(lexer);
-                    if (towupper(lexer->lookahead) == 'C') {
+                    if (cf_toupper(lexer->lookahead) == 'C') {
                         advance(lexer);
-                        if (towupper(lexer->lookahead) == 'F') {
+                        if (cf_toupper(lexer->lookahead) == 'F') {
                             break;
                         }
                         lexer->mark_end(lexer);
                         saw_text = true;
                         saw_any = true;
                         continue;
-                    } else if (towupper(lexer->lookahead) == 'S') {
+                    } else if (cf_toupper(lexer->lookahead) == 'S') {
                         // Potential </script or </style - stop
                         break;
                     }
@@ -599,7 +671,7 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
             // apply. mark_end first: on a real tag the token has to end here.
             lexer->mark_end(lexer);
             advance(lexer);
-            if (lexer->lookahead == 0 || iswalpha(lexer->lookahead) || lexer->lookahead == '/' ||
+            if (lexer->lookahead == 0 || cf_isalpha(lexer->lookahead) || lexer->lookahead == '/' ||
                 lexer->lookahead == '!' || lexer->lookahead == '?' || lexer->lookahead == '#') {
                 break;
             }
@@ -629,13 +701,13 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
                 saw_text = true;
                 saw_any = true;
                 advance(lexer);
-                if (lexer->lookahead == 'x' || lexer->lookahead == 'X' || iswdigit(lexer->lookahead)) {
+                if (lexer->lookahead == 'x' || lexer->lookahead == 'X' || cf_isdigit(lexer->lookahead)) {
                     // Numeric entity - consume fully as text
                     if (lexer->lookahead == 'x' || lexer->lookahead == 'X') {
                         advance(lexer);
-                        while (iswxdigit(lexer->lookahead)) advance(lexer);
+                        while (cf_isxdigit(lexer->lookahead)) advance(lexer);
                     } else {
-                        while (iswdigit(lexer->lookahead)) advance(lexer);
+                        while (cf_isdigit(lexer->lookahead)) advance(lexer);
                     }
                     if (lexer->lookahead == ';') advance(lexer);
                     lexer->mark_end(lexer);
@@ -644,10 +716,10 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
                 // &# not followed by digit/x - & consumed as text, break at #
                 break;
             }
-            if (iswalpha(lexer->lookahead)) {
+            if (cf_isalpha(lexer->lookahead)) {
                 // Could be &word; - scan ahead for ;
                 unsigned count = 0;
-                while (iswalpha(lexer->lookahead) && count < 31) {
+                while (cf_isalpha(lexer->lookahead) && count < 31) {
                     advance(lexer);
                     count++;
                 }
@@ -667,7 +739,7 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
             saw_any = true;
             continue;
         }
-        bool is_wspace = iswspace(lexer->lookahead);
+        bool is_wspace = cf_isspace(lexer->lookahead);
         if (lexer->lookahead == '\n') {
             at_newline = true;
         } else {
@@ -745,7 +817,7 @@ static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer, bool is_cfque
     size_t end_delim_len = 4 + tag_len;
 
     while (lexer->lookahead) {
-        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
+        if (cf_toupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
             delimiter_index++;
             if (delimiter_index == end_delim_len) {
                 break;
@@ -787,7 +859,7 @@ static bool scan_cfxml_content(Scanner *scanner, TSLexer *lexer, bool is_cfquery
     size_t end_delim_len = 4 + tag_len;
 
     while (lexer->lookahead) {
-        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
+        if (cf_toupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
             delimiter_index++;
             if (delimiter_index == end_delim_len) {
                 break;
@@ -830,7 +902,7 @@ static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer, bool is_cfqu
     size_t end_delim_len = 4 + tag_len;
 
     while (lexer->lookahead) {
-        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
+        if (cf_toupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
             delimiter_index++;
             if (delimiter_index == end_delim_len) {
                 break;
@@ -860,7 +932,7 @@ static bool scan_cfsavecontent_body_type(Scanner *scanner, TSLexer *lexer, const
 
     // Peek ahead for <!--- @content TYPE --->
     // Skip whitespace first
-    while (iswspace(lexer->lookahead)) advance(lexer);
+    while (cf_isspace(lexer->lookahead)) advance(lexer);
 
     if (lexer->lookahead == '<') {
         advance(lexer);
@@ -873,7 +945,7 @@ static bool scan_cfsavecontent_body_type(Scanner *scanner, TSLexer *lexer, const
                     if (lexer->lookahead == '-') {
                         advance(lexer);
                         // Skip whitespace after <!---
-                        while (iswspace(lexer->lookahead)) advance(lexer);
+                        while (cf_isspace(lexer->lookahead)) advance(lexer);
                         // Check for @content
                         const char *directive = "@content";
                         size_t di = 0;
@@ -885,12 +957,12 @@ static bool scan_cfsavecontent_body_type(Scanner *scanner, TSLexer *lexer, const
                         }
                         if (matched) {
                             // Skip whitespace
-                            while (iswspace(lexer->lookahead)) advance(lexer);
+                            while (cf_isspace(lexer->lookahead)) advance(lexer);
                             // Read type word
                             char type_buf[16];
                             int len = 0;
-                            while (iswalpha(lexer->lookahead) && len < 15) {
-                                type_buf[len++] = towlower(lexer->lookahead);
+                            while (cf_isalpha(lexer->lookahead) && len < 15) {
+                                type_buf[len++] = cf_tolower(lexer->lookahead);
                                 advance(lexer);
                             }
                             type_buf[len] = '\0';
@@ -939,7 +1011,7 @@ static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer, bool is
                 size_t i = 2;
                 bool matched = true;
                 while (i < end_delim_len) {
-                    if (towupper(lexer->lookahead) != end_delimiter[i]) { matched = false; break; }
+                    if (cf_toupper(lexer->lookahead) != end_delimiter[i]) { matched = false; break; }
                     i++;
                     if (i < end_delim_len) advance(lexer);
                 }
@@ -969,6 +1041,9 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_cont
     lexer->mark_end(lexer);
 
     const char *end_delimiter = array_back(&scanner->tags)->type == SCRIPT ? "</SCRIPT" : "</STYLE";
+    // Both delimiters are literals, but the compiler cannot fold a `strlen` of
+    // the ternary's result, so it was running one per matching character.
+    const unsigned end_delimiter_len = array_back(&scanner->tags)->type == SCRIPT ? 8 : 7;
 
     bool stop_at_cfml = !is_cfquery_context &&
         (array_back(&scanner->tags)->type == SCRIPT || array_back(&scanner->tags)->type == STYLE);
@@ -983,9 +1058,9 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_cont
             }
             if (lexer->lookahead == '<') {
                 advance(lexer);
-                if (towupper(lexer->lookahead) == 'C') {
+                if (cf_toupper(lexer->lookahead) == 'C') {
                     advance(lexer);
-                    if (towupper(lexer->lookahead) == 'F') {
+                    if (cf_toupper(lexer->lookahead) == 'F') {
                         // Stop before <cf
                         break;
                     }
@@ -994,16 +1069,16 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_cont
                     continue;
                 } else if (lexer->lookahead == '/') {
                     advance(lexer);
-                    if (towupper(lexer->lookahead) == 'C') {
+                    if (cf_toupper(lexer->lookahead) == 'C') {
                         advance(lexer);
-                        if (towupper(lexer->lookahead) == 'F') {
+                        if (cf_toupper(lexer->lookahead) == 'F') {
                             // Stop before </cf
                             break;
                         }
                         lexer->mark_end(lexer);
                         has_content = true;
                         continue;
-                    } else if (towupper(lexer->lookahead) == end_delimiter[2]) {
+                    } else if (cf_toupper(lexer->lookahead) == end_delimiter[2]) {
                         // Potential </script or </style
                         delimiter_index = 3;
                         advance(lexer);
@@ -1043,9 +1118,9 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_cont
             }
         }
 
-        if (towupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
+        if (cf_toupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
             delimiter_index++;
-            if (delimiter_index == strlen(end_delimiter)) {
+            if (delimiter_index == end_delimiter_len) {
                 break;
             }
             advance(lexer);
@@ -1482,11 +1557,11 @@ static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer, bo
 static bool scan_cfml_word_operator(TSLexer *lexer) {
     char buf[11] = {0};
     int len = 0;
-    for (; len < 10 && iswalpha(lexer->lookahead); len++) {
-        buf[len] = towlower(lexer->lookahead);
+    for (; len < 10 && cf_isalpha(lexer->lookahead); len++) {
+        buf[len] = cf_tolower(lexer->lookahead);
         skip(lexer);
     }
-    bool at_end = !iswalnum(lexer->lookahead);
+    bool at_end = !cf_isalnum(lexer->lookahead);
     if (!at_end) return false;
 
     return (len == 2 && (
@@ -1542,7 +1617,7 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
             break;
         }
 
-        if (!iswspace(lexer->lookahead)) {
+        if (!cf_isspace(lexer->lookahead)) {
             return false;
         }
 
@@ -1577,7 +1652,7 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
         // Insert a semicolon before decimals literals but not otherwise.
         case '.':
             skip(lexer);
-            return iswdigit(lexer->lookahead);
+            return cf_isdigit(lexer->lookahead);
 
         // Insert a semicolon before `--` and `++`, but not before binary `+` or `-`.
         case '+':
@@ -1613,7 +1688,7 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
 
 static bool scan_ternary_qmark(TSLexer *lexer, bool is_cfquery_context) {
     for (;;) {
-        if (!iswspace(lexer->lookahead)) {
+        if (!cf_isspace(lexer->lookahead)) {
             break;
         }
         skip(lexer);
@@ -1639,7 +1714,7 @@ static bool scan_ternary_qmark(TSLexer *lexer, bool is_cfquery_context) {
 
         if (lexer->lookahead == '.') {
             advance(lexer);
-            if (iswdigit(lexer->lookahead)) {
+            if (cf_isdigit(lexer->lookahead)) {
                 return true;
             }
             return false;
@@ -1670,7 +1745,7 @@ static bool scanner_in_hash_eval_context(Scanner *scanner, bool is_cfquery_conte
 static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
     // Skip whitespace and script-style comments (// and /* */)
     for (;;) {
-        while (iswspace(lexer->lookahead)) advance(lexer);
+        while (cf_isspace(lexer->lookahead)) advance(lexer);
         if (lexer->lookahead == '/') {
             advance(lexer);
             if (lexer->lookahead == '/') {
@@ -1693,25 +1768,25 @@ static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
     // Read the first word
     char word[16];
     int len = 0;
-    while (iswalpha(lexer->lookahead) && len < 15) {
-        word[len++] = towlower(lexer->lookahead);
+    while (cf_isalpha(lexer->lookahead) && len < 15) {
+        word[len++] = cf_tolower(lexer->lookahead);
         advance(lexer);
     }
     word[len] = '\0';
 
     // Must not be followed by another identifier char (e.g. 'componentFoo')
-    if (iswalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
+    if (cf_isalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
 
     // If the first word is a modifier, skip whitespace and read the next word
     if (strcmp(word, "abstract") == 0 || strcmp(word, "static") == 0) {
-        while (iswspace(lexer->lookahead)) advance(lexer);
+        while (cf_isspace(lexer->lookahead)) advance(lexer);
         len = 0;
-        while (iswalpha(lexer->lookahead) && len < 15) {
-            word[len++] = towlower(lexer->lookahead);
+        while (cf_isalpha(lexer->lookahead) && len < 15) {
+            word[len++] = cf_tolower(lexer->lookahead);
             advance(lexer);
         }
         word[len] = '\0';
-        if (iswalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
+        if (cf_isalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
     }
 
     if (strcmp(word, "component") != 0 && strcmp(word, "property") != 0 &&
@@ -1729,7 +1804,7 @@ static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
 static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols, unsigned count, bool is_cfquery_context) {
 
     if (!VS(valid_symbols, HTML_TEXT, count) && !VS(valid_symbols, RAW_TEXT, count)) {
-        while (iswspace(lexer->lookahead)) {
+        while (cf_isspace(lexer->lookahead)) {
             skip(lexer);
         }
     }
