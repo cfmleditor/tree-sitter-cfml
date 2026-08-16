@@ -29,7 +29,7 @@
     "cfscript/empty_struct_literal.cfc": "pass",
     "cfscript/final_member_declaration.cfc": "pass",
     "cfscript/for_in_reserved_name.cfc": "pass",
-    "cfscript/for_in_var_dotted.cfc": "fail",
+    "cfscript/for_in_var_dotted.cfc": "pass",
     "cfscript/function_named_instanceof.cfc": "pass",
     "cfscript/keyword_shaped_param_types.cfc": "pass",
     "cfscript/leading_javadoc.cfc": "pass",

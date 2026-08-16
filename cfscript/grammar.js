@@ -465,6 +465,14 @@ module.exports = grammar({
             // have to be accepted rather than lexed as keywords.
             $.identifier,
             alias($._reserved_identifier, $.identifier),
+            // `for ( var local.package in items )` — the scoped name that
+            // `variable_declarator` has accepted for `var local.x = 1` since
+            // it was widened. This header never got the same widening, so a
+            // dotted loop variable parsed without `var` and a plain one parsed
+            // with it, and only the combination failed. The
+            // `_reserved_identifier` line above is the guard that widening
+            // needed, and it is already here.
+            $.member_expression,
             $._destructuring_pattern,
           )),
           optional($._initializer),

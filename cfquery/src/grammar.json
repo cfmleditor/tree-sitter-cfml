@@ -3133,6 +3133,10 @@
                       },
                       {
                         "type": "SYMBOL",
+                        "name": "member_expression"
+                      },
+                      {
+                        "type": "SYMBOL",
                         "name": "_destructuring_pattern"
                       }
                     ]

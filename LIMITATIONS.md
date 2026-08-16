@@ -189,9 +189,8 @@ where keyword extraction is lexical. Verify a fix in both — a `.cfs` file for
 `cfscript/grammar.js`, and a `<cfset>` closure for `common/define-grammar.js`.
 
 - **Comma-less function parameters** — `function f( boolean a = false ⏎ boolean b = true )`. A newline between parameters is a soft separator on Lucee, ACF and BoxLang; TestBox's `BaseSpec.cfc` `createMock` depends on it. [#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49).
-- **A type in front of a reserved-word parameter name** — `function f( array in )`. Untyped `function f( in )` parses, and `do`, `for`, `eq`, `is` take a type fine; only `in` is affected. ColdBox's `Util.cfc` declares `<cfargument name="in" type="array">`. [#50](https://github.com/cfmleditor/tree-sitter-cfml/issues/50).
+- **A word-shaped binary operator as a parameter name, behind a type the grammar spells as an identifier** — `function f( array in )`. The issue records this as specific to `in`, and it is not: `array eq`, `array is`, `array mod`, `array contains`, `array neq` and `array lt` fail the same way, and so do the same names behind `query`, `struct` and `component`. What decides it is the **type**, not the name — `string in` and `any in` parse, because `parameter_type` spells those as `keyword()` tokens and no expression reading survives them, while `array` reaches the slot through `$.identifier` and leaves a `primary_expression` stack live, where a binary operator is valid and so out-lexes the identifier (confirmed with `--debug`: the lexer emits `sym:in`). Untyped `function f( in )` parses because a binary operator is not valid at the start of a parameter. So the fix is not one aliased token but the whole word-operator set (~25, most of them anonymous case-insensitive regexes rather than named rules) in the parameter-name slot — re-rate this **Med-High/Med**, not the cheapest of the four. ColdBox's `Util.cfc` declares `<cfargument name="in" type="array">`. [#50](https://github.com/cfmleditor/tree-sitter-cfml/issues/50).
 - **`param <type> <name> = <value>;`** — `param numeric shortBad = "abc";`. The `default=` spelling of the same shorthand parses; the `=` spelling does not. [#52](https://github.com/cfmleditor/tree-sitter-cfml/issues/52).
-- **`for ( var <dotted> in … )`** — `for ( var local.package in items )`. Dotted without `var` parses, plain name with `var` parses; only the combination fails. [#53](https://github.com/cfmleditor/tree-sitter-cfml/issues/53).
 
 ### cfml
 
@@ -210,8 +209,10 @@ attributes, a subscript as a `var` declaration name
 (`var mappings[ key ] = value`), `new` with a dotted Java path
 (`new java.util.Properties()`), `debugger` as an ordinary identifier, the
 thin-arrow lambda (`t -> t.b()`), the `''` escape inside a single-quoted tag
-attribute value (`default='x ''y'' z'`), and an array type in parameter position
-(`function f( string[] v )`, nested `string[][]`). The `new java:` / `new cfml:`
+attribute value (`default='x ''y'' z'`), an array type in parameter position
+(`function f( string[] v )`, nested `string[][]`), and a `var`-scoped dotted
+loop variable in a for-in header (`for ( var local.package in items )`). The
+`new java:` / `new cfml:`
 type prefix now works in both CFScript grammars, where it had been
 `cfscript`-only.
 

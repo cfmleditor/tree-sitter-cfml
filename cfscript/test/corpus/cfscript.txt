@@ -2294,3 +2294,43 @@ function f( string[] v, User[][] w, required numeric[] x = [] ) {}
         (identifier)
         (array)))
     (statement_block)))
+
+===================================
+var-scoped dotted name in a for-in header
+===================================
+for ( var local.package in items ) {}
+for ( var a.b.c in items ) {}
+for ( var pkg in items ) {}
+for ( var export in items ) {}
+for ( local.pkg in items ) {}
+---
+
+(program
+  (for_in_statement
+    (member_expression
+      (identifier)
+      (property_identifier))
+    (identifier)
+    (statement_block))
+  (for_in_statement
+    (member_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (property_identifier))
+    (identifier)
+    (statement_block))
+  (for_in_statement
+    (identifier)
+    (identifier)
+    (statement_block))
+  (for_in_statement
+    (identifier)
+    (identifier)
+    (statement_block))
+  (for_in_statement
+    (member_expression
+      (identifier)
+      (property_identifier))
+    (identifier)
+    (statement_block)))
