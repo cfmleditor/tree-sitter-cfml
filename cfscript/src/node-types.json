@@ -2815,6 +2815,16 @@
           }
         ]
       },
+      "default": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "assignment_expression",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": false,

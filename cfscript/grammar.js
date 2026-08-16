@@ -1587,7 +1587,21 @@ module.exports = grammar({
         // `=` in the attribute branch below.
         field('tag', $.identifier),
         field('type', alias($.identifier, $.parameter_type)),
-        field('name', choice($.identifier, $.member_expression)),
+        choice(
+          // `param numeric url.id default="0";` — a bare name, then attributes.
+          field('name', choice($.identifier, $.member_expression)),
+          // `param numeric shortBad = "abc";` — the `=` spelling of the same
+          // default. The name and its value together are an ordinary
+          // `assignment_expression`, and reusing that rule is the point: it
+          // already settles where such an expression ends against the automatic
+          // semicolon. Spelling this out as a fresh `'=' $.expression` position
+          // reopens that question and cannot be resolved locally — `= a + { … }`
+          // then has two readings, a binary `+` continuing the value or a unary
+          // `+` opening the next statement, and the only offered resolutions are
+          // a conflict or a precedence on `binary_expression`/`unary_operator`,
+          // both live at every `+` and `-` in the language.
+          field('default', $.assignment_expression),
+        ),
         field('arguments', repeat(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
         $._semicolon,
       ),

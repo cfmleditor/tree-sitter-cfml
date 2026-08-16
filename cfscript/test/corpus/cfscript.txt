@@ -2334,3 +2334,62 @@ for ( local.pkg in items ) {}
       (property_identifier))
     (identifier)
     (statement_block)))
+
+===================================
+param with the = spelling of the default
+===================================
+param numeric shortBad = "abc";
+param string url.id = "0";
+param numeric x default="0";
+param numeric y = 1 max=5;
+param name="z" type="numeric" default="0";
+---
+
+(program
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (assignment_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (string
+        (string_fragment))))
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (assignment_expression
+      (identifier)
+      (number))
+    (assignment_expression
+      (identifier)
+      (number)))
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))))
