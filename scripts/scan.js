@@ -347,7 +347,7 @@ function checkExpected(status) {
 }
 
 // Main
-const resolvedDir = path.resolve(dir);
+const resolvedDir = path.resolve(require('./corpus-dir').resolveScanTarget(dir));
 const stat = fs.statSync(resolvedDir);
 const files = stat.isFile() ? [resolvedDir] : collectFiles(resolvedDir).sort();
 

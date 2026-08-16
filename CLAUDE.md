@@ -42,7 +42,7 @@ node ../node_modules/tree-sitter-cli/cli.js parse path/to/file.cfc
 Scan real-world CFML for parse errors, and cluster what comes back:
 
 ```bash
-npm run corpus:fetch                    # clone ~25 public CFML repos into /corpus (gitignored)
+npm run corpus:fetch                    # clone 47 public CFML repos into ~/corpus, or ./corpus (gitignored)
 npm run scan corpus > scan.txt          # or any directory of .cfm/.cfc/.cfs files
 npm run corpus:report -- --from scan.txt  # group failures by source-line shape
 ```
@@ -122,7 +122,7 @@ Three layers, each catching what the one above misses:
 
 - `cf*/test/corpus/` — the committed expectations. `npm test` runs them.
 - `test/probes/` — minimal reductions of constructs found in real code, with their current pass/fail status in `test/probes/expected.json`. `npm run probe` fails on drift **in either direction**, so a gap closing is as visible as a regression.
-- the real-world corpus (`npm run corpus:fetch`) — 12,500 files from public CFML projects. Not in CI; run it by hand before and after a grammar change and diff the two scans. Three changes in the last round looked self-contained, passed the test suite, and were only caught here.
+- the real-world corpus (`npm run corpus:fetch`) — 14,974 files from public CFML projects, kept in `~/corpus` when that exists. Not in CI; run it by hand before and after a grammar change and diff the two scans. Three changes in the last round looked self-contained, passed the test suite, and were only caught here.
 
 ### Bindings (`bindings/`)
 

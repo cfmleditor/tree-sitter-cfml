@@ -7,7 +7,7 @@ written by other people, and recording what breaks.
 ## Running it yourself
 
 ```bash
-npm run corpus:fetch     # shallow-clone the curated repo list into ./corpus (~100 MB)
+npm run corpus:fetch     # shallow-clone the curated repo list (~100 MB)
 npm run scan corpus      # one line per ERROR / MISSING node
 npm run corpus:report    # the same scan, clustered into distinct failure sites
 npm run probe            # minimal reductions of every construct found below
@@ -68,9 +68,38 @@ Two mechanisms exist for flaky crashes, and the difference matters:
   asserting. `--update` will not overwrite a `flaky` entry; clear it by hand,
   which is what the fix warranted.
 
-`corpus/` is gitignored — it is third-party code under a mix of licences and is
-never committed. `npm run corpus:fetch -- --list` prints the repository list;
-extra repositories can be passed as arguments.
+`npm run corpus:fetch -- --list` prints the repository list; extra repositories
+can be passed as arguments.
+
+### Where it is kept
+
+Two locations, resolved by `scripts/corpus-dir.js` and printed at the top of
+every fetch:
+
+| Location | Used when |
+|---|---|
+| `~/corpus` | it exists |
+| `<repo>/corpus` | otherwise — gitignored |
+
+Prefer `~/corpus`. The in-repo default is per-clone, so a second clone or a
+`git worktree` re-fetches all 97 MB, and `git clean -xdf` deletes it because it
+is gitignored. Creating `~/corpus` is how you opt in; deleting it is how you opt
+out. Nothing creates it for you.
+
+`npm run scan corpus` follows the same resolution, so the commands throughout
+this document work unchanged in either layout. Only the bare word `corpus` is
+redirected, and only when it does not exist relative to the current directory —
+any other path is taken literally.
+
+**Fetching is incremental.** A repository already present is skipped, so a
+second `npm run corpus:fetch` costs about a second and re-clones nothing. The
+flip side is that a repository is never *refreshed* once fetched: the clones are
+`--depth 1` snapshots frozen at the date you first fetched them, which is what
+makes a before/after scan pair comparable. To refresh one, delete its directory
+and re-run.
+
+Wherever it lives, the corpus is third-party code under a mix of licences and is
+never committed.
 
 ## The corpus
 

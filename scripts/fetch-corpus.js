@@ -10,12 +10,13 @@
  *   npm run corpus:fetch -- ortus-boxlang/BoxLang other/repo
  *
  * Each repository is cloned shallowly into a temporary directory; only CFML
- * source files are kept, under `corpus/<owner>_<repo>/`. Then:
+ * source files are kept, under `<corpus>/<owner>_<repo>/`. Then:
  *
  *   npm run scan corpus
  *
  * The corpus is deliberately not committed — it is third-party code under a
- * mix of licences and weighs ~100 MB. `corpus/` is gitignored.
+ * mix of licences and weighs ~100 MB. It goes in `~/corpus` when that exists,
+ * otherwise the gitignored in-repo `corpus/`; see `scripts/corpus-dir.js`.
  */
 
 const fs = require('fs');
@@ -23,8 +24,7 @@ const path = require('path');
 const {join} = path;
 const {spawnSync} = require('child_process');
 
-const root = join(__dirname, '..');
-const corpusDir = join(root, 'corpus');
+const corpusDir = require('./corpus-dir').corpusDir();
 const workDir = join(corpusDir, '.work');
 
 // Curated list: large, actively maintained, publicly licensed CFML code bases
@@ -138,6 +138,8 @@ function rmrf(dir) {
   fs.rmSync(dir, {recursive: true, force: true});
 }
 
+console.log(`corpus: ${corpusDir}\n`);
+
 fs.mkdirSync(workDir, {recursive: true});
 
 let ok = 0;
@@ -148,7 +150,7 @@ for (const repo of targets) {
   const name = repo.replace('/', '_');
   const dest = join(corpusDir, name);
   if (fs.existsSync(dest)) {
-    console.log(`skip  ${repo} (already in corpus/)`);
+    console.log(`skip  ${repo} (already fetched)`);
     ok++;
     continue;
   }
@@ -176,7 +178,7 @@ for (const repo of targets) {
 
 rmrf(workDir);
 
-console.log(`\n${ok} repositor${ok === 1 ? 'y' : 'ies'} in corpus/, ${failed} failed, ${totalFiles} files fetched this run.`);
+console.log(`\n${ok} repositor${ok === 1 ? 'y' : 'ies'} in ${corpusDir}, ${failed} failed, ${totalFiles} files fetched this run.`);
 console.log('Next: npm run scan corpus');
 
 process.exit(failed > 0 && ok === 0 ? 1 : 0);
