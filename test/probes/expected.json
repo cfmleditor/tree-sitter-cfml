@@ -18,7 +18,7 @@
     "cfml/param_typed.cfm": "pass",
     "cfml/prefixed_dynamic_tag.cfm": "fail",
     "cfml/script_block_js.cfm": "pass",
-    "cfml/single_quoted_attribute_escape.cfm": "fail",
+    "cfml/single_quoted_attribute_escape.cfm": "pass",
     "cfml/var_new_in_cfset.cfc": "pass",
     "cfquery/bitwise_and.cfm": "pass",
     "cfscript/array_param_type.cfc": "fail",

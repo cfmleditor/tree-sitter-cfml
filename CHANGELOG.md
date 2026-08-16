@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### cfml & cfquery
+
+- Support the `''` doubled-quote escape inside a **single**-quoted tag attribute value (`<cfparam name="sq" default='x ''y'' z'>`), which previously collapsed the tag to an ERROR ([#54](https://github.com/cfmleditor/tree-sitter-cfml/issues/54)). The escape has always worked in a double-quoted value; `quoted_cf_attribute_value` carried `'""'` in its double-quoted branch and had no `"''"` counterpart in the other. One `choice` arm, no new conflicts, and `cfscript/src/parser.c` is byte-identical since the rule lives in the shared `common/define-grammar.js`. The corpus scan goes 802 → 801 error nodes across 174 → 173 files, the whole diff being one deleted line in the RustCFML test the probe was reduced from. The case worth knowing about is the one *not* in the issue: a `''` token could in principle out-lex the closing quote and break the empty value `default=''`, so the new corpus test pins both escapes and both empty forms rather than just the reported construct
+
 ### Tooling
 
 - Keep the real-world corpus in `~/corpus` when that directory exists, falling back to the gitignored in-repo `corpus/` when it does not (`scripts/corpus-dir.js`, printed at the top of every fetch). The in-repo default is per-clone, so a second clone or a `git worktree` re-fetched all 97 MB, and `git clean -xdf` deleted it precisely because it is gitignored. Creating `~/corpus` opts in; deleting it opts out; nothing creates it for you. `npm run scan corpus` follows the same resolution, so every documented command works unchanged in either layout — only the bare word `corpus` is redirected, and only when it does not exist relative to the current directory

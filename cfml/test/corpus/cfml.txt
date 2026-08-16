@@ -2985,3 +2985,57 @@ cfcache as paired tag
   (cf_output_tag
     (hash_expression
       (identifier))))
+
+===================================
+doubled-quote escape in tag attribute values
+===================================
+<cfparam name="dq" default="p ""q"" r">
+<cfparam name="sq" default='x ''y'' z'>
+<cfparam name="ed" default="">
+<cfparam name="es" default=''>
+
+---
+
+(program
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)
+        (attribute_value)
+        (attribute_value)))
+    (cf_selfclose_void_tag_end))
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)
+        (attribute_value)
+        (attribute_value)))
+    (cf_selfclose_void_tag_end))
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value))
+    (cf_selfclose_void_tag_end))
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value))
+    (cf_selfclose_void_tag_end)))

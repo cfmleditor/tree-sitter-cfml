@@ -184,7 +184,6 @@ five came from the RustCFML engine test suite; see [CORPUS.md](CORPUS.md).
 - **Dynamic tag name with a static prefix or namespace** — `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` (Lucee admin). 10 files.
 - **Dynamic tag opened and closed in different blocks** — `<cfoutput>#t()#</#g(n)#></cfoutput>` where the matching open tag is in an earlier `<cfoutput>` (Taffy examples). The plain `<#expr#>` form parses when open and close sit together. 13 files.
 - **A `<style>` block with many `#` tokens** — Lucee's `debug/Simple.cfc`, 42 `#` across CSS ID selectors and hex colours. Each of those constructs parses on its own; the failure only appears in accumulation, and the shortest failing extract is 20 lines.
-- **`''` inside a single-quoted tag attribute** — `<cfparam name="sq" default='x ''y'' z'>`. The doubled-quote escape works in a double-quoted value (`default="p ""q"" r"`) and not in a single-quoted one: `quoted_cf_attribute_value` lists `'""'` in its double-quoted branch and has no `"''"` counterpart in the other. [#54](https://github.com/cfmleditor/tree-sitter-cfml/issues/54).
 - **A run of unpaired custom tags whose names total more than ~1,014 bytes** — an unpaired `<cf_foo>` opens a block the next one nests inside, so N in a row is N levels deep, and each level costs its tag name plus 4 bytes in the scanner's serialized state. That state has a fixed 1,024-byte budget (`TREE_SITTER_SERIALIZATION_BUFFER_SIZE`), so once it is full the deepest tags are dropped, and a *following* tag then collapses the whole document to one ERROR at `1:1`. The threshold therefore moves with name length rather than being a fixed depth — `<cf_a>` survives 124, `<cf_runtest>` 71, `<cf_abcdefghijklmnopqrstuvwxy>` 37, and in every case `depth × (name + 4) ≈ 1,014`. The run alone is fine at any depth (implicit end tags close it at EOF), so it is the trailing tag that exposes it. RustCFML's `runner.cfm` is ~700 unpaired `<cf_runtest>` tags followed by a `<cfscript>` block. [#55](https://github.com/cfmleditor/tree-sitter-cfml/issues/55).
 - **`</cfscript>` inside a string literal** — `FileWrite( p, "<cfscript>…</cfscript>" )` closes the script block early; the remainder parses as template text and the real closing tag becomes a stray end tag. The scanner scans raw script text for the close tag without tracking string literals. [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56).
 
@@ -195,9 +194,10 @@ access-modifier member declarations, the empty struct literal `[=]`, bare `>` or
 (`User[] function getUsers()`), script-syntax tag calls with space-separated
 attributes, a subscript as a `var` declaration name
 (`var mappings[ key ] = value`), `new` with a dotted Java path
-(`new java.util.Properties()`), `debugger` as an ordinary identifier, and the
-thin-arrow lambda (`t -> t.b()`). The `new java:` / `new cfml:` type prefix now
-works in both CFScript grammars, where it had been `cfscript`-only.
+(`new java.util.Properties()`), `debugger` as an ordinary identifier, the
+thin-arrow lambda (`t -> t.b()`), and the `''` escape inside a single-quoted tag
+attribute value (`default='x ''y'' z'`). The `new java:` / `new cfml:` type
+prefix now works in both CFScript grammars, where it had been `cfscript`-only.
 
 ### `=>` and `->` produce the same node
 

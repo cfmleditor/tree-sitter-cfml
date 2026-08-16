@@ -1038,6 +1038,7 @@ module.exports = function defineGrammar(dialect) {
           repeat(
             choice(
               $._hash_always_eval,
+              '\'\'', // the doubled-quote escape, mirroring '""' below
               alias(/[^'#]+/, $.attribute_value),
             ),
           ),

@@ -2207,6 +2207,10 @@
                     "name": "_hash_always_eval"
                   },
                   {
+                    "type": "STRING",
+                    "value": "''"
+                  },
+                  {
                     "type": "ALIAS",
                     "content": {
                       "type": "PATTERN",
