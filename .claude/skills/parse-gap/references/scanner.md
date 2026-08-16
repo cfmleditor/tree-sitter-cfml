@@ -52,6 +52,36 @@ inside a tag, so `>` cannot be closing one.
 state no longer accepts the token; if it does, the parser loops forever emitting
 the same empty token.
 
+## In error recovery, every external token is valid
+
+`valid_symbols` is all-true while the parser is recovering. A scan that is cheap
+where the grammar actually reaches it — because it only runs after some opening
+delimiter — will run at *every* recovery step instead, and a scan that ends at
+EOF ends at EOF each time. Returning `false` afterwards does not refund it.
+
+`cfml_template_content` (the body of a ``` fence) is only reachable straight
+after the opening fence, so its scan looked bounded. Unguarded in recovery it
+searched every remaining byte for a closing fence that ordinary CFML does not
+contain: 3,060 calls over 400 corpus script components did 25.1M of the
+scanner's 25.13M character advances on 2.2 MB of input, and 52% of every
+instruction the parse retired. `npm test`, the probes and the corpus scan were
+all green — the output was right, it just cost 1.6× more than it needed to.
+
+Detect recovery by naming a token the grammar never makes valid alongside yours,
+and stand down:
+
+```c
+if (valid_symbols[CFML_TEMPLATE_CONTENT]) {
+    if (valid_symbols[AUTOMATIC_SEMICOLON]) return false;  // recovery
+    return scan_cfml_template_content(lexer);
+}
+```
+
+Return `false` rather than falling through, so the branches below still see the
+state they used to. Anything that scans to a delimiter — raw text, query and
+script bodies, `#hash#` spans — wants the same guard, and `npm run bench` is the
+only gate that can see it missing.
+
 ## Infinite loops
 
 `advance()` is a **no-op once `lexer->lookahead` is 0**. So any loop of the form
@@ -122,5 +152,7 @@ culprit. Bias the inserted characters toward the ones the scanner branches on �
 - `npm run fuzz` — mandatory for scanner changes; it is the only thing that
   exercises state transitions systematically
 - Full corpus scan diffed against a pre-change baseline; deletions only
+- `npm run bench` against a baseline taken on the base commit. A scanner change
+  moves throughput without moving a single test — in both directions
 - Spot-check truncated inputs by hand: `<cf`, `<!--- x`, `<cfoutput>#a`,
   `<cfquery>SELECT 1`, `queryExecute("`, `x = {`. Each should recover, not hang.
