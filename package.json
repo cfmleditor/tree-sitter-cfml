@@ -62,6 +62,7 @@
     "build:native": "node scripts/build-native.js",
     "parse": "node scripts/parse.js",
     "scan": "node scripts/scan.js",
+    "scan:examples": "node scripts/scan.js examples --isolate --retries 3 --expect examples/expected.json",
     "probe": "node scripts/probe.js",
     "bench": "node scripts/bench.js",
     "fuzz": "node scripts/fuzz.js",

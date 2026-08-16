@@ -201,19 +201,34 @@ static inline bool implicit_cf_end_tag_valid(const bool *vs, unsigned count) {
            !VS(vs, CF_ELSEIF_TAG_NAME, count) && !VS(vs, CF_ELSE_TAG_NAME, count);
 }
 
-#define SERIALIZE_TAGS(tags_field, buffer, size, is_cfquery_context) do { \
+// Each serialized tag array is a 4-byte header — `_serialized`, then `_count` —
+// followed by `_serialized` entries. The two differ when the buffer runs out:
+// deserialize restores that many real tags and pads to `_count` with empty ones.
+//
+// `reserve` is how many bytes must still be free *after* this array, so that
+// whatever serialize writes next always fits. Getting this wrong is what caused
+// #57: the second array found no room for its own header, skipped writing it,
+// and left a stream whose shape no longer matched what deserialize expected —
+// which then read past the end of the buffer. The header is written
+// unconditionally now, and only the entries are ever dropped.
+#define TAGS_HEADER_SIZE (2 * sizeof(uint16_t))
+
+#define SERIALIZE_TAGS(tags_field, buffer, size, reserve, is_cfquery_context) do { \
     uint16_t _count = (tags_field).size > UINT16_MAX ? UINT16_MAX : (tags_field).size; \
     uint16_t _serialized = 0; \
     unsigned _count_offset = (size); \
-    if ((size) + sizeof(_count) + sizeof(_count) > TREE_SITTER_SERIALIZATION_BUFFER_SIZE) break; \
-    (size) += sizeof(_count); \
-    (size) += sizeof(_count); \
+    unsigned _limit = TREE_SITTER_SERIALIZATION_BUFFER_SIZE - (reserve); \
+    /* Unreachable with the reserves serialize() passes: the first array is */ \
+    /* capped so the second's header always fits. Kept so a future caller */ \
+    /* that reserves too little truncates rather than corrupting the stream. */ \
+    if ((size) + TAGS_HEADER_SIZE > _limit) break; \
+    (size) += TAGS_HEADER_SIZE; \
     for (; _serialized < _count; _serialized++) { \
         Tag _tag = (tags_field).contents[_serialized]; \
         if (tag_has_name(_tag.type, is_cfquery_context)) { \
             unsigned _len = _tag.tag_name.size; \
             if (_len > UINT8_MAX) _len = UINT8_MAX; \
-            if ((size) + 2 + _len + sizeof(_tag.html_depth) >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) break; \
+            if ((size) + 2 + _len + sizeof(_tag.html_depth) > _limit) break; \
             (buffer)[(size)++] = (char)_tag.type; \
             (buffer)[(size)++] = (char)_len; \
             memcpy(&(buffer)[(size)], _tag.tag_name.contents, _len); \
@@ -221,7 +236,7 @@ static inline bool implicit_cf_end_tag_valid(const bool *vs, unsigned count) {
             memcpy(&(buffer)[(size)], &_tag.html_depth, sizeof(_tag.html_depth)); \
             (size) += sizeof(_tag.html_depth); \
         } else { \
-            if ((size) + 1 >= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) break; \
+            if ((size) + 1 > _limit) break; \
             (buffer)[(size)++] = (char)_tag.type; \
         } \
     } \
@@ -231,9 +246,15 @@ static inline bool implicit_cf_end_tag_valid(const bool *vs, unsigned count) {
 
 static unsigned serialize(Scanner *scanner, char *buffer, bool is_cfquery_context) {
     unsigned size = 0;
-    SERIALIZE_TAGS(scanner->tags, buffer, size, is_cfquery_context);
-    SERIALIZE_TAGS(scanner->cf_tags, buffer, size, is_cfquery_context);
-    if (size + sizeof(scanner->cfoutput_depth) + sizeof(scanner->cfcomponent_depth) + sizeof(scanner->cffunction_depth) < TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
+    const unsigned depths = sizeof(scanner->cfoutput_depth) +
+                            sizeof(scanner->cfcomponent_depth) +
+                            sizeof(scanner->cffunction_depth);
+    // `tags` must leave room for cf_tags' header and the three depth fields;
+    // `cf_tags` only for the depths. That keeps every section present even when
+    // the tag stacks are deep enough to fill the buffer on their own.
+    SERIALIZE_TAGS(scanner->tags, buffer, size, TAGS_HEADER_SIZE + depths, is_cfquery_context);
+    SERIALIZE_TAGS(scanner->cf_tags, buffer, size, depths, is_cfquery_context);
+    if (size + depths <= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
         memcpy(&buffer[size], &scanner->cfoutput_depth, sizeof(scanner->cfoutput_depth));
         size += sizeof(scanner->cfoutput_depth);
         memcpy(&buffer[size], &scanner->cfcomponent_depth, sizeof(scanner->cfcomponent_depth));
@@ -252,32 +273,55 @@ static unsigned serialize(Scanner *scanner, char *buffer, bool is_cfquery_contex
 // in depth touches the allocator now. Reuse is safe because every Tag owns its
 // name buffer regardless of type (see `tag_free`), so overwriting a slot never
 // strands one.
-#define DESERIALIZE_TAGS(tags_field, buffer, size, is_cfquery_context) do { \
+//
+// Every read is bounded by `length` (#57). The counts and lengths driving this
+// loop are read out of the buffer, so trusting them is trusting the input: an
+// over-long `_serialized` used to walk straight off the end of the heap block
+// and segfault the process. When a read would not fit, `_stop` latches and the
+// remaining slots are emptied — the same state a serialize-side truncation
+// leaves, so a short or foreign buffer costs scanner state, not memory safety.
+#define DESERIALIZE_TAGS(tags_field, buffer, size, length, is_cfquery_context) do { \
     uint16_t _serialized = 0, _count = 0; \
-    memcpy(&_serialized, &(buffer)[(size)], sizeof(_serialized)); (size) += sizeof(_serialized); \
-    memcpy(&_count, &(buffer)[(size)], sizeof(_count)); (size) += sizeof(_count); \
+    if ((size) + TAGS_HEADER_SIZE <= (length)) { \
+        memcpy(&_serialized, &(buffer)[(size)], sizeof(_serialized)); (size) += sizeof(_serialized); \
+        memcpy(&_count, &(buffer)[(size)], sizeof(_count)); (size) += sizeof(_count); \
+    } \
     for (unsigned _i = _count; _i < (tags_field).size; _i++) tag_free(&(tags_field).contents[_i]); \
     if ((tags_field).size > _count) (tags_field).size = _count; \
     array_reserve(&(tags_field), _count); \
     while ((tags_field).size < _count) array_push(&(tags_field), tag_new()); \
+    bool _stop = false; \
     for (unsigned _i = 0; _i < _count; _i++) { \
         Tag *_tag = &(tags_field).contents[_i]; \
-        if (_i >= _serialized) { \
-            _tag->type = END_; \
-            _tag->tag_name.size = 0; \
-            _tag->html_depth = 0; \
-            continue; \
+        bool _filled = false; \
+        if (!_stop && _i < _serialized && (size) + 1 <= (length)) { \
+            TagType _type = (TagType)(unsigned char)(buffer)[(size)]; \
+            if (!tag_has_name(_type, is_cfquery_context)) { \
+                (size) += 1; \
+                _tag->type = _type; \
+                _tag->tag_name.size = 0; \
+                _tag->html_depth = 0; \
+                _filled = true; \
+            } else if ((size) + 2 <= (length)) { \
+                uint16_t _len = (uint8_t)(buffer)[(size) + 1]; \
+                if ((size) + 2 + _len + sizeof(_tag->html_depth) <= (length)) { \
+                    (size) += 2; \
+                    _tag->type = _type; \
+                    array_reserve(&_tag->tag_name, _len); \
+                    /* memcpy(NULL, …, 0) is undefined; a zero-length name */ \
+                    /* can leave `contents` NULL. */ \
+                    if (_len) memcpy(_tag->tag_name.contents, &(buffer)[(size)], _len); \
+                    _tag->tag_name.size = _len; \
+                    (size) += _len; \
+                    memcpy(&_tag->html_depth, &(buffer)[(size)], sizeof(_tag->html_depth)); \
+                    (size) += sizeof(_tag->html_depth); \
+                    _filled = true; \
+                } \
+            } \
         } \
-        _tag->type = (TagType)(unsigned char)(buffer)[(size)++]; \
-        if (tag_has_name(_tag->type, is_cfquery_context)) { \
-            uint16_t _len = (uint8_t)(buffer)[(size)++]; \
-            array_reserve(&_tag->tag_name, _len); \
-            if (_len) memcpy(_tag->tag_name.contents, &(buffer)[(size)], _len); \
-            _tag->tag_name.size = _len; \
-            (size) += _len; \
-            memcpy(&_tag->html_depth, &(buffer)[(size)], sizeof(_tag->html_depth)); \
-            (size) += sizeof(_tag->html_depth); \
-        } else { \
+        if (!_filled) { \
+            _stop = true; \
+            _tag->type = END_; \
             _tag->tag_name.size = 0; \
             _tag->html_depth = 0; \
         } \
@@ -290,8 +334,8 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length, b
     scanner->cffunction_depth = 0;
     if (length > 0) {
         unsigned size = 0;
-        DESERIALIZE_TAGS(scanner->tags, buffer, size, is_cfquery_context);
-        DESERIALIZE_TAGS(scanner->cf_tags, buffer, size, is_cfquery_context);
+        DESERIALIZE_TAGS(scanner->tags, buffer, size, length, is_cfquery_context);
+        DESERIALIZE_TAGS(scanner->cf_tags, buffer, size, length, is_cfquery_context);
         if (size + sizeof(scanner->cfoutput_depth) <= length) {
             memcpy(&scanner->cfoutput_depth, &buffer[size], sizeof(scanner->cfoutput_depth));
             size += sizeof(scanner->cfoutput_depth);

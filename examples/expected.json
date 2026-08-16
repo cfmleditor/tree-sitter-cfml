@@ -1,0 +1,7 @@
+{
+  "comment": "Scan status of each file under `examples/`. `clean` = no ERROR/MISSING nodes, `errors:<n>` = that many, `crash` = the parser died, `flaky` = it dies intermittently and is deliberately not asserted (only \"did not become ordinary parse errors\" is). Regenerate with `npm run scan:examples -- --update`.",
+  "files": {
+    "examples/deeply-nested-custom.cfm": "clean",
+    "examples/deeply-nested.cfm": "clean"
+  }
+}

@@ -11,8 +11,62 @@ npm run corpus:fetch     # shallow-clone the curated repo list into ./corpus (~1
 npm run scan corpus      # one line per ERROR / MISSING node
 npm run corpus:report    # the same scan, clustered into distinct failure sites
 npm run probe            # minimal reductions of every construct found below
+npm run scan:examples    # the committed examples/, isolated, against its baseline
 npm run bench -- corpus  # parser throughput; add --out/--baseline to compare builds
 ```
+
+### `examples/` and `--isolate`
+
+`examples/` holds pathological inputs rather than sample code, and until it was
+wired into CI nothing scanned it — not a script, not a workflow, and ESLint
+ignored it. **Both** of its files used to segfault the parser, via the heap
+over-read in `deserialize` fixed under
+[#57](https://github.com/cfmleditor/tree-sitter-cfml/issues/57). Both now record
+`clean`, and the check exists to keep it that way.
+
+That crash was **probabilistic**, which is what shaped the tooling and is worth
+keeping written down, because the next scanner crash will behave the same way.
+It fired when the serialized tag state overflowed the 1,024-byte buffer, and
+whether the resulting out-of-bounds read faulted depended on what happened to be
+mapped after the heap block:
+
+| Input | Crash rate, pre-fix |
+|---|---|
+| `deeply-nested-custom.cfm` — 1,201 nested `<xyz>` | 40/40 |
+| `deeply-nested.cfm` — 1,981 nested `<a>` | 10/40 |
+| `<xyz>` × 200 | 18/20 |
+| `<xyz>` × 60 | 0/20 |
+
+Two lessons from measuring it. **Do not bisect for a threshold** — a bisect over
+a non-monotonic predicate returns a confident, meaningless answer; it reported
+"118 ok, 119 crash" when both values pass and fail across repeated runs. And
+**do not conclude from single runs**: that is what produced the initial claim
+that known HTML tags were immune, when `<a>` crashes too and merely needs ~2,000
+of them rather than ~200 to fill the same buffer.
+
+A crash cannot be scanned in-process, because it takes the scan down with it.
+`--isolate` parses each file in a child process and turns a fatal exit into a
+reported result; it costs a process per file, so it is for `examples/`, not the
+14k-file corpus. `--expect <file>` compares against a committed baseline
+(`examples/expected.json`) and fails on drift **in either direction**, the same
+contract `npm run probe` has — so a known crash does not redden CI, while both a
+new crash and a fix do. It earned that keep straight away: the #57 fix showed up
+as `expected crash, got clean`. Re-baseline with
+`npm run scan:examples -- --update`.
+
+Two mechanisms exist for flaky crashes, and the difference matters:
+
+- `--retries <n>` attempts a file up to n times and takes "crashed at least
+  once" as the answer. That was enough for `deeply-nested-custom.cfm`, which
+  crashed every time.
+- A baseline entry of **`flaky`** asserts nothing about crash-vs-clean, only
+  that the file has not started producing ordinary parse errors.
+  `deeply-nested.cfm` was recorded this way while the bug was live. Retrying did
+  *not* stabilise it — outcomes are not independent between processes, so 25
+  attempts still returned all-clean about a fifth of the time — and a check that
+  reddens CI at random is worse than one that says plainly what it is not
+  asserting. `--update` will not overwrite a `flaky` entry; clear it by hand,
+  which is what the fix warranted.
 
 `corpus/` is gitignored — it is third-party code under a mix of licences and is
 never committed. `npm run corpus:fetch -- --list` prints the repository list;
@@ -20,7 +74,7 @@ extra repositories can be passed as arguments.
 
 ## The corpus
 
-46 public repositories, **13,777 CFML files** (`.cfc`, `.cfm`, `.cfml`, `.cfs`),
+47 public repositories, **14,965 CFML files** (`.cfc`, `.cfm`, `.cfml`, `.cfs`),
 spanning tag-based templates, script components, and embedded SQL:
 
 | Area | Repositories |
@@ -30,6 +84,7 @@ spanning tag-based templates, script components, and embedded SQL:
 | Applications / CMS | `pixl8/preside-cms`, `MSU-NatSci/MuraCMS`, `Ortus-Solutions/ContentBox`, `valtech-cfml/Slatwall`, `ColdBox/coldbox-samples` |
 | Tooling / modules | `Ortus-Solutions/commandbox`, `coldbox-modules/{qb,cborm,cbfs,cbsecurity,cbi18n}`, `cfsimplicity/spreadsheet-cfml`, `foundeo/cfdocs`, `cfmleditor/cfmleditor` |
 | Second wave (21 repos, 1,228 files) | `coldbox-modules/{cbvalidation,cbstreams,cbmailservices,cbdebugger,hyper,cbwire,cbmarkdown,cbmessagebox,cbq,cfmigrations,cbSwagger,cbjavaloader,cbantisamy,cbfeeds}`, `Ortus-Solutions/coldbox-elixir`, `pixl8/preside-ext-saml2-sso`, `lucee/extension-{image,redis,s3,esapi,pdf}` |
+| Third wave (1 repo, 1,188 files) | `RustCFML/RustCFML` |
 
 The second wave was added once the first 25 repos stopped producing new failure
 signatures — smaller, more specialised code bases chosen for breadth of idiom
@@ -51,6 +106,92 @@ rather than size. It scanned at **23 error nodes across 6 of 1,228 files**
   wins over the expression statement it now also matches. That took the second
   wave from 23 errors across 6 files to **8 across 4**, with no movement on the
   original corpus (760 → 760, per-file diff identical).
+
+The third wave is an **engine test suite**, not an application: RustCFML is a
+CFML interpreter written in Rust, and 1,108 of its 1,188 CFML files are the
+`tests/` tree — deliberately edge-case CFML, each file written to pin one
+language behaviour. Density of unusual constructs per file is far higher than in
+application code, which is the whole reason it is here: it found eight new gaps
+where the second wave found two in a comparable 1,228 files.
+
+It scanned at **40 error nodes across 15 of 1,188 files** (98.7% of files clean).
+Every one of the 40 is in `tests/`; the rest of the repository is ordinary CFML
+and parses clean:
+
+| Directory | Files | Errors |
+|---|---|---|
+| `tests/` | 1,108 | 40 across 15 files |
+| `examples/` — demo apps, incl. `miniapp`, `taffytest`, `websocket_chat` | 39 | none |
+| `crates/` — CLI test fixtures | 37 | none |
+| `bench/` | 4 | none |
+
+The 40 are attributed as:
+
+| Nodes | Files | Cause | Status |
+|---|---|---|---|
+| 17 | 8 | eight new gaps, listed below | probed, unfixed |
+| 14 | 1 | dotted key in a struct literal | known, [rejected on runtime cost](docs/FAILING-PATTERNS.md) |
+| 9 | 6 | not grammar defects | see below |
+
+The nine non-defects: three `tests/tags/unclosed/*.cfm` fixtures, which are
+deliberately invalid (`"Both engines must refuse to compile it"`); one file with
+an unterminated `<cfscript>` at EOF that the suite's own runner does not load;
+four nodes from `#...#` inside a string literal, where `...` is not a CFML
+expression; and one bare identifier used as a statement with no semicolon.
+
+### What it found
+
+Every construct below is exercised by a file that RustCFML's own `runner.cfm`
+loads, so each is CFML that at least one engine accepts. Each has a probe.
+
+**Five are `cfscript`-grammar-only** — they already parse in the embedded
+CFScript of `common/define-grammar.js` and fail only in the standalone
+`cfscript/grammar.js`. That is the drift the architecture note in
+[`CLAUDE.md`](CLAUDE.md) warns about, and it is user-visible rather than
+cosmetic: `injections.scm` routes every `<cfscript>` block and every `component`
+body to the standalone grammar, so an editor reports errors on source the `cfml`
+grammar parsed cleanly a moment earlier.
+
+- **Comma-less function parameters** — a newline between parameters as a soft
+  separator, `function f( boolean a = false ⏎ boolean b = true )`. Lucee, ACF and
+  BoxLang all tolerate the missing comma; TestBox's `BaseSpec.cfc` `createMock`
+  relies on it. `cfscript/commaless_params.cfc`, [#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49).
+- **A type in front of a reserved-word parameter name** — `function f( array in )`.
+  The untyped `function f( in )` parses, and `do`, `for`, `eq` and `is` take a
+  type fine; only `in` is affected. ColdBox's `coldbox.system.core.util.Util`
+  declares `<cfargument name="in" type="array">`.
+  `cfscript/typed_reserved_param.cfc`, [#50](https://github.com/cfmleditor/tree-sitter-cfml/issues/50).
+- **An array type in parameter position** — `function f( string[] v )`, and the
+  nested `string[][]` form. The exact mirror of `array_return_type.cfc`, which
+  parses: `X[]` was made to work in return position and never in parameter
+  position. `cfscript/array_param_type.cfc`, [#51](https://github.com/cfmleditor/tree-sitter-cfml/issues/51).
+- **`param <type> <name> = <value>;`** — `param numeric shortBad = "abc";`. The
+  `default=` spelling of the same shorthand (`param_typed.cfm`) parses; the `=`
+  spelling does not. `cfscript/param_typed_assignment.cfc`, [#52](https://github.com/cfmleditor/tree-sitter-cfml/issues/52).
+- **`for ( var <dotted> in … )`** — `for ( var local.package in items )`. A dotted
+  loop variable parses without `var`, and a plain name parses with it; only the
+  combination fails. `cfscript/for_in_var_dotted.cfc`, [#53](https://github.com/cfmleditor/tree-sitter-cfml/issues/53).
+
+The remaining three are `cfml`:
+
+- **`''` inside a single-quoted tag attribute** — `<cfparam default='x ''y'' z'>`.
+  The doubled-quote escape is accepted in a double-quoted value and not in a
+  single-quoted one, because `quoted_cf_attribute_value` lists `'""'` as an
+  alternative in its double-quoted branch and has no `"''"` counterpart in the
+  other. The narrowest of the eight — a one-line asymmetry.
+  `cfml/single_quoted_attribute_escape.cfm`, [#54](https://github.com/cfmleditor/tree-sitter-cfml/issues/54).
+- **A run of unpaired custom tags deeper than ~71** — an unpaired `<cf_foo>` opens
+  a block that the next one nests inside, so N in a row is N levels deep. At 72
+  levels a *following* tag can no longer be parsed and the whole document
+  collapses to a single ERROR node at `1:1`. The run on its own is fine at any
+  depth, since implicit end tags close it cheaply at EOF, so it is the trailing
+  tag that exposes the limit. RustCFML's `runner.cfm` drives its suite with ~700
+  unpaired `<cf_runtest>` tags and then calls `printSummary()`, which is exactly
+  that shape. `cfml/deep_unpaired_custom_tags.cfm`, [#55](https://github.com/cfmleditor/tree-sitter-cfml/issues/55).
+- **`</cfscript>` inside a string literal** — closes the script block early, so
+  the rest of the block is parsed as template text and the real closing tag
+  becomes a stray end tag. The scanner scans raw script text for the close tag
+  without tracking string literals. `cfml/close_tag_in_script_string.cfm`, [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56).
 
 Files are scanned with the `cfml` grammar (or `cfscript` for `.cfs`), then every
 `cf_script_content`, `cf_component_content` and `cf_query_content` region is
