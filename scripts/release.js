@@ -7,17 +7,62 @@ const readline = require('readline');
 
 const root = join(__dirname, '..');
 
+/**
+ * Answers read from a non-TTY stdin, drained in full before the first prompt.
+ *
+ * readline cannot be used for this. It emits a `line` event for every line in
+ * a chunk the moment the chunk arrives, but `question` only captures the next
+ * line emitted *after* it is called — so with all the answers piped in at
+ * once, the second and later ones are emitted while the first prompt is
+ * waiting and are discarded. Every prompt after the first then reads EOF.
+ *
+ * @type {string[] | undefined}
+ */
+let pipedAnswers;
+
+/** @returns {string | null} The next piped answer, or null if none are left. */
+function nextPipedAnswer() {
+  if (!pipedAnswers) {
+    const raw = readFileSync(0, 'utf8'); // fd 0, read to EOF
+    pipedAnswers = raw ? raw.replace(/\r?\n$/, '').split(/\r?\n/) : [];
+  }
+  return pipedAnswers.length ? /** @type {string} */ (pipedAnswers.shift()) : null;
+}
+
+/**
+ * @param {string} answer - The reply to a prompt
+ * @param {() => void} resolve - Called when the answer is an approval
+ */
+function applyAnswer(answer, resolve) {
+  if (answer.trim().toLowerCase() !== 'y') {
+    console.log('Aborted.');
+    process.exit(0);
+  }
+  resolve();
+}
+
 /** @param {string} message - Prompt to display */
 function confirm(message) {
-  const rl = readline.createInterface({input: process.stdin, output: process.stdout});
   return new Promise((resolve) => {
+    if (!process.stdin.isTTY) {
+      const answer = nextPipedAnswer();
+      // Echo the prompt and the answer, so a piped run reads like a live one.
+      console.log(`${message} (y/N) ${answer ?? ''}`);
+      if (answer === null) {
+        // Never resolve an unanswered prompt. Leaving the promise pending
+        // empties the event loop and exits 0 part-way through the release.
+        console.error(`\nError: stdin ended before "${message.trim()}" was answered.`);
+        console.error('Pipe one line per prompt, or run with a terminal attached.');
+        process.exit(1);
+      }
+      applyAnswer(answer, resolve);
+      return;
+    }
+
+    const rl = readline.createInterface({input: process.stdin, output: process.stdout});
     rl.question(`${message} (y/N) `, (answer) => {
       rl.close();
-      if (answer.trim().toLowerCase() !== 'y') {
-        console.log('Aborted.');
-        process.exit(0);
-      }
-      resolve();
+      applyAnswer(answer, resolve);
     });
   });
 }
@@ -206,4 +251,10 @@ async function release() {
   console.log('    npm and crates.io publish will be handled by the GitHub Release workflow.');
 }
 
-release();
+release().catch((err) => {
+  // A step failed. `run` inherits stdio, so the command's own output is
+  // already above; print the message rather than a stack trace, and make
+  // sure the exit code reflects the failure.
+  console.error(`\nError: ${err.message}`);
+  process.exitCode = 1;
+});
