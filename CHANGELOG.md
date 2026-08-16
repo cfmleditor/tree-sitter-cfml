@@ -10,8 +10,13 @@
 - Fix `make install` failing to find the C header: it looked for `bindings/c/…` relative to the dialect directory rather than the repository root. Add the missing `tree_sitter/tree-sitter-cfquery.h`, and move `tree-sitter-cfscript.h` alongside the other two in `bindings/c/tree_sitter/`
 - Fix the hardcoded `VERSION` in `common/common.mak`, stale at 0.26.17, which was written into every generated `.pc` file. It now comes from `tree-sitter.json`, and `.pc` descriptions are no longer empty for cfscript and cfquery
 
+### Corpus
+
+- Add `RustCFML/RustCFML` to the corpus repository list — a CFML interpreter written in Rust whose `tests/` tree is 1,188 files of deliberately edge-case CFML. It scans at 40 error nodes across 15 files (98.7% of files clean) and turned up eight constructs no earlier scan had shown, recorded in [`CORPUS.md`](CORPUS.md), [`LIMITATIONS.md`](LIMITATIONS.md) and [`docs/FAILING-PATTERNS.md`](docs/FAILING-PATTERNS.md) with a probe each. No grammar changes — five of the eight already parse in the embedded CFScript of `common/define-grammar.js` and fail only in the standalone `cfscript/grammar.js`, which `injections.scm` is what makes user-visible
+
 ### Tooling
 
+- Ignore `corpus/**` in `eslint.config.mjs`. The directory is gitignored but was still linted, so `npm run lint` reported errors in third-party JavaScript pulled in by `npm run corpus:fetch` — 53 of them from one repository in the list
 - Fix the file count in `npm run scan`: a file whose only parse errors came from an injected `<cfscript>` or `<cfquery>` region had them printed but was never counted, so the summary under-reported affected files (62 against a true 161 on the reference corpus). Node counts were unaffected
 
 ### cfml & cfscript

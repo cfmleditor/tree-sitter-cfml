@@ -82,6 +82,13 @@ const REPOS = [
   'lucee/script-runner',
   'lucee/extension-mongodb',
   'cfmleditor/cfmleditor', // editor fixtures
+
+  // Third wave: an engine test suite rather than an application. RustCFML is a
+  // CFML interpreter written in Rust; its `tests/` tree is 1,180 files of
+  // deliberately edge-case CFML, each one written to pin a single language
+  // behaviour. Density of unusual constructs per file is far higher than in
+  // application code, which is exactly why it is here.
+  'RustCFML/RustCFML',
 ];
 
 const EXTENSIONS = /\.(cfc|cfm|cfml|cfs)$/i;

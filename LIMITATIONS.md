@@ -165,11 +165,28 @@ assessment, including how many files each affects and what fixing it would cost.
   (`x.function`), but not as the object of a member expression. Making it a
   general expression start is what previously broke `function instanceOf( ... )`.
 
+#### Present in the embedded CFScript, missing from the standalone grammar
+
+The five below parse in the embedded CFScript of `common/define-grammar.js` and
+fail only in `cfscript/grammar.js`. Because `injections.scm` sends every
+`<cfscript>` block and every `component` body to the standalone grammar, an
+editor flags them even though the `cfml` grammar accepted the same source. All
+five came from the RustCFML engine test suite; see [CORPUS.md](CORPUS.md).
+
+- **Comma-less function parameters** — `function f( boolean a = false ⏎ boolean b = true )`. A newline between parameters is a soft separator on Lucee, ACF and BoxLang; TestBox's `BaseSpec.cfc` `createMock` depends on it.
+- **A type in front of a reserved-word parameter name** — `function f( array in )`. Untyped `function f( in )` parses, and `do`, `for`, `eq`, `is` take a type fine; only `in` is affected. ColdBox's `Util.cfc` declares `<cfargument name="in" type="array">`.
+- **An array type in parameter position** — `function f( string[] v )`, and nested `string[][]`. The mirror of the array *return* type, which parses.
+- **`param <type> <name> = <value>;`** — `param numeric shortBad = "abc";`. The `default=` spelling of the same shorthand parses; the `=` spelling does not.
+- **`for ( var <dotted> in … )`** — `for ( var local.package in items )`. Dotted without `var` parses, plain name with `var` parses; only the combination fails.
+
 ### cfml
 
 - **Dynamic tag name with a static prefix or namespace** — `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` (Lucee admin). 10 files.
 - **Dynamic tag opened and closed in different blocks** — `<cfoutput>#t()#</#g(n)#></cfoutput>` where the matching open tag is in an earlier `<cfoutput>` (Taffy examples). The plain `<#expr#>` form parses when open and close sit together. 13 files.
 - **A `<style>` block with many `#` tokens** — Lucee's `debug/Simple.cfc`, 42 `#` across CSS ID selectors and hex colours. Each of those constructs parses on its own; the failure only appears in accumulation, and the shortest failing extract is 20 lines.
+- **`''` inside a single-quoted tag attribute** — `<cfparam name="sq" default='x ''y'' z'>`. The doubled-quote escape works in a double-quoted value (`default="p ""q"" r"`) and not in a single-quoted one: `quoted_cf_attribute_value` lists `'""'` in its double-quoted branch and has no `"''"` counterpart in the other.
+- **A run of unpaired custom tags deeper than ~71** — an unpaired `<cf_foo>` opens a block the next one nests inside, so N in a row is N levels deep. At 72 levels a *following* tag stops parsing and the whole document collapses to one ERROR at `1:1`. The run alone is fine at any depth (implicit end tags close it at EOF), so it is the trailing tag that exposes the limit. RustCFML's `runner.cfm` is ~700 unpaired `<cf_runtest>` tags followed by a `<cfscript>` block.
+- **`</cfscript>` inside a string literal** — `FileWrite( p, "<cfscript>…</cfscript>" )` closes the script block early; the remainder parses as template text and the real closing tag becomes a stray end tag. The scanner scans raw script text for the close tag without tracking string literals.
 
 The following were gaps and now parse: typed `catch` with `var`, `var` with a
 scoped or dotted name, tag comments in a script body, `final` and
