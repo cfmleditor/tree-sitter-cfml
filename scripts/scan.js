@@ -27,6 +27,15 @@ const update = process.argv.includes('--update');
 const expectIdx = process.argv.indexOf('--expect');
 const expectFile = expectIdx !== -1 ? process.argv[expectIdx + 1] : null;
 
+// A crash caused by reading past a heap block is probabilistic — whether it
+// faults depends on what is mapped after the block, so the same input can pass
+// and fail across runs. Classifying such a file from one attempt makes the
+// check flaky in both directions, so `--retries` attempts it repeatedly and
+// treats "crashed at least once" as the answer. Proving one fixed therefore
+// means every attempt came back clean.
+const retriesIdx = process.argv.indexOf('--retries');
+const retries = retriesIdx !== -1 ? Math.max(1, +process.argv[retriesIdx + 1]) : 1;
+
 const EXTENSIONS = new Set(['.cfm', '.cfml', '.cfc', '.cfs']);
 
 const parserCfml = new Parser();
@@ -233,22 +242,31 @@ function scanIsolated(files) {
   for (const file of files) {
     const argv = [__filename, file, '--no-summary'];
     if (forcedLang) argv.push('--language', forcedLang);
-    const run = spawnSync(process.execPath, argv, {
-      encoding: 'utf8',
-      maxBuffer: 64 * 1024 * 1024,
-    });
     const rel = path.relative(process.cwd(), file);
     totalFiles++;
 
-    // The child exits 0 when clean and 1 when it found parse errors. Anything
-    // else means it died rather than reporting: a signal on POSIX, a large
-    // status (0xC0000005 and friends) on Windows, where a fault is not a
-    // signal. The recorded status is the bare word `crash` — which signal or
-    // code it was varies by platform and allocator, and pinning that would
-    // make the baseline drift for reasons that are not about the parser.
-    if (run.signal || (run.status !== 0 && run.status !== 1)) {
-      const how = run.signal || `exit ${run.status}`;
-      console.log(`${rel}: [scan] parser crashed (${how})`);
+    let run = null;
+    let crashedAs = null;
+    for (let attempt = 0; attempt < retries; attempt++) {
+      run = spawnSync(process.execPath, argv, {
+        encoding: 'utf8',
+        maxBuffer: 64 * 1024 * 1024,
+      });
+      // The child exits 0 when clean and 1 when it found parse errors. Anything
+      // else means it died rather than reporting: a signal on POSIX, a large
+      // status (0xC0000005 and friends) on Windows, where a fault is not a
+      // signal. The recorded status is the bare word `crash` — which signal or
+      // code it was varies by platform and allocator, and pinning that would
+      // make the baseline drift for reasons that are not about the parser.
+      if (run.signal || (run.status !== 0 && run.status !== 1)) {
+        crashedAs = run.signal || `exit ${run.status}`;
+        break;
+      }
+    }
+
+    if (crashedAs) {
+      const of = retries > 1 ? ` (1 of up to ${retries} attempts)` : '';
+      console.log(`${rel}: [scan] parser crashed (${crashedAs})${of}`);
       status[rel] = 'crash';
       totalCrashes++;
       continue;
@@ -278,11 +296,22 @@ function scanIsolated(files) {
 function checkExpected(status) {
   const file = path.resolve(expectFile);
   if (update) {
+    // A `flaky` entry is a human judgement that this file cannot be classified
+    // reliably, so an update must not overwrite it with whatever this one run
+    // happened to see. Clear it by hand to start asserting the file again.
+    const prior = fs.existsSync(file) ?
+      (JSON.parse(fs.readFileSync(file, 'utf8')).files || {}) : {};
+    const merged = {};
+    for (const [key, value] of Object.entries(status)) {
+      merged[key] = prior[key] === 'flaky' ? 'flaky' : value;
+    }
     const payload = {
-      comment: 'Current scan status of each file under `examples/`. `clean` = ' +
-        'no ERROR/MISSING nodes, `errors:<n>` = that many, `crash` = the ' +
-        'parser died on a signal. Regenerate with `npm run scan:examples -- --update`.',
-      files: status,
+      comment: 'Scan status of each file under `examples/`. `clean` = no ' +
+        'ERROR/MISSING nodes, `errors:<n>` = that many, `crash` = the parser ' +
+        'died, `flaky` = it dies intermittently and is deliberately not ' +
+        'asserted (only "did not become ordinary parse errors" is). ' +
+        'Regenerate with `npm run scan:examples -- --update`.',
+      files: merged,
     };
     fs.writeFileSync(file, `${JSON.stringify(payload, null, 2)}\n`);
     console.log(`updated ${path.relative(process.cwd(), file)}`);
@@ -294,6 +323,17 @@ function checkExpected(status) {
   for (const key of new Set([...Object.keys(expected), ...Object.keys(status)])) {
     const was = expected[key] ?? '(new file)';
     const now = status[key] ?? '(removed)';
+    // `flaky` asserts nothing about crash-vs-clean, only that the file did not
+    // start producing ordinary parse errors. Some crashes are intermittent in
+    // a way retrying cannot pin down — outcomes are not independent between
+    // processes — and an assertion that reddens CI at random is worse than one
+    // that says plainly it is not asserting.
+    if (was === 'flaky') {
+      if (now !== 'crash' && now !== 'clean') {
+        drift.push(`  ${key}: expected flaky (crash or clean), got ${now}`);
+      }
+      continue;
+    }
     if (was !== now) drift.push(`  ${key}: expected ${was}, got ${now}`);
   }
   if (drift.length === 0) {

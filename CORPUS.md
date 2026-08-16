@@ -19,19 +19,47 @@ npm run bench -- corpus  # parser throughput; add --out/--baseline to compare bu
 
 `examples/` holds pathological inputs rather than sample code, and until it was
 wired into CI nothing scanned it — not a script, not a workflow, and ESLint
-ignored it. One of its two files, `deeply-nested-custom.cfm`, **segfaults the
-parser**: ~1,200 nested `<xyz>` elements, and an unknown element nests, so each
-one is a level. The threshold is 119 (118 parses). Known HTML tags do not
-accumulate depth and survive 1,500; unpaired *CF* custom tags produce an ERROR
-instead of crashing, which is the milder half of the same mechanism.
+ignored it. **Both** of its files segfault the parser, via the heap over-read in
+`deserialize` tracked in
+[#57](https://github.com/cfmleditor/tree-sitter-cfml/issues/57).
+
+The crash is **probabilistic**, and that shapes everything about how it is
+tested. It fires when the scanner's serialized tag state overflows the 1,024-byte
+buffer, and whether the resulting out-of-bounds read faults depends on what is
+mapped after the heap block — so the same input passes and fails across runs:
+
+| Input | Crash rate |
+|---|---|
+| `deeply-nested-custom.cfm` — 1,201 nested `<xyz>` | 40/40 |
+| `deeply-nested.cfm` — 1,981 nested `<a>` | 10/40 |
+| `<xyz>` × 200 | 18/20 |
+| `<xyz>` × 60 | 0/20 |
+
+The rate tracks how fast a tag fills that buffer, not whether the element is
+known: an unknown element nests, so each one costs a stack entry and ~200 are
+enough, while `<a>` needs ~2,000. Do not bisect for a threshold — a bisect over
+a non-monotonic predicate returns a meaningless answer.
 
 A crash cannot be scanned in-process, because it takes the scan down with it.
-`--isolate` parses each file in a child process and turns a fatal signal into a
+`--isolate` parses each file in a child process and turns a fatal exit into a
 reported result; it costs a process per file, so it is for `examples/`, not the
-14k-file corpus. `--expect <file>` compares the run against a committed baseline
+14k-file corpus. `--expect <file>` compares against a committed baseline
 (`examples/expected.json`) and fails on drift **in either direction**, the same
-contract `npm run probe` has — so the known crash does not redden CI, and both a
+contract `npm run probe` has — so a known crash does not redden CI, while both a
 new crash and a fix do. Re-baseline with `npm run scan:examples -- --update`.
+
+Two mechanisms handle the flakiness, and the difference matters:
+
+- `--retries <n>` attempts a file up to n times and takes "crashed at least
+  once" as the answer. This is enough for `deeply-nested-custom.cfm`, which
+  crashes every time.
+- A baseline entry of **`flaky`** asserts nothing about crash-vs-clean, only
+  that the file has not started producing ordinary parse errors.
+  `deeply-nested.cfm` is recorded this way. Retrying does *not* stabilise it —
+  outcomes are not independent between processes, so 25 attempts still returned
+  all-clean about a fifth of the time — and a check that reddens CI at random is
+  worse than one that says plainly what it is not asserting. `--update` will not
+  overwrite a `flaky` entry; clear it by hand to start asserting the file again.
 
 `corpus/` is gitignored — it is third-party code under a mix of licences and is
 never committed. `npm run corpus:fetch -- --list` prints the repository list;
