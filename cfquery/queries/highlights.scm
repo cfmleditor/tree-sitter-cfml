@@ -1,24 +1,49 @@
 ; CF tags
 (erroneous_cf_end_tag_name) @tag.error
+
 (cf_attribute_name) @attribute
+
 (attribute_value) @string
+
 (cf_selfclose_tag) @tag
+
 (cf_start_tag_with_selfclose) @tag
+
 (cf_set_tag) @tag
+
 (cf_if_tag) @tag
+
 (cf_else_tag) @tag
+
 (cf_elseif_tag) @tag
+
 (cf_start_tag) @tag
+
 (cf_end_tag) @tag
+
 (cf_tag) @tag
+
+(cf_output_tag) @tag
+
+(cf_return_tag) @tag
+
 (cf_tag_name) @tag
 
 ; Variables
 (identifier) @variable
 
+; CFML scopes
+((identifier) @variable.builtin
+ (#match? @variable.builtin "^(?i)(APPLICATION|ARGUMENTS|CGI|CLIENT|COOKIE|FORM|LOCAL|REQUEST|SERVER|SESSION|THIS|URL|VARIABLES)$"))
+
 ; Properties
 (property_identifier) @property
+
 (shorthand_property_identifier) @property
+
+(shorthand_property_identifier_pattern) @property
+
+(private_property_identifier) @property
 
 ; Function and method definitions
 (function_expression
@@ -58,6 +83,12 @@
   right: [(function_expression) (arrow_function)])
 
 ; Function and method calls
+; Lucee built-in functions - highlight as builtin
+(call_expression
+  function: (identifier) @function.builtin
+  (#match? @function.builtin "^(?i)(abs|acos|addsoaprequestheader|addsoapresponseheader|aigetmetadata|aihas|ajaxlink|ajaxonload|applicationpathcacheclear|applicationstarttime|applicationstop|argon2checkhash|array|arrayappend|arrayavg|arrayclear|arraycontains|arraycontainsnocase|arraydelete|arraydeleteat|arraydeletenocase|arrayeach|arrayevery|arrayfilter|arrayfind|arrayfindall|arrayfindallnocase|arrayfindnocase|arrayfirst|arrayindexexists|arrayinsertat|arrayisdefined|arrayisempty|arraylast|arraylen|arraymap|arraymax|arraymedian|arraymerge|arraymid|arraymin|arraynew|arraypop|arrayprepend|arraypush|arrayreduce|arrayremoveduplicates|arrayresize|arrayreverse|arrayset|arrayshift|arrayslice|arraysome|arraysort|arraysplice|arraysum|arrayswap|arraytolist|arraytostruct|arrayunshift|asc|asin|astfrompath|astfromstring|atn|beat|binarydecode|binaryencode|bitand|bitmaskclear|bitmaskread|bitmaskset|bitnot|bitor|bitshln|bitshrn|bitxor|booleanformat|bundleinfo|cacheclear|cachecount|cachedelete|cacheget|cachegetall|cachegetallids|cachegetdefaultcachename|cachegetmetadata|cachegetproperties|cacheidexists|cachekeyexists|cacheput|cacheregionexists|cacheregionnew|cacheregionremove|cacheremove|cacheremoveall|cachesetproperties|callstackdump|callstackget|canonicalize|ceiling|cfusion_decrypt|cfusion_encrypt|charsetdecode|charsetencode|chr|cjustify|cleartimezone|collectioneach|collectionevery|collectionfilter|collectionmap|collectionreduce|collectionsome|compare|comparenocase|componentcacheclear|componentcachelist|componentinfo|componentlistpackage|compress|configimport|configtranslate|contractpath|cos|createaisession|createdate|createdatetime|createdynamicproxy|createguid|createobject|createodbcdate|createodbcdatetime|createodbctime|createtime|createtimespan|createulid|createuniqueid|createuuid|createwebsocketclient|csrfgeneratetoken|csrfverifytoken|ctcacheclear|ctcachelist|datasourceflushmetacache|dateadd|datecompare|dateconvert|datediff|dateformat|datepart|datetimeformat|day|dayofweek|dayofweekasstring|dayofweekshortasstring|dayofyear|daysinmonth|daysinyear|dbpoolclear|de|debugadd|decimalformat|decodeforhtml|decodefromurl|decrementvalue|decrypt|decryptbinary|deleteclientvariable|deserializejson|directorycopy|directorycreate|directorydelete|directoryexists|directoryinfo|directorylist|directoryrename|dollarformat|dump|duplicate|each|ec2describeinstances|echo|empty|encodeforcss|encodefordn|encodeforhtml|encodeforhtmlattribute|encodeforjavascript|encodeforldap|encodeforsql|encodeforurl|encodeforxml|encodeforxmlattribute|encodeforxpath|encrypt|encryptbinary|entitydelete|entityload|entityloadbyexample|entityloadbypk|entitymerge|entitynamearray|entitynamelist|entitynew|entityreload|entitysave|entitytoquery|esapidecode|esapiencode|evaluate|exp|expandpath|extensionexists|extensioninfo|extensionlist|extract|fileappend|fileclose|filecopy|filedelete|fileexists|filegetmimetype|fileinfo|fileiseof|filemodetosymbolic|filemove|fileopen|fileread|filereadbinary|filereadline|fileseek|filesetaccessmode|filesetattribute|filesetlastmodified|fileskipbytes|filetouch|fileupload|fileuploadall|filewrite|filewriteline|find|findlast|findlastnocase|findnocase|findoneof|firstdayofmonth|fix|floor|formatbasen|gatewayaction|gatewaystate|generate3deskey|generateargon2hash|generatepbkdfkey|generatersakeys|generatesecretkey|getapplicationmetadata|getapplicationsettings|getauthuser|getbasetagdata|getbasetaglist|getbasetemplatepath|getbuiltinfunction|getcanonicalpath|getclasspath|getclientvariableslist|getcomponentmetadata|getcomponentstaticscope|getcontextinfo|getcontextroot|getcpuusage|getcurrentcontext|getcurrenttemplatepath|getdirectoryfrompath|getencoding|getfilefrompath|getfileinfo|getfreespace|getfunctioncalledname|getfunctiondata|getfunctionkeywords|getfunctionlist|gethttprequestdata|gethttprequestheaders|gethttptimestring|getk2serverdoccount|getk2serverdoccountlimit|getlocale|getlocaledisplayname|getlocaleinfo|getlocalhostip|getluceeid|getmemoryusage|getmetadata|getmetricdata|getnumericdate|getpagecontext|getprinterinfo|getprinterlist|getprofilesections|getprofilestring|getpropertyfile|getpropertystring|getreadableimageformats|getsoaprequest|getsoaprequestheader|getsoapresponse|getsoapresponseheader|getsystemfreememory|getsystemmetrics|getsystemproporenvvar|getsystemtotalmemory|gettagdata|gettaglist|gettempdirectory|gettempfile|gettemplatepath|gettickcount|gettimezone|gettimezoneinfo|gettoken|gettotalspace|getuserroles|getvariable|getvfsmetadata|getwriteableimageformats|guarddecode|guardencode|hash|hash40|hmac|hour|htmlcodeformat|htmleditformat|htmlparse|iif|imageaddborder|imageblur|imagecaptcha|imageclearrect|imagecoderinfo|imagecopy|imagecrop|imagedrawarc|imagedrawbeveledrect|imagedrawcubiccurve|imagedrawimage|imagedrawline|imagedrawlines|imagedrawoval|imagedrawpoint|imagedrawquadraticcurve|imagedrawrect|imagedrawroundrect|imagedrawtext|imagefilter|imagefiltercolormap|imagefiltercurves|imagefilterkernel|imagefilterwarpgrid|imageflip|imagefonts|imageformats|imagegetblob|imagegetbufferedimage|imagegetexifmetadata|imagegetexiftag|imagegetheight|imagegetiptcmetadata|imagegetwidth|imagegrayscale|imageinfo|imagenegative|imagenew|imageoverlay|imagepaste|imageread|imagereadbase64|imageresize|imagerotate|imagerotatedrawingaxis|imagescaletofit|imagesetantialiasing|imagesetbackgroundcolor|imagesetdrawingalpha|imagesetdrawingcolor|imagesetdrawingstroke|imagesetdrawingtransparency|imagesharpen|imageshear|imagesheardrawingaxis|imagetranslate|imagetranslatedrawingaxis|imagewrite|imagewritebase64|imagewritetobrowser|imagexordrawingmode|incrementvalue|inputbasen|inquiryaisession|insert|inspecttemplates|int|internalrequest|interruptthread|invoke|isarray|isbinary|isboolean|isclosure|iscustomfunction|isdate|isdebugmode|isdefined|isempty|isfileobject|isflushed|isimage|isimagefile|isinstanceof|isinthread|isipinrange|isipv6|isjson|isleapyear|islocalhost|isnotmap|isnull|isnumeric|isnumericdate|isobject|ispdfobject|isquery|issimplevalue|issoaprequest|isstruct|isthreadinterrupted|isuserinanyrole|isuserinrole|isuserloggedin|isvalid|isvideofile|iswddx|iswithintransaction|isxml|isxmlattribute|isxmldoc|isxmlelem|isxmlnode|isxmlroot|iszipfile|javacast|jsstringformat|lcase|left|len|listappend|listavg|listchangedelims|listcompact|listcontains|listcontainsnocase|listdeleteat|listeach|listevery|listfilter|listfind|listfindnocase|listfirst|listgetat|listgetduplicates|listindexexists|listinsertat|listitemtrim|listlast|listlen|listmap|listprepend|listqualifiedtoarray|listqualify|listreduce|listremoveduplicates|listrest|listsetat|listsome|listsort|listtoarray|listtrim|listvaluecount|listvaluecountnocase|ljustify|loadaisession|location|log|log10|logallthreads|lscurrencyformat|lsdateformat|lsdatetimeformat|lsdayofweek|lseurocurrencyformat|lsiscurrency|lsisdate|lsisnumeric|lslcase|lsnumberformat|lsparsecurrency|lsparsedatetime|lsparseeurocurrency|lsparsenumber|lstimeformat|lsucase|lsweek|ltrim|luceeaigetmetadata|luceeaihas|luceecreateaisession|luceeinquiryaisession|manifestread|markdowntohtml|maveninfo|mavenload|max|metaphone|mid|millisecond|min|minute|month|monthasstring|monthshortasstring|newline|now|nowserver|nullvalue|numberformat|objectequals|objectload|objectsave|ormclearsession|ormcloseallsessions|ormclosesession|ormevictcollection|ormevictentity|ormevictqueries|ormexecutequery|ormflush|ormgetsession|ormgetsessionfactory|ormreload|pagepoolclear|pagepoollist|paragraphformat|parameterexists|parsedatetime|parsenumber|pi|precisionevaluate|preservesinglequotes|quarter|query|queryaddcolumn|queryaddrow|queryappend|queryclear|queryclose|querycolumnarray|querycolumncount|querycolumndata|querycolumnexists|querycolumnlist|queryconvertforgrid|querycurrentrow|querydeletecolumn|querydeleterow|queryeach|queryevery|queryexecute|queryfilter|querygetcell|querygetcellbyindex|querygetrow|queryinsertat|queryisempty|querykeyexists|querylazy|querymap|querynew|queryprepend|queryrecordcount|queryreduce|queryrenamecolumn|queryreverse|queryrowbyindex|queryrowdata|queryrowdatabyindex|queryrowswap|querysetcell|querysetrow|queryslice|querysome|querysort|querytostruct|quotedvaluelist|rand|randomize|randrange|rediscommand|rediscommandlowpriority|redisconnectionpoolinfo|reescape|refind|refindnocase|releasecomobject|rematch|rematchnocase|removechars|render|repeatstring|replace|replacelist|replacelistnocase|replacenocase|rereplace|rereplacenocase|restdeleteapplication|restinitapplication|restsetresponse|reverse|right|rjustify|round|rtrim|runasync|s3addacl|s3clearbucket|s3copy|s3createbucket|s3delete|s3deletebucket|s3download|s3exists|s3generatepresignedurl|s3generateuri|s3getacl|s3getmetadata|s3getversioninfo|s3listbucket|s3listbuckets|s3move|s3read|s3readbinary|s3setacl|s3setmetadata|s3upload|s3write|sanitize|sanitizehtml|second|secretproviderget|sendgatewaymessage|serialize|serializeaisession|serializejson|sessioncommit|sessionexists|sessioninvalidate|sessionrotate|sessionstarttime|setencoding|setlocale|setprofilestring|setpropertystring|settimezone|setvariable|sgn|sin|sizeof|sleep|soundex|spanexcluding|spanincluding|spreadsheetnew|sqr|sslcertificateinstall|sslcertificatelist|storeaddacl|storegetacl|storegetmetadata|storesetacl|storesetmetadata|stringeach|stringevery|stringfilter|stringlen|stringmap|stringreduce|stringsome|stringsort|stripcr|structappend|structclear|structcopy|structcount|structdelete|structeach|structevery|structfilter|structfind|structfindkey|structfindvalue|structget|structinsert|structisempty|structkeyarray|structkeyexists|structkeylist|structkeytranslate|structmap|structnew|structreduce|structsome|structsort|structtosorted|structupdate|structvaluearray|systemcacheclear|systemoutput|tan|threaddata|threadinterrupt|threadinterrupted|threadjoin|threadterminate|throw|timeformat|tobase64|tobinary|tonumeric|toscript|tostring|trace|transactioncommit|transactionrollback|transactionsetsavepoint|trim|trimwhitespace|truefalseformat|ucase|ucfirst|unserializejava|urldecode|urlencode|urlencodedformat|urlsessionformat|val|validatejson|valuearray|valuelist|valueref|verifyclient|webservicenew|websocketinfo|week|wrap|writedump|writelog|writeoutput|xmlchildpos|xmlelemnew|xmlformat|xmlgetnodetype|xmlnew|xmlparse|xmlsearch|xmltransform|xmlvalidate|year|yesnoformat)$"))
+
+; Function and method calls
 (call_expression
   function: (identifier) @function.call)
 
@@ -73,6 +104,7 @@
   (#eq? @variable.builtin "self"))
 
 (this) @variable.builtin
+
 (super) @variable.builtin
 
 (cf_var) @keyword
@@ -96,9 +128,11 @@
   (#match? @comment.documentation "^/[*][*][^*].*[*]/$"))
 
 (string) @string
+
 (hash_empty) @punctuation.special
 
 (regex_pattern) @string.regexp
+
 (regex_flags) @character.special
 
 (regex
@@ -110,6 +144,9 @@
   "#" @punctuation.special)
 
 (unary_operator) @operator
+
+(spread_element
+  "..." @operator)
 
 ((identifier) @number
   (#any-of? @number "NaN" "Infinity"))
@@ -178,6 +215,12 @@
   "&&="
   "||="
   "??="
+  "<="
+  "<>"
+  "<<"
+  ">="
+  ">>"
+  ">>>"
 ] @operator
 
 ; Types
@@ -217,6 +260,8 @@
   "instanceof"
   "static"
   "with"
+  "default"
+  "in"
 ] @keyword
 
 [
@@ -226,6 +271,7 @@
   "]"
   "{"
   "}"
+  "</"
 ] @punctuation.bracket
 
 ; SQL keywords and identifiers
@@ -237,6 +283,7 @@
 (query_function_name) @variable
 
 (query_identifier) @variable
+
 (query_alias
   right: _ @variable)
 
@@ -252,13 +299,25 @@
 (query_comparison_expression
   operator: _ @operator)
 
-(quoted_query_value
-  (query_value) @string)
-(double_quoted_query_value
-  (query_value) @string)
+; Quoted values: capture the whole node so the delimiters are styled too
+[
+  (quoted_query_value)
+  (double_quoted_query_value)
+] @string
+
+; Backticks and brackets quote an identifier, not a string literal
+(backtick_quoted_query_value
+  (query_value) @variable)
+
+(backtick_quoted_query_value
+  "`" @punctuation.bracket)
 
 (query_comma) @punctuation.delimiter
+
 (query_semicolon) @punctuation.delimiter
+
+(bracketed_query_value
+  (query_value) @variable)
 
 (bracketed_query_value
   ["[" "]"] @punctuation.bracket)
@@ -272,4 +331,20 @@
 (query_operator) @operator
 
 (query_open_paren) @punctuation.bracket
+
 (query_close_paren) @punctuation.bracket
+
+(quoted_query_value
+  (query_value) @string)
+
+(double_quoted_query_value
+  (query_value) @string)
+
+; Reachable inside `#...#` through a `function(...)` expression or a typed
+; arrow-function parameter, even though a `<cfscript>` block is not.
+(parameter_type) @type
+; `User[] v` - one token, so the anonymous "[" / "]" rule cannot reach it.
+(array_return_suffix) @punctuation.bracket
+
+; Lucee object selector, e.g. `new java:java.io.File(...)`
+(type_prefix) @keyword

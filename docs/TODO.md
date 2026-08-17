@@ -89,8 +89,7 @@ operators reused `query_math_expression`. Neither needed a query change.
 
 ## Housekeeping
 
-- Delete the merged remote branch `claude/bare-angle-brackets-in-text` (PR #38 is
-  merged; the branch is stale).
+Nothing outstanding.
 
 ## Considered and deliberately not doing
 

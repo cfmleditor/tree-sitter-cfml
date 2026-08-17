@@ -273,6 +273,18 @@ jobs:
           registry-token: ${{ steps.crates_auth.outputs.token || secrets.CARGO_REGISTRY_TOKEN }}
 
       - name: Create GitHub Release
+        # Runs even when a publish step failed. The Release is independent of
+        # whether a registry accepted an upload, it is the artifact people
+        # actually read, and its notes were computed back at step 2 — so a
+        # registry rejection should not suppress it. `!cancelled()` rather than
+        # `always()`, so an intentional cancellation stays a cancellation.
+        #
+        # This does mean a run that fails its credential pre-flight, having
+        # published nothing, still gets a Release. That is the accepted cost:
+        # the tag exists either way, and a Release carrying the changelog for a
+        # tag is more useful than silence. The action updates an existing
+        # Release rather than failing, so repeats are harmless.
+        if: ${{ !cancelled() }}
         uses: softprops/action-gh-release@v2
         with:
           # `tag_name` must be explicit. On a tag push the action infers it from
@@ -303,7 +315,18 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version-file: ".nvmrc"
+          # Pinned for the same reason as the release job: on a dispatch the
+          # checkout is the *tag*, so node-version-file would name whatever
+          # `.nvmrc` said when that release was cut, and an old enough tag can
+          # name a version setup-node no longer offers — which breaks the
+          # recovery path precisely when it is needed.
+          #
+          # Nothing is lost by not matching the tag. Node here only *runs*
+          # `scripts/build-native.js`; it is not part of what ships. That script
+          # shells out to `cc` to build standalone shared libraries and does not
+          # go through node-gyp or link the Node ABI, so the compiler is the
+          # toolchain that determines the artifact, not this.
+          node-version: 24
           cache: "npm"
 
       - name: Setup Java
