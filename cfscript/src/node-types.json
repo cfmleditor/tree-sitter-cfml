@@ -1582,6 +1582,11 @@
     }
   },
   {
+    "type": "identifier",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "if_statement",
     "named": true,
     "fields": {
@@ -2815,6 +2820,16 @@
           }
         ]
       },
+      "default": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "assignment_expression",
+            "named": true
+          }
+        ]
+      },
       "name": {
         "multiple": false,
         "required": false,
@@ -3550,10 +3565,6 @@
   },
   {
     "type": "hash_empty",
-    "named": true
-  },
-  {
-    "type": "identifier",
     "named": true
   },
   {

@@ -465,6 +465,14 @@ module.exports = grammar({
             // have to be accepted rather than lexed as keywords.
             $.identifier,
             alias($._reserved_identifier, $.identifier),
+            // `for ( var local.package in items )` — the scoped name that
+            // `variable_declarator` has accepted for `var local.x = 1` since
+            // it was widened. This header never got the same widening, so a
+            // dotted loop variable parsed without `var` and a plain one parsed
+            // with it, and only the combination failed. The
+            // `_reserved_identifier` line above is the guard that widening
+            // needed, and it is already here.
+            $.member_expression,
             $._destructuring_pattern,
           )),
           optional($._initializer),
@@ -859,7 +867,18 @@ module.exports = grammar({
         // `]`. The node keeps its `array_return_suffix` name so the existing
         // `@punctuation.bracket` highlight covers both positions.
         repeat($.array_return_suffix),
-        optional(choice($.pattern, $.assignment_pattern)),
+        optional(choice(
+          $.pattern,
+          $.assignment_pattern,
+          // `array in`, `array eq`, `query contains` — see `_operator_shaped_name`.
+          // The bare name only. `array in = []` stays unsupported: reaching it
+          // means aliasing a `seq` to `assignment_pattern`, since that rule's
+          // left is a `pattern` and no pattern can reach these words, and that
+          // spelling produced a malformed tree — the name outside a nested,
+          // duplicated `assignment_pattern` — while adding 5% to the state
+          // table. No corpus file gives an operator-shaped parameter a default.
+          alias($._operator_shaped_name, $.identifier),
+        )),
         repeat($.parameter_attribute),
       ),
       seq(
@@ -867,6 +886,60 @@ module.exports = grammar({
         choice($.pattern, $.assignment_pattern),
         repeat($.parameter_attribute),
       ),
+    ),
+
+    // CFML's word-shaped operators are legal parameter names, and it is a type
+    // in front of the name that makes them fail rather than the name itself.
+    // `parameter_type` reaches the slot through `$.identifier`, and
+    // `member_expression`'s object is a full `$.expression`, so an expression
+    // reading is live at the start of every parameter — which makes a binary
+    // operator valid straight after the type, and keyword extraction then hands
+    // the word to the operator token. `--debug` shows the lexer emitting
+    // `sym:in` for the name in `function f( array in )`. Naming each operator
+    // here restores the identifier reading, the same move `_reserved_identifier`
+    // makes for keyword-shaped names.
+    //
+    // Only the type spelling decides it, which is why `string in` and `any in`
+    // always parsed: `parameter_type` spells those as `keyword()` tokens and no
+    // expression reading survives them. `array`, `query`, `struct` and
+    // `component` reach it as identifiers and do not.
+    //
+    // The patterns are duplicated from the `binary_expression` operator table
+    // rather than shared with it: that table pairs each operator with its own
+    // precedence and cannot be factored into a single rule. They are the same
+    // tokens — identical patterns unify — which is what keeps `a eq b` a
+    // `binary_expression` rather than two identifiers. Keep the two lists in
+    // step. Multi-word operators (`does not contain`, `greater than or equal
+    // to`) are deliberately absent, since no identifier can contain a space.
+    _operator_shaped_name: ($) => choice(
+      $._kw_in,
+      $._kw_instanceof,
+      /[aA][nN][dD]/,
+      /[oO][rR]/,
+      /[xX][oO][rR]/,
+      /[mM][oO][dD]/,
+      /[lL][tT]/,
+      /[lL][tT][eE]/,
+      /[lL][eE]/,
+      /[eE][qQ]/,
+      /[eE][qQ][uU][aA][lL]/,
+      /[iI][sS]/,
+      /[nN][eE][qQ]/,
+      /[cC][oO][nN][tT][aA][iI][nN][sS]/,
+      /[cC][tT]/,
+      /[nN][cC][tT]/,
+      /[gG][tT][eE]/,
+      /[gG][eE]/,
+      /[gG][tT]/,
+      // `not` is deliberately absent, and is the one word here that cannot be
+      // added. Every other entry is a *binary* operator, so it only competes
+      // with a reading that needs a left operand the name slot has not got.
+      // `not` is `unary_operator`, so `function f( array not x )` is genuinely
+      // ambiguous — a parameter named `not` followed by another, or `not x` as
+      // a unary expression — and `generate` offers only a conflict between
+      // `_operator_shaped_name` and `unary_operator`, which would be live at
+      // every `!`, `-` and `+` in the language. A parameter named `not` is also
+      // the least plausible of the set, and none appears in the corpus.
     ),
 
     parameter_attribute: ($) => prec.dynamic(-2, seq(
@@ -1579,7 +1652,21 @@ module.exports = grammar({
         // `=` in the attribute branch below.
         field('tag', $.identifier),
         field('type', alias($.identifier, $.parameter_type)),
-        field('name', choice($.identifier, $.member_expression)),
+        choice(
+          // `param numeric url.id default="0";` — a bare name, then attributes.
+          field('name', choice($.identifier, $.member_expression)),
+          // `param numeric shortBad = "abc";` — the `=` spelling of the same
+          // default. The name and its value together are an ordinary
+          // `assignment_expression`, and reusing that rule is the point: it
+          // already settles where such an expression ends against the automatic
+          // semicolon. Spelling this out as a fresh `'=' $.expression` position
+          // reopens that question and cannot be resolved locally — `= a + { … }`
+          // then has two readings, a binary `+` continuing the value or a unary
+          // `+` opening the next statement, and the only offered resolutions are
+          // a conflict or a precedence on `binary_expression`/`unary_operator`,
+          // both live at every `+` and `-` in the language.
+          field('default', $.assignment_expression),
+        ),
         field('arguments', repeat(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
         $._semicolon,
       ),

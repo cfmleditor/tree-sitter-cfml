@@ -188,10 +188,20 @@ Each is therefore a real grammar change, needed in **both** files, in the area
 where keyword extraction is lexical. Verify a fix in both — a `.cfs` file for
 `cfscript/grammar.js`, and a `<cfset>` closure for `common/define-grammar.js`.
 
-- **Comma-less function parameters** — `function f( boolean a = false ⏎ boolean b = true )`. A newline between parameters is a soft separator on Lucee, ACF and BoxLang; TestBox's `BaseSpec.cfc` `createMock` depends on it. [#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49).
-- **A type in front of a reserved-word parameter name** — `function f( array in )`. Untyped `function f( in )` parses, and `do`, `for`, `eq`, `is` take a type fine; only `in` is affected. ColdBox's `Util.cfc` declares `<cfargument name="in" type="array">`. [#50](https://github.com/cfmleditor/tree-sitter-cfml/issues/50).
-- **`param <type> <name> = <value>;`** — `param numeric shortBad = "abc";`. The `default=` spelling of the same shorthand parses; the `=` spelling does not. [#52](https://github.com/cfmleditor/tree-sitter-cfml/issues/52).
-- **`for ( var <dotted> in … )`** — `for ( var local.package in items )`. Dotted without `var` parses, plain name with `var` parses; only the combination fails. [#53](https://github.com/cfmleditor/tree-sitter-cfml/issues/53).
+**Second correction, narrower.** "Needed in both files" held for every construct
+here that was checked, and then did not hold for [#52](https://github.com/cfmleditor/tree-sitter-cfml/issues/52).
+`common/define-grammar.js` has no `tag_statement` rule at all, so its copy of
+CFScript carries no `param` statement in any spelling — the attribute form
+`param name="x" default="0";` fails there too, not just the shorthand. #52 was
+therefore a `cfscript`-only fix. The rule to carry forward is that the two files
+have to be *checked* rather than assumed symmetric in either direction: they had
+drifted apart on `_for_header` (a missing alternative) and on `tag_statement` (a
+missing rule).
+
+- **Comma-less function parameters** — `function f( boolean a = false ⏎ boolean b = true )`. TestBox's `BaseSpec.cfc` `createMock` is written this way. The issue frames this as the newline acting as a soft separator, and that is not the mechanism: a **space** fails identically to a newline in every shape tested, so there is no newline sensitivity to honour and the comma is simply required by `commaSep1`. The one shape that looks supported is a misparse — untyped `function f( a b )` yields a *single* parameter of type `a` named `b`, and `function f( a b c )` errors. That misparse is also the cost: making the comma optional makes `f( a b )` ambiguous between one typed parameter and two untyped ones, an ambiguity inherent to CFML's `<type> <name>` parameter syntax and live at **every parameter list in the language**. Re-rated **High/High**, and not acceptable without `npm run bench`. [#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49).
+- **`not` as a parameter name behind a type** — `function f( array not )`. The rest of the word-operator set parses since [#50](https://github.com/cfmleditor/tree-sitter-cfml/issues/50) was fixed, and `not` is the one word that cannot join them: every other entry in `_operator_shaped_name` is a *binary* operator, competing only with a reading that needs a left operand the name slot has not got, while `not` is `unary_operator`, so `function f( array not x )` is genuinely ambiguous. The only resolutions `generate` offers are a conflict or a precedence between `_operator_shaped_name` and `unary_operator`, both live at every `!`, `-` and `+` in the language. Not worth that for the least plausible name in the set.
+- **A default on an operator-shaped parameter name** — `function f( array in = [] )`. The bare `array in` parses; giving it a default means aliasing a `seq` to `assignment_pattern`, because that rule's left is a `pattern` and no pattern can reach these words. That spelling generates without conflicts but produces a malformed tree — the name outside a nested, duplicated `assignment_pattern` — and adds 5% to the state table. No corpus file writes it.
+- **A `param` type spelled with a `_reserved_identifier` word** — `param query x;` and `param component x;` fail in *every* spelling, including `param query x default=1;`. Found while fixing #52 and unrelated to it: `tag_statement` takes its type through `$.identifier`, and `query` and `component` are in `_reserved_identifier`, so they lex as keywords in that slot. Every other type name tested parses (`string numeric any boolean date array struct xml binary guid void`). Narrow, and no corpus file writes it. Not yet filed.
 
 ### cfml
 
@@ -210,8 +220,13 @@ attributes, a subscript as a `var` declaration name
 (`var mappings[ key ] = value`), `new` with a dotted Java path
 (`new java.util.Properties()`), `debugger` as an ordinary identifier, the
 thin-arrow lambda (`t -> t.b()`), the `''` escape inside a single-quoted tag
-attribute value (`default='x ''y'' z'`), and an array type in parameter position
-(`function f( string[] v )`, nested `string[][]`). The `new java:` / `new cfml:`
+attribute value (`default='x ''y'' z'`), an array type in parameter position
+(`function f( string[] v )`, nested `string[][]`), a `var`-scoped dotted
+loop variable in a for-in header (`for ( var local.package in items )`), the
+`=` spelling of a typed `param` default (`param numeric shortBad = "abc";`,
+`cfscript` only), and a word-shaped binary operator as a parameter name behind
+any type (`function f( array in )`, `query contains`, `struct eq`). The
+`new java:` / `new cfml:`
 type prefix now works in both CFScript grammars, where it had been
 `cfscript`-only.
 

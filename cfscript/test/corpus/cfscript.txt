@@ -2294,3 +2294,154 @@ function f( string[] v, User[][] w, required numeric[] x = [] ) {}
         (identifier)
         (array)))
     (statement_block)))
+
+===================================
+var-scoped dotted name in a for-in header
+===================================
+for ( var local.package in items ) {}
+for ( var a.b.c in items ) {}
+for ( var pkg in items ) {}
+for ( var export in items ) {}
+for ( local.pkg in items ) {}
+---
+
+(program
+  (for_in_statement
+    (member_expression
+      (identifier)
+      (property_identifier))
+    (identifier)
+    (statement_block))
+  (for_in_statement
+    (member_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (property_identifier))
+    (identifier)
+    (statement_block))
+  (for_in_statement
+    (identifier)
+    (identifier)
+    (statement_block))
+  (for_in_statement
+    (identifier)
+    (identifier)
+    (statement_block))
+  (for_in_statement
+    (member_expression
+      (identifier)
+      (property_identifier))
+    (identifier)
+    (statement_block)))
+
+===================================
+param with the = spelling of the default
+===================================
+param numeric shortBad = "abc";
+param string url.id = "0";
+param numeric x default="0";
+param numeric y = 1 max=5;
+param name="z" type="numeric" default="0";
+---
+
+(program
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (assignment_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (string
+        (string_fragment))))
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (assignment_expression
+      (identifier)
+      (number))
+    (assignment_expression
+      (identifier)
+      (number)))
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))))
+
+===================================
+word-shaped operator as a parameter name behind a type
+===================================
+function f( array in, query contains, struct eq ) {}
+function g( string in, any is ) {}
+function h( component gt, numeric x ) {}
+function i() { return a eq b and c contains d; }
+---
+
+(program
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type
+        (identifier))
+      (identifier)
+      (parameter_type)
+      (identifier)
+      (parameter_type
+        (identifier))
+      (identifier))
+    (statement_block))
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier))
+    (statement_block))
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type
+        (identifier))
+      (identifier)
+      (parameter_type)
+      (identifier))
+    (statement_block))
+  (function_declaration
+    (identifier)
+    (formal_parameters)
+    (statement_block
+      (return_statement
+        (binary_expression
+          (binary_expression
+            (identifier)
+            (identifier))
+          (binary_expression
+            (identifier)
+            (identifier)))))))

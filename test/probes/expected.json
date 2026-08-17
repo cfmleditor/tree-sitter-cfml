@@ -29,14 +29,14 @@
     "cfscript/empty_struct_literal.cfc": "pass",
     "cfscript/final_member_declaration.cfc": "pass",
     "cfscript/for_in_reserved_name.cfc": "pass",
-    "cfscript/for_in_var_dotted.cfc": "fail",
+    "cfscript/for_in_var_dotted.cfc": "pass",
     "cfscript/function_named_instanceof.cfc": "pass",
     "cfscript/keyword_shaped_param_types.cfc": "pass",
     "cfscript/leading_javadoc.cfc": "pass",
     "cfscript/mixed_case_keywords.cfc": "pass",
     "cfscript/new_dotted_java_path.cfc": "pass",
     "cfscript/no_semicolon_before_brace.cfc": "pass",
-    "cfscript/param_typed_assignment.cfc": "fail",
+    "cfscript/param_typed_assignment.cfc": "pass",
     "cfscript/script_tag_call.cfc": "pass",
     "cfscript/spaced_param_defaults.cfc": "pass",
     "cfscript/static_block.cfc": "pass",
@@ -46,7 +46,7 @@
     "cfscript/tag_comment_in_script_body.cfc": "pass",
     "cfscript/thin_arrow_lambda.cfc": "pass",
     "cfscript/typed_catch_with_var.cfc": "pass",
-    "cfscript/typed_reserved_param.cfc": "fail",
+    "cfscript/typed_reserved_param.cfc": "pass",
     "cfscript/var_scoped_dotted_name.cfc": "pass"
   }
 }
