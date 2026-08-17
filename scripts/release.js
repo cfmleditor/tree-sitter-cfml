@@ -242,10 +242,23 @@ async function release() {
   run(`git tag "v${version}"`);
 
   // 8. Push
+  //
+  // One atomic push, not a branch push followed by a tag push. As two commands
+  // the branch lands first, so anything that rejects the tag — a protected-tag
+  // ruleset, a credential scoped to `refs/heads/*`, a network drop — leaves the
+  // version bump on the default branch with nothing tagged and nothing
+  // published, which is a state you have to unpick by hand. `--atomic` makes
+  // the server take both refs or neither, so a rejected tag leaves the branch
+  // untouched and the release simply retryable. The remote and branch come from
+  // the upstream this script has already required to exist.
   await confirm('==> Push commit and tag?');
   if (ghUser) run(`gh auth switch --user ${ghUser}`);
-  run('git push');
-  run(`git push origin "v${version}"`);
+  const upstream = execSync('git rev-parse --abbrev-ref --symbolic-full-name @{u}', {
+    cwd: root, encoding: 'utf8',
+  }).trim();
+  const remote = upstream.slice(0, upstream.indexOf('/'));
+  const branch = upstream.slice(upstream.indexOf('/') + 1);
+  run(`git push --atomic ${remote} HEAD:refs/heads/${branch} refs/tags/v${version}`);
 
   console.log(`\n==> Done! v${version} released.`);
   console.log('    npm and crates.io publish will be handled by the GitHub Release workflow.');

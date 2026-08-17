@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Tooling
+
+- Push the release commit and its tag as **one atomic push** rather than two commands. `scripts/release.js` ran `git push` and then `git push origin v<version>`, so the branch landed first and anything that rejected the tag left the version bump on the default branch with nothing tagged and nothing published — the registries still serving the previous version while the repository claims the new one, a state that has to be unpicked by hand. This is not hypothetical: it happened cutting 0.26.33, where the tag push returned HTTP 403 from a credential scoped to `refs/heads/*`, after `master` had already moved. `git push --atomic <remote> HEAD:refs/heads/<branch> refs/tags/v<version>` makes the server take both refs or neither, so a rejected tag leaves the branch untouched and the release is simply retryable. The remote and branch are derived from the upstream the script already requires to exist, so a release cut from a branch whose name differs from its remote's still pushes to the right place. Verified both ways against a local bare repository with a `pre-receive` hook that rejects `refs/tags/*`: non-atomic advances the branch and loses the tag, atomic leaves the branch exactly where it was, and both refs land once the hook is removed
+
 ## [0.26.33]
 
 ### cfml & cfscript
