@@ -180,6 +180,19 @@
   "??="
 ] @operator
 
+; Types
+;------
+
+; Reachable inside `#...#` through a `function(…)` expression or a typed
+; arrow-function parameter, even though a `<cfscript>` block is not.
+(parameter_type) @type
+; `User[] v` — one token, so the anonymous "[" / "]" rule above cannot reach it.
+(array_return_suffix) @punctuation.bracket
+
+; `new java:X()` / `new cfml:X()` — one token including the colon, and a
+; fixed pair of words, so it belongs with the `new` keyword beside it.
+(type_prefix) @keyword
+
 [
   "var"
   "let"

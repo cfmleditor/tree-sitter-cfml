@@ -155,6 +155,9 @@
 ; `User[] function getUsers()` — one token, so the anonymous "[" / "]"
 ; rule below cannot reach it.
 (array_return_suffix) @punctuation.bracket
+; `new java:X()` / `new cfml:X()` — one token including the colon, and a
+; fixed pair of words, so it belongs with the `new` keyword beside it.
+(type_prefix) @keyword
 (catch_clause
   type: (catch_type) @type)
 
