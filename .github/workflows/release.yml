@@ -182,38 +182,46 @@ jobs:
 
       - name: Verify crates.io credentials
         env:
-          # Trusted publishing first, the stored token second. Whichever wins
-          # here is the one the publish step uses, so this checks what will
-          # actually be used rather than what we hope will be.
-          CRATES_TOKEN: ${{ steps.crates_auth.outputs.token || secrets.CARGO_REGISTRY_TOKEN }}
+          OIDC_OUTCOME: ${{ steps.crates_auth.outcome }}
+          OIDC_TOKEN: ${{ steps.crates_auth.outputs.token }}
+          FALLBACK_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
         run: |
-          if [ "${{ steps.crates_auth.outcome }}" = "success" ]; then
-            echo "Using a trusted-publishing token."
-          else
-            echo "::warning::Trusted publishing did not yield a token;" \
-                 "falling back to CARGO_REGISTRY_TOKEN."
+          # A trusted-publishing token is scoped to publishing this one crate
+          # and cannot read /api/v1/me, which needs a user-scoped token — that
+          # endpoint answers 403 for a perfectly good OIDC token, so checking it
+          # that way rejects the credential it is meant to protect. The
+          # exchange succeeding *is* the verification for this path: the action
+          # fails when the trusted publisher does not match this repository and
+          # workflow, and it runs before any publish, which is the property that
+          # matters.
+          if [ "$OIDC_OUTCOME" = "success" ] && [ -n "$OIDC_TOKEN" ]; then
+            echo "Trusted publishing produced a token; crates.io credentials OK."
+            exit 0
           fi
-          if [ -z "$CRATES_TOKEN" ]; then
+          echo "::warning::Trusted publishing did not yield a token;" \
+               "falling back to CARGO_REGISTRY_TOKEN."
+          if [ -z "$FALLBACK_TOKEN" ]; then
             echo "No crates.io credential: trusted publishing produced nothing" >&2
             echo "and CARGO_REGISTRY_TOKEN is unset." >&2
             exit 1
           fi
-          # `cargo publish --dry-run` does not authenticate, so ask the registry
-          # directly. 200 means the credential is valid and unexpired.
+          # Only the stored token reaches here, and it *is* user-scoped, so the
+          # /me check is meaningful. `cargo publish --dry-run` does not
+          # authenticate, which is why this asks the registry directly.
           # Not named `status`: that is read-only in some shells, which turns a
           # credential check into a spurious job failure.
           code=$(curl --silent --output /dev/null --write-out '%{http_code}' \
-            --header "Authorization: $CRATES_TOKEN" \
+            --header "Authorization: $FALLBACK_TOKEN" \
             --header "User-Agent: tree-sitter-cfml release workflow" \
             https://crates.io/api/v1/me)
           if [ "$code" != "200" ]; then
-            echo "crates.io rejected the credential (HTTP $code)." >&2
+            echo "crates.io rejected CARGO_REGISTRY_TOKEN (HTTP $code)." >&2
             echo "Check the trusted publisher for this repository and" >&2
             echo "release.yml at https://crates.io/crates/tree-sitter-cfml/settings," >&2
             echo "or regenerate CARGO_REGISTRY_TOKEN with publish-update scope." >&2
             exit 1
           fi
-          echo "crates.io credentials OK."
+          echo "crates.io credentials OK (stored token)."
 
       # The publishes below skip a version that is already on the registry
       # rather than failing on it, so a re-run after a later step failed can
