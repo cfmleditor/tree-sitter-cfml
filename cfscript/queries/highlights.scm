@@ -1,26 +1,30 @@
 ; Variables
 ;----------
-
 (identifier) @variable
 
 ; CFML scopes
 ;-------------
-
 ((identifier) @variable.builtin
  (#match? @variable.builtin "^(?i)(APPLICATION|ARGUMENTS|CGI|CLIENT|COOKIE|FORM|LOCAL|REQUEST|SERVER|SESSION|THIS|URL|VARIABLES)$"))
 
 ; Properties
 ;-----------
-
 (property_identifier) @property
+
 (shorthand_property_identifier) @property
+
+(shorthand_property_identifier_pattern) @property
+
 (private_property_identifier) @property
 
 ; Component and property declarations
 ;-------------------------------------
-
 (component_attribute
   (attribute_label) @attribute)
+
+; Namespaced attributes, e.g. `component test:displayLabel="..."`
+(component_attribute
+  ":" @punctuation.delimiter)
 
 (property_declaration
   name: (identifier) @property)
@@ -30,13 +34,15 @@
 
 ; Function and method definitions
 ;--------------------------------
-
 (function_expression
   name: (identifier) @function)
+
 (function_declaration
   name: (identifier) @function)
+
 (function_declaration
   (access_type) @keyword)
+
 (method_definition
   name: (property_identifier) @function.method)
 
@@ -74,7 +80,6 @@
 
 ; Special identifiers
 ;--------------------
-
 ((identifier) @constructor
  (#match? @constructor "^[A-Z]"))
 
@@ -95,9 +100,10 @@
 
 ; Literals
 ;---------
-
 (this) @variable.builtin
+
 (super) @variable.builtin
+
 (undefined) @constant.builtin
 
 [
@@ -108,7 +114,11 @@
 ] @constant.builtin
 
 (comment) @comment
+
 (cf_comment) @comment
+
+((comment) @comment.documentation
+  (#match? @comment.documentation "^/[*][*][^*].*[*]/$"))
 
 [
   (string)
@@ -117,14 +127,20 @@
 
 (hash_expression
   "#" @punctuation.special)
+
 (hash_empty) @punctuation.special
 
-(regex) @string.special
+(regex_pattern) @string.regexp
+
+(regex_flags) @character.special
+
+(regex
+  "/" @punctuation.bracket) ; Regex delimiters
+
 (number) @number
 
 ; Tokens
 ;-------
-
 [
   ";"
   (optional_chain)
@@ -136,8 +152,28 @@
 (ordered_struct
   ["[" ":" "]"] @punctuation.bracket)
 
+(pair
+  ":" @punctuation.delimiter)
+
+(pair_pattern
+  ":" @punctuation.delimiter)
+
+(switch_case
+  ":" @punctuation.delimiter)
+
+(switch_default
+  ":" @punctuation.delimiter)
+
+(labeled_statement
+  ":" @punctuation.delimiter)
+
+(slice_expression
+  ":" @punctuation.delimiter)
+
 (cfml_template
   "```" @punctuation.delimiter)
+
+(cfml_template_content) @embedded
 
 (ternary_expression
   [
@@ -150,28 +186,38 @@
 
 ; Types
 ;------
-
 (parameter_type) @type
-; `User[] function getUsers()` — one token, so the anonymous "[" / "]"
-; rule below cannot reach it.
-(array_return_suffix) @punctuation.bracket
+
 (catch_clause
   type: (catch_type) @type)
 
+(property_declaration
+  type: [(identifier) (path)] @type)
+
 ; Tag statements
 ;---------------
-
 (tag_statement
   tag: (identifier) @keyword)
+
 (query_tag
   "query" @keyword)
 
+; Inline queries
+;---------------
+
+; Unparented so the keyword stays highlighted mid-typing, while the string is still
+; unterminated and the whole call sits inside an ERROR node.
+"queryExecute" @function.builtin
+
+(query_expression
+  ["\"" "'"] @punctuation.delimiter)
+
+(query_text) @embedded
+
 ; Imports
 ;--------
-
 (import_path
   (identifier) @module)
-
 
 [
   "-"
@@ -215,7 +261,13 @@
   "&&="
   "||="
   "??="
+  "<>"
+  "<<"
+  ">>"
+  ">>>"
 ] @operator
+
+(unary_operator) @operator
 
 [
   "("
@@ -267,4 +319,18 @@
   "void"
   "while"
   "with"
+  "abstract"
+  "final"
+  "interface"
+  "property"
+  "required"
 ] @keyword
+
+(regex) @string.special
+
+; `User[] function getUsers()` — one token, so the anonymous "[" / "]"
+; rule below cannot reach it.
+(array_return_suffix) @punctuation.bracket
+
+; Lucee object selector, e.g. `new java:java.io.File(...)`
+(type_prefix) @keyword
