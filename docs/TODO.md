@@ -89,8 +89,16 @@ operators reused `query_math_expression`. Neither needed a query change.
 
 ## Housekeeping
 
-- Delete the merged remote branch `claude/bare-angle-brackets-in-text` (PR #38 is
-  merged; the branch is stale).
+- **`publish-maven` reads the tag's toolchain.** Its `Setup Node` still uses
+  `node-version-file: ".nvmrc"`, and on a `workflow_dispatch` the checkout is the
+  *tag*, so that is whatever `.nvmrc` said when the release was cut. The `release`
+  job hit exactly this while recovering 0.26.33: it landed on the Node 22 the tag
+  carried, whose npm 10.9.8 predates trusted publishing, and it now pins
+  `node-version: 24` instead. `publish-maven` builds the native libraries from the
+  tag's source, where the tag's toolchain is arguably the right choice, so it was
+  left alone rather than changed blind — but it is gated off (`PUBLISH_MAVEN`), so
+  nobody has ever run it and the question is untested. Settle it before turning
+  that variable on.
 
 ## Considered and deliberately not doing
 
