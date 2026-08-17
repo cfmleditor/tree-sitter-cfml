@@ -273,6 +273,18 @@ jobs:
           registry-token: ${{ steps.crates_auth.outputs.token || secrets.CARGO_REGISTRY_TOKEN }}
 
       - name: Create GitHub Release
+        # Runs even when a publish step failed. The Release is independent of
+        # whether a registry accepted an upload, it is the artifact people
+        # actually read, and its notes were computed back at step 2 — so a
+        # registry rejection should not suppress it. `!cancelled()` rather than
+        # `always()`, so an intentional cancellation stays a cancellation.
+        #
+        # This does mean a run that fails its credential pre-flight, having
+        # published nothing, still gets a Release. That is the accepted cost:
+        # the tag exists either way, and a Release carrying the changelog for a
+        # tag is more useful than silence. The action updates an existing
+        # Release rather than failing, so repeats are harmless.
+        if: ${{ !cancelled() }}
         uses: softprops/action-gh-release@v2
         with:
           # `tag_name` must be explicit. On a tag push the action infers it from
