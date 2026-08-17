@@ -4,6 +4,22 @@ on:
   push:
     tags:
       - "v*"
+  # Re-running a tag-push run replays the workflow file *from that tag*, so a
+  # release broken by a workflow bug can never be repaired by re-running it —
+  # the broken file is what runs again. v0.26.33 reached npm and PyPI but not
+  # crates.io for exactly that reason. Dispatching instead runs the workflow as
+  # it exists on the branch you dispatch from, against the tag you name, which
+  # is the only way to apply a workflow fix to an already-tagged release.
+  #
+  # Safe to run against a fully published tag: every publish below skips a
+  # version already on its registry, so a dispatch that has nothing to do
+  # reports skips rather than failing or republishing.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish, e.g. v0.26.33"
+        required: true
+        type: string
 
 jobs:
   build-wheels:
@@ -16,6 +32,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v4.1.0
@@ -31,6 +49,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
       - name: Setup Python
         uses: actions/setup-python@v6
@@ -70,6 +90,11 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # Same reasoning as the npm and crates.io guards below: a dispatch
+          # aimed at a partly-published tag must be able to walk past what
+          # already shipped instead of failing on it.
+          skip-existing: true
 
   release:
     runs-on: ubuntu-latest
@@ -82,11 +107,17 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
       - name: Extract changelog notes
         id: changelog
+        env:
+          # On a dispatch, GITHUB_REF_NAME is the branch dispatched from rather
+          # than the tag, so the version has to come from the input instead.
+          TAG: ${{ inputs.tag || github.ref_name }}
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          VERSION="${TAG#v}"
           NOTES=$(awk "/^## \[${VERSION}\]/{found=1; next} /^## \[/{if(found) exit} found{print}" CHANGELOG.md)
           echo "notes<<EOF" >> "$GITHUB_OUTPUT"
           echo "$NOTES" >> "$GITHUB_OUTPUT"
@@ -111,8 +142,28 @@ jobs:
       # went out first, and the crates.io token was rejected immediately after.
       - name: Verify npm credentials
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm whoami
+          NPM_FALLBACK_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          # npm gained OIDC trusted publishing in 11.5.0. Node 22 bundles npm
+          # 10.9.8, which is why .nvmrc moved to 24 (npm 11.16+). Checked here
+          # because the failure mode otherwise is silent: an old npm ignores
+          # OIDC, quietly authenticates with NPM_TOKEN, and trusted publishing
+          # looks configured while never being used.
+          need=11.5.2
+          have=$(npm --version)
+          if [ "$(printf '%s\n%s\n' "$need" "$have" | sort -V | head -n1)" != "$need" ]; then
+            echo "npm $have is too old for trusted publishing (need >= $need)." >&2
+            exit 1
+          fi
+          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+            echo "OIDC available; npm publish will use trusted publishing."
+          elif [ -n "$NPM_FALLBACK_TOKEN" ]; then
+            echo "::warning::No OIDC token endpoint; falling back to NPM_TOKEN."
+            NODE_AUTH_TOKEN="$NPM_FALLBACK_TOKEN" npm whoami
+          else
+            echo "No npm credential: no OIDC token endpoint and NPM_TOKEN is unset." >&2
+            exit 1
+          fi
 
       # The OIDC exchange runs here rather than next to the publish, so that a
       # misconfigured trusted publisher is discovered before npm has shipped.
@@ -165,13 +216,20 @@ jobs:
       # version number.
       - name: Publish to npm
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_FALLBACK_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           name=$(node -p 'require("./package.json").name')
           version=$(node -p 'require("./package.json").version')
           if npm view "$name@$version" version >/dev/null 2>&1; then
             echo "$name@$version is already on npm; skipping."
           else
+            # The token is supplied only when OIDC is unavailable. npm prefers
+            # NODE_AUTH_TOKEN when it is set and never attempts the exchange, so
+            # passing it unconditionally would shadow trusted publishing with
+            # the very credential this repo has moved away from.
+            if [ -z "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then
+              export NODE_AUTH_TOKEN="$NPM_FALLBACK_TOKEN"
+            fi
             npm publish
           fi
 
@@ -203,7 +261,13 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          name: ${{ github.ref_name }}
+          # `tag_name` must be explicit. On a tag push the action infers it from
+          # the ref, but on a dispatch that ref is the branch, so without this it
+          # would cut a release against the branch instead of the tag. The
+          # action updates an existing release rather than failing, which is
+          # what makes a dispatch at an already-released tag harmless.
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          name: ${{ inputs.tag || github.ref_name }}
           body: ${{ steps.changelog.outputs.notes }}
 
   # Off by default, so a tag push cannot fail on credentials that do not exist
@@ -219,6 +283,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.tag || github.ref }}
 
       - name: Setup Node
         uses: actions/setup-node@v6
