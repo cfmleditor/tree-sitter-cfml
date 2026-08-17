@@ -3305,6 +3305,15 @@
                     {
                       "type": "SYMBOL",
                       "name": "assignment_pattern"
+                    },
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_operator_shaped_name"
+                      },
+                      "named": true,
+                      "value": "identifier"
                     }
                   ]
                 },
@@ -3376,6 +3385,87 @@
               }
             }
           ]
+        }
+      ]
+    },
+    "_operator_shaped_name": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_kw_in"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_kw_instanceof"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[aA][nN][dD]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[oO][rR]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[xX][oO][rR]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[mM][oO][dD]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[lL][tT]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[lL][tT][eE]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[lL][eE]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[eE][qQ]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[eE][qQ][uU][aA][lL]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[iI][sS]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[nN][eE][qQ]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[cC][oO][nN][tT][aA][iI][nN][sS]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[cC][tT]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[nN][cC][tT]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[gG][tT][eE]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[gG][eE]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[gG][tT]"
         }
       ]
     },

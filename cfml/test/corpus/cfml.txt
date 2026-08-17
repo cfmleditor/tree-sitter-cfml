@@ -3092,3 +3092,25 @@ var-scoped dotted name in a for-in header
                   (identifier)
                   (number))))))))
     (cf_selfclose_void_tag_end)))
+
+===================================
+word-shaped operator as a parameter name behind a type
+===================================
+<cfset f = function( array in, query contains ) {}>
+
+---
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (function_expression
+        (formal_parameters
+          (parameter_type
+            (identifier))
+          (identifier)
+          (parameter_type
+            (identifier))
+          (identifier))
+        (statement_block)))
+    (cf_selfclose_void_tag_end)))

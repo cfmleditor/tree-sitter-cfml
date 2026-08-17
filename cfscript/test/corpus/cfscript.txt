@@ -2393,3 +2393,55 @@ param name="z" type="numeric" default="0";
       (identifier)
       (string
         (string_fragment)))))
+
+===================================
+word-shaped operator as a parameter name behind a type
+===================================
+function f( array in, query contains, struct eq ) {}
+function g( string in, any is ) {}
+function h( component gt, numeric x ) {}
+function i() { return a eq b and c contains d; }
+---
+
+(program
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type
+        (identifier))
+      (identifier)
+      (parameter_type)
+      (identifier)
+      (parameter_type
+        (identifier))
+      (identifier))
+    (statement_block))
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type)
+      (identifier)
+      (parameter_type)
+      (identifier))
+    (statement_block))
+  (function_declaration
+    (identifier)
+    (formal_parameters
+      (parameter_type
+        (identifier))
+      (identifier)
+      (parameter_type)
+      (identifier))
+    (statement_block))
+  (function_declaration
+    (identifier)
+    (formal_parameters)
+    (statement_block
+      (return_statement
+        (binary_expression
+          (binary_expression
+            (identifier)
+            (identifier))
+          (binary_expression
+            (identifier)
+            (identifier)))))))
