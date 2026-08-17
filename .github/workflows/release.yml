@@ -126,7 +126,13 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version-file: ".nvmrc"
+          # Pinned rather than read from .nvmrc, which every other job uses.
+          # This job checks out the *tag*, so node-version-file would take the
+          # toolchain the release was cut with — and re-driving v0.26.33 did
+          # exactly that, landing on the Node 22 it was tagged with, whose npm
+          # 10.9.8 predates trusted publishing. The code being published comes
+          # from the tag; the toolchain doing the publishing must not.
+          node-version: 24
           cache: "npm"
           registry-url: "https://registry.npmjs.org"
 
