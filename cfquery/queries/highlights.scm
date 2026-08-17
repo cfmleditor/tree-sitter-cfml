@@ -327,5 +327,11 @@
 (double_quoted_query_value
   (query_value) @string)
 
+; Reachable inside `#...#` through a `function(...)` expression or a typed
+; arrow-function parameter, even though a `<cfscript>` block is not.
+(parameter_type) @type
+; `User[] v` - one token, so the anonymous "[" / "]" rule cannot reach it.
+(array_return_suffix) @punctuation.bracket
+
 ; Lucee object selector, e.g. `new java:java.io.File(...)`
 (type_prefix) @keyword
