@@ -315,7 +315,18 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
-          node-version-file: ".nvmrc"
+          # Pinned for the same reason as the release job: on a dispatch the
+          # checkout is the *tag*, so node-version-file would name whatever
+          # `.nvmrc` said when that release was cut, and an old enough tag can
+          # name a version setup-node no longer offers — which breaks the
+          # recovery path precisely when it is needed.
+          #
+          # Nothing is lost by not matching the tag. Node here only *runs*
+          # `scripts/build-native.js`; it is not part of what ships. That script
+          # shells out to `cc` to build standalone shared libraries and does not
+          # go through node-gyp or link the Node ABI, so the compiler is the
+          # toolchain that determines the artifact, not this.
+          node-version: 24
           cache: "npm"
 
       - name: Setup Java
