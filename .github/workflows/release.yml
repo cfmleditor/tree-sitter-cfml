@@ -75,6 +75,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # crates.io publishes through Trusted Publishing, which exchanges this
+      # job's OIDC identity for a short-lived registry token. Without it the
+      # exchange fails and the release falls back to CARGO_REGISTRY_TOKEN.
+      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -98,23 +102,103 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # Every credential is checked before anything is published. This job is a
+      # sequence of one-way publishes, so a token that turns out to be bad
+      # part-way through leaves the version on some registries and not others,
+      # and re-running cannot repair it because the publishes that already
+      # succeeded now collide with themselves. That is how 0.26.33 reached npm
+      # and PyPI but not crates.io: only npm's credentials were checked, npm
+      # went out first, and the crates.io token was rejected immediately after.
       - name: Verify npm credentials
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm whoami
 
+      # The OIDC exchange runs here rather than next to the publish, so that a
+      # misconfigured trusted publisher is discovered before npm has shipped.
+      # It is allowed to fail: CARGO_REGISTRY_TOKEN is kept as a fallback, and
+      # the check below is what decides whether either credential works.
+      - name: Exchange OIDC for a crates.io token
+        id: crates_auth
+        continue-on-error: true
+        uses: rust-lang/crates-io-auth-action@v1
+
+      - name: Verify crates.io credentials
+        env:
+          # Trusted publishing first, the stored token second. Whichever wins
+          # here is the one the publish step uses, so this checks what will
+          # actually be used rather than what we hope will be.
+          CRATES_TOKEN: ${{ steps.crates_auth.outputs.token || secrets.CARGO_REGISTRY_TOKEN }}
+        run: |
+          if [ "${{ steps.crates_auth.outcome }}" = "success" ]; then
+            echo "Using a trusted-publishing token."
+          else
+            echo "::warning::Trusted publishing did not yield a token;" \
+                 "falling back to CARGO_REGISTRY_TOKEN."
+          fi
+          if [ -z "$CRATES_TOKEN" ]; then
+            echo "No crates.io credential: trusted publishing produced nothing" >&2
+            echo "and CARGO_REGISTRY_TOKEN is unset." >&2
+            exit 1
+          fi
+          # `cargo publish --dry-run` does not authenticate, so ask the registry
+          # directly. 200 means the credential is valid and unexpired.
+          # Not named `status`: that is read-only in some shells, which turns a
+          # credential check into a spurious job failure.
+          code=$(curl --silent --output /dev/null --write-out '%{http_code}' \
+            --header "Authorization: $CRATES_TOKEN" \
+            --header "User-Agent: tree-sitter-cfml release workflow" \
+            https://crates.io/api/v1/me)
+          if [ "$code" != "200" ]; then
+            echo "crates.io rejected the credential (HTTP $code)." >&2
+            echo "Check the trusted publisher for this repository and" >&2
+            echo "release.yml at https://crates.io/crates/tree-sitter-cfml/settings," >&2
+            echo "or regenerate CARGO_REGISTRY_TOKEN with publish-update scope." >&2
+            exit 1
+          fi
+          echo "crates.io credentials OK."
+
+      # The publishes below skip a version that is already on the registry
+      # rather than failing on it, so a re-run after a later step failed can
+      # walk past what already succeeded and reach the step that did not.
+      # Without this, the only way out of a half-published release is to burn a
+      # version number.
       - name: Publish to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish
+        run: |
+          name=$(node -p 'require("./package.json").name')
+          version=$(node -p 'require("./package.json").version')
+          if npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "$name@$version is already on npm; skipping."
+          else
+            npm publish
+          fi
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Check whether this version is on crates.io
+        id: crate
+        run: |
+          version=$(node -p 'require("./package.json").version')
+          if curl --silent --fail \
+               --header "User-Agent: tree-sitter-cfml release workflow" \
+               https://crates.io/api/v1/crates/tree-sitter-cfml/versions \
+             | jq -e --arg v "$version" '.versions[] | select(.num == $v)' >/dev/null; then
+            echo "tree-sitter-cfml $version is already on crates.io; skipping."
+            echo "published=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish to crates.io
+        if: steps.crate.outputs.published == 'false'
         uses: katyo/publish-crates@v2
         with:
-          registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          # Same expression the verify step checked, so the credential that was
+          # tested is the credential that publishes.
+          registry-token: ${{ steps.crates_auth.outputs.token || secrets.CARGO_REGISTRY_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
