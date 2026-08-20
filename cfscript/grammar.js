@@ -581,18 +581,28 @@ module.exports = grammar({
       '}',
     ),
 
-    switch_case: ($) => seq(
+    // `prec.left`, not `prec.right`: with `default` also a declaration modifier
+    // (see `access_type`), `case 1: y=1; default: …` is ambiguous between
+    // extending this case body and opening the default label. Right
+    // associativity prefers extending, which swallows the label and broke every
+    // switch that has a default clause. Left associativity ends the body, which
+    // is what the language means.
+    switch_case: ($) => prec.left(seq(
       $._kw_case,
       field('value', $._expressions),
       ':',
       field('body', repeat($.statement)),
-    ),
+    )),
 
-    switch_default: ($) => seq(
+    // Same reasoning as `switch_case` above: `prec.left` so a following label
+    // ends this body rather than being absorbed into it as a modifier. The
+    // ambiguity involves a generated repeat rule, so it cannot be resolved by
+    // declaring a conflict.
+    switch_default: ($) => prec.left(seq(
       $._kw_default,
       ':',
       field('body', repeat($.statement)),
-    ),
+    )),
 
     catch_clause: ($) => seq(
       $._kw_catch,
@@ -784,6 +794,15 @@ module.exports = grammar({
       $._kw_static,
       $._kw_final,
       $._kw_abstract,
+      // `public default any function f()` — Lucee's default method on an
+      // interface. Not interface-only: it is accepted on a component too, and
+      // with or without an access modifier in front, which is what the reporting
+      // issue's `interface` framing understated. `_kw_default` was previously
+      // reachable only from `switch_default`, so this makes the word valid at
+      // the start of a declaration as well; `default :` and `default <type>
+      // function` are separated by one token of lookahead, and the switch tests
+      // pin that.
+      $._kw_default,
     ),
 
     // CFML type names are spelled with the same words as several keywords
@@ -1586,6 +1605,14 @@ module.exports = grammar({
       // the identifier at statement start, though `x = debugger.foo` always
       // parsed because no statement keyword is valid there.
       $._kw_debugger,
+      // `default = listLast( … )` and `default.foo` — Lucee's own
+      // `Administrator.cfc` and a ColdBox spec both use `default` as an ordinary
+      // variable. Adding it to `access_type` for Lucee's default methods made
+      // the word lex as a keyword wherever a declaration can start, which broke
+      // those two files (four error nodes) until the identifier reading was
+      // named here as well. Exactly the guard `debugger` above needed, for
+      // exactly the same reason.
+      $._kw_default,
       // `function` is deliberately absent. Listing it here made `function` a
       // valid expression start, which in turn made every binary operator —
       // including `instanceof` — valid immediately after it. Keyword extraction
@@ -1668,6 +1695,18 @@ module.exports = grammar({
           field('default', $.assignment_expression),
         ),
         field('arguments', repeat(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
+        $._semicolon,
+      ),
+      // `param x;` and `param url.number;` — the untyped shorthand, with no type
+      // and no attributes. Its own branch rather than an optional name inside
+      // the typed branch above: with two bare identifiers the grammar cannot
+      // tell a type from a name and would label the name as a `parameter_type`,
+      // and letting this form carry attributes as well collides with the
+      // attribute-only branch below on `tag name attr=v {`. One token of
+      // lookahead separates it — a `;` here, a further name or `=` there.
+      seq(
+        field('tag', $.identifier),
+        field('name', choice($.identifier, $.member_expression)),
         $._semicolon,
       ),
       seq(
