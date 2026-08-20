@@ -2445,3 +2445,149 @@ function i() { return a eq b and c contains d; }
           (binary_expression
             (identifier)
             (identifier)))))))
+
+===================================
+untyped param shorthand
+===================================
+param x;
+param url.number;
+param numeric typed;
+param name="x" type="numeric";
+---
+
+(program
+  (tag_statement
+    (identifier)
+    (identifier))
+  (tag_statement
+    (identifier)
+    (member_expression
+      (identifier)
+      (property_identifier)))
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (identifier))
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))))
+
+===================================
+default as an ordinary identifier
+===================================
+default = "x";
+default = listLast( a, b );
+default.foo = 1;
+x = default.foo;
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (identifier)
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier)))))
+
+===================================
+default as a declaration modifier, and as a switch label
+===================================
+interface {
+	public default any function a( any o ) { return o; }
+	default any function b( any o ) { return o; }
+}
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (access_type)
+        (access_type)
+        (identifier)
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier))
+        (statement_block
+          (return_statement
+            (identifier))))
+      (function_declaration
+        (access_type)
+        (identifier)
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier))
+        (statement_block
+          (return_statement
+            (identifier)))))))
+
+===================================
+switch with case and default clauses
+===================================
+switch (x) {
+	case 1:
+		y = 1;
+		break;
+	case 2:
+	case 3:
+		y = 2;
+		break;
+	default:
+		y = 3;
+}
+---
+
+(program
+  (switch_statement
+    (parenthesized_expression
+      (identifier))
+    (switch_body
+      (switch_case
+        (number)
+        (expression_statement
+          (assignment_expression
+            (identifier)
+            (number)))
+        (break_statement))
+      (switch_case
+        (number))
+      (switch_case
+        (number)
+        (expression_statement
+          (assignment_expression
+            (identifier)
+            (number)))
+        (break_statement))
+      (switch_default
+        (expression_statement
+          (assignment_expression
+            (identifier)
+            (number)))))))
