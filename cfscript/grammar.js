@@ -373,6 +373,12 @@ module.exports = grammar({
       // modifier is followed by a return type, not a variable name.
       prec.dynamic(-1, seq(
         alias(choice($._kw_public, $._kw_private, $._kw_package, $._kw_remote), $.access_type),
+        // `public final MEMBER = "v";` — the two modifiers combine. `final`
+        // alone is the first branch above, and an access modifier alone is this
+        // one; only the pair had no reading. It stays after the access modifier
+        // because that is the order Lucee writes, and keeping it here rather
+        // than in the `choice` above avoids making `final` reachable twice.
+        optional(alias($._kw_final, $.access_type)),
         commaSep1(alias($._plain_declarator, $.variable_declarator)),
         $._semicolon,
       )),
@@ -811,14 +817,47 @@ module.exports = grammar({
     ),
 
     function_declaration: ($) => prec.right('declaration', seq(
-      repeat($.access_type),
-      optional(seq(
-        choice($._kw_function, keyword('Query'), $.path, $.identifier),
-        // `IValidationError[] function getFieldErrors()` — an array of that
-        // type (cbvalidation). The brackets must be empty and adjacent: that is
-        // the only thing separating this from a subscript, `User[0]`.
-        optional($.array_return_suffix),
-      )),
+      // The return type may be written either after the modifiers
+      // (`public static struct function f()`) or in front of them
+      // (`struct public static function f()`, Lucee's StaticFunctions.cfc).
+      // The two orders are spelled as separate alternatives rather than by
+      // allowing modifiers on both sides of one optional type, which would make
+      // `public function f()` ambiguous over which `repeat` takes the modifier
+      // and needs a conflict. `repeat1` in the type-first alternative is what
+      // keeps them disjoint: with no modifier to follow, only the first
+      // alternative matches. A modifier can never be read as the type here —
+      // `public` and its neighbours lex as keywords in this state, so they
+      // never reach the `$.identifier` in the type slot.
+      choice(
+        seq(
+          repeat($.access_type),
+          optional(seq(
+            choice($._kw_function, keyword('Query'), $.path, $.identifier),
+            // `IValidationError[] function getFieldErrors()` — an array of that
+            // type (cbvalidation). The brackets must be empty and adjacent: that
+            // is the only thing separating this from a subscript, `User[0]`.
+            optional($.array_return_suffix),
+          )),
+        ),
+        seq(
+          // `Query` is deliberately absent from the type-first spelling: a
+          // leading `Query` is already the head of `query_tag`, and offering it
+          // as a return type here makes `query • Abstract` ambiguous between
+          // the two. `query public function f()` is not a form anyone writes,
+          // while `public query function f()` still goes through the
+          // modifiers-first alternative above, which keeps it.
+          // `Function` is excluded here for the same lexical reason, and it
+          // is the one that actually bit: offering it as a *leading* return
+          // type makes an access modifier valid immediately after the word
+          // `function`, so in `function static( … )` — a function *named*
+          // `static`, from Mura's MuraScope.cfc — `static` stops lexing as an
+          // identifier and becomes `_kw_static`. The file parsed cleanly before
+          // and the corpus scan is what caught it.
+          choice($.path, $.identifier),
+          optional($.array_return_suffix),
+          repeat1($.access_type),
+        ),
+      ),
       $._kw_function,
       field('name', $.identifier),
       $._call_signature,
@@ -1668,6 +1707,25 @@ module.exports = grammar({
           field('default', $.assignment_expression),
         ),
         field('arguments', repeat(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
+        $._semicolon,
+      ),
+      // `param x;` and `param url.number;` — the untyped shorthand. Spelled as
+      // its own branch rather than by making the type above optional: optional
+      // there lets the `default` alternative be reached with nothing in front
+      // of it, which reopens the boundary against the attribute-only branch
+      // below (`tag assignment_expression • {` is then both a default followed
+      // by a body and a first attribute), and the only resolution `generate`
+      // offers for that is a conflict of `tag_statement` with itself, which
+      // cannot be declared. A name is an `identifier` or `member_expression`,
+      // never an `assignment_expression`, so this branch cannot collide.
+      // No trailing attributes here either: `param foo bar="1";` would then be
+      // genuinely ambiguous between this branch (name `foo`, one attribute) and
+      // the typed branch above (type `foo`, `bar="1"` as the `default`). The
+      // typed branch already accepts every attribute-carrying spelling —
+      // `param x default="0";` reads `x` as the type — so nothing is lost.
+      seq(
+        field('tag', $.identifier),
+        field('name', choice($.identifier, $.member_expression)),
         $._semicolon,
       ),
       seq(

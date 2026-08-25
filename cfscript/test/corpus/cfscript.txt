@@ -2445,3 +2445,138 @@ function i() { return a eq b and c contains d; }
           (binary_expression
             (identifier)
             (identifier)))))))
+
+===================================
+untyped param shorthand
+===================================
+
+component {
+	function f() {
+		param x;
+		param url.number;
+		param numeric y;
+		param z default="0";
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (tag_statement
+            (identifier)
+            (identifier))
+          (tag_statement
+            (identifier)
+            (member_expression
+              (identifier)
+              (property_identifier)))
+          (tag_statement
+            (identifier)
+            (parameter_type)
+            (identifier))
+          (tag_statement
+            (identifier)
+            (parameter_type)
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))))))))
+
+===================================
+access modifier combined with final
+===================================
+
+component {
+	public final MEMBER = "v";
+	static {
+		public final OTHER = "w";
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (variable_declaration
+        (access_type)
+        (access_type)
+        (variable_declarator
+          (identifier)
+          (string
+            (string_fragment))))
+      (static_initializer
+        (statement_block
+          (variable_declaration
+            (access_type)
+            (access_type)
+            (variable_declarator
+              (identifier)
+              (string
+                (string_fragment)))))))))
+
+===================================
+return type before the access modifiers
+===================================
+
+component {
+	struct public static function a() { }
+	struct public function b() { }
+	public static struct function c(arg1) { }
+	User[] public function d() { }
+	function static(one="", two="") output=false { }
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (access_type)
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (access_type)
+        (access_type)
+        (identifier)
+        (identifier)
+        (formal_parameters
+          (parameter_type
+            (identifier)))
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (array_return_suffix)
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (assignment_pattern
+            (identifier)
+            (string))
+          (assignment_pattern
+            (identifier)
+            (string)))
+        (assignment_expression
+          (identifier)
+          (false))
+        (statement_block)))))

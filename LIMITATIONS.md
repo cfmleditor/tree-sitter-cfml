@@ -225,10 +225,21 @@ attribute value (`default='x ''y'' z'`), an array type in parameter position
 loop variable in a for-in header (`for ( var local.package in items )`), the
 `=` spelling of a typed `param` default (`param numeric shortBad = "abc";`,
 `cfscript` only), and a word-shaped binary operator as a parameter name behind
-any type (`function f( array in )`, `query contains`, `struct eq`). The
+any type (`function f( array in )`, `query contains`, `struct eq`), the untyped
+`param` shorthand (`param x;`, `param url.number;`, `cfscript` only), an access
+modifier combined with `final` in a member declaration
+(`public final MEMBER = "v";`), and a return type written before the access
+modifiers (`struct public static function f()`). The
 `new java:` / `new cfml:`
 type prefix now works in both CFScript grammars, where it had been
 `cfscript`-only.
+
+Two words are deliberately not accepted in the *leading* return-type slot, only
+in the modifiers-first spelling: `query`, which collides with the head of
+`query_tag`, and `function`, which if allowed there makes an access modifier
+valid straight after the word `function` and so breaks a function *named*
+`static` (`function static( … )`, Mura's `MuraScope.cfc`). `public query
+function f()` and `public function function f()` are unaffected.
 
 ### `=>` and `->` produce the same node
 
