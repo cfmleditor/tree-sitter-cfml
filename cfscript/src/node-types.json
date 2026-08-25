@@ -2421,7 +2421,7 @@
       },
       "body": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "statement_block",
@@ -2851,6 +2851,10 @@
           {
             "type": "member_expression",
             "named": true
+          },
+          {
+            "type": "string",
+            "named": true
           }
         ]
       },
@@ -2970,7 +2974,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
@@ -2979,6 +2983,10 @@
         },
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "parameter_attribute",
           "named": true
         },
         {

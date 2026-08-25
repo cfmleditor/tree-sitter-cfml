@@ -232,7 +232,10 @@ modifier combined with `final` in a member declaration
 modifiers (`struct public static function f()`), a subscripted static access
 (`Test::["f"]()`, `Test::[m]()`), and the `default` modifier on an interface
 method (`public default any function f()`, reachable after another modifier but
-not as the first one). The
+not as the first one), the bodyless tag-statement form of `throw` and `query`
+(`throw message="x" type="y";`, `query name="q" dbtype="query";`), and a bare
+string argument in a tag statement (`exit "exitTemplate";`,
+`pageencoding "utf-8";`). The
 `new java:` / `new cfml:`
 type prefix now works in both CFScript grammars, where it had been
 `cfscript`-only.

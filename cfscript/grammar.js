@@ -557,7 +557,19 @@ module.exports = grammar({
     // `pair` is only reachable from `arguments`, so accept those explicitly.
     throw_statement: ($) => seq(
       $._kw_throw,
-      choice(prec.dynamic(1, $.arguments), $._expressions),
+      choice(
+        prec.dynamic(1, $.arguments),
+        // `throw message="x" type="y";` — the bodyless tag-statement spelling,
+        // which every other tag reaches through `tag_statement`. `throw` cannot:
+        // it has this dedicated rule, and `_kw_throw` out-lexes the identifier
+        // that `tag_statement` needs in its `tag` slot, so the attribute form
+        // had no reading at all. Spelled with `parameter_attribute` exactly as
+        // `include_statement` above already spells the same shape — a single
+        // `assignment_expression` would not do, because what fails is the
+        // *space*-separated pair rather than the first attribute.
+        repeat1($.parameter_attribute),
+        $._expressions,
+      ),
       $._semicolon,
     ),
 
@@ -1692,11 +1704,25 @@ module.exports = grammar({
       ')',
     ),
 
-    query_tag: ($) => seq(
-      keyword('Query'),
-      repeat(prec(1, seq(optional($.tag_linefeed), field('arguments', $.assignment_expression)))),
-      optional($.tag_linefeed),
-      field('body', $.statement_block),
+    query_tag: ($) => choice(
+      seq(
+        keyword('Query'),
+        repeat(prec(1, seq(optional($.tag_linefeed), field('arguments', $.assignment_expression)))),
+        optional($.tag_linefeed),
+        field('body', $.statement_block),
+      ),
+      // `query name="q" dbtype="query";` — the bodyless spelling. Like `throw`
+      // above, `query` cannot reach `tag_statement`, because `Query` is in
+      // `_reserved_identifier` and lexes as a keyword in the `tag` slot. The
+      // arguments are `repeat1` rather than `repeat` so that a bare `query;`
+      // keeps its existing reading as an expression statement, which the
+      // "bare reserved words parse as expressions" note in `LIMITATIONS.md`
+      // records as deliberate.
+      seq(
+        keyword('Query'),
+        repeat1(prec(1, seq(optional($.tag_linefeed), field('arguments', $.assignment_expression)))),
+        $._semicolon,
+      ),
     ),
 
     tag_statement: $ => choice(
@@ -1746,7 +1772,12 @@ module.exports = grammar({
       // `param x default="0";` reads `x` as the type — so nothing is lost.
       seq(
         field('tag', $.identifier),
-        field('name', choice($.identifier, $.member_expression)),
+        // A bare string argument covers `exit "exitTemplate";` (#81) and
+        // `pageencoding "utf-8";` (#89) — the same `tag <word-or-string>;`
+        // shape as the untyped `param`, and the two tags that write it are
+        // otherwise unreachable: `exit;` and `exit method="template";` parse,
+        // but the positional string had no reading.
+        field('name', choice($.identifier, $.member_expression, $.string)),
         $._semicolon,
       ),
       seq(

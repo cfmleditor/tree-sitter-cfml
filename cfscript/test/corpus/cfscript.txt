@@ -2679,3 +2679,112 @@ interface {
         (statement_block
           (return_statement
             (identifier)))))))
+
+===================================
+bodyless throw and query tag statements
+===================================
+
+component {
+	function f() {
+		throw message="x" type="y";
+		query name="q" dbtype="query";
+		throw(message = "x", type = "y");
+		throw "boom";
+		query name="q2" { }
+		x = query.newQuery();
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (throw_statement
+            (parameter_attribute
+              (identifier)
+              (string
+                (string_fragment)))
+            (parameter_attribute
+              (identifier)
+              (string
+                (string_fragment))))
+          (query_tag
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment))))
+          (throw_statement
+            (arguments
+              (assignment_expression
+                (identifier)
+                (string
+                  (string_fragment)))
+              (assignment_expression
+                (identifier)
+                (string
+                  (string_fragment)))))
+          (throw_statement
+            (string
+              (string_fragment)))
+          (query_tag
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))
+            (statement_block))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (arguments)))))))))
+
+===================================
+tag statement with a bare string argument
+===================================
+
+pageencoding "utf-8";
+component {
+	function f() {
+		exit "exitTemplate";
+		exit;
+		exit method="template";
+	}
+}
+
+---
+
+(program
+  (tag_statement
+    (identifier)
+    (string
+      (string_fragment)))
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (tag_statement
+            (identifier)
+            (string
+              (string_fragment)))
+          (expression_statement
+            (identifier))
+          (tag_statement
+            (identifier)
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))))))))
