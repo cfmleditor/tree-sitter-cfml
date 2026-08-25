@@ -3006,11 +3006,42 @@
                 "type": "SEQ",
                 "members": [
                   {
-                    "type": "REPEAT",
-                    "content": {
-                      "type": "SYMBOL",
-                      "name": "access_type"
-                    }
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "access_type"
+                          },
+                          {
+                            "type": "REPEAT",
+                            "content": {
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "access_type"
+                                },
+                                {
+                                  "type": "ALIAS",
+                                  "content": {
+                                    "type": "SYMBOL",
+                                    "name": "_kw_default"
+                                  },
+                                  "named": true,
+                                  "value": "access_type"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "BLANK"
+                      }
+                    ]
                   },
                   {
                     "type": "CHOICE",
@@ -3897,12 +3928,25 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "FIELD",
-                "name": "optional_chain",
-                "content": {
-                  "type": "SYMBOL",
-                  "name": "optional_chain"
-                }
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "FIELD",
+                    "name": "optional_chain",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "optional_chain"
+                    }
+                  },
+                  {
+                    "type": "FIELD",
+                    "name": "static_chain",
+                    "content": {
+                      "type": "SYMBOL",
+                      "name": "static_chain"
+                    }
+                  }
+                ]
               },
               {
                 "type": "BLANK"

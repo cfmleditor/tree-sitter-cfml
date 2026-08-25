@@ -2685,6 +2685,16 @@
             "named": true
           }
         ]
+      },
+      "static_chain": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "static_chain",
+            "named": true
+          }
+        ]
       }
     }
   },

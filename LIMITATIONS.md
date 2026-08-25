@@ -229,7 +229,10 @@ any type (`function f( array in )`, `query contains`, `struct eq`), the untyped
 `param` shorthand (`param x;`, `param url.number;`, `cfscript` only), an access
 modifier combined with `final` in a member declaration
 (`public final MEMBER = "v";`), and a return type written before the access
-modifiers (`struct public static function f()`). The
+modifiers (`struct public static function f()`), a subscripted static access
+(`Test::["f"]()`, `Test::[m]()`), and the `default` modifier on an interface
+method (`public default any function f()`, reachable after another modifier but
+not as the first one). The
 `new java:` / `new cfml:`
 type prefix now works in both CFScript grammars, where it had been
 `cfscript`-only.

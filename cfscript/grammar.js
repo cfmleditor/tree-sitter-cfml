@@ -830,7 +830,21 @@ module.exports = grammar({
       // never reach the `$.identifier` in the type slot.
       choice(
         seq(
-          repeat($.access_type),
+          // `public default any function returnsany( any obj )` — Lucee's
+          // Java-style modifier for a method an `interface` supplies a body
+          // for. `Default` is reachable only *after* another modifier, never as
+          // the first one, and that restriction is the whole reason this works:
+          // a `switch_default` body is an ordinary statement list, so making
+          // `default` able to start a declaration makes
+          // `switch { default: default any function f(){} }` ambiguous between
+          // continuing the first default's body and opening a second label —
+          // and the only resolution offered is a conflict of `switch_default`
+          // with itself, which cannot be declared. No corpus file writes
+          // `default` first, and Lucee's own spelling puts it after `public`.
+          optional(seq(
+            $.access_type,
+            repeat(choice($.access_type, alias($._kw_default, $.access_type))),
+          )),
           optional(seq(
             choice($._kw_function, keyword('Query'), $.path, $.identifier),
             // `IValidationError[] function getFieldErrors()` — an array of that
@@ -1039,7 +1053,14 @@ module.exports = grammar({
 
     subscript_expression: ($) => prec.right('member', seq(
       field('object', choice($.expression, $.primary_expression)),
-      optional(field('optional_chain', $.optional_chain)),
+      // `Test::["f"]()` and `Test::[m]()` — a subscript reached through the
+      // static chain, which Lucee accepts alongside the bare `Test::f()` that
+      // `member_expression` already handles. `::` is its own token, so unlike a
+      // keyword-shaped addition this cannot change how anything else lexes.
+      optional(choice(
+        field('optional_chain', $.optional_chain),
+        field('static_chain', $.static_chain),
+      )),
       '[', field('index', choice($._expressions, $.slice_expression)), ']',
     )),
 

@@ -2580,3 +2580,102 @@ component {
           (identifier)
           (false))
         (statement_block)))))
+
+===================================
+subscripted static access
+===================================
+
+component {
+	function f() {
+		x = Test::m();
+		y = Test::["f"]();
+		z = Test::[m]();
+		w = LDEV0255.Test::["f"]();
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (member_expression
+                  (identifier)
+                  (static_chain)
+                  (property_identifier))
+                (arguments))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (subscript_expression
+                  (identifier)
+                  (static_chain)
+                  (string
+                    (string_fragment)))
+                (arguments))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (subscript_expression
+                  (identifier)
+                  (static_chain)
+                  (identifier))
+                (arguments))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (subscript_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier))
+                  (static_chain)
+                  (string
+                    (string_fragment)))
+                (arguments)))))))))
+
+===================================
+default modifier on an interface method
+===================================
+
+interface {
+	public default any function returnsany(any obj) { return obj; }
+	public any function plain(any obj) { return obj; }
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (access_type)
+        (access_type)
+        (identifier)
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier))
+        (statement_block
+          (return_statement
+            (identifier))))
+      (function_declaration
+        (access_type)
+        (identifier)
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier))
+        (statement_block
+          (return_statement
+            (identifier)))))))
