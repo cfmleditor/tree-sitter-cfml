@@ -235,7 +235,10 @@ method (`public default any function f()`, reachable after another modifier but
 not as the first one), the bodyless tag-statement form of `throw` and `query`
 (`throw message="x" type="y";`, `query name="q" dbtype="query";`), and a bare
 string argument in a tag statement (`exit "exitTemplate";`,
-`pageencoding "utf-8";`). The
+`pageencoding "utf-8";`), a brace-less `try` body
+(`try x = y; catch( any e ){ }`, an expression statement only), and a
+parenthesised component attribute list (`component( javasettings = { } ) { }`).
+The
 `new java:` / `new cfml:`
 type prefix now works in both CFScript grammars, where it had been
 `cfscript`-only.

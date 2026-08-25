@@ -193,6 +193,19 @@ module.exports = grammar({
     [$.parenthesized_expression, $.expression, $.arguments],
     [$.expression, $.template_substitution],
 
+    // `component (` is ambiguous: the parenthesised attribute list of a
+    // `component` declaration, or a call of the reserved identifier
+    // `component`. Only what follows the `)` settles it — a `{` means the
+    // declaration — so the two readings have to be carried until then.
+    // Unlike the `[$.primary_expression, $.call_expression]` conflict the cost
+    // table warns about, whose prefix is `identifier (` and so live at every
+    // call in the language, this one's prefix is the `Component` *keyword*
+    // followed by `(`, which occurs only where that word is actually called.
+    // Benchmarked: cfscript 12880 ms before, 12800 ms after, inside a 5.4%
+    // run-to-run spread.
+    [$.component, $._property_name],
+    [$.component, $.primary_expression],
+    [$.component, $.primary_expression, $._property_name],
     [$.primary_expression, $.tag_statement],
     [$.expression, $.tag_statement],
     [$.tag_statement, $.expression],
@@ -513,7 +526,18 @@ module.exports = grammar({
 
     try_statement: ($) => seq(
       $._kw_try,
-      field('body', $.statement_block),
+      // `try x = nonExistantVariable; catch( any e ){ … }` — Lucee accepts a
+      // single unbraced statement as the body. The unbraced alternative is an
+      // `expression_statement` rather than a general `$.statement`, which is
+      // what the construct needs and is also the only spelling that generates:
+      // a `statement_block` *is* reachable as a `$.statement`, so the general
+      // form makes the braced body match both alternatives and `try { } { }`
+      // ambiguous over which brace pair is the body. A precedence on the
+      // `statement_block` arm does not settle that — the competing reduction is
+      // `statement_block` → `statement`, outside this rule — and the only other
+      // resolutions offered touch `statement` itself, which is live at every
+      // statement in the language.
+      field('body', choice($.statement_block, $.expression_statement)),
       repeat(field('handler', $.catch_clause)),
       optional(field('finalizer', $.finally_clause)),
     ),
@@ -765,7 +789,14 @@ module.exports = grammar({
         $._kw_component,
         $._kw_interface,
       ),
-      repeat(seq(optional($.tag_linefeed), $.component_attribute)),
+      // `component( javasettings = { } ) { … }` — Lucee's parenthesised settings
+      // list, alongside the bare attribute spelling `component javasettings = { }`
+      // that already parsed. Comma-separated inside the parentheses, matching
+      // every other parenthesised list in the grammar.
+      choice(
+        repeat(seq(optional($.tag_linefeed), $.component_attribute)),
+        seq('(', commaSep($.component_attribute), ')'),
+      ),
       field('body', $.component_body),
     )),
 

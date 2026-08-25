@@ -2788,3 +2788,106 @@ component {
               (identifier)
               (string
                 (string_fragment)))))))))
+
+===================================
+brace-less try body
+===================================
+
+component {
+	function f() {
+		try x = nonExistantVariable;
+		catch( any exception ) { var tct = exception.TagContext[ 1 ]; }
+		try { y = 1; } catch (any e) { } finally { z = 2; }
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (try_statement
+            (expression_statement
+              (assignment_expression
+                (identifier)
+                (identifier)))
+            (catch_clause
+              (catch_type)
+              (identifier)
+              (statement_block
+                (variable_declaration
+                  (variable_declarator
+                    (identifier)
+                    (subscript_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier))
+                      (number)))))))
+          (try_statement
+            (statement_block
+              (expression_statement
+                (assignment_expression
+                  (identifier)
+                  (number))))
+            (catch_clause
+              (catch_type)
+              (identifier)
+              (statement_block))
+            (finally_clause
+              (statement_block
+                (expression_statement
+                  (assignment_expression
+                    (identifier)
+                    (number)))))))))))
+
+===================================
+parenthesised component attributes
+===================================
+
+component( javasettings = { } ) {
+	public function test() { }
+	function g() {
+		x = component("a");
+		s = { component: 1, static: 2 };
+	}
+}
+
+---
+
+(program
+  (component
+    (component_attribute
+      (identifier)
+      (object_pattern))
+    (component_body
+      (function_declaration
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (identifier)
+                (arguments
+                  (string
+                    (string_fragment))))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (object
+                (pair
+                  (property_identifier)
+                  (number))
+                (pair
+                  (property_identifier)
+                  (number))))))))))
