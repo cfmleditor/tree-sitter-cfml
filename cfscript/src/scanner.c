@@ -199,7 +199,6 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
             return true;
         }
 
-
         if (lexer->is_at_included_range_start(lexer)) {
             return true;
         }
