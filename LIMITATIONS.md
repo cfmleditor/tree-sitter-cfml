@@ -250,7 +250,10 @@ colon-separated attributes in a script tag call
 (`cfparam (name:"local.d" default:"DDD")`). A `.cfc` beginning
 `final component` is now recognised as a component file rather than silently
 degrading to `html_text`, a `static { … }` initialiser parses at the top level
-of an injected region as well as inside a component body. The
+of an injected region as well as inside a component body, and a colon
+assignment to a dotted name (`msSQL.class: 'x';`). A bare `foo: bar;` still
+parses as a `labeled_statement` rather than an assignment; the two spellings are
+indistinguishable without a semantic pass, and no corpus file depends on it. The
 `new java:` / `new cfml:`
 type prefix now works in both CFScript grammars, where it had been
 `cfscript`-only.

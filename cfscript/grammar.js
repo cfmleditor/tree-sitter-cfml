@@ -369,6 +369,7 @@ module.exports = grammar({
       $.throw_statement,
       $.empty_statement,
       $.labeled_statement,
+      $.colon_assignment_statement,
       $.include_statement,
 
       $.cfml_template,
@@ -622,6 +623,19 @@ module.exports = grammar({
     )),
 
     empty_statement: (_) => ';',
+
+    // `msSQL.class: 'net.sourceforge.jtds.jdbc.Driver';` — Lucee accepts `:`
+    // in place of `=` for an assignment, and Application.cfc files mix the two
+    // in adjacent lines. Only the *dotted* form is spelled here: a bare
+    // `foo: bar;` is already a `labeled_statement`, and changing that reading
+    // would rewrite existing trees for a construct this issue is not about.
+    // A `member_expression` can never be a label, so the two cannot collide.
+    colon_assignment_statement: ($) => seq(
+      field('left', $.member_expression),
+      ':',
+      field('right', $.expression),
+      $._semicolon,
+    ),
 
     labeled_statement: ($) => prec.dynamic(-1, seq(
       field('label', alias(choice($.identifier, $._reserved_identifier), $.statement_identifier)),

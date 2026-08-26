@@ -212,6 +212,10 @@
         "named": true
       },
       {
+        "type": "colon_assignment_statement",
+        "named": true
+      },
+      {
         "type": "component",
         "named": true
       },
@@ -982,6 +986,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "colon_assignment_statement",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "member_expression",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
