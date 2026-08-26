@@ -7511,8 +7511,17 @@
           }
         },
         {
-          "type": "STRING",
-          "value": "="
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "STRING",
+              "value": "="
+            },
+            {
+              "type": "STRING",
+              "value": ":"
+            }
+          ]
         },
         {
           "type": "FIELD",
@@ -10041,6 +10050,10 @@
     [
       "expression",
       "template_substitution"
+    ],
+    [
+      "_property_name",
+      "tag_call_attribute"
     ],
     [
       "component",

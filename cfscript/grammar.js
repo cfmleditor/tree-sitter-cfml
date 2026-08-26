@@ -203,6 +203,14 @@ module.exports = grammar({
     // followed by `(`, which occurs only where that word is actually called.
     // Benchmarked: cfscript 12880 ms before, 12800 ms after, inside a 5.4%
     // run-to-run spread.
+    // `f( name : … ` is ambiguous between a `pair` in ordinary `arguments` and
+    // a colon-separated `tag_call_attribute`. Only what follows settles it — a
+    // comma keeps the pair reading, a space-separated second attribute makes it
+    // a tag call — so both have to be carried. Narrower than it looks: the
+    // prefix is `identifier ( identifier :`, so the two stacks are live only at
+    // a call whose first named argument uses a colon, not at every call.
+    // Benchmarked below.
+    [$._property_name, $.tag_call_attribute],
     [$.component, $._property_name],
     [$.component, $.primary_expression],
     [$.component, $.primary_expression, $._property_name],
@@ -784,6 +792,14 @@ module.exports = grammar({
     )),
 
     component: ($) => prec('literal', seq(
+      // One modifier only. The shared scanner skips a *run* of them when it
+      // decides a file is a component file, but widening this to `repeat` to
+      // match makes `abstract` at the head of a component-body member ambiguous
+      // between an `access_type` and a nested component's modifier list, and
+      // the conflict then pulls in `variable_declaration` as well (`final
+      // MEMBER = "v"`). No corpus file writes two modifiers here — six write
+      // `final component`, which this already accepts — so the trade is not
+      // worth it. Recorded in LIMITATIONS.md.
       optional(choice($._kw_static, $._kw_abstract, $._kw_final)),
       choice(
         $._kw_component,
@@ -1525,7 +1541,14 @@ module.exports = grammar({
 
     tag_call_attribute: ($) => seq(
       field('left', $.identifier),
-      '=',
+      // `cfparam (name:"local.d" default:"DDD")` — Lucee spells a script tag
+      // call's attributes with either separator. The comma-separated colon form
+      // already parsed, but as ordinary `arguments` full of `pair`s rather than
+      // through this rule; only the space-separated one had no reading. Both
+      // separators produce the same tree here, for the reason the alias above
+      // gives: they mean the same thing, and every downstream consumer already
+      // handles one of them.
+      choice('=', ':'),
       field('right', $._tag_call_value),
     ),
 
