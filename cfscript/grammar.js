@@ -801,10 +801,16 @@ module.exports = grammar({
     )),
 
     component_attribute: ($) => choice(
+      // `component displayname:"X" { }` — Lucee's `name:value` annotation.
+      // The recursive colon arm already existed and already parsed the bare
+      // form `component foo:bar { }`; what it could not take was a *quoted*
+      // value, because a string is not itself a `component_attribute`. Spelled
+      // as a `choice` on the value rather than by adding `$.string` to the
+      // arms above, which would also make a bare `component "X" { }` parse.
       seq(
         alias($.identifier, $.attribute_label),
         ':',
-        $.component_attribute,
+        choice($.component_attribute, $.string),
       ),
       seq(
         $.identifier,
@@ -918,12 +924,27 @@ module.exports = grammar({
       $._kw_function,
       field('name', $.identifier),
       $._call_signature,
-      repeat(prec(1, seq(optional($.tag_linefeed), choice($.assignment_expression, $.identifier)))),
+      repeat(prec(1, seq(optional($.tag_linefeed), choice(
+        $.assignment_expression,
+        // `function f( String x ) access:remote { … }` and `secured:api` —
+        // the same `name:value` annotation as on a component, which had no
+        // spelling at all in this position. The value is a word or a string;
+        // it is not a general expression, which keeps this `:` away from the
+        // ternary and from `pair`.
+        alias($.function_annotation, $.component_attribute),
+        $.identifier,
+      )))),
       choice(
         seq(optional($.tag_linefeed), field('body', $.statement_block), optional($._automatic_semicolon)),
         $._semicolon,
       ),
     )),
+
+    function_annotation: ($) => seq(
+      alias($.identifier, $.attribute_label),
+      ':',
+      choice($.identifier, $.string),
+    ),
 
     // A single token, not `seq('[', ']')`: as two tokens the `[` is reachable
     // from `subscript_expression` and `array` in the same state, and the parser

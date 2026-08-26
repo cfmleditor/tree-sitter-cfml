@@ -1037,6 +1037,10 @@
         {
           "type": "identifier",
           "named": true
+        },
+        {
+          "type": "string",
+          "named": true
         }
       ]
     }
@@ -1503,6 +1507,10 @@
         },
         {
           "type": "assignment_expression",
+          "named": true
+        },
+        {
+          "type": "component_attribute",
           "named": true
         },
         {

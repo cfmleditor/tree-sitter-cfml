@@ -240,8 +240,9 @@ not as the first one), the bodyless tag-statement form of `throw` and `query`
 string argument in a tag statement (`exit "exitTemplate";`,
 `pageencoding "utf-8";`), a brace-less `try` body
 (`try x = y; catch( any e ){ }`, an expression statement only), and a
-parenthesised component attribute list (`component( javasettings = { } ) { }`).
-The
+parenthesised component attribute list (`component( javasettings = { } ) { }`),
+and `name:value` annotations on components and functions
+(`component displayname:"X" { }`, `function f() access:remote { }`). The
 `new java:` / `new cfml:`
 type prefix now works in both CFScript grammars, where it had been
 `cfscript`-only.

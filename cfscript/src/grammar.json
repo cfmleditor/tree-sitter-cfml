@@ -2701,8 +2701,17 @@
               "value": ":"
             },
             {
-              "type": "SYMBOL",
-              "name": "component_attribute"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "component_attribute"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "string"
+                }
+              ]
             }
           ]
         },
@@ -3259,6 +3268,15 @@
                         "name": "assignment_expression"
                       },
                       {
+                        "type": "ALIAS",
+                        "content": {
+                          "type": "SYMBOL",
+                          "name": "function_annotation"
+                        },
+                        "named": true,
+                        "value": "component_attribute"
+                      },
+                      {
                         "type": "SYMBOL",
                         "name": "identifier"
                       }
@@ -3316,6 +3334,37 @@
           }
         ]
       }
+    },
+    "function_annotation": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          "named": true,
+          "value": "attribute_label"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "identifier"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "string"
+            }
+          ]
+        }
+      ]
     },
     "array_return_suffix": {
       "type": "TOKEN",
