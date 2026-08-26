@@ -3451,10 +3451,6 @@
               {
                 "type": "SYMBOL",
                 "name": "statement_block"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "if_statement"
               }
             ]
           }

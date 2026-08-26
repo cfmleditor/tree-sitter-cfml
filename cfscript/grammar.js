@@ -1003,7 +1003,6 @@ module.exports = grammar({
         // `if` is the shape the corpus writes; a call that only looks like a
         // statement, `(v) => throw( … )`, is a `call_expression` and already
         // went through the expression arm.
-        $.if_statement,
       )),
     ),
 

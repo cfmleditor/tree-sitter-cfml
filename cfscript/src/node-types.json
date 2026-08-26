@@ -384,10 +384,6 @@
             "named": true
           },
           {
-            "type": "if_statement",
-            "named": true
-          },
-          {
             "type": "statement_block",
             "named": true
           }

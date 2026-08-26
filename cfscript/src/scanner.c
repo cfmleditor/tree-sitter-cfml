@@ -199,14 +199,6 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
             return true;
         }
 
-        // `list.each( (v) => if ( v < 0 ) throw( … ) )` — a statement as an
-        // arrow-function body, where the statement ends at the call's closing
-        // paren rather than at a `}`, a newline or EOF. Only consulted when the
-        // parser already has AUTOMATIC_SEMICOLON in `valid_symbols`, i.e. in a
-        // state where a statement may end, so an ordinary `f( a )` is untouched.
-        if (lexer->lookahead == ')') {
-            return true;
-        }
 
         if (lexer->is_at_included_range_start(lexer)) {
             return true;

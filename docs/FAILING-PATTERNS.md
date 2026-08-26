@@ -162,6 +162,38 @@ Three properties of this grammar drive most of the risk:
 | Heap over-read in the scanner's `deserialize` | — | — | **Fixed.** The serialized-state overflow above also had a memory-safety half: the second tag array's header was skipped when the buffer was full, and `deserialize` read past the end of the heap block and segfaulted. `serialize` now reserves room so every section is written, and `deserialize` bounds-checks every read. See [#57](https://github.com/cfmleditor/tree-sitter-cfml/issues/57) |
 | `</cfscript>` inside a string literal | **Med** | **High** | Shared-scanner work on `common/scanner.h`, so it lands in `cfml` and `cfquery` together. The raw-text scan would have to track string state, and a bug there breaks every `<cfscript>` block rather than an edge case. Confirm against Lucee first: the engines may also end the block here, in which case the current behaviour is correct and this row should be deleted. [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56) |
 
+### A third axis: the size of the generated table
+
+The section below separates implementation risk from runtime cost. A statement
+as an arrow-function body ([#75](https://github.com/cfmleditor/tree-sitter-cfml/issues/75))
+found a third axis that neither covers, and that no step in the workflow reports.
+
+The change declared **no conflicts**, generated cleanly, passed `npm test`,
+`npm run probe`, `npm run lint` and `npm run fuzz`, and moved the corpus the
+right way. Parse time did not visibly regress. What it did do:
+
+| | before | after |
+|---|---|---|
+| `STATE_COUNT` | 4,984 | 10,005 |
+| `cfscript/src/parser.c` | 17.9 MB | 35.7 MB |
+
+A 2× parse table and +17.7 MB of *committed* C that every binding compiles, for
+one corpus file carrying one error node. It was reverted.
+
+The mechanism: admitting `if_statement` in the arrow body makes every state
+reachable inside an if-statement reachable in arrow-body position too, and the
+table forks. The trap is that the guidance to "run `npm run bench` on any change
+that declares a conflict" does not fire here, because there is no conflict — and
+on a loaded machine the benchmark could not have resolved a difference this
+change did not produce anyway.
+
+So: **check `STATE_COUNT` and the size of `parser.c` on any change that admits
+an existing statement or expression rule into a new position**, not only on ones
+that declare conflicts. It is a deterministic two-second check, and unlike the
+benchmark it works on a busy machine — which is exactly when it is most needed.
+For comparison, the same session's changes that were kept cost 1 state (#78),
+4 states (#84's conflict), and none measurable at all.
+
 ### Implementation risk is not runtime cost
 
 The table above rates how likely a change is to *break* something. It says
