@@ -36,8 +36,17 @@
             {
               "type": "REPEAT",
               "content": {
-                "type": "SYMBOL",
-                "name": "statement"
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "statement"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "static_initializer"
+                  }
+                ]
               }
             }
           ]
@@ -3442,6 +3451,10 @@
               {
                 "type": "SYMBOL",
                 "name": "statement_block"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "if_statement"
               }
             ]
           }

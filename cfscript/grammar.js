@@ -250,7 +250,15 @@ module.exports = grammar({
       ),
       choice(
         $.component,
-        repeat($.statement),
+        // `static_initializer` is reachable at the top level as well as inside
+        // `component_body`, because that is what an injected region can be.
+        // `injections.scm` hands the body of a tag-based component's
+        // `<cfscript>` island to this grammar as a bare region, and that region
+        // is a *component body* rather than a statement list — so a file that
+        // is perfectly valid CFML reported an error inside an editor using the
+        // injection queries. `property` already parsed here; `static { … }` was
+        // the one component-level construct that did not.
+        repeat(choice($.statement, $.static_initializer)),
       ),
     ),
 
@@ -985,6 +993,17 @@ module.exports = grammar({
       field('body', choice(
         $.expression,
         $.statement_block,
+        // `list.each( (v) => if ( v < 0 ) throw( message="x" ) )` — Lucee
+        // accepts a statement as the body (Lucee LDEV1819). Only `if_statement`
+        // is admitted, not a general `$.statement`: a `statement_block` is
+        // itself a `$.statement`, so the general form makes the braced body
+        // match two alternatives and `(v) => { }` ambiguous — the same
+        // collision the brace-less `try` body hit, where the competing
+        // reduction sits outside the rule and no local precedence reaches it.
+        // `if` is the shape the corpus writes; a call that only looks like a
+        // statement, `(v) => throw( … )`, is a `call_expression` and already
+        // went through the expression arm.
+        $.if_statement,
       )),
     ),
 

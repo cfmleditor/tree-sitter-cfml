@@ -384,6 +384,10 @@
             "named": true
           },
           {
+            "type": "if_statement",
+            "named": true
+          },
+          {
             "type": "statement_block",
             "named": true
           }
@@ -2337,6 +2341,10 @@
         },
         {
           "type": "statement",
+          "named": true
+        },
+        {
+          "type": "static_initializer",
           "named": true
         }
       ]

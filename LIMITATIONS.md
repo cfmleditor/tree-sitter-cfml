@@ -248,7 +248,9 @@ and `name:value` annotations on components and functions
 colon-separated attributes in a script tag call
 (`cfparam (name:"local.d" default:"DDD")`). A `.cfc` beginning
 `final component` is now recognised as a component file rather than silently
-degrading to `html_text`. The
+degrading to `html_text`, a `static { … }` initialiser parses at the top level
+of an injected region as well as inside a component body, and a statement is
+accepted as an arrow-function body (`(v) => if ( … ) …`). The
 `new java:` / `new cfml:`
 type prefix now works in both CFScript grammars, where it had been
 `cfscript`-only.
