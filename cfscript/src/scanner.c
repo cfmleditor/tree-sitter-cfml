@@ -13,7 +13,8 @@ enum TokenType {
     QUERY_TEXT,
     TAG_LINEFEED,
     CFML_TEMPLATE_CONTENT,
-    CFML_COMMENT
+    CFML_COMMENT,
+    JAVA_CLASS_CONTENT
 };
 
 void *tree_sitter_cfscript_external_scanner_create() { return NULL; }
@@ -496,6 +497,89 @@ static bool scan_cfml_comment(TSLexer *lexer) {
     return false;
 }
 
+// The body of a Lucee inline Java class block, `java { … }` (LDEV4001).
+//
+// Entered immediately after the opening brace, which the grammar lexes as part
+// of the single `_java_block_open` token, so by the time this runs the block is
+// already committed — there is no shape in which it has to give characters
+// back. It stops *before* the closing brace and leaves it to the grammar, so
+// the block's extent is visible in the tree.
+//
+// The body is Java, not CFML, and is kept opaque on purpose. All this has to do
+// is find the matching brace, which means knowing the three places a brace can
+// appear without nesting: a string literal, a character literal, and a comment.
+static bool scan_java_class_content(TSLexer *lexer) {
+    unsigned depth = 1;
+    bool any = false;
+
+    for (;;) {
+        if (lexer->lookahead == 0) {
+            // Unterminated block. End the content at EOF rather than returning
+            // false, which would strand everything consumed so far.
+            lexer->mark_end(lexer);
+            lexer->result_symbol = JAVA_CLASS_CONTENT;
+            return any;
+        }
+
+        if (lexer->lookahead == '"' || lexer->lookahead == '\'') {
+            int32_t quote = lexer->lookahead;
+            advance(lexer);
+            any = true;
+            while (lexer->lookahead != 0 && lexer->lookahead != quote) {
+                if (lexer->lookahead == '\\') {
+                    advance(lexer);
+                    if (lexer->lookahead == 0) break;
+                }
+                advance(lexer);
+            }
+            if (lexer->lookahead == quote) advance(lexer);
+            continue;
+        }
+
+        if (lexer->lookahead == '/') {
+            advance(lexer);
+            any = true;
+            if (lexer->lookahead == '/') {
+                while (lexer->lookahead != 0 && lexer->lookahead != '\n') advance(lexer);
+            } else if (lexer->lookahead == '*') {
+                advance(lexer);
+                while (lexer->lookahead != 0) {
+                    if (lexer->lookahead == '*') {
+                        advance(lexer);
+                        if (lexer->lookahead == '/') { advance(lexer); break; }
+                    } else {
+                        advance(lexer);
+                    }
+                }
+            }
+            continue;
+        }
+
+        if (lexer->lookahead == '{') {
+            depth++;
+            advance(lexer);
+            any = true;
+            continue;
+        }
+
+        if (lexer->lookahead == '}') {
+            if (depth == 1) {
+                // Leave the closing brace for the grammar.
+                lexer->mark_end(lexer);
+                lexer->result_symbol = JAVA_CLASS_CONTENT;
+                return any;
+            }
+            depth--;
+            advance(lexer);
+            any = true;
+            continue;
+        }
+
+        advance(lexer);
+        any = true;
+    }
+}
+
 bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
     // `cfml_template_content` is only reachable straight after a ``` fence, a
     // state in which no other external token is valid — so AUTOMATIC_SEMICOLON
@@ -506,6 +590,19 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
     // components (2.2 MB) that happened 3,060 times and accounted for 25.1M of
     // the scanner's 25.13M character advances — 52% of every instruction the
     // parse retired. TEMPLATE_CHARS below already stands down the same way.
+    // Only reachable straight after `java {`, a state in which no other
+    // external token is valid — so AUTOMATIC_SEMICOLON being valid alongside it
+    // means the parser is in error recovery, where every external token is
+    // marked valid. Standing down there keeps the balanced-brace scan from
+    // running at every recovery step, the cost CFML_TEMPLATE_CONTENT below
+    // already documents.
+    if (valid_symbols[JAVA_CLASS_CONTENT]) {
+        if (valid_symbols[AUTOMATIC_SEMICOLON]) {
+            return false;
+        }
+        return scan_java_class_content(lexer);
+    }
+
     if (valid_symbols[CFML_TEMPLATE_CONTENT]) {
         if (valid_symbols[AUTOMATIC_SEMICOLON]) {
             return false;

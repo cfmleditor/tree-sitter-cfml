@@ -1977,6 +1977,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "java_class_block"
+        },
+        {
+          "type": "SYMBOL",
           "name": "function_expression"
         },
         {
@@ -7781,6 +7785,51 @@
         }
       ]
     },
+    "java_class_block": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "_java_block_open"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "java_class_content"
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
+    "_java_block_open": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "[jJ][aA][vV][aA]"
+          },
+          {
+            "type": "PATTERN",
+            "value": "[ \\t]*"
+          },
+          {
+            "type": "STRING",
+            "value": "{"
+          }
+        ]
+      }
+    },
     "property_declaration": {
       "type": "SEQ",
       "members": [
@@ -10340,6 +10389,10 @@
     {
       "type": "SYMBOL",
       "name": "cf_comment"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "java_class_content"
     }
   ],
   "inline": [

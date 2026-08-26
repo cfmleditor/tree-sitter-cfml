@@ -38,6 +38,7 @@ module.exports = grammar({
     $.tag_linefeed,
     $.cfml_template_content,
     $.cf_comment,
+    $.java_class_content,
   ],
 
   extras: ($) => [
@@ -735,6 +736,7 @@ module.exports = grammar({
       $.object,
       $.array,
       $.ordered_struct,
+      $.java_class_block,
       $.function_expression,
       $.arrow_function,
       $.call_expression,
@@ -1622,6 +1624,31 @@ module.exports = grammar({
     ),
 
     static_initializer: ($) => seq($._kw_static, $.statement_block),
+
+    // `classInstance = java { public class C { … } }` — Lucee's inline Java
+    // class block (LDEV4001). The body is not CFML and is deliberately kept
+    // opaque, which is what the issue asks for: recognising the block is enough
+    // for a consumer, and parsing Java is not this grammar's job.
+    //
+    // The opener is one *internal* token rather than a keyword. `java` must
+    // stay an ordinary identifier — `new java.util.Properties()` and
+    // `x = java.lang.System` both depend on it, and a `keyword('Java')` valid
+    // at expression start is precisely the out-lexing bug that
+    // `new java.…` already suffered once. Because the token can only match
+    // when a `{` follows, and carries no explicit precedence, longest-match
+    // leaves `java.util` to `identifier` untouched. Same trick as
+    // `array_return_suffix`.
+    java_class_block: ($) => seq(
+      $._java_block_open,
+      optional($.java_class_content),
+      '}',
+    ),
+
+    // Same-line whitespace only. Allowing a newline between the word and the
+    // brace would capture `java` as a bare statement followed by an ordinary
+    // block on the next line, which is a different program; Lucee writes
+    // `java{` and `java {`, both on one line.
+    _java_block_open: (_) => token(seq(/[jJ][aA][vV][aA]/, /[ \t]*/, '{')),
 
     property_declaration: ($) => seq(
       $._kw_property,

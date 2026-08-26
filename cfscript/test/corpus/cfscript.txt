@@ -3189,3 +3189,106 @@ component {
               (statement_block
                 (break_statement
                   (statement_identifier))))))))))
+
+===================================
+inline java class block
+===================================
+
+classInstance = java{
+	public class class1{
+		public String execute() { return "java block worked in Lucee"; }
+	}
+}
+writeoutput(classInstance.execute())
+a = java { public class C { String s = "}"; char c = '}'; } };
+b = java { /* } */ public class C { } };
+c = JAVA { public class D { } };
+d = new java.util.Properties();
+e = new java:foo.Bar();
+java = 1;
+f = java.lang.System;
+g = createObject("java", "java.util.Date");
+h = javaCast("int", 1);
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (java_class_block
+        (java_class_content))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (call_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (arguments)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (java_class_block
+        (java_class_content))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (java_class_block
+        (java_class_content))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (java_class_block
+        (java_class_content))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (property_identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (string
+            (string_fragment))
+          (string
+            (string_fragment))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (string
+            (string_fragment))
+          (number))))))
