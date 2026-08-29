@@ -1,6 +1,7 @@
 #include "tree_sitter/parser.h"
 
 #include <stdio.h>
+#include <string.h>
 #include <wctype.h>
 
 enum TokenType {
@@ -14,7 +15,8 @@ enum TokenType {
     TAG_LINEFEED,
     CFML_TEMPLATE_CONTENT,
     CFML_COMMENT,
-    JAVA_CLASS_CONTENT
+    JAVA_CLASS_CONTENT,
+    JAVA_BLOCK_OPEN
 };
 
 void *tree_sitter_cfscript_external_scanner_create() { return NULL; }
@@ -497,6 +499,95 @@ static bool scan_cfml_comment(TSLexer *lexer) {
     return false;
 }
 
+// The opener of a Lucee inline Java class block: the word `java`, same-line
+// whitespace, and `{`.
+//
+// The brace is part of the token so that `java` on its own — `new
+// java.util.Properties()`, `x = java.lang.System` — is never touched. That much
+// a plain internal token also gave. What it could not give is the check below:
+// a variable that happens to be named `java` can also sit immediately before a
+// brace, as in `loop array=java { x = 1; }`, where the brace opens the tag's
+// *body*. Swallowing that produced a silently wrong tree with no ERROR node,
+// which is the worst failure mode this parser has.
+//
+// So the block is only claimed when what follows the brace actually starts a
+// Java class body. CFML statements never start with these words in this
+// position, and a Java class body always does.
+static bool scan_java_block_open(TSLexer *lexer) {
+    // Leading whitespace is ours to consume: `extras` are applied to tokens the
+    // generated lexer produces, not to an external scan, which starts wherever
+    // the previous token ended. `skip` rather than `advance` keeps it out of
+    // the token.
+    while (cf_isspace(lexer->lookahead)) skip(lexer);
+
+    const char *word = "java";
+    for (int i = 0; i < 4; i++) {
+        if (cf_tolower(lexer->lookahead) != word[i]) return false;
+        advance(lexer);
+    }
+    // `javaCast`, `javascript`: the word must end here.
+    if (cf_isalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
+
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') advance(lexer);
+    if (lexer->lookahead != '{') return false;
+    advance(lexer);
+    lexer->mark_end(lexer);
+
+    // Everything from here is lookahead only; mark_end above has already fixed
+    // the token at the brace.
+    //
+    // Comments are skipped as well as whitespace: a Java class body may open
+    // with one, and `java { /* } */ public class C { } }` otherwise failed the
+    // starter check and lost the block. (Note the brace inside that comment —
+    // finding the *end* of the body has the same three exceptions, which
+    // `scan_java_class_content` below handles.)
+    for (;;) {
+        while (cf_isspace(lexer->lookahead)) advance(lexer);
+        if (lexer->lookahead != '/') break;
+        advance(lexer);
+        if (lexer->lookahead == '/') {
+            while (lexer->lookahead != 0 && lexer->lookahead != '\n') advance(lexer);
+        } else if (lexer->lookahead == '*') {
+            advance(lexer);
+            while (lexer->lookahead != 0) {
+                if (lexer->lookahead == '*') {
+                    advance(lexer);
+                    if (lexer->lookahead == '/') { advance(lexer); break; }
+                } else {
+                    advance(lexer);
+                }
+            }
+        } else {
+            return false;   // a stray `/` does not start a Java class body
+        }
+    }
+
+    if (lexer->lookahead == '@') {          // an annotation
+        lexer->result_symbol = JAVA_BLOCK_OPEN;
+        return true;
+    }
+
+    char buf[16];
+    int len = 0;
+    while (cf_isalpha(lexer->lookahead) && len < 15) {
+        buf[len++] = (char)cf_tolower(lexer->lookahead);
+        advance(lexer);
+    }
+    buf[len] = '\0';
+
+    static const char *starters[] = {
+        "public", "private", "protected", "static", "final", "abstract",
+        "class", "interface", "enum", "record", "import", "package", "strictfp"
+    };
+    for (unsigned i = 0; i < sizeof(starters) / sizeof(starters[0]); i++) {
+        if (strcmp(buf, starters[i]) == 0) {
+            lexer->result_symbol = JAVA_BLOCK_OPEN;
+            return true;
+        }
+    }
+    return false;
+}
+
 // The body of a Lucee inline Java class block, `java { … }` (LDEV4001).
 //
 // Entered immediately after the opening brace, which the grammar lexes as part
@@ -581,6 +672,19 @@ static bool scan_java_class_content(TSLexer *lexer) {
 }
 
 bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
+    // `java_class_content` is only reachable straight after that opener, a
+    // state in which no other external token is valid — so AUTOMATIC_SEMICOLON
+    // being valid alongside it means the parser is in error recovery, where
+    // tree-sitter marks every external token valid. Standing down keeps the
+    // balanced-brace walk from running at every recovery step, which is the
+    // cost CFML_TEMPLATE_CONTENT below measures.
+    if (valid_symbols[JAVA_CLASS_CONTENT]) {
+        if (valid_symbols[AUTOMATIC_SEMICOLON]) {
+            return false;
+        }
+        return scan_java_class_content(lexer);
+    }
+
     // `cfml_template_content` is only reachable straight after a ``` fence, a
     // state in which no other external token is valid — so AUTOMATIC_SEMICOLON
     // being valid alongside it means the parser is in error recovery, where
@@ -590,19 +694,6 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
     // components (2.2 MB) that happened 3,060 times and accounted for 25.1M of
     // the scanner's 25.13M character advances — 52% of every instruction the
     // parse retired. TEMPLATE_CHARS below already stands down the same way.
-    // Only reachable straight after `java {`, a state in which no other
-    // external token is valid — so AUTOMATIC_SEMICOLON being valid alongside it
-    // means the parser is in error recovery, where every external token is
-    // marked valid. Standing down there keeps the balanced-brace scan from
-    // running at every recovery step, the cost CFML_TEMPLATE_CONTENT below
-    // already documents.
-    if (valid_symbols[JAVA_CLASS_CONTENT]) {
-        if (valid_symbols[AUTOMATIC_SEMICOLON]) {
-            return false;
-        }
-        return scan_java_class_content(lexer);
-    }
-
     if (valid_symbols[CFML_TEMPLATE_CONTENT]) {
         if (valid_symbols[AUTOMATIC_SEMICOLON]) {
             return false;
@@ -670,6 +761,21 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
         !valid_symbols[REGEX_PATTERN]) {
         return scan_html_comment(lexer);
     }*/
+
+    // Last, and deliberately so. This scan consumes leading whitespace with
+    // `skip` before it can tell whether the word is `java`, and several of the
+    // branches above — automatic semicolon insertion in particular — decide
+    // what they do from exactly that whitespace. Running first, it stole the
+    // run of spaces before a trailing comment and the comment then attached
+    // inside the preceding block instead of after it, which `cfscript comments`
+    // caught. Placed here it only ever sees a position nothing else claimed.
+    //
+    // It needs no recovery guard: it rejects within a few characters of
+    // anything that is not the word `java`.
+    if (valid_symbols[JAVA_BLOCK_OPEN] && !valid_symbols[AUTOMATIC_SEMICOLON] &&
+        scan_java_block_open(lexer)) {
+        return true;
+    }
 
     return false;
 }

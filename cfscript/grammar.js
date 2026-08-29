@@ -39,6 +39,7 @@ module.exports = grammar({
     $.cfml_template_content,
     $.cf_comment,
     $.java_class_content,
+    $._java_block_open,
   ],
 
   extras: ($) => [
@@ -420,7 +421,14 @@ module.exports = grammar({
     // `public` lex as a keyword, and `public component function f()` is a
     // function declaration with a return type, not a member.
     _plain_declarator: ($) => seq(
-      field('name', $.identifier),
+      // `default` has to be spelled out. Admitting it as a function modifier
+      // (`public default any function f()`) makes `_kw_default` valid straight
+      // after an access modifier, so it lexes as a keyword here too and
+      // `public default = 1;` — an ordinary member named `default` — stopped
+      // parsing. Same shape as the `_reserved_identifier` entries elsewhere:
+      // a keyword made valid in a new position has to keep its identifier
+      // reading in every rule that shared the position.
+      field('name', choice($.identifier, alias($._kw_default, $.identifier))),
       optional($._initializer),
     ),
 
@@ -1644,11 +1652,6 @@ module.exports = grammar({
       '}',
     ),
 
-    // Same-line whitespace only. Allowing a newline between the word and the
-    // brace would capture `java` as a bare statement followed by an ordinary
-    // block on the next line, which is a different program; Lucee writes
-    // `java{` and `java {`, both on one line.
-    _java_block_open: (_) => token(seq(/[jJ][aA][vV][aA]/, /[ \t]*/, '{')),
 
     property_declaration: ($) => seq(
       $._kw_property,

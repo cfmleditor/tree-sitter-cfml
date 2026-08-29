@@ -707,8 +707,22 @@
           "type": "FIELD",
           "name": "name",
           "content": {
-            "type": "SYMBOL",
-            "name": "identifier"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              },
+              {
+                "type": "ALIAS",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "_kw_default"
+                },
+                "named": true,
+                "value": "identifier"
+              }
+            ]
           }
         },
         {
@@ -7810,26 +7824,6 @@
         }
       ]
     },
-    "_java_block_open": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "PATTERN",
-            "value": "[jJ][aA][vV][aA]"
-          },
-          {
-            "type": "PATTERN",
-            "value": "[ \\t]*"
-          },
-          {
-            "type": "STRING",
-            "value": "{"
-          }
-        ]
-      }
-    },
     "property_declaration": {
       "type": "SEQ",
       "members": [
@@ -10393,6 +10387,10 @@
     {
       "type": "SYMBOL",
       "name": "java_class_content"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_java_block_open"
     }
   ],
   "inline": [
