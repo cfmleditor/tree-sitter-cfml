@@ -3408,3 +3408,94 @@ param numeric x default="0";
       (identifier)
       (string
         (string_fragment)))))
+
+===================================
+default as an ordinary identifier
+===================================
+
+default = "x";
+default = listLast( a, b );
+default.foo = 1;
+x = default.foo;
+component { public default = 1; }
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (identifier)
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier))))
+  (component
+    (component_body
+      (variable_declaration
+        (access_type)
+        (variable_declarator
+          (identifier)
+          (number))))))
+
+===================================
+switch with case and default clauses
+===================================
+
+switch (x) {
+	case 1:
+		y = 1;
+		break;
+	case 2:
+	case 3:
+		y = 2;
+		break;
+	default:
+		y = 3;
+}
+
+---
+
+(program
+  (switch_statement
+    (parenthesized_expression
+      (identifier))
+    (switch_body
+      (switch_case
+        (number)
+        (expression_statement
+          (assignment_expression
+            (identifier)
+            (number)))
+        (break_statement))
+      (switch_case
+        (number))
+      (switch_case
+        (number)
+        (expression_statement
+          (assignment_expression
+            (identifier)
+            (number)))
+        (break_statement))
+      (switch_default
+        (expression_statement
+          (assignment_expression
+            (identifier)
+            (number)))))))
