@@ -1921,12 +1921,16 @@ module.exports = grammar({
         field('body', $.statement_block),
         $._semicolon,
       ),
-      seq(
+      // Negative dynamic precedence so an ordinary expression statement wins
+      // the tie. `r[ a ][ b ] = new R( v=1 );` matches this branch too, reading
+      // `r` as a tag and `[ a ]` as an array literal, and that reading is never
+      // the right one for a subscript assignment.
+      prec.dynamic(-1, seq(
         field('tag', $.identifier),
         field('arguments', repeat1(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
         optional(field('body', $.statement_block)),
         $._semicolon,
-      ),
+      )),
     ),
 
     // Keyword tokens. Defined once here and referenced as `$._kw_<word>`

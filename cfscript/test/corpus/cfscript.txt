@@ -3315,3 +3315,96 @@ j = java { @Deprecated public class E { } };
       (identifier)
       (java_class_block
         (java_class_content)))))
+
+===================================
+subscript assignment is not a tag statement
+===================================
+
+r[ a ][ b ] = new R( v=1 );
+r[ a ][ b ] = 1;
+interceptors[ x ].name = listLast( interceptors[ x ].class, "." );
+modules[ m ].i18n = { defaultLocale = "" };
+location url="/home" addtoken="false";
+http url="https://x" method="get";
+param numeric x default="0";
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (subscript_expression
+        (subscript_expression
+          (identifier)
+          (identifier))
+        (identifier))
+      (new_expression
+        (identifier)
+        (arguments
+          (assignment_expression
+            (identifier)
+            (number))))))
+  (expression_statement
+    (assignment_expression
+      (subscript_expression
+        (subscript_expression
+          (identifier)
+          (identifier))
+        (identifier))
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (member_expression
+        (subscript_expression
+          (identifier)
+          (identifier))
+        (property_identifier))
+      (call_expression
+        (identifier)
+        (arguments
+          (member_expression
+            (subscript_expression
+              (identifier)
+              (identifier))
+            (property_identifier))
+          (string
+            (string_fragment))))))
+  (expression_statement
+    (assignment_expression
+      (member_expression
+        (subscript_expression
+          (identifier)
+          (identifier))
+        (property_identifier))
+      (object_pattern
+        (object_assignment_pattern
+          (shorthand_property_identifier_pattern)
+          (string)))))
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))))
