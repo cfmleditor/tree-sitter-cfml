@@ -138,6 +138,10 @@
         "named": true
       },
       {
+        "type": "java_class_block",
+        "named": true
+      },
+      {
         "type": "member_expression",
         "named": true
       },
@@ -209,6 +213,10 @@
       },
       {
         "type": "cfml_template",
+        "named": true
+      },
+      {
+        "type": "colon_assignment_statement",
         "named": true
       },
       {
@@ -985,6 +993,32 @@
     }
   },
   {
+    "type": "colon_assignment_statement",
+    "named": true,
+    "fields": {
+      "left": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "member_expression",
+            "named": true
+          }
+        ]
+      },
+      "right": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
     "type": "component",
     "named": true,
     "fields": {
@@ -1036,6 +1070,10 @@
         },
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "string",
           "named": true
         }
       ]
@@ -1506,6 +1544,10 @@
           "named": true
         },
         {
+          "type": "component_attribute",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         },
@@ -1761,6 +1803,21 @@
         },
         {
           "type": "sequence_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "java_class_block",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "java_class_content",
           "named": true
         }
       ]
@@ -2330,6 +2387,10 @@
         {
           "type": "statement",
           "named": true
+        },
+        {
+          "type": "static_initializer",
+          "named": true
         }
       ]
     }
@@ -2421,7 +2482,7 @@
       },
       "body": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "statement_block",
@@ -2685,6 +2746,16 @@
             "named": true
           }
         ]
+      },
+      "static_chain": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "static_chain",
+            "named": true
+          }
+        ]
       }
     }
   },
@@ -2841,6 +2912,10 @@
           {
             "type": "member_expression",
             "named": true
+          },
+          {
+            "type": "string",
+            "named": true
           }
         ]
       },
@@ -2960,7 +3035,7 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
@@ -2969,6 +3044,10 @@
         },
         {
           "type": "expression",
+          "named": true
+        },
+        {
+          "type": "parameter_attribute",
           "named": true
         },
         {
@@ -2991,6 +3070,10 @@
         "multiple": false,
         "required": true,
         "types": [
+          {
+            "type": "expression_statement",
+            "named": true
+          },
           {
             "type": "statement_block",
             "named": true
@@ -3590,6 +3673,10 @@
   {
     "type": "interface",
     "named": false
+  },
+  {
+    "type": "java_class_content",
+    "named": true
   },
   {
     "type": "let",

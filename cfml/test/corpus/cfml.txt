@@ -2072,6 +2072,40 @@ static component {
     (cf_component_content)))
 
 ===================================
+final component ( cfscript )
+===================================
+final component {
+  public function test() { }
+}
+---
+
+(program
+  (component_file
+    (cf_component_content)))
+
+===================================
+FINAL component, case-insensitive ( cfscript )
+===================================
+FINAL component {
+  public function test() { }
+}
+---
+
+(program
+  (component_file
+    (cf_component_content)))
+
+===================================
+a modifier word that is not a component file stays text
+===================================
+final xyz { }
+---
+
+(program
+  (html_text)
+  (text))
+
+===================================
 nested comments
 ===================================
 

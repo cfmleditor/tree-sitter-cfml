@@ -2445,3 +2445,966 @@ function i() { return a eq b and c contains d; }
           (binary_expression
             (identifier)
             (identifier)))))))
+
+===================================
+untyped param shorthand
+===================================
+
+component {
+	function f() {
+		param x;
+		param url.number;
+		param numeric y;
+		param z default="0";
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (tag_statement
+            (identifier)
+            (identifier))
+          (tag_statement
+            (identifier)
+            (member_expression
+              (identifier)
+              (property_identifier)))
+          (tag_statement
+            (identifier)
+            (parameter_type)
+            (identifier))
+          (tag_statement
+            (identifier)
+            (parameter_type)
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))))))))
+
+===================================
+access modifier combined with final
+===================================
+
+component {
+	public final MEMBER = "v";
+	static {
+		public final OTHER = "w";
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (variable_declaration
+        (access_type)
+        (access_type)
+        (variable_declarator
+          (identifier)
+          (string
+            (string_fragment))))
+      (static_initializer
+        (statement_block
+          (variable_declaration
+            (access_type)
+            (access_type)
+            (variable_declarator
+              (identifier)
+              (string
+                (string_fragment)))))))))
+
+===================================
+return type before the access modifiers
+===================================
+
+component {
+	struct public static function a() { }
+	struct public function b() { }
+	public static struct function c(arg1) { }
+	User[] public function d() { }
+	function static(one="", two="") output=false { }
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (access_type)
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (access_type)
+        (access_type)
+        (identifier)
+        (identifier)
+        (formal_parameters
+          (parameter_type
+            (identifier)))
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (array_return_suffix)
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (assignment_pattern
+            (identifier)
+            (string))
+          (assignment_pattern
+            (identifier)
+            (string)))
+        (assignment_expression
+          (identifier)
+          (false))
+        (statement_block)))))
+
+===================================
+subscripted static access
+===================================
+
+component {
+	function f() {
+		x = Test::m();
+		y = Test::["f"]();
+		z = Test::[m]();
+		w = LDEV0255.Test::["f"]();
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (member_expression
+                  (identifier)
+                  (static_chain)
+                  (property_identifier))
+                (arguments))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (subscript_expression
+                  (identifier)
+                  (static_chain)
+                  (string
+                    (string_fragment)))
+                (arguments))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (subscript_expression
+                  (identifier)
+                  (static_chain)
+                  (identifier))
+                (arguments))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (subscript_expression
+                  (member_expression
+                    (identifier)
+                    (property_identifier))
+                  (static_chain)
+                  (string
+                    (string_fragment)))
+                (arguments)))))))))
+
+===================================
+default modifier on an interface method
+===================================
+
+interface {
+	public default any function returnsany(any obj) { return obj; }
+	public any function plain(any obj) { return obj; }
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (access_type)
+        (access_type)
+        (identifier)
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier))
+        (statement_block
+          (return_statement
+            (identifier))))
+      (function_declaration
+        (access_type)
+        (identifier)
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier))
+        (statement_block
+          (return_statement
+            (identifier)))))))
+
+===================================
+bodyless throw and query tag statements
+===================================
+
+component {
+	function f() {
+		throw message="x" type="y";
+		query name="q" dbtype="query";
+		throw(message = "x", type = "y");
+		throw "boom";
+		query name="q2" { }
+		x = query.newQuery();
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (throw_statement
+            (parameter_attribute
+              (identifier)
+              (string
+                (string_fragment)))
+            (parameter_attribute
+              (identifier)
+              (string
+                (string_fragment))))
+          (query_tag
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment))))
+          (throw_statement
+            (arguments
+              (assignment_expression
+                (identifier)
+                (string
+                  (string_fragment)))
+              (assignment_expression
+                (identifier)
+                (string
+                  (string_fragment)))))
+          (throw_statement
+            (string
+              (string_fragment)))
+          (query_tag
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))
+            (statement_block))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (arguments)))))))))
+
+===================================
+tag statement with a bare string argument
+===================================
+
+pageencoding "utf-8";
+component {
+	function f() {
+		exit "exitTemplate";
+		exit;
+		exit method="template";
+	}
+}
+
+---
+
+(program
+  (tag_statement
+    (identifier)
+    (string
+      (string_fragment)))
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (tag_statement
+            (identifier)
+            (string
+              (string_fragment)))
+          (expression_statement
+            (identifier))
+          (tag_statement
+            (identifier)
+            (assignment_expression
+              (identifier)
+              (string
+                (string_fragment)))))))))
+
+===================================
+brace-less try body
+===================================
+
+component {
+	function f() {
+		try x = nonExistantVariable;
+		catch( any exception ) { var tct = exception.TagContext[ 1 ]; }
+		try { y = 1; } catch (any e) { } finally { z = 2; }
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (try_statement
+            (expression_statement
+              (assignment_expression
+                (identifier)
+                (identifier)))
+            (catch_clause
+              (catch_type)
+              (identifier)
+              (statement_block
+                (variable_declaration
+                  (variable_declarator
+                    (identifier)
+                    (subscript_expression
+                      (member_expression
+                        (identifier)
+                        (property_identifier))
+                      (number)))))))
+          (try_statement
+            (statement_block
+              (expression_statement
+                (assignment_expression
+                  (identifier)
+                  (number))))
+            (catch_clause
+              (catch_type)
+              (identifier)
+              (statement_block))
+            (finally_clause
+              (statement_block
+                (expression_statement
+                  (assignment_expression
+                    (identifier)
+                    (number)))))))))))
+
+===================================
+parenthesised component attributes
+===================================
+
+component( javasettings = { } ) {
+	public function test() { }
+	function g() {
+		x = component("a");
+		s = { component: 1, static: 2 };
+	}
+}
+
+---
+
+(program
+  (component
+    (component_attribute
+      (identifier)
+      (object_pattern))
+    (component_body
+      (function_declaration
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (identifier)
+                (arguments
+                  (string
+                    (string_fragment))))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (object
+                (pair
+                  (property_identifier)
+                  (number))
+                (pair
+                  (property_identifier)
+                  (number))))))))))
+
+===================================
+name:value annotations on components and functions
+===================================
+
+component displayname:"X" foo:bar {
+	function a(String x) access:remote { return "true"; }
+	function b(String x) access:"remote" { return "true"; }
+	function c() secured:api { }
+	function d() output=false { }
+	function e() {
+		x = a ? b : c;
+		s = { a: 1 };
+		y = s[1:3];
+		switch (x) { case 1: break; }
+	}
+}
+
+---
+
+(program
+  (component
+    (component_attribute
+      (attribute_label)
+      (string
+        (string_fragment)))
+    (component_attribute
+      (attribute_label)
+      (component_attribute
+        (identifier)))
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier))
+        (component_attribute
+          (attribute_label)
+          (identifier))
+        (statement_block
+          (return_statement
+            (string
+              (string_fragment)))))
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier))
+        (component_attribute
+          (attribute_label)
+          (string
+            (string_fragment)))
+        (statement_block
+          (return_statement
+            (string
+              (string_fragment)))))
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (component_attribute
+          (attribute_label)
+          (identifier))
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (assignment_expression
+          (identifier)
+          (false))
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (ternary_expression
+                (identifier)
+                (identifier)
+                (identifier))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (object
+                (pair
+                  (property_identifier)
+                  (number)))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (subscript_expression
+                (identifier)
+                (slice_expression
+                  (number)
+                  (number)))))
+          (switch_statement
+            (parenthesized_expression
+              (identifier))
+            (switch_body
+              (switch_case
+                (number)
+                (break_statement)))))))))
+
+===================================
+colon-separated script tag call attributes
+===================================
+
+component {
+	function f() {
+		cfparam (name:"local.d" default:"DDD");
+		cfparam (name:"local.e", default:"EEE");
+		cfimap( a = "1" b = "2" c = "3" );
+		g(a: 1, b: 2);
+		s = { a: 1 };
+		y = s[1:3];
+		x = a ? b : c;
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment))))))
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (pair
+                  (property_identifier)
+                  (string
+                    (string_fragment)))
+                (pair
+                  (property_identifier)
+                  (string
+                    (string_fragment))))))
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment)))
+                (assignment_expression
+                  (identifier)
+                  (string
+                    (string_fragment))))))
+          (expression_statement
+            (call_expression
+              (identifier)
+              (arguments
+                (pair
+                  (property_identifier)
+                  (number))
+                (pair
+                  (property_identifier)
+                  (number)))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (object
+                (pair
+                  (property_identifier)
+                  (number)))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (subscript_expression
+                (identifier)
+                (slice_expression
+                  (number)
+                  (number)))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (ternary_expression
+                (identifier)
+                (identifier)
+                (identifier)))))))))
+
+===================================
+static initialiser at the top level of a region
+===================================
+
+static {
+	static3 = 3;
+}
+
+---
+
+(program
+  (static_initializer
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (number))))))
+
+===================================
+colon assignment to a dotted name
+===================================
+
+component {
+	function f() {
+		msSQL.storage = true;
+		msSQL.class: 'net.sourceforge.jtds.jdbc.Driver';
+		msSQL.bundleName:'jtds';
+		foo: bar;
+		x = a ? b : c;
+		s = { a: 1 };
+		y = s[1:3];
+		outer: while (x) { break outer; }
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (true)))
+          (colon_assignment_statement
+            (member_expression
+              (identifier)
+              (property_identifier))
+            (string
+              (string_fragment)))
+          (colon_assignment_statement
+            (member_expression
+              (identifier)
+              (property_identifier))
+            (string
+              (string_fragment)))
+          (labeled_statement
+            (statement_identifier)
+            (expression_statement
+              (identifier)))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (ternary_expression
+                (identifier)
+                (identifier)
+                (identifier))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (object
+                (pair
+                  (property_identifier)
+                  (number)))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (subscript_expression
+                (identifier)
+                (slice_expression
+                  (number)
+                  (number)))))
+          (labeled_statement
+            (statement_identifier)
+            (while_statement
+              (parenthesized_expression
+                (identifier))
+              (statement_block
+                (break_statement
+                  (statement_identifier))))))))))
+
+===================================
+inline java class block
+===================================
+
+classInstance = java{
+	public class class1{
+		public String execute() { return "java block worked in Lucee"; }
+	}
+}
+writeoutput(classInstance.execute())
+a = java { public class C { String s = "}"; char c = '}'; } };
+b = java { /* } */ public class C { } };
+c = JAVA { public class D { } };
+d = new java.util.Properties();
+e = new java:foo.Bar();
+java = 1;
+f = java.lang.System;
+g = createObject("java", "java.util.Date");
+h = javaCast("int", 1);
+loop array=java { x = 1; }
+i = java { class D { } };
+j = java { @Deprecated public class E { } };
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (java_class_block
+        (java_class_content))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (call_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (arguments)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (java_class_block
+        (java_class_content))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (java_class_block
+        (java_class_content))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (java_class_block
+        (java_class_content))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (property_identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (string
+            (string_fragment))
+          (string
+            (string_fragment))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (string
+            (string_fragment))
+          (number)))))
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (identifier))
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (java_class_block
+        (java_class_content))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (java_class_block
+        (java_class_content)))))
+
+===================================
+subscript assignment is not a tag statement
+===================================
+
+r[ a ][ b ] = new R( v=1 );
+r[ a ][ b ] = 1;
+interceptors[ x ].name = listLast( interceptors[ x ].class, "." );
+modules[ m ].i18n = { defaultLocale = "" };
+location url="/home" addtoken="false";
+http url="https://x" method="get";
+param numeric x default="0";
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (subscript_expression
+        (subscript_expression
+          (identifier)
+          (identifier))
+        (identifier))
+      (new_expression
+        (identifier)
+        (arguments
+          (assignment_expression
+            (identifier)
+            (number))))))
+  (expression_statement
+    (assignment_expression
+      (subscript_expression
+        (subscript_expression
+          (identifier)
+          (identifier))
+        (identifier))
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (member_expression
+        (subscript_expression
+          (identifier)
+          (identifier))
+        (property_identifier))
+      (call_expression
+        (identifier)
+        (arguments
+          (member_expression
+            (subscript_expression
+              (identifier)
+              (identifier))
+            (property_identifier))
+          (string
+            (string_fragment))))))
+  (expression_statement
+    (assignment_expression
+      (member_expression
+        (subscript_expression
+          (identifier)
+          (identifier))
+        (property_identifier))
+      (object_pattern
+        (object_assignment_pattern
+          (shorthand_property_identifier_pattern)
+          (string)))))
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment))))
+  (tag_statement
+    (identifier)
+    (parameter_type)
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))))

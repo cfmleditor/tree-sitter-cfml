@@ -35,5 +35,14 @@ if (dirs.length === 1) {
       console.error('native addon rebuild failed');
       process.exit(rb.status ?? 1);
     }
+  }).catch((err) => {
+    // `spawnTreeSitterAsync` resolves with the exit code for a generate that
+    // *ran* and failed — that path is handled above. It rejects only when the
+    // process could not be started at all (`child.on('error')`), which is the
+    // case this catch exists for. Without it the rejection is unhandled: Node
+    // still exits non-zero, but it prints a stack trace instead of saying
+    // which step died. Same treatment as `release.js`.
+    console.error(`\nError: ${err.message}`);
+    process.exitCode = 1;
   });
 }

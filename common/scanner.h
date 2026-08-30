@@ -1777,8 +1777,19 @@ static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
     // Must not be followed by another identifier char (e.g. 'componentFoo')
     if (cf_isalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
 
-    // If the first word is a modifier, skip whitespace and read the next word
-    if (strcmp(word, "abstract") == 0 || strcmp(word, "static") == 0) {
+    // If the word is a modifier, skip whitespace and read the next one.
+    //
+    // `final` was missing from this set, which is what made a `.cfc` starting
+    // `final component` fall through to `html_text` instead of being recognised
+    // as a component file — a silent degradation rather than an ERROR, so every
+    // consumer believed it had a valid parse of a text file.
+    //
+    // Looped rather than done once because Lucee accepts more than one modifier
+    // (`final abstract component`). The loop terminates because each iteration
+    // either consumes a word or reads none, and an empty word matches no
+    // modifier.
+    while (strcmp(word, "abstract") == 0 || strcmp(word, "static") == 0
+            || strcmp(word, "final") == 0) {
         while (cf_isspace(lexer->lookahead)) advance(lexer);
         len = 0;
         while (cf_isalpha(lexer->lookahead) && len < 15) {
@@ -1787,6 +1798,7 @@ static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
         }
         word[len] = '\0';
         if (cf_isalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
+        if (len == 0) return false;
     }
 
     if (strcmp(word, "component") != 0 && strcmp(word, "property") != 0 &&

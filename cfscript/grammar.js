@@ -38,6 +38,8 @@ module.exports = grammar({
     $.tag_linefeed,
     $.cfml_template_content,
     $.cf_comment,
+    $.java_class_content,
+    $._java_block_open,
   ],
 
   extras: ($) => [
@@ -193,6 +195,27 @@ module.exports = grammar({
     [$.parenthesized_expression, $.expression, $.arguments],
     [$.expression, $.template_substitution],
 
+    // `component (` is ambiguous: the parenthesised attribute list of a
+    // `component` declaration, or a call of the reserved identifier
+    // `component`. Only what follows the `)` settles it — a `{` means the
+    // declaration — so the two readings have to be carried until then.
+    // Unlike the `[$.primary_expression, $.call_expression]` conflict the cost
+    // table warns about, whose prefix is `identifier (` and so live at every
+    // call in the language, this one's prefix is the `Component` *keyword*
+    // followed by `(`, which occurs only where that word is actually called.
+    // Benchmarked: cfscript 12880 ms before, 12800 ms after, inside a 5.4%
+    // run-to-run spread.
+    // `f( name : … ` is ambiguous between a `pair` in ordinary `arguments` and
+    // a colon-separated `tag_call_attribute`. Only what follows settles it — a
+    // comma keeps the pair reading, a space-separated second attribute makes it
+    // a tag call — so both have to be carried. Narrower than it looks: the
+    // prefix is `identifier ( identifier :`, so the two stacks are live only at
+    // a call whose first named argument uses a colon, not at every call.
+    // Benchmarked below.
+    [$._property_name, $.tag_call_attribute],
+    [$.component, $._property_name],
+    [$.component, $.primary_expression],
+    [$.component, $.primary_expression, $._property_name],
     [$.primary_expression, $.tag_statement],
     [$.expression, $.tag_statement],
     [$.tag_statement, $.expression],
@@ -229,7 +252,15 @@ module.exports = grammar({
       ),
       choice(
         $.component,
-        repeat($.statement),
+        // `static_initializer` is reachable at the top level as well as inside
+        // `component_body`, because that is what an injected region can be.
+        // `injections.scm` hands the body of a tag-based component's
+        // `<cfscript>` island to this grammar as a bare region, and that region
+        // is a *component body* rather than a statement list — so a file that
+        // is perfectly valid CFML reported an error inside an editor using the
+        // injection queries. `property` already parsed here; `static { … }` was
+        // the one component-level construct that did not.
+        repeat(choice($.statement, $.static_initializer)),
       ),
     ),
 
@@ -340,6 +371,7 @@ module.exports = grammar({
       $.throw_statement,
       $.empty_statement,
       $.labeled_statement,
+      $.colon_assignment_statement,
       $.include_statement,
 
       $.cfml_template,
@@ -373,6 +405,12 @@ module.exports = grammar({
       // modifier is followed by a return type, not a variable name.
       prec.dynamic(-1, seq(
         alias(choice($._kw_public, $._kw_private, $._kw_package, $._kw_remote), $.access_type),
+        // `public final MEMBER = "v";` — the two modifiers combine. `final`
+        // alone is the first branch above, and an access modifier alone is this
+        // one; only the pair had no reading. It stays after the access modifier
+        // because that is the order Lucee writes, and keeping it here rather
+        // than in the `choice` above avoids making `final` reachable twice.
+        optional(alias($._kw_final, $.access_type)),
         commaSep1(alias($._plain_declarator, $.variable_declarator)),
         $._semicolon,
       )),
@@ -383,7 +421,14 @@ module.exports = grammar({
     // `public` lex as a keyword, and `public component function f()` is a
     // function declaration with a return type, not a member.
     _plain_declarator: ($) => seq(
-      field('name', $.identifier),
+      // `default` has to be spelled out. Admitting it as a function modifier
+      // (`public default any function f()`) makes `_kw_default` valid straight
+      // after an access modifier, so it lexes as a keyword here too and
+      // `public default = 1;` — an ordinary member named `default` — stopped
+      // parsing. Same shape as the `_reserved_identifier` entries elsewhere:
+      // a keyword made valid in a new position has to keep its identifier
+      // reading in every rule that shared the position.
+      field('name', choice($.identifier, alias($._kw_default, $.identifier))),
       optional($._initializer),
     ),
 
@@ -507,7 +552,18 @@ module.exports = grammar({
 
     try_statement: ($) => seq(
       $._kw_try,
-      field('body', $.statement_block),
+      // `try x = nonExistantVariable; catch( any e ){ … }` — Lucee accepts a
+      // single unbraced statement as the body. The unbraced alternative is an
+      // `expression_statement` rather than a general `$.statement`, which is
+      // what the construct needs and is also the only spelling that generates:
+      // a `statement_block` *is* reachable as a `$.statement`, so the general
+      // form makes the braced body match both alternatives and `try { } { }`
+      // ambiguous over which brace pair is the body. A precedence on the
+      // `statement_block` arm does not settle that — the competing reduction is
+      // `statement_block` → `statement`, outside this rule — and the only other
+      // resolutions offered touch `statement` itself, which is live at every
+      // statement in the language.
+      field('body', choice($.statement_block, $.expression_statement)),
       repeat(field('handler', $.catch_clause)),
       optional(field('finalizer', $.finally_clause)),
     ),
@@ -551,7 +607,19 @@ module.exports = grammar({
     // `pair` is only reachable from `arguments`, so accept those explicitly.
     throw_statement: ($) => seq(
       $._kw_throw,
-      choice(prec.dynamic(1, $.arguments), $._expressions),
+      choice(
+        prec.dynamic(1, $.arguments),
+        // `throw message="x" type="y";` — the bodyless tag-statement spelling,
+        // which every other tag reaches through `tag_statement`. `throw` cannot:
+        // it has this dedicated rule, and `_kw_throw` out-lexes the identifier
+        // that `tag_statement` needs in its `tag` slot, so the attribute form
+        // had no reading at all. Spelled with `parameter_attribute` exactly as
+        // `include_statement` above already spells the same shape — a single
+        // `assignment_expression` would not do, because what fails is the
+        // *space*-separated pair rather than the first attribute.
+        repeat1($.parameter_attribute),
+        $._expressions,
+      ),
       $._semicolon,
     ),
 
@@ -564,6 +632,19 @@ module.exports = grammar({
     )),
 
     empty_statement: (_) => ';',
+
+    // `msSQL.class: 'net.sourceforge.jtds.jdbc.Driver';` — Lucee accepts `:`
+    // in place of `=` for an assignment, and Application.cfc files mix the two
+    // in adjacent lines. Only the *dotted* form is spelled here: a bare
+    // `foo: bar;` is already a `labeled_statement`, and changing that reading
+    // would rewrite existing trees for a construct this issue is not about.
+    // A `member_expression` can never be a label, so the two cannot collide.
+    colon_assignment_statement: ($) => seq(
+      field('left', $.member_expression),
+      ':',
+      field('right', $.expression),
+      $._semicolon,
+    ),
 
     labeled_statement: ($) => prec.dynamic(-1, seq(
       field('label', alias(choice($.identifier, $._reserved_identifier), $.statement_identifier)),
@@ -663,6 +744,7 @@ module.exports = grammar({
       $.object,
       $.array,
       $.ordered_struct,
+      $.java_class_block,
       $.function_expression,
       $.arrow_function,
       $.call_expression,
@@ -742,20 +824,41 @@ module.exports = grammar({
     )),
 
     component: ($) => prec('literal', seq(
+      // One modifier only. The shared scanner skips a *run* of them when it
+      // decides a file is a component file, but widening this to `repeat` to
+      // match makes `abstract` at the head of a component-body member ambiguous
+      // between an `access_type` and a nested component's modifier list, and
+      // the conflict then pulls in `variable_declaration` as well (`final
+      // MEMBER = "v"`). No corpus file writes two modifiers here — six write
+      // `final component`, which this already accepts — so the trade is not
+      // worth it. Recorded in LIMITATIONS.md.
       optional(choice($._kw_static, $._kw_abstract, $._kw_final)),
       choice(
         $._kw_component,
         $._kw_interface,
       ),
-      repeat(seq(optional($.tag_linefeed), $.component_attribute)),
+      // `component( javasettings = { } ) { … }` — Lucee's parenthesised settings
+      // list, alongside the bare attribute spelling `component javasettings = { }`
+      // that already parsed. Comma-separated inside the parentheses, matching
+      // every other parenthesised list in the grammar.
+      choice(
+        repeat(seq(optional($.tag_linefeed), $.component_attribute)),
+        seq('(', commaSep($.component_attribute), ')'),
+      ),
       field('body', $.component_body),
     )),
 
     component_attribute: ($) => choice(
+      // `component displayname:"X" { }` — Lucee's `name:value` annotation.
+      // The recursive colon arm already existed and already parsed the bare
+      // form `component foo:bar { }`; what it could not take was a *quoted*
+      // value, because a string is not itself a `component_attribute`. Spelled
+      // as a `choice` on the value rather than by adding `$.string` to the
+      // arms above, which would also make a bare `component "X" { }` parse.
       seq(
         alias($.identifier, $.attribute_label),
         ':',
-        $.component_attribute,
+        choice($.component_attribute, $.string),
       ),
       seq(
         $.identifier,
@@ -811,23 +914,85 @@ module.exports = grammar({
     ),
 
     function_declaration: ($) => prec.right('declaration', seq(
-      repeat($.access_type),
-      optional(seq(
-        choice($._kw_function, keyword('Query'), $.path, $.identifier),
-        // `IValidationError[] function getFieldErrors()` — an array of that
-        // type (cbvalidation). The brackets must be empty and adjacent: that is
-        // the only thing separating this from a subscript, `User[0]`.
-        optional($.array_return_suffix),
-      )),
+      // The return type may be written either after the modifiers
+      // (`public static struct function f()`) or in front of them
+      // (`struct public static function f()`, Lucee's StaticFunctions.cfc).
+      // The two orders are spelled as separate alternatives rather than by
+      // allowing modifiers on both sides of one optional type, which would make
+      // `public function f()` ambiguous over which `repeat` takes the modifier
+      // and needs a conflict. `repeat1` in the type-first alternative is what
+      // keeps them disjoint: with no modifier to follow, only the first
+      // alternative matches. A modifier can never be read as the type here —
+      // `public` and its neighbours lex as keywords in this state, so they
+      // never reach the `$.identifier` in the type slot.
+      choice(
+        seq(
+          // `public default any function returnsany( any obj )` — Lucee's
+          // Java-style modifier for a method an `interface` supplies a body
+          // for. `Default` is reachable only *after* another modifier, never as
+          // the first one, and that restriction is the whole reason this works:
+          // a `switch_default` body is an ordinary statement list, so making
+          // `default` able to start a declaration makes
+          // `switch { default: default any function f(){} }` ambiguous between
+          // continuing the first default's body and opening a second label —
+          // and the only resolution offered is a conflict of `switch_default`
+          // with itself, which cannot be declared. No corpus file writes
+          // `default` first, and Lucee's own spelling puts it after `public`.
+          optional(seq(
+            $.access_type,
+            repeat(choice($.access_type, alias($._kw_default, $.access_type))),
+          )),
+          optional(seq(
+            choice($._kw_function, keyword('Query'), $.path, $.identifier),
+            // `IValidationError[] function getFieldErrors()` — an array of that
+            // type (cbvalidation). The brackets must be empty and adjacent: that
+            // is the only thing separating this from a subscript, `User[0]`.
+            optional($.array_return_suffix),
+          )),
+        ),
+        seq(
+          // `Query` is deliberately absent from the type-first spelling: a
+          // leading `Query` is already the head of `query_tag`, and offering it
+          // as a return type here makes `query • Abstract` ambiguous between
+          // the two. `query public function f()` is not a form anyone writes,
+          // while `public query function f()` still goes through the
+          // modifiers-first alternative above, which keeps it.
+          // `Function` is excluded here for the same lexical reason, and it
+          // is the one that actually bit: offering it as a *leading* return
+          // type makes an access modifier valid immediately after the word
+          // `function`, so in `function static( … )` — a function *named*
+          // `static`, from Mura's MuraScope.cfc — `static` stops lexing as an
+          // identifier and becomes `_kw_static`. The file parsed cleanly before
+          // and the corpus scan is what caught it.
+          choice($.path, $.identifier),
+          optional($.array_return_suffix),
+          repeat1($.access_type),
+        ),
+      ),
       $._kw_function,
       field('name', $.identifier),
       $._call_signature,
-      repeat(prec(1, seq(optional($.tag_linefeed), choice($.assignment_expression, $.identifier)))),
+      repeat(prec(1, seq(optional($.tag_linefeed), choice(
+        $.assignment_expression,
+        // `function f( String x ) access:remote { … }` and `secured:api` —
+        // the same `name:value` annotation as on a component, which had no
+        // spelling at all in this position. The value is a word or a string;
+        // it is not a general expression, which keeps this `:` away from the
+        // ternary and from `pair`.
+        alias($.function_annotation, $.component_attribute),
+        $.identifier,
+      )))),
       choice(
         seq(optional($.tag_linefeed), field('body', $.statement_block), optional($._automatic_semicolon)),
         $._semicolon,
       ),
     )),
+
+    function_annotation: ($) => seq(
+      alias($.identifier, $.attribute_label),
+      ':',
+      choice($.identifier, $.string),
+    ),
 
     // A single token, not `seq('[', ']')`: as two tokens the `[` is reachable
     // from `subscript_expression` and `array` in the same state, and the parser
@@ -1000,7 +1165,14 @@ module.exports = grammar({
 
     subscript_expression: ($) => prec.right('member', seq(
       field('object', choice($.expression, $.primary_expression)),
-      optional(field('optional_chain', $.optional_chain)),
+      // `Test::["f"]()` and `Test::[m]()` — a subscript reached through the
+      // static chain, which Lucee accepts alongside the bare `Test::f()` that
+      // `member_expression` already handles. `::` is its own token, so unlike a
+      // keyword-shaped addition this cannot change how anything else lexes.
+      optional(choice(
+        field('optional_chain', $.optional_chain),
+        field('static_chain', $.static_chain),
+      )),
       '[', field('index', choice($._expressions, $.slice_expression)), ']',
     )),
 
@@ -1401,7 +1573,14 @@ module.exports = grammar({
 
     tag_call_attribute: ($) => seq(
       field('left', $.identifier),
-      '=',
+      // `cfparam (name:"local.d" default:"DDD")` — Lucee spells a script tag
+      // call's attributes with either separator. The comma-separated colon form
+      // already parsed, but as ordinary `arguments` full of `pair`s rather than
+      // through this rule; only the space-separated one had no reading. Both
+      // separators produce the same tree here, for the reason the alias above
+      // gives: they mean the same thing, and every downstream consumer already
+      // handles one of them.
+      choice('=', ':'),
       field('right', $._tag_call_value),
     ),
 
@@ -1453,6 +1632,26 @@ module.exports = grammar({
     ),
 
     static_initializer: ($) => seq($._kw_static, $.statement_block),
+
+    // `classInstance = java { public class C { … } }` — Lucee's inline Java
+    // class block (LDEV4001). The body is not CFML and is deliberately kept
+    // opaque, which is what the issue asks for: recognising the block is enough
+    // for a consumer, and parsing Java is not this grammar's job.
+    //
+    // The opener is one *internal* token rather than a keyword. `java` must
+    // stay an ordinary identifier — `new java.util.Properties()` and
+    // `x = java.lang.System` both depend on it, and a `keyword('Java')` valid
+    // at expression start is precisely the out-lexing bug that
+    // `new java.…` already suffered once. Because the token can only match
+    // when a `{` follows, and carries no explicit precedence, longest-match
+    // leaves `java.util` to `identifier` untouched. Same trick as
+    // `array_return_suffix`.
+    java_class_block: ($) => seq(
+      $._java_block_open,
+      optional($.java_class_content),
+      '}',
+    ),
+
 
     property_declaration: ($) => seq(
       $._kw_property,
@@ -1632,11 +1831,25 @@ module.exports = grammar({
       ')',
     ),
 
-    query_tag: ($) => seq(
-      keyword('Query'),
-      repeat(prec(1, seq(optional($.tag_linefeed), field('arguments', $.assignment_expression)))),
-      optional($.tag_linefeed),
-      field('body', $.statement_block),
+    query_tag: ($) => choice(
+      seq(
+        keyword('Query'),
+        repeat(prec(1, seq(optional($.tag_linefeed), field('arguments', $.assignment_expression)))),
+        optional($.tag_linefeed),
+        field('body', $.statement_block),
+      ),
+      // `query name="q" dbtype="query";` — the bodyless spelling. Like `throw`
+      // above, `query` cannot reach `tag_statement`, because `Query` is in
+      // `_reserved_identifier` and lexes as a keyword in the `tag` slot. The
+      // arguments are `repeat1` rather than `repeat` so that a bare `query;`
+      // keeps its existing reading as an expression statement, which the
+      // "bare reserved words parse as expressions" note in `LIMITATIONS.md`
+      // records as deliberate.
+      seq(
+        keyword('Query'),
+        repeat1(prec(1, seq(optional($.tag_linefeed), field('arguments', $.assignment_expression)))),
+        $._semicolon,
+      ),
     ),
 
     tag_statement: $ => choice(
@@ -1670,6 +1883,30 @@ module.exports = grammar({
         field('arguments', repeat(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
         $._semicolon,
       ),
+      // `param x;` and `param url.number;` — the untyped shorthand. Spelled as
+      // its own branch rather than by making the type above optional: optional
+      // there lets the `default` alternative be reached with nothing in front
+      // of it, which reopens the boundary against the attribute-only branch
+      // below (`tag assignment_expression • {` is then both a default followed
+      // by a body and a first attribute), and the only resolution `generate`
+      // offers for that is a conflict of `tag_statement` with itself, which
+      // cannot be declared. A name is an `identifier` or `member_expression`,
+      // never an `assignment_expression`, so this branch cannot collide.
+      // No trailing attributes here either: `param foo bar="1";` would then be
+      // genuinely ambiguous between this branch (name `foo`, one attribute) and
+      // the typed branch above (type `foo`, `bar="1"` as the `default`). The
+      // typed branch already accepts every attribute-carrying spelling —
+      // `param x default="0";` reads `x` as the type — so nothing is lost.
+      seq(
+        field('tag', $.identifier),
+        // A bare string argument covers `exit "exitTemplate";` (#81) and
+        // `pageencoding "utf-8";` (#89) — the same `tag <word-or-string>;`
+        // shape as the untyped `param`, and the two tags that write it are
+        // otherwise unreachable: `exit;` and `exit method="template";` parse,
+        // but the positional string had no reading.
+        field('name', choice($.identifier, $.member_expression, $.string)),
+        $._semicolon,
+      ),
       seq(
         field('tag', $.identifier),
         optional($.tag_linefeed),
@@ -1684,12 +1921,16 @@ module.exports = grammar({
         field('body', $.statement_block),
         $._semicolon,
       ),
-      seq(
+      // Negative dynamic precedence so an ordinary expression statement wins
+      // the tie. `r[ a ][ b ] = new R( v=1 );` matches this branch too, reading
+      // `r` as a tag and `[ a ]` as an array literal, and that reading is never
+      // the right one for a subscript assignment.
+      prec.dynamic(-1, seq(
         field('tag', $.identifier),
         field('arguments', repeat1(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
         optional(field('body', $.statement_block)),
         $._semicolon,
-      ),
+      )),
     ),
 
     // Keyword tokens. Defined once here and referenced as `$._kw_<word>`
