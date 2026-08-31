@@ -12,6 +12,14 @@ jobs:
   # `npm test` compiles the *committed* cf*/src/parser.c, so a grammar change
   # that was never regenerated would otherwise pass CI while shipping a stale
   # parser. Regenerate here and fail if the result differs from what is checked in.
+  #
+  # The pathspec here read `*/src/` for eleven releases, and matches NOTHING: git's
+  # wildcard pathspecs are fnmatch patterns, so a trailing `/` needs a component
+  # after it, and only a literal prefix like `cfscript/src` works without one.
+  # `git diff --exit-code` over an empty match always exits 0, so this job had
+  # been passing without comparing anything. Hence the `ls-files` guard below —
+  # a check that cannot see its own subject is worse than no check, because it
+  # reads as green.
   generated:
     name: Generated parsers up to date
     runs-on: ubuntu-latest
@@ -29,9 +37,15 @@ jobs:
           DIALECT=cfquery npm run build
       - name: Check for drift
         run: |
-          if ! git diff --exit-code -- '*/src/'; then
+          tracked=$(git ls-files -- '*/src/*' | wc -l)
+          if [ "$tracked" -eq 0 ]; then
+            echo "::error::The drift pathspec matches no tracked files, so this check is vacuous."
+            exit 1
+          fi
+          echo "comparing $tracked generated files"
+          if ! git diff --exit-code -- '*/src/*'; then
             echo "::error::Generated parsers are out of date. Run 'npm run build' and commit cf*/src/."
-            git diff --stat -- '*/src/'
+            git diff --stat -- '*/src/*'
             exit 1
           fi
 

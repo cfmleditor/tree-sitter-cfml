@@ -34,6 +34,10 @@
         "named": true
       },
       {
+        "type": "function_listener_expression",
+        "named": true
+      },
+      {
         "type": "hash_empty",
         "named": true
       },
@@ -1606,6 +1610,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "function_listener_expression",
+    "named": true,
+    "fields": {
+      "listener": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "primary_expression",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "call_expression",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {

@@ -71,7 +71,7 @@ Listed first so they do not distort the rest.
 `<script>` element parses fine — `test/probes/cfml/script_block_js.cfm` covers
 that.
 
-## Genuine gaps — 191 nodes, 27 files
+## Genuine gaps — 174 nodes, 27 files
 
 | Nodes | Files | Pattern | Example | Probe |
 |---|---|---|---|---|
@@ -79,7 +79,7 @@ that.
 | 48 | 10 | Dynamic tag name with a static prefix or namespace | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
 | 30 | 1 | Dotted key in a struct literal — **tractable, rejected on cost** | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
 | 19 | 13 | Dynamic tag opened and closed in different blocks | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | — |
-| 19 | 1 | Function-listener callback syntax | `var t = mySuccess():function( result, error ) { … };` | — |
+| 2 | 1 | Function-listener callback on a `new` expression | `var t = new Query():function( result, error ) { … };` | `function_listener.cfc` |
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
 | 2 | 1 | `thread { … }` followed by a tag island | a ` ``` ` block after `thread name="x" { … }`; each parses alone | — |
 
@@ -142,8 +142,15 @@ Three properties of this grammar drive most of the risk:
   that state. This has bitten twice — but note that each time, the fix (naming
   `_reserved_identifier` explicitly) then protected every later change to the
   same rule.
-- **`:` is heavily contested.** It already serves `pair`, `switch_case`,
-  `slice_expression` and the ternary.
+- **`:` is heavily contested — but contention is per state, not per character.**
+  It serves `pair`, `switch_case`, `slice_expression`, the ternary, a colon
+  assignment to a dotted name, a colon-separated `tag_call_attribute`, a
+  `function_annotation` and now a function listener. That list is what made the
+  listener look High/High; it is the wrong unit. Ask instead which of those is
+  reachable in the *state* your new reading lives in, and on what lookahead.
+  For the listener the answer was one — the ternary, after a `call_expression`
+  — and the conflict was cheap. For a reading that starts at a bare identifier
+  the answer is most of the list, and the warning holds.
 - **The scanner is shared, except where it is not.** `common/scanner.h` backs
   `cfml` and `cfquery`; `cfscript` has its own hand-written `src/scanner.c`. No
   generator checks scanner work — the corpus scan is the only safety net.
@@ -154,7 +161,7 @@ Three properties of this grammar drive most of the risk:
 | CSS in `<style>` with many `#` | **Med-High** | **Med** | Does not reduce below 20 lines, so the mechanism is not yet understood — understand it before estimating again. One file, but a whole stylesheet is a plausible shape for any CFML admin template |
 | Dynamic tag opened and closed in different blocks | **High** | **High** | Scanner tag-stack work on the shared header. 13 files but only 19 nodes: the surrounding markup still recovers, so the errors stay small |
 | Prefixed / namespaced dynamic tag | **High** | **High** | Same tag stack, same shared header. Called the largest cluster at the last baseline; now 48 nodes |
-| Function-listener `f():callback` | **Med-High** | **High** | Another `:` reading in the most contested character in the grammar, for a single-file Lucee feature |
+| Function-listener `f():callback` | ~~**Med-High**~~ **Low** | ~~**High**~~ **Low** | **Done, and the rating was wrong by two steps in both columns.** Shipped as one rule, one declared conflict and **+176 parse states**; see [#87](https://github.com/cfmleditor/tree-sitter-cfml/issues/87). The reasoning that produced Med-High/High — "another `:` reading in the most contested character in the grammar" — is the part to correct. Contention is not a property of the *character*; it is a property of the *state and lookahead* where two readings meet. `:` serves five rules, but the only one reachable after a `call_expression` is the ternary, so the conflict is live at `call` `:` and nowhere else — about 1,160 sites against 26k ternaries in the 15k-file corpus, and unmeasurable even on a workload saturated with it. A **second** wrong conclusion sat on top of it: an earlier attempt reported the rule "fails to generate", having tried only the resolutions the error message lists in order rather than the conflict declaration it also offers. Two readings that diverge in the *parser* are what conflicts are for; only two that diverge in the *lexer* are the hard case. The genuinely expensive half was the one nobody rated: `new_expression` as the target, +578 states, now the residual gap |
 | Subscript with more than one pair | **High** | **High** | Re-admits `pair` inside subscripts — the ambiguity the casing branch removed. One file, non-idiomatic syntax |
 | Comma-less function parameters ([#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49)) | **High** | **High** | **Re-rated from Med/Med by matrix.** The newline is not a soft separator the grammar could honour: a *space* fails identically, so the comma is simply required by `commaSep1`. The shape that looks supported is a misparse — `f( a b )` is one parameter of type `a` named `b`, and `f( a b c )` errors. Making the comma optional therefore makes `f( a b )` ambiguous between one typed parameter and two untyped ones, an ambiguity inherent to CFML's `<type> <name>` syntax and live at every parameter list in the language. Needs a benchmark before it can be accepted, and the change is needed in both grammars |
 | ~~Four~~ CFScript constructs that fail in **both** grammars | — | — | **Group dissolved; kept for the correction it carries.** [#51](https://github.com/cfmleditor/tree-sitter-cfml/issues/51), [#50](https://github.com/cfmleditor/tree-sitter-cfml/issues/50), [#52](https://github.com/cfmleditor/tree-sitter-cfml/issues/52) and [#53](https://github.com/cfmleditor/tree-sitter-cfml/issues/53) are fixed; only [#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49) remains and has its own row above, re-rated High/High. The single Med/Med rating never fitted any of them: three came in at or under one line of real cost, and the fourth went up. #52 also broke the "both grammars" half of this entry: `common/define-grammar.js` has no `tag_statement` rule at all, so it carries no `param` statement in any spelling and the fix was `cfscript`-only. The correction below stands for #49 and #50, whose rules do exist in both files. It said: "Not new features — a port of rules that already exist and are already tested in `common/define-grammar.js`". There is nothing to port. The `cfml` grammar never parses CFScript — `<cfscript>` is `cf_script_content` and a component body is `cf_component_content`, both raw text for `injections.scm` — so "the embedded grammar already has it" was measuring a body that had not been parsed. Reached through `<cfset f = function( … ) { … }>`, where the copy in `common/define-grammar.js` genuinely is live, all of them fail there too, and `_formal_parameter` is byte-identical between the two files. So each is a real change in both files, not a copy. The Med risk stands and is the reason: all four touch parameter lists or `param`, where keyword extraction is lexical. One at a time. [#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49), [#50](https://github.com/cfmleditor/tree-sitter-cfml/issues/50) |

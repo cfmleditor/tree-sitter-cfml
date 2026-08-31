@@ -158,6 +158,13 @@ module.exports = grammar({
     [$.array, $.array_pattern],
     [$.assignment_expression, $.object_assignment_pattern],
     [$.labeled_statement, $._property_name],
+    // `f() :` — a call is a complete `primary_expression`, and it is also the
+    // target of a function listener, so the parser cannot decide whether to
+    // reduce it until it has seen what the `:` belongs to. Live only on that
+    // lookahead: a call followed by a colon, which is the ternary
+    // `cond ? f() : g` and `case f():` and little else — about 1,160 sites in
+    // the 15k-file corpus, against 26k ternaries. Benchmarked below.
+    [$.primary_expression, $.function_listener_expression],
     [$.computed_property_name, $.array],
     // `for ( var x = y in z )` — the initializer, an assignment and a binary
     // `in` expression all fit the same prefix.
@@ -721,6 +728,7 @@ module.exports = grammar({
       $.elvis_expression,
       $.update_expression,
       $.new_expression,
+      $.function_listener_expression,
       $._hash_always_eval,
       $.object_pattern,
       $.query_expression,
@@ -1152,6 +1160,32 @@ module.exports = grammar({
     )),
 
     _new_type_prefix: (_) => token(seq(choice('java', 'cfml'), ':')),
+
+    // Lucee's function listener: `mySuccess():function(result, error) { … }`.
+    // The call runs on a background thread and whatever follows the `:` is
+    // handed its result — a function literal, a struct of `onSuccess`/`onFail`,
+    // a component instance, or a variable holding one of those. So the listener
+    // slot is a general `primary_expression`, not a function literal; narrowing
+    // it to the shapes the corpus uses saved 10 parse states and would have
+    // rejected the rest of Lucee's own test file.
+    //
+    // `new Foo():listener` is NOT covered. Admitting `new_expression` into the
+    // target as well costs 578 more parse states — 5247 -> 5825, +14.9% over
+    // master — because a bare `new` is itself a complete `new_expression`, so
+    // `New` before a `:` becomes ambiguous with a label and a property name
+    // wherever those are live, and three further conflicts are needed to
+    // resolve it. That buys two nodes in one file. Recorded in LIMITATIONS.md.
+    //
+    // The dynamic precedence is for `a[ f() : g() ]`, where a slice and a
+    // listener are both complete parses of the same text. Slicing is the older
+    // and far commoner reading, so it wins; nothing else reaches a state where
+    // both survive, because the ternary's own `:` is required and the listener
+    // reading leaves it dangling.
+    function_listener_expression: ($) => prec.dynamic(-1, prec.right('call', seq(
+      field('target', $.call_expression),
+      ':',
+      field('listener', $.primary_expression),
+    ))),
 
     member_expression: $ => prec('member', seq(
       field('object', choice($.expression, $.primary_expression)),
