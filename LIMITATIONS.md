@@ -339,6 +339,35 @@ Other JS leftovers still present and *not* valid CFML: `debugger_statement`,
 `with_statement`, `template_string`, `regex`, `namespace_import`,
 `_from_clause`, `export`.
 
+**These are deliberately kept, and the decision is settled** — see
+[#94](https://github.com/cfmleditor/tree-sitter-cfml/issues/94), closed as not
+planned. They will look like dead weight to a reader, so the reasoning is worth
+having here rather than only on the issue.
+
+They are *unused*, not *unreachable*: every one of them parses today. `with (x)
+{ y = 1; }`, `` x = `hello`; ``, `x = /foo/g;` and `import * as ns from 'mod';`
+all produce their node and no ERROR. Removing them would therefore be a
+behaviour change, not a cleanup — those inputs would start failing — and a
+parser being lenient about syntax nobody writes costs nothing in practice. The
+measured saving was small: **43 parse states, 0.85%**, for the two least
+entangled of the five.
+
+The two carrying any real value are also the two hardest to remove, which is
+what settled it:
+
+- `regex` references `regex_pattern`, an **external token**, so removing it
+  shifts the scanner's enum ordering — a different risk class from deleting a
+  grammar rule. It is also actively disambiguating a regex literal from
+  division: `a / b / c`, `arr[1] / arr[2] / arr[3]` and `f() / g() / h()` all
+  parse as `binary_expression`, and something has to keep deciding that.
+- `namespace_import` and `_from_clause` live inside `import_statement`, and
+  CFML's `import foo.Bar;` is live. Only the JS `import x from 'y'` half is
+  dead, so it is surgery inside a rule that matters.
+
+Even `template_string`, the apparently isolated one, shares the backtick with
+CFML **tag islands** (` ``` ` fences, `cfml_template_content`), which the
+`cfml template block` corpus test covers.
+
 `debugger_statement` is the one that had a cost. Because keyword extraction is
 lexical, the `debugger` token out-lexed `identifier` at statement start, so
 `debugger.log( … )` and `debugger = 1` failed — while `x = debugger.foo`, which
