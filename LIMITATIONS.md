@@ -279,6 +279,47 @@ the operator token itself; `highlights.scm` matches both.
 No known gaps. Bitwise `&`, `|` and `^` were the last failing construct across
 the corpus's 2,247 `<cfquery>` bodies and now parse as `query_math_expression`.
 
+## Constructs that parse, but produce the wrong tree
+
+These are not gaps — every input below parses cleanly, with no ERROR or MISSING
+node. What is wrong is the *shape* of the tree, which makes them invisible to
+`npm run scan` and untrackable by a probe: probes assert on error nodes, and
+there are none. They were found by diffing tree shapes against a baseline
+parser across the corpus, the technique proposed in
+[#95](https://github.com/cfmleditor/tree-sitter-cfml/issues/95).
+
+The section exists because the file previously had no home for this category. A
+reader scanning the gap lists above would reasonably conclude that anything
+absent parses correctly, and that is not true.
+
+- **`{ a = 1 }` and `{}` struct literals become JS destructuring patterns**
+  ([#92](https://github.com/cfmleditor/tree-sitter-cfml/issues/92)).
+  `{ a: 1 }` yields `(object (pair …))`; the `=` spelling yields
+  `(object_pattern (object_assignment_pattern …))`, and `{}` yields a bare
+  `(object_pattern)`. Inherited from the `tree-sitter-javascript` fork, where
+  `=` inside braces means a default value; CFML has no destructuring assignment.
+  **18,234 `object_pattern` nodes across 2,698 of the 8,664 cleanly-parsed
+  `.cfc`/`.cfs` corpus files** — roughly 62% of all struct literals. All three
+  grammars, because the rules are duplicated: `cfscript/grammar.js:753`/`768`/
+  `789` and `common/define-grammar.js:1438`/`1453`/`1474`. The shipped `.scm`
+  queries compensate by pairing every `object` rule with an `object_pattern`
+  one, so indentation and highlighting are correct today; any consumer matching
+  `(object)` or `(pair)` semantically is not.
+
+- **A `cfml:` / `java:` prefix on a static call becomes a JS label**
+  ([#93](https://github.com/cfmleditor/tree-sitter-cfml/issues/93)).
+  `cfml:Query::new( … )` yields
+  `(labeled_statement label: (statement_identifier) body: …)`, losing the
+  prefix entirely; `Query::new( … )` alone is correct. `_new_type_prefix` is
+  reachable only from `new_expression`, so in statement position `cfml` matches
+  `identifier` and the following `:` matches `labeled_statement`, which nothing
+  else claims. 2 nodes in 1 file (Lucee
+  `test/general/StaticMembersInvoke.cfc:19`) — and 2 of only 2
+  `labeled_statement` nodes in the entire corpus, which is what made it
+  findable. The inverse of
+  [#90](https://github.com/cfmleditor/tree-sitter-cfml/issues/90): same rule,
+  opposite direction, so anyone touching `labeled_statement` should read both.
+
 ## Removed JavaScript constructs
 
 This grammar is a fork of `tree-sitter-javascript`, and some JS-only rules were
