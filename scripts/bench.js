@@ -161,14 +161,50 @@ function buildWorkload(files) {
  *
  * @param {object} parser
  * @param {Array<string>} inputs
- * @returns {number} milliseconds
+ * @param {Array<boolean>} erroring which inputs the parser cannot parse cleanly
+ * @returns {{ms: number, clean: number, error: number}} milliseconds, split by bucket
  */
-function timePass(parser, inputs) {
-  const started = process.hrtime.bigint();
-  for (const text of inputs) {
-    parser.parse(text);
+function timePass(parser, inputs, erroring) {
+  let clean = 0;
+  let error = 0;
+  // Timed per input rather than once around the loop, so each parse can be
+  // charged to the right bucket. The timer costs ~100 ns against parses that
+  // run in milliseconds, so the total is the same number it always was.
+  for (let i = 0; i < inputs.length; i++) {
+    const started = process.hrtime.bigint();
+    parser.parse(inputs[i]);
+    const ms = Number(process.hrtime.bigint() - started) / 1e6;
+    if (erroring[i]) error += ms; else clean += ms;
   }
-  return Number(process.hrtime.bigint() - started) / 1e6;
+  return {ms: clean + error, clean, error};
+}
+
+/**
+ * Which inputs the parser cannot parse cleanly, and how many bytes they are.
+ *
+ * Error recovery costs multiples of what a clean parse costs, so a workload
+ * that mixes the two hides which of them a change actually moved. This split is
+ * diagnostic only: the headline `ms` stays the whole workload, so baselines
+ * written by older revisions remain comparable, and  the partition itself is
+ * not stable across grammar changes — fixing a parse gap moves inputs from
+ * one side to the other, which is the point, and is why the input counts are
+ * reported alongside the times.
+ *
+ * @param {object} parser
+ * @param {Array<string>} inputs
+ * @returns {{flags: Array<boolean>, cleanBytes: number, errorBytes: number}}
+ */
+function classify(parser, inputs) {
+  const flags = [];
+  let cleanBytes = 0;
+  let errorBytes = 0;
+  for (const text of inputs) {
+    const bad = parser.parse(text).rootNode.hasError;
+    flags.push(bad);
+    if (bad) errorBytes += Buffer.byteLength(text);
+    else cleanBytes += Buffer.byteLength(text);
+  }
+  return {flags, cleanBytes, errorBytes};
 }
 
 console.log(`bench: collecting from ${dir}`);
@@ -198,23 +234,47 @@ const result = {reps, files: files.length, grammars: {}};
 
 for (const name of ['cfml', 'cfscript', 'cfquery']) {
   if (work[name].length === 0) continue;
-  timePass(parsers[name], work[name]); // warm-up: JIT, allocator, page cache
-  const times = [];
+  const split = classify(parsers[name], work[name]);
+  timePass(parsers[name], work[name], split.flags); // warm-up: JIT, allocator, page cache
+  const runs = [];
   for (let i = 0; i < reps; i++) {
-    times.push(timePass(parsers[name], work[name]));
+    runs.push(timePass(parsers[name], work[name], split.flags));
   }
-  const best = Math.min(...times);
-  const worst = Math.max(...times);
+  runs.sort((a, b) => a.ms - b.ms);
+  const bestRun = runs[0];
+  const best = bestRun.ms;
+  const worst = runs[runs.length - 1].ms;
+  const errorInputs = split.flags.filter(Boolean).length;
   result.grammars[name] = {
     ms: Number(best.toFixed(1)),
     spreadPct: Number(((worst - best) / best * 100).toFixed(1)),
     bytes: bytes[name],
     bytesPerMs: Math.round(bytes[name] / best),
     inputs: work[name].length,
+    clean: {
+      inputs: work[name].length - errorInputs,
+      bytes: split.cleanBytes,
+      ms: Number(bestRun.clean.toFixed(1)),
+      bytesPerMs: bestRun.clean > 0 ? Math.round(split.cleanBytes / bestRun.clean) : 0,
+    },
+    error: {
+      inputs: errorInputs,
+      bytes: split.errorBytes,
+      ms: Number(bestRun.error.toFixed(1)),
+      bytesPerMs: bestRun.error > 0 ? Math.round(split.errorBytes / bestRun.error) : 0,
+    },
   };
   const r = result.grammars[name];
   console.log(`  ${name.padEnd(9)} ${String(r.ms).padStart(9)} ms   ` +
     `${String(r.bytesPerMs).padStart(7)} bytes/ms   (spread across reps ${r.spreadPct}%)`);
+  if (r.error.inputs > 0 && r.clean.inputs > 0) {
+    const pctBytes = (r.error.bytes / r.bytes * 100).toFixed(0);
+    const pctTime = (r.error.ms / r.ms * 100).toFixed(0);
+    console.log(`  ${' '.repeat(9)}   clean ${String(r.clean.bytesPerMs).padStart(6)} bytes/ms ` +
+      `(${r.clean.inputs} inputs)   error-recovery ${String(r.error.bytesPerMs).padStart(6)} bytes/ms ` +
+      `(${r.error.inputs} inputs)`);
+    console.log(`  ${' '.repeat(9)}   error-recovery input is ${pctBytes}% of bytes but ${pctTime}% of the time`);
+  }
 }
 
 // A wide spread means the machine was busy, and a comparison against it can

@@ -111,6 +111,41 @@ on their own. That file is invalid CFML (a bare `#` where the language needs
 recovery shape is not a reason to back out a fix; a file that *parses* getting
 worse is.
 
+**The scan sees a parse that goes *missing*. It cannot see one that goes
+*wrong*.** A change that turns a correct tree into a different, equally
+error-free tree moves nothing in the diff above, and no probe catches it either,
+because probes assert on error nodes. Diff tree *shapes* as well:
+
+```bash
+git worktree add ../base-worktree origin/master
+ln -s "$PWD/node_modules" ../base-worktree/node_modules
+(cd ../base-worktree && npx node-gyp rebuild)   # compiles; does not regenerate
+npm run treediff -- ../base-worktree
+```
+
+Read the node-type delta before the file list: changes that all move the same
+direction are usually one fix, a mixed delta usually means two things happened.
+Both sides must have addons built from their own committed sources — an addon
+left from a build whose sources were later discarded produces convincing false
+positives. Pointing the tool at the commit it is running from must report zero.
+
+This is how a subscript assignment read as a tag statement across 104 files was
+found, and how `{ a = 1 }` reading as JS destructuring across 2,698 files was
+found. Neither moved the error count at all.
+
+**Check `STATE_COUNT` on any change that admits an existing rule into a new
+position**, not only on one that declares a conflict:
+
+```bash
+grep -m1 -E '^#define STATE_COUNT' cfscript/src/parser.c
+```
+
+A statement as an arrow-function body declared no conflicts, passed every gate,
+and doubled the table — 4,984 to 10,005 states, `parser.c` 17.9 MB to 35.7 MB —
+for one corpus file. It was reverted. This check is deterministic and takes two
+seconds, which is what makes it usable when the machine is too busy to
+benchmark.
+
 If the change touches either scanner, also run `npm run fuzz` — it applies
 random edits to every corpus test and re-parses, which is the only thing that
 exercises scanner state transitions systematically. CI runs it for grammar and

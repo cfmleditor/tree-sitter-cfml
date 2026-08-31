@@ -194,6 +194,41 @@ benchmark it works on a busy machine — which is exactly when it is most needed
 For comparison, the same session's changes that were kept cost 1 state (#78),
 4 states (#84's conflict), and none measurable at all.
 
+### Two corrections from building the tooling
+
+Both came out of implementing `npm run treediff`, and both correct claims made
+while the tree-shape technique was still ad-hoc.
+
+**The arrow-function finding was an artifact.** The write-up of the
+subscript-assignment fix said the same diff showed two arrow-function shapes
+that master got wrong — `item => new Future( item )` parsing as
+`(item => new Future)( item )` — already fixed on that branch. They were not.
+Re-checked against a worktree at the pre-merge master with both addons built
+from their own committed sources, the trees are **identical**. The apparent
+difference came from comparing a working-tree addon compiled from regenerated
+sources against a baseline compiled from committed ones. The subscript fix
+itself stands: it was verified on a reduced one-liner and is pinned by a corpus
+test.
+
+The lesson is now a guard in the tool and a warning in the skill: **both sides
+must have addons built from their own committed sources**, and pointing the tool
+at the commit it is running from must report zero changes. It is the cheapest
+possible self-check and it would have caught this immediately.
+
+**Error recovery is a much smaller share of parse time than first measured.** An
+ad-hoc measurement put it at 21% of cfscript bytes and 40% of its time, and was
+used to argue that fixing parse gaps is itself throughput work. That measurement
+fed whole `.cfc` files to the cfscript parser, including tag-based components it
+was never meant to see, which inflated the error share. On the workload
+`bench.js` actually uses — `.cfs` files, script-syntax components, and extracted
+script bodies — error recovery is **2–3% of cfscript's bytes and about 2% of its
+time**. The lever is real but small there.
+
+It is *not* small for `cfml`, where the same split reports error-recovery input
+at **4% of bytes and 26% of the time**, roughly 7× slower per byte. `npm run
+bench` now reports this split per grammar, so the claim does not have to be
+re-derived by hand.
+
 ### Implementation risk is not runtime cost
 
 The table above rates how likely a change is to *break* something. It says

@@ -9,8 +9,20 @@ written by other people, and recording what breaks.
 ```bash
 npm run corpus:fetch     # shallow-clone the curated repo list (~100 MB)
 npm run scan corpus      # one line per ERROR / MISSING node
+npm run treediff -- DIR  # tree-SHAPE diff vs a baseline worktree (see below)
 npm run corpus:report    # the same scan, clustered into distinct failure sites
 npm run probe            # minimal reductions of every construct found below
+```
+
+`scan` reports ERROR and MISSING nodes, so it finds parses that go *missing*. It
+cannot find one that goes *wrong*: a construct that parses cleanly into the
+wrong shape produces no output here, and probes cannot track it either, since
+they assert on error nodes. `treediff` covers that case by comparing tree shapes
+against a built baseline worktree — see
+[`LIMITATIONS.md`](LIMITATIONS.md#constructs-that-parse-but-produce-the-wrong-tree)
+for the constructs found that way.
+
+```bash
 npm run scan:examples    # the committed examples/, isolated, against its baseline
 npm run bench -- corpus  # parser throughput; add --out/--baseline to compare builds
 ```

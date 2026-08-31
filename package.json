@@ -61,6 +61,7 @@
     "build": "node scripts/build.js",
     "build:native": "node scripts/build-native.js",
     "parse": "node scripts/parse.js",
+    "treediff": "node scripts/treediff.js",
     "scan": "node scripts/scan.js",
     "scan:examples": "node scripts/scan.js examples --isolate --retries 3 --expect examples/expected.json",
     "probe": "node scripts/probe.js",
