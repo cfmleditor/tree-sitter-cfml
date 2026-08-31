@@ -1901,6 +1901,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "function_listener_expression"
+        },
+        {
+          "type": "SYMBOL",
           "name": "_hash_always_eval"
         },
         {
@@ -3993,6 +3997,39 @@
             "value": ":"
           }
         ]
+      }
+    },
+    "function_listener_expression": {
+      "type": "PREC_DYNAMIC",
+      "value": -1,
+      "content": {
+        "type": "PREC_RIGHT",
+        "value": "call",
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "target",
+              "content": {
+                "type": "SYMBOL",
+                "name": "call_expression"
+              }
+            },
+            {
+              "type": "STRING",
+              "value": ":"
+            },
+            {
+              "type": "FIELD",
+              "name": "listener",
+              "content": {
+                "type": "SYMBOL",
+                "name": "primary_expression"
+              }
+            }
+          ]
+        }
       }
     },
     "member_expression": {
@@ -10005,6 +10042,10 @@
     [
       "labeled_statement",
       "_property_name"
+    ],
+    [
+      "primary_expression",
+      "function_listener_expression"
     ],
     [
       "computed_property_name",

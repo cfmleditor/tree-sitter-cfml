@@ -58,6 +58,24 @@ reading (a callback syntax, a type annotation, a label) tends to reintroduce the
 `case <expr> :` ambiguity, and the fix is not local. Budget accordingly, and
 treat "just one more `:` form" as a medium-risk change however small the diff.
 
+**But cost the reading by what precedes the `:`, not by the character.** Which
+of those four is actually reachable depends on the state your new form starts
+in. The function listener (`f():callback`) starts after a `call_expression`,
+where only the ternary can follow with a `:`, so it needed one conflict —
+`[$.primary_expression, $.function_listener_expression]` — live on that one
+lookahead and unmeasurable on a workload made entirely of it. It had been rated
+Med-High/High and once written off as "fails to generate" on the strength of
+the character alone. A reading that starts at a bare *identifier* is the
+opposite case: there `pair`, `switch_case` and `labeled_statement` are all in
+play, and the warning above is the right prior. #90's colon assignment took the
+narrow route for exactly that reason, spelling only the dotted form.
+
+The two `:` forms still open, [#87](https://github.com/cfmleditor/tree-sitter-cfml/issues/87)'s
+`new Foo():callback` and [#93](https://github.com/cfmleditor/tree-sitter-cfml/issues/93)'s
+`cfml:Query::new(…)` in statement position, are both blocked on a *different*
+thing: a bare `new`, and a bare `cfml`, are each already complete expressions,
+so the ambiguity is at the head of the form rather than at the colon.
+
 ## CFScript exists twice
 
 `cfscript/grammar.js` is a standalone 1,500-line grammar. The CFScript rules

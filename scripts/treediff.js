@@ -50,7 +50,8 @@ const Parser = require('tree-sitter');
 const head = require('..');
 
 const baseDir = process.argv[2];
-const dir = process.argv[3] || require('./corpus-dir')();
+const {corpusDir, resolveScanTarget} = require('./corpus-dir');
+const dir = process.argv[3] ? resolveScanTarget(process.argv[3]) : corpusDir();
 
 if (!baseDir || baseDir.startsWith('--')) {
   console.error('usage: npm run treediff -- <baseline-worktree> [corpus-dir]');
