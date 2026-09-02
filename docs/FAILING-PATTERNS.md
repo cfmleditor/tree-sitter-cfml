@@ -79,9 +79,21 @@ that.
 | 48 | 10 | Dynamic tag name with a static prefix or namespace | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
 | 30 | 1 | Dotted key in a struct literal — **tractable, rejected on cost** | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
 | 19 | 13 | Dynamic tag opened and closed in different blocks | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | — |
-| 2 | 1 | Function-listener callback on a `new` expression | `var t = new Query():function( result, error ) { … };` | `function_listener.cfc` |
+| 2 | 1 | Function-listener callback on a `new` **target** — tractable, rejected on cost | `var t = new Query():function( result, error ) { … };` | `function_listener_new.cfc` |
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
 | 2 | 1 | `thread { … }` followed by a tag island | a ` ``` ` block after `thread name="x" { … }`; each parses alone | — |
+
+The function-listener row is where this table's one-number-per-construct shape
+breaks down, and the reason generalises. Admitting `new_expression` as a
+function-listener *listener* cost +27 parse states and no conflicts; admitting it
+as the *target* costs +591 and two. Same rule, same symbol, same construct — the
+difference is only whether the `new` sits before or after the contested `:`,
+because a bare `new` is itself a complete expression and so forks everything that
+can precede a colon. Cost lives in the position, not in the symbol: a row rating
+"support construct X" as one number can be rating two things twenty times apart.
+The cheap half shipped; the expensive half is
+[#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98), which carries the
+three narrowings already measured against it.
 
 The plain `<#expr#>` dynamic tag form parses when open and close sit in the same
 block; the prefixed, namespaced and split-across-blocks variants do not.

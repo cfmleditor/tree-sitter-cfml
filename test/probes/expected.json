@@ -30,6 +30,7 @@
     "cfscript/final_member_declaration.cfc": "pass",
     "cfscript/for_in_reserved_name.cfc": "pass",
     "cfscript/for_in_var_dotted.cfc": "pass",
+    "cfscript/function_listener_new.cfc": "fail",
     "cfscript/function_listener.cfc": "pass",
     "cfscript/function_named_instanceof.cfc": "pass",
     "cfscript/keyword_shaped_param_types.cfc": "pass",

@@ -1169,12 +1169,27 @@ module.exports = grammar({
     // it to the shapes the corpus uses saved 10 parse states and would have
     // rejected the rest of Lucee's own test file.
     //
-    // `new Foo():listener` is NOT covered. Admitting `new_expression` into the
-    // target as well costs 578 more parse states — 5247 -> 5825, +14.9% over
-    // master — because a bare `new` is itself a complete `new_expression`, so
-    // `New` before a `:` becomes ambiguous with a label and a property name
-    // wherever those are live, and three further conflicts are needed to
-    // resolve it. That buys two nodes in one file. Recorded in LIMITATIONS.md.
+    // `new_expression` is admitted on the LISTENER side but not on the TARGET
+    // side, and the asymmetry is a cost result rather than a taste:
+    //
+    //   listener  `f():new component { … }`      +27 states  (+0.5%), 0 conflicts
+    //   target    `new Query():f(){ … }`        +591 states (+11.3%), 2 conflicts
+    //
+    // The colon is what separates them. On the listener side the `new` comes
+    // *after* it, so nothing changes about how anything before a `:` reduces.
+    // On the target side it comes before, and a bare `new` is itself a complete
+    // `new_expression` — so `New` ahead of a `:` becomes ambiguous with a label
+    // and with a property name wherever those are live, and the whole
+    // new-expression item set forks into `:`-following context.
+    //
+    // Three narrowings were measured and none helped: requiring the
+    // constructor grammar-wide saved 70 of the 591; a target rule that requires
+    // the arguments cannot generate at all, because it collides with
+    // `new_expression` at every `new (`; and confining the whole listener rule
+    // to statement and assignment position — the trick that made script tag
+    // calls affordable — came out *worse* at +669, since the rule then has to
+    // be duplicated at each site. Left undone at 2 corpus nodes; see
+    // LIMITATIONS.md and the probe `cfscript/function_listener_new.cfc`.
     //
     // The dynamic precedence is for `a[ f() : g() ]`, where a slice and a
     // listener are both complete parses of the same text. Slicing is the older
@@ -1184,7 +1199,7 @@ module.exports = grammar({
     function_listener_expression: ($) => prec.dynamic(-1, prec.right('call', seq(
       field('target', $.call_expression),
       ':',
-      field('listener', $.primary_expression),
+      field('listener', choice($.primary_expression, $.new_expression)),
     ))),
 
     member_expression: $ => prec('member', seq(

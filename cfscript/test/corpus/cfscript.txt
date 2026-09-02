@@ -3512,6 +3512,8 @@ t5 = mySuccess():coll1;
 t6 = logAndFail("testNull","Peter Lustig"):nullValue();
 t7 = logAndFail("testStruct","Ruedi Zraggen"):{};
 mySuccess():cfc;
+t8 = mySuccess():new component { function onSuccess(result) {} };
+t9 = logAndFail("a","b"):new component {};
 a = cond ? f() : g;
 b = cond ? f() : function() { return 1; };
 c = arr[ f() : g() ];
@@ -3642,6 +3644,34 @@ msSQL.class: "net.sourceforge.jtds.jdbc.Driver";
         (identifier)
         (arguments))
       (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (function_listener_expression
+        (call_expression
+          (identifier)
+          (arguments))
+        (new_expression
+          (component_body
+            (function_declaration
+              (identifier)
+              (formal_parameters
+                (parameter_type
+                  (identifier)))
+              (statement_block)))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (function_listener_expression
+        (call_expression
+          (identifier)
+          (arguments
+            (string
+              (string_fragment))
+            (string
+              (string_fragment))))
+        (new_expression
+          (component_body)))))
   (expression_statement
     (assignment_expression
       (identifier)
