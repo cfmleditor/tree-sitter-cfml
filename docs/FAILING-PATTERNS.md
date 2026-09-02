@@ -83,6 +83,20 @@ that.
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
 | 2 | 1 | `thread { … }` followed by a tag island | a ` ``` ` block after `thread name="x" { … }`; each parses alone | — |
 
+A prior caution on reading this table at all: its node counts come from the
+corpus, so they measure what people have written, not what the language defines.
+The function-listener row read 2 nodes in 1 file. Lucee's
+[Function Listeners](https://docs.lucee.org/recipes/function-listeners.html)
+recipe lists **eleven** forms, and reading it found a failure the corpus could
+not: `mySuccess():new component { … }` appears zero times across all 15,083
+files, including Lucee's own `FunctionListener.cfc` — the very file the issue was
+reduced from. Neither `npm run scan` nor `npm run treediff` could have found it;
+the first needs an occurrence and the second needs a file to compare. For a
+construct whose only corpus evidence is one vendor test file, and especially for
+a young feature (this one is `since` 6.1), read the vendor documentation before
+estimating. It also turned out to be the cheap half, so the reading changed what
+shipped and not just what was counted.
+
 The function-listener row is where this table's one-number-per-construct shape
 breaks down. Admitting `new_expression` as a function-listener *listener* cost
 +27 parse states and no conflicts; as the *target* it costs +591 and two. Same
