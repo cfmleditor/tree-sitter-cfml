@@ -84,16 +84,25 @@ that.
 | 2 | 1 | `thread { … }` followed by a tag island | a ` ``` ` block after `thread name="x" { … }`; each parses alone | — |
 
 The function-listener row is where this table's one-number-per-construct shape
-breaks down, and the reason generalises. Admitting `new_expression` as a
-function-listener *listener* cost +27 parse states and no conflicts; admitting it
-as the *target* costs +591 and two. Same rule, same symbol, same construct — the
-difference is only whether the `new` sits before or after the contested `:`,
-because a bare `new` is itself a complete expression and so forks everything that
-can precede a colon. Cost lives in the position, not in the symbol: a row rating
-"support construct X" as one number can be rating two things twenty times apart.
-The cheap half shipped; the expensive half is
-[#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98), which carries the
-three narrowings already measured against it.
+breaks down. Admitting `new_expression` as a function-listener *listener* cost
++27 parse states and no conflicts; as the *target* it costs +591 and two. Same
+rule, same symbol, same construct.
+
+The tempting explanation — that what matters is which side of the contested `:`
+the symbol sits on — is wrong, and two controls settle it. Widening the same
+target slot with `subscript_expression` costs **+46**; widening it with a
+`new_expression` whose `arguments` are required costs **−2**. Position is worth
+tens of states. What is worth hundreds is admitting a rule that can complete on a
+**bare keyword**: `new_expression` leaves both its constructor and its arguments
+optional, so `new` alone is already a complete expression, and every state that
+can precede a colon then has to carry the `New`-as-label and
+`New`-as-property-name readings too.
+
+So when a row here looks expensive, ask what in the rule can reduce from a single
+token before assuming the surrounding position is to blame — and note the check
+is two `tree-sitter generate` runs, not an afternoon. The cheap half shipped; the
+expensive half is [#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98),
+which carries all four narrowings measured against it.
 
 The plain `<#expr#>` dynamic tag form parses when open and close sit in the same
 block; the prefixed, namespaced and split-across-blocks variants do not.
