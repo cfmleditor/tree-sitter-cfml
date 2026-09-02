@@ -1169,12 +1169,35 @@ module.exports = grammar({
     // it to the shapes the corpus uses saved 10 parse states and would have
     // rejected the rest of Lucee's own test file.
     //
-    // `new Foo():listener` is NOT covered. Admitting `new_expression` into the
-    // target as well costs 578 more parse states — 5247 -> 5825, +14.9% over
-    // master — because a bare `new` is itself a complete `new_expression`, so
-    // `New` before a `:` becomes ambiguous with a label and a property name
-    // wherever those are live, and three further conflicts are needed to
-    // resolve it. That buys two nodes in one file. Recorded in LIMITATIONS.md.
+    // `new_expression` is admitted on the LISTENER side but not on the TARGET
+    // side, and the asymmetry is a cost result rather than a taste:
+    //
+    //   listener  `f():new component { … }`      +27 states  (+0.5%), 0 conflicts
+    //   target    `new Query():f(){ … }`        +591 states (+11.3%), 2 conflicts
+    //
+    // The cost is NOT about which side of the colon the `new` sits on, which is
+    // the obvious reading and is wrong. Two controls, both measured from this
+    // rule as shipped:
+    //
+    //   target += subscript_expression                   +46 states
+    //   target += new_expression                        +591 states
+    //   target += new_expression, `arguments` required    -2 states
+    //
+    // Widening the target is cheap. What is expensive is admitting a rule that
+    // can complete on a BARE KEYWORD. `new_expression` has both its constructor
+    // and its arguments optional, so `new` alone is already a complete
+    // expression; put that before a contested `:` and every state that can
+    // precede a colon has to carry the `New`-as-label and `New`-as-property-name
+    // readings too, and the item set forks. Take the self-completion away by
+    // requiring the arguments and the entire 591 disappears.
+    //
+    // That last line is not a shippable fix, and the reason is this file's own
+    // first hazard: requiring the arguments changes how `new` LEXES. In
+    // `isNull(o) ? new() : o` the consequence silently becomes a
+    // `call_expression` of an identifier named `new`. `prec.dynamic` at 1, 2 and
+    // 5 does not move it, because dynamic precedence chooses between complete
+    // parses and this divergence happens earlier. See #98, which carries this
+    // and the two other narrowings that failed.
     //
     // The dynamic precedence is for `a[ f() : g() ]`, where a slice and a
     // listener are both complete parses of the same text. Slicing is the older
@@ -1184,7 +1207,7 @@ module.exports = grammar({
     function_listener_expression: ($) => prec.dynamic(-1, prec.right('call', seq(
       field('target', $.call_expression),
       ':',
-      field('listener', $.primary_expression),
+      field('listener', choice($.primary_expression, $.new_expression)),
     ))),
 
     member_expression: $ => prec('member', seq(

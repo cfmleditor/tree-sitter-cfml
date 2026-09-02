@@ -79,9 +79,30 @@ that.
 | 48 | 10 | Dynamic tag name with a static prefix or namespace | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
 | 30 | 1 | Dotted key in a struct literal — **tractable, rejected on cost** | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
 | 19 | 13 | Dynamic tag opened and closed in different blocks | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | — |
-| 2 | 1 | Function-listener callback on a `new` expression | `var t = new Query():function( result, error ) { … };` | `function_listener.cfc` |
+| 2 | 1 | Function-listener callback on a `new` **target** — tractable, rejected on cost | `var t = new Query():function( result, error ) { … };` | `function_listener_new.cfc` |
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
 | 2 | 1 | `thread { … }` followed by a tag island | a ` ``` ` block after `thread name="x" { … }`; each parses alone | — |
+
+The function-listener row is where this table's one-number-per-construct shape
+breaks down. Admitting `new_expression` as a function-listener *listener* cost
++27 parse states and no conflicts; as the *target* it costs +591 and two. Same
+rule, same symbol, same construct.
+
+The tempting explanation — that what matters is which side of the contested `:`
+the symbol sits on — is wrong, and two controls settle it. Widening the same
+target slot with `subscript_expression` costs **+46**; widening it with a
+`new_expression` whose `arguments` are required costs **−2**. Position is worth
+tens of states. What is worth hundreds is admitting a rule that can complete on a
+**bare keyword**: `new_expression` leaves both its constructor and its arguments
+optional, so `new` alone is already a complete expression, and every state that
+can precede a colon then has to carry the `New`-as-label and
+`New`-as-property-name readings too.
+
+So when a row here looks expensive, ask what in the rule can reduce from a single
+token before assuming the surrounding position is to blame — and note the check
+is two `tree-sitter generate` runs, not an afternoon. The cheap half shipped; the
+expensive half is [#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98),
+which carries all four narrowings measured against it.
 
 The plain `<#expr#>` dynamic tag form parses when open and close sit in the same
 block; the prefixed, namespaced and split-across-blocks variants do not.
