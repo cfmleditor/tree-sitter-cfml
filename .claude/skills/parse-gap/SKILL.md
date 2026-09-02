@@ -33,6 +33,23 @@ Once it is small, save it under `test/probes/<grammar>/<name>.<ext>` with a
 comment naming the real-world source. `npm run probe` then tracks it forever and
 tells you the moment it starts passing.
 
+**Then read the vendor's documentation for the construct, before deciding what
+"it" is.** The corpus tells you what people have written; the docs tell you what
+the language defines, and for a recent feature those differ a lot. #87 was
+reduced from the corpus and shipped covering the forms Lucee's own
+`FunctionListener.cfc` exercises — and Lucee's
+[Function Listeners](https://docs.lucee.org/recipes/function-listeners.html)
+recipe turned out to list eleven forms, one of which (`f():new component { … }`)
+appears **zero** times in all 15,083 corpus files. Nothing in the workflow below
+can find a construct nobody has written: the scan needs an occurrence, the tree
+diff needs a file to compare. Only the docs, and then a probe, will.
+
+Lucee's docs are generated from
+[`lucee/lucee-docs`](https://github.com/lucee/lucee-docs) — clone it and grep
+`docs/recipes/` when the site is unreachable. The page front-matter carries a
+`since` version, worth recording alongside the construct. `metadata/vendor_support.json`
+is where this repo maps constructs to ACF and Lucee doc URLs.
+
 ## 2. Work out who owns it
 
 | The construct appears in | Edit |
