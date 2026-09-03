@@ -11,15 +11,24 @@ on:
 jobs:
   # `npm test` compiles the *committed* cf*/src/parser.c, so a grammar change
   # that was never regenerated would otherwise pass CI while shipping a stale
-  # parser. Regenerate here and fail if the result differs from what is checked in.
+  # parser. Regenerate here and compare against what is checked in.
   #
-  # The pathspec here read `*/src/` for eleven releases, and matches NOTHING: git's
+  # Two histories are worth knowing before touching this job.
+  #
+  # The pathspec read `*/src/` for eleven releases, and matches NOTHING: git's
   # wildcard pathspecs are fnmatch patterns, so a trailing `/` needs a component
   # after it, and only a literal prefix like `cfscript/src` works without one.
   # `git diff --exit-code` over an empty match always exits 0, so this job had
-  # been passing without comparing anything. Hence the `ls-files` guard below —
-  # a check that cannot see its own subject is worse than no check, because it
-  # reads as green.
+  # been passing without comparing anything. Hence the `ls-files` guard, which
+  # now lives in the script — a check that cannot see its own subject is worse
+  # than no check, because it reads as green.
+  #
+  # Fixing that surfaced the second problem: `tree-sitter generate` is not
+  # reproducible across machines (#100). Identical grammar, identical CLI,
+  # equivalent tables — different state numbering, and a diff of hundreds of
+  # thousands of lines. Failing on that punishes a contributor for their CPU.
+  # So the comparison is classified rather than binary: a stale parser fails,
+  # a renumbering warns and CI publishes its own output as the canonical copy.
   generated:
     name: Generated parsers up to date
     runs-on: ubuntu-latest
@@ -35,19 +44,26 @@ jobs:
           DIALECT=cfml npm run build
           DIALECT=cfscript npm run build
           DIALECT=cfquery npm run build
-      - name: Check for drift
+      - name: Classify drift
+        run: node scripts/check-generated.js --explain
+      # CI is the authority for what the generated sources should look like, so
+      # publish them whenever they differ at all — on a renumbering the job has
+      # passed and this is how a contributor adopts CI's numbering; on a failure
+      # it is the quickest way to see what the job actually produced.
+      - name: Did anything differ?
+        id: publish
+        if: always()
         run: |
-          tracked=$(git ls-files -- '*/src/*' | wc -l)
-          if [ "$tracked" -eq 0 ]; then
-            echo "::error::The drift pathspec matches no tracked files, so this check is vacuous."
-            exit 1
-          fi
-          echo "comparing $tracked generated files"
-          if ! git diff --exit-code -- '*/src/*'; then
-            echo "::error::Generated parsers are out of date. Run 'npm run build' and commit cf*/src/."
-            git diff --stat -- '*/src/*'
-            exit 1
-          fi
+          git diff --quiet -- '*/src/*' || echo "publishing=true" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.publish.outputs.publishing == 'true'
+        with:
+          name: generated-parsers
+          path: |
+            cfml/src/
+            cfquery/src/
+            cfscript/src/
+          retention-days: 14
 
   test:
     runs-on: ${{ matrix.os }}
