@@ -3751,3 +3751,115 @@ msSQL.class: "net.sourceforge.jtds.jdbc.Driver";
       (property_identifier))
     (string
       (string_fragment))))
+
+===================================
+new requires its arguments (#98)
+===================================
+
+x = new.foo;
+y = new.foo.bar;
+z = a.new;
+c = new();
+d = new( entityName );
+e = new Query();
+f = new org.lucee.cfml.Query();
+g = new java:java.io.File( p );
+h = new component { function init() {} };
+i = cond ? new() : other;
+j = cond ? new Query() : other;
+var new = 1;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (property_identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (arguments
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (identifier)
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (member_expression
+          (member_expression
+            (member_expression
+              (identifier)
+              (property_identifier))
+            (property_identifier))
+          (property_identifier))
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (component_body
+          (function_declaration
+            (identifier)
+            (formal_parameters)
+            (statement_block))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ternary_expression
+        (identifier)
+        (new_expression
+          (arguments))
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ternary_expression
+        (identifier)
+        (new_expression
+          (identifier)
+          (arguments))
+        (identifier))))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (number))))

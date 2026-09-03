@@ -3953,20 +3953,12 @@
                 "type": "FIELD",
                 "name": "arguments",
                 "content": {
-                  "type": "CHOICE",
-                  "members": [
-                    {
-                      "type": "PREC_DYNAMIC",
-                      "value": 1,
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "arguments"
-                      }
-                    },
-                    {
-                      "type": "BLANK"
-                    }
-                  ]
+                  "type": "PREC_DYNAMIC",
+                  "value": 1,
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "arguments"
+                  }
                 }
               }
             ]
@@ -10082,21 +10074,6 @@
       "query_tag"
     ],
     [
-      "_for_header",
-      "primary_expression",
-      "new_expression"
-    ],
-    [
-      "primary_expression",
-      "new_expression",
-      "rest_pattern"
-    ],
-    [
-      "new_expression",
-      "pattern"
-    ],
-    [
-      "primary_expression",
       "new_expression",
       "pattern"
     ],
