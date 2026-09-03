@@ -40,6 +40,7 @@ module.exports = grammar({
     $.cf_comment,
     $.java_class_content,
     $._java_block_open,
+    $._static_type_prefix,
   ],
 
   extras: ($) => [
@@ -750,6 +751,7 @@ module.exports = grammar({
       $.array,
       $.ordered_struct,
       $.java_class_block,
+      $.prefixed_type,
       $.function_expression,
       $.arrow_function,
       $.call_expression,
@@ -1170,6 +1172,23 @@ module.exports = grammar({
     )),
 
     _new_type_prefix: (_) => token(seq(choice('java', 'cfml'), ':')),
+
+    // `cfml:Query::new( … )` — Lucee's type prefix on a STATIC call. The prefix
+    // is an EXTERNAL token, unlike `_new_type_prefix` above, and that is the
+    // whole design. Both spell `java:` / `cfml:` with the colon inside the
+    // token, which is what stops `new java.util.Properties()` mis-lexing after
+    // `new`. But outside `new` the same longest-match swallows every label and
+    // struct key named `java` or `cfml`: `cfml: while (true) { … }` became a
+    // call to a `prefixed_type` named `cfml:while`.
+    //
+    // What separates them is what follows the name — a static call has `::`, a
+    // label has a statement, a pair has a value — and that is a bounded
+    // lookahead the grammar cannot express and the scanner can. See
+    // `scan_java_or_cfml_word` in src/scanner.c.
+    prefixed_type: ($) => seq(
+      field('prefix', alias($._static_type_prefix, $.type_prefix)),
+      field('name', $.identifier),
+    ),
 
     // Lucee's function listener: `mySuccess():function(result, error) { … }`.
     // The call runs on a background thread and whatever follows the `:` is

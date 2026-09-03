@@ -338,17 +338,19 @@ says which.
   it was declined on that basis. If it is ever revisited, it needs a
   major-version note and a coordinated update of the queries above.
 
-- **A `cfml:` / `java:` prefix on a static call becomes a JS label — open
-  defect** ([#93](https://github.com/cfmleditor/tree-sitter-cfml/issues/93)).
-  `cfml:Query::new( … )` yields
-  `(labeled_statement label: (statement_identifier) body: …)`, losing the
-  prefix entirely; `Query::new( … )` alone is correct. `_new_type_prefix` is
-  reachable only from `new_expression`, so in statement position `cfml` matches
-  `identifier` and the following `:` matches `labeled_statement`, which nothing
-  else claims. 2 nodes in 1 file (Lucee
-  `test/general/StaticMembersInvoke.cfc:19`) — and 2 of only 2
-  `labeled_statement` nodes in the entire corpus, which is what made it
-  findable. The inverse of
+- **A `cfml:` / `java:` prefix on a static call — fixed, see `prefixed_type`**
+  ([#93](https://github.com/cfmleditor/tree-sitter-cfml/issues/93)).
+  `cfml:Query::new( … )` used to yield `(labeled_statement …)`, losing the
+  prefix. It now yields `(prefixed_type prefix: (type_prefix) name:
+  (identifier))` under the `member_expression`'s `static_chain`. Left here as a
+  standing warning rather than deleted, because the *shape* of the fix is the
+  reusable part: the prefix could not be a grammar token. `_new_type_prefix`
+  carries its colon inside `token(seq(choice('java','cfml'), ':'))`, and
+  wherever such a token is valid, longest-match takes `cfml:` over `cfml`
+  followed by `:` — so every label and struct key named `java` or `cfml` was
+  swallowed with it. What separates the two readings is what comes *after* the
+  name (`::` for a static call, a statement for a label, a value for a pair),
+  which is a bounded lookahead only an external scanner can do. The inverse of
   [#90](https://github.com/cfmleditor/tree-sitter-cfml/issues/90): same rule,
   opposite direction, so anyone touching `labeled_statement` should read both.
 

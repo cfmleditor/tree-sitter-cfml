@@ -1999,6 +1999,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "prefixed_type"
+        },
+        {
+          "type": "SYMBOL",
           "name": "function_expression"
         },
         {
@@ -3990,6 +3994,32 @@
           }
         ]
       }
+    },
+    "prefixed_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "prefix",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_static_type_prefix"
+            },
+            "named": true,
+            "value": "type_prefix"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "name",
+          "content": {
+            "type": "SYMBOL",
+            "name": "identifier"
+          }
+        }
+      ]
     },
     "function_listener_expression": {
       "type": "PREC_DYNAMIC",
@@ -10422,6 +10452,10 @@
     {
       "type": "SYMBOL",
       "name": "_java_block_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_static_type_prefix"
     }
   ],
   "inline": [

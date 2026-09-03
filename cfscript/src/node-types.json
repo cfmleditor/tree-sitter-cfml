@@ -170,6 +170,10 @@
         "named": true
       },
       {
+        "type": "prefixed_type",
+        "named": true
+      },
+      {
         "type": "regex",
         "named": true
       },
@@ -2403,6 +2407,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "prefixed_type",
+    "named": true,
+    "fields": {
+      "name": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      },
+      "prefix": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "type_prefix",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
