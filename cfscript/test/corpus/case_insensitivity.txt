@@ -578,7 +578,7 @@ y = a.new;
     (assignment_expression
       (identifier)
       (member_expression
-        (new_expression)
+        (identifier)
         (property_identifier))))
   (variable_declaration
     (variable_declarator

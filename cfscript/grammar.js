@@ -175,10 +175,7 @@ module.exports = grammar({
     [$.switch_case, $.expression],
     [$.primary_expression, $.new_expression],
     [$.primary_expression, $.query_tag],
-    [$._for_header, $.primary_expression, $.new_expression],
-    [$.primary_expression, $.new_expression, $.rest_pattern],
     [$.new_expression, $.pattern],
-    [$.primary_expression, $.new_expression, $.pattern],
     [$.primary_expression, $.new_expression, $._property_name],
     [$.function_expression, $.pattern],
     [$.function_expression, $.parameter_type, $.pattern],
@@ -1155,7 +1152,20 @@ module.exports = grammar({
         // identifier, which is what CFML's Java interop needs.
         optional(field('prefix', alias($._new_type_prefix, $.type_prefix))),
         optional(field('constructor', choice($.primary_expression, $.new_expression))),
-        field('arguments', optional(prec.dynamic(1, $.arguments))),
+        // The arguments are REQUIRED, so a bare `new` cannot reduce to a
+        // complete `new_expression` on its own. That self-completion was
+        // costing more than it looked: `x = new.foo` parsed as a
+        // `member_expression` whose object was an EMPTY `new_expression`,
+        // rather than the identifier read it plainly is, and the same
+        // reduction is what makes admitting `new_expression` before a
+        // contested `:` expensive (see #98). Requiring the arguments removes
+        // it and takes 16 states OUT of the table.
+        //
+        // The constructor stays optional on purpose: `new( … )` with no class
+        // name is real CFML — a call to a user-defined function named `new`
+        // (Slatwall's `BaseDAO`, RustCFML's new-UDF-dispatch tests) — and both
+        // that reading and `x = new();` have to keep working.
+        field('arguments', prec.dynamic(1, $.arguments)),
       ),
     )),
 
