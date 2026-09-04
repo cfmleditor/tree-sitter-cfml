@@ -11,6 +11,30 @@
  * @param {Rule} rule
  * @returns {SeqRule}
  */
+/**
+ * `object`'s entry list, reused by both bracketed `ordered_struct` forms.
+ *
+ * A plain function rather than a grammar rule on purpose: `commaSep(optional(…))`
+ * matches the empty string, and tree-sitter rejects a NAMED rule that can. It is
+ * legal inlined, because the surrounding `${`/`}` make the enclosing rule
+ * non-empty — which is exactly how `object` already spells it.
+ *
+ * Deliberately NOT `object`'s full entry list: its
+ * `shorthand_property_identifier` arm is a JavaScript-ism carried over with the
+ * fork, it is not CFML, and it costs 43 of the 117 states the full list wanted.
+ * `spread_element` is free and `cf_pair` costs one, so both stay.
+ *
+ * @param {GrammarSymbols<string>} $
+ * @returns {Rule}
+ */
+function orderedStructEntries($) {
+  return commaSep(optional(choice(
+    $.pair,
+    $.cf_pair,
+    $.spread_element,
+  )));
+}
+
 function commaSep1(rule) {
   return seq(rule, repeat(seq(',', rule)));
 }
@@ -813,7 +837,28 @@ module.exports = grammar({
     ),
 
     // `[ : ]` and `[ = ]` are both empty ordered structs; Lucee accepts either.
-    ordered_struct: ($) => prec(1, choice(seq('[', ':', ']'), seq('[', '=', ']'))),
+    // Lucee's ordered-struct literals, which preserve insertion order where a
+    // plain `{ … }` does not. `[:]` and `[=]` are the empty forms; `${ … }` and
+    // `$[ … ]` carry entries. Both spellings are the SAME feature and both were
+    // missing — Lucee's own LDEV3133 test writes them side by side as scenes 4
+    // and 5, asserting `structKeyList` comes back in source order.
+    //
+    // `$[ … ]` looked supported and was not: `$` lexed as an ordinary
+    // identifier, so `$[ x: 1 ]` parsed as a SUBSCRIPT on a variable named `$`
+    // with a slice inside — the same tree `q[ x: 1 ]` gives, error-free and
+    // wrong. Two pairs then failed outright, which is the only reason the gap
+    // was visible at all.
+    //
+    // Both openers carry their brace or bracket INSIDE the token. That is what
+    // keeps `$` an ordinary identifier everywhere else, and it is why the entry
+    // list is spelled here rather than reusing `object`: `{` and `[` alone must
+    // not start an ordered struct.
+    ordered_struct: ($) => prec(1, choice(
+      seq('[', ':', ']'),
+      seq('[', '=', ']'),
+      seq('${', orderedStructEntries($), '}'),
+      seq('$[', orderedStructEntries($), ']'),
+    )),
 
     array_pattern: ($) => seq(
       '[',
