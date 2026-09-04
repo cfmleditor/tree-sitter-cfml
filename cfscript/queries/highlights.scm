@@ -150,7 +150,7 @@
 ] @punctuation.delimiter
 
 (ordered_struct
-  ["[" ":" "]"] @punctuation.bracket)
+  ["[" ":" "=" "]" "${" "$[" "}"] @punctuation.bracket)
 
 (pair
   ":" @punctuation.delimiter)

@@ -3981,3 +3981,99 @@ v = cfml::foo();
           (static_chain)
           (property_identifier))
         (arguments)))))
+
+===================================
+ordered struct literals (#80)
+===================================
+
+a = ${ x: 1, y: 2 };
+b = $[ x: 1, y: 2 ];
+c = ${ k = "v" };
+d = ${};
+e = $[];
+f = [:];
+g = [=];
+h = { x: 1 };
+i = [ 1, 2 ];
+j = q[ x: 1 ];
+k = $;
+l = $.foo;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct
+        (pair
+          (property_identifier)
+          (number))
+        (pair
+          (property_identifier)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct
+        (pair
+          (property_identifier)
+          (number))
+        (pair
+          (property_identifier)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct
+        (cf_pair
+          (property_identifier)
+          (string
+            (string_fragment))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (object
+        (pair
+          (property_identifier)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (array
+        (number)
+        (number))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (subscript_expression
+        (identifier)
+        (slice_expression
+          (identifier)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (identifier)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier)))))
