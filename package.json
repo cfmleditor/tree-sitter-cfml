@@ -87,6 +87,6 @@
   },
   "allowScripts": {
     "tree-sitter@0.25.1": true,
-    "tree-sitter-cli@0.26.13": true
+    "tree-sitter-cli@0.27.0": true
   }
 }
