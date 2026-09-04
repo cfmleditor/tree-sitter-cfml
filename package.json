@@ -1,6 +1,6 @@
 {
   "name": "@cfmleditor/tree-sitter-cfml",
-  "version": "0.26.33",
+  "version": "0.26.34",
   "description": "CFML grammar for tree-sitter",
   "repository": "github:cfmleditor/tree-sitter-cfml",
   "license": "MIT",
@@ -38,10 +38,10 @@
   "devDependencies": {
     "eslint": "^10.9.1",
     "eslint-config-treesitter": "^1.0.2",
-    "globals": "^17.11.0",
+    "globals": "^17.12.0",
     "prebuildify": "^6.0.1",
     "tree-sitter": "0.25.1",
-    "tree-sitter-cli": "0.26.13"
+    "tree-sitter-cli": "0.27.0"
   },
   "overrides": {
     "eslint-plugin-jsdoc": "^62.9.0"
@@ -87,6 +87,6 @@
   },
   "allowScripts": {
     "tree-sitter@0.25.1": true,
-    "tree-sitter-cli@0.26.13": true
+    "tree-sitter-cli@0.27.0": true
   }
 }

@@ -334,3 +334,28 @@
 
 ; Lucee object selector, e.g. `new java:java.io.File(...)`
 (type_prefix) @keyword
+
+; `cfparam (name:"x" default:"y")` — a colon-separated script tag call attribute
+; is an assignment_expression whose operator is `:` rather than `=`.
+(assignment_expression
+  ":" @operator)
+
+; `foo: bar;`
+(statement_identifier) @label
+
+; Unparented: `public final MEMBER = "v"` puts access_type on a
+; variable_declaration, not just a function_declaration.
+(access_type) @keyword
+
+; Inline Lucee java block, `a = java { ... }` — injected as Java, @embedded is
+; the fallback if that layer does not load.
+(java_class_content) @embedded
+
+; `msSQL.class: 'value';` — a dotted colon assignment is its own node, not an
+; assignment_expression, so the rule above does not reach it.
+(colon_assignment_statement
+  ":" @operator)
+
+; `mySuccess():function(result, error) { … }` — the listener callback separator.
+(function_listener_expression
+  ":" @operator)
