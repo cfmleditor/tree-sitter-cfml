@@ -213,6 +213,15 @@ static inline bool implicit_cf_end_tag_valid(const bool *vs, unsigned count) {
 // unconditionally now, and only the entries are ever dropped.
 #define TAGS_HEADER_SIZE (2 * sizeof(uint16_t))
 
+// How many bytes SERIALIZE_TAGS below will spend on one tag. Kept beside it so
+// the two cannot drift: if the serialized shape of a tag changes, this changes.
+static unsigned tag_serialized_size(const Tag *tag, bool is_cfquery_context) {
+    if (!tag_has_name(tag->type, is_cfquery_context)) return 1;
+    unsigned len = tag->tag_name.size;
+    if (len > UINT8_MAX) len = UINT8_MAX;
+    return 2 + len + sizeof(tag->html_depth);
+}
+
 #define SERIALIZE_TAGS(tags_field, buffer, size, reserve, is_cfquery_context) do { \
     uint16_t _count = (tags_field).size > UINT16_MAX ? UINT16_MAX : (tags_field).size; \
     uint16_t _serialized = 0; \
@@ -243,6 +252,51 @@ static inline bool implicit_cf_end_tag_valid(const bool *vs, unsigned count) {
     memcpy(&(buffer)[_count_offset], &_serialized, sizeof(_serialized)); \
     memcpy(&(buffer)[_count_offset + sizeof(_serialized)], &_count, sizeof(_count)); \
 } while(0)
+
+// Would pushing `incoming` take the two tag stacks past what `serialize` can
+// write? tree-sitter caps that buffer at TREE_SITTER_SERIALIZATION_BUFFER_SIZE,
+// and SERIALIZE_TAGS truncates when it runs out — deserialize then pads the
+// remainder with nameless END_ sentinels, so the stack comes back *different*
+// from the one that was saved and every later end-tag decision is made against
+// tags that have lost their names.
+//
+// That is #55. A run of unpaired `<cf_foo>` tags nests, one level per tag, and
+// past ~1KB of stack the whole document collapsed to a single ERROR at 1:1 —
+// including the perfectly good `<cfscript>` block after the run. It is a BYTE
+// budget rather than a tag count, which is what the bug report's "~71" missed:
+// the limit moves with the tag NAME LENGTH, measured at 124 tags for `cf_a`
+// down to 41 for `cf_runtest1234567890`.
+//
+// The cost is O(depth) per start tag rather than a maintained counter,
+// deliberately: tags are popped from several places and a counter that drifts
+// would reintroduce exactly the silent mismatch this exists to prevent. Real
+// nesting depth is a handful of tags, so the loop is not measurable.
+#define TAG_STACK_HEADROOM 256
+
+static bool tag_stack_would_overflow(const Scanner *scanner, const Tag *incoming,
+                                     bool is_cfquery_context) {
+    const unsigned depths = sizeof(scanner->cfoutput_depth) +
+                            sizeof(scanner->cfcomponent_depth) +
+                            sizeof(scanner->cffunction_depth);
+    // Headroom, and it is the whole point rather than a safety margin. The tag
+    // that overflowed in the bug report was NOT one of the custom tags: 72
+    // `<cf_runtest>` tags fit, and the `<cfscript>` after them became the 73rd
+    // and was the one truncated. So a run of non-nesting tags must stop short of
+    // the budget by enough for the tags that legitimately DO nest — a
+    // `<cfscript>`, `<cfoutput>`, `<cfquery>` — to still fit after it. 256 bytes
+    // is roughly 18 further named tags, well past any real nesting depth.
+    const unsigned budget =
+        TREE_SITTER_SERIALIZATION_BUFFER_SIZE -
+        (2 * TAGS_HEADER_SIZE + depths) - TAG_STACK_HEADROOM;
+    unsigned used = 0;
+    for (unsigned i = 0; i < scanner->tags.size; i++) {
+        used += tag_serialized_size(&scanner->tags.contents[i], is_cfquery_context);
+    }
+    for (unsigned i = 0; i < scanner->cf_tags.size; i++) {
+        used += tag_serialized_size(&scanner->cf_tags.contents[i], is_cfquery_context);
+    }
+    return used + tag_serialized_size(incoming, is_cfquery_context) > budget;
+}
 
 static unsigned serialize(Scanner *scanner, char *buffer, bool is_cfquery_context) {
     unsigned size = 0;
@@ -1406,6 +1460,26 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         default:
             lexer->result_symbol = is_cf_context ? CF_START_TAG_NAME : START_TAG_NAME;
             break;
+    }
+
+    // A custom tag whose push would break the serialize/deserialize round trip
+    // does not nest. `CFML` is the type `cf_tag_for_name` gives an unrecognised
+    // `<cf_foo>` — `CUSTOM` is the HTML-side type and never reaches here. `CUSTOM` only, and deliberately: the cases above this point
+    // that reach the push also bump a depth counter (`cfoutput`, `cffunction`,
+    // `cfcomponent`), so bailing out here would leave the counter incremented
+    // for a tag that was never pushed. A `<cf_foo>` run is the shape that
+    // actually reaches ~1KB of stack, and `CF_VOID_START_TAG_NAME` completes
+    // such an element without an end tag — the same symbol the void tags in
+    // `CF_VOID_TAGS` use, so no new grammar rule is needed.
+    //
+    // The tag stops nesting rather than the document being lost. Whether an
+    // unpaired custom tag should nest AT ALL is the open question on #55; this
+    // does not settle it, it stops the failure being unrecoverable.
+    if (is_cf_context && tag.type == CFML &&
+        tag_stack_would_overflow(scanner, &tag, is_cfquery_context)) {
+        lexer->result_symbol = CF_VOID_START_TAG_NAME;
+        tag_free(&tag);
+        return true;
     }
 
     if ( is_cf_context ) {
