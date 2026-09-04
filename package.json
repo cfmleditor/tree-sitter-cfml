@@ -38,10 +38,10 @@
   "devDependencies": {
     "eslint": "^10.9.1",
     "eslint-config-treesitter": "^1.0.2",
-    "globals": "^17.11.0",
+    "globals": "^17.12.0",
     "prebuildify": "^6.0.1",
     "tree-sitter": "0.25.1",
-    "tree-sitter-cli": "0.26.13"
+    "tree-sitter-cli": "0.27.-"
   },
   "overrides": {
     "eslint-plugin-jsdoc": "^62.9.0"
