@@ -94,7 +94,7 @@
   name: (identifier) @function)
 
 (function_declaration
-  (access_type) @access_type)
+  (access_type) @keyword)
 
 (method_definition
   name: [
