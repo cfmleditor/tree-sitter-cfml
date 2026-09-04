@@ -42,6 +42,7 @@
     "cfscript/script_tag_call.cfc": "pass",
     "cfscript/spaced_param_defaults.cfc": "pass",
     "cfscript/static_block.cfc": "pass",
+    "cfscript/static_type_prefix.cfc": "pass",
     "cfscript/string_slice.cfc": "pass",
     "cfscript/subscript_multiple_pairs.cfc": "fail",
     "cfscript/subscript_var_name.cfc": "pass",

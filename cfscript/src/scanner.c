@@ -16,7 +16,8 @@ enum TokenType {
     CFML_TEMPLATE_CONTENT,
     CFML_COMMENT,
     JAVA_CLASS_CONTENT,
-    JAVA_BLOCK_OPEN
+    JAVA_BLOCK_OPEN,
+    STATIC_TYPE_PREFIX
 };
 
 void *tree_sitter_cfscript_external_scanner_create() { return NULL; }
@@ -513,21 +514,50 @@ static bool scan_cfml_comment(TSLexer *lexer) {
 // So the block is only claimed when what follows the brace actually starts a
 // Java class body. CFML statements never start with these words in this
 // position, and a Java class body always does.
-static bool scan_java_block_open(TSLexer *lexer) {
-    // Leading whitespace is ours to consume: `extras` are applied to tokens the
-    // generated lexer produces, not to an external scan, which starts wherever
-    // the previous token ended. `skip` rather than `advance` keeps it out of
-    // the token.
-    while (cf_isspace(lexer->lookahead)) skip(lexer);
+// `cfml:Query::new( … )` — Lucee's type prefix on a STATIC call, as opposed to
+// on a `new`. The grammar cannot own this token: `_new_type_prefix` carries the
+// colon inside it, so wherever it is valid, longest-match takes `cfml:` in
+// preference to `cfml` followed by `:` — and every label and struct key that
+// happens to be named `java` or `cfml` is swallowed. `cfml: while (true) { … }`
+// became a call to a `prefixed_type` named `cfml:while`, with the label gone.
+//
+// What separates the two is what comes AFTER the name: a static call has `::`,
+// a label has a statement, a pair has a value. That is a bounded lookahead, so
+// the scanner can decide it and the grammar cannot. `mark_end` fixes the token
+// at the colon first; everything past it is lookahead only, exactly as
+// `scan_java_block_open_tail` below does past its brace.
+static bool scan_static_type_prefix_tail(TSLexer *lexer) {
+    // Entered with `java` or `cfml` already consumed and the word boundary
+    // checked. `cfml::foo` is a static call on something named `cfml`, not a
+    // prefix, so a doubled colon rejects.
+    if (lexer->lookahead != ':') return false;
+    advance(lexer);
+    if (lexer->lookahead == ':') return false;
+    lexer->mark_end(lexer);
 
-    const char *word = "java";
-    for (int i = 0; i < 4; i++) {
-        if (cf_tolower(lexer->lookahead) != word[i]) return false;
-        advance(lexer);
+    // Lookahead only from here: a dotted name, then `::`. Without the `::` this
+    // is a label or a struct key and the prefix reading must not be offered —
+    // that is the whole reason this token is external rather than a
+    // `token(seq(choice('java','cfml'), ':'))` like `_new_type_prefix`.
+    while (lexer->lookahead == ' ' || lexer->lookahead == '\t') advance(lexer);
+    for (;;) {
+        if (!cf_isalpha(lexer->lookahead) && lexer->lookahead != '_') return false;
+        while (cf_isalnum(lexer->lookahead) || lexer->lookahead == '_') advance(lexer);
+        while (lexer->lookahead == ' ' || lexer->lookahead == '\t') advance(lexer);
+        if (lexer->lookahead == '.') {
+            advance(lexer);
+            while (lexer->lookahead == ' ' || lexer->lookahead == '\t') advance(lexer);
+            continue;
+        }
+        break;
     }
-    // `javaCast`, `javascript`: the word must end here.
-    if (cf_isalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
+    if (lexer->lookahead != ':') return false;
+    advance(lexer);
+    return lexer->lookahead == ':';
+}
 
+static bool scan_java_block_open_tail(TSLexer *lexer) {
+    // Entered with `java` already consumed and the word boundary checked.
     while (lexer->lookahead == ' ' || lexer->lookahead == '\t') advance(lexer);
     if (lexer->lookahead != '{') return false;
     advance(lexer);
@@ -671,6 +701,56 @@ static bool scan_java_class_content(TSLexer *lexer) {
     }
 }
 
+// `java` and `cfml` open three different things, and all three start by
+// consuming the same word. They CANNOT be separate scans tried in turn: within
+// a single `scan()` call tree-sitter does not rewind between them, so the first
+// to advance past the word leaves the second reading from the middle of it.
+// That is exactly what happened — `java:Query::new()` reached the prefix scan
+// with the lexer already sitting on the `:`, and silently did nothing. The
+// rewind the API gives you is between calls, not inside one.
+//
+// So the word is matched once, here, and what FOLLOWS it decides:
+//
+//     java {     an inline Java class block   (#74)
+//     java:Q::   a static type prefix         (#93)
+//     cfml:Q::   likewise
+//
+// Leading whitespace is ours to consume: `extras` apply to tokens the generated
+// lexer produces, not to an external scan, which starts wherever the previous
+// token ended. `skip` rather than `advance` keeps it out of the token.
+static bool scan_java_or_cfml_word(TSLexer *lexer, const bool *valid_symbols, bool skip_space) {
+    if (skip_space) {
+        while (cf_isspace(lexer->lookahead)) skip(lexer);
+    }
+
+    const char *word;
+    if (cf_tolower(lexer->lookahead) == 'j') {
+        word = "java";
+    } else if (cf_tolower(lexer->lookahead) == 'c') {
+        word = "cfml";
+    } else {
+        return false;
+    }
+    for (int i = 0; i < 4; i++) {
+        if (cf_tolower(lexer->lookahead) != word[i]) return false;
+        advance(lexer);
+    }
+    // `javaCast`, `javascript`, `cfmlFoo`: the word must end here.
+    if (cf_isalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
+
+    if (lexer->lookahead == ':') {
+        if (!valid_symbols[STATIC_TYPE_PREFIX]) return false;
+        if (!scan_static_type_prefix_tail(lexer)) return false;
+        lexer->result_symbol = STATIC_TYPE_PREFIX;
+        return true;
+    }
+    if (word[0] == 'j' && valid_symbols[JAVA_BLOCK_OPEN] &&
+        !valid_symbols[AUTOMATIC_SEMICOLON]) {
+        return scan_java_block_open_tail(lexer);
+    }
+    return false;
+}
+
 bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
     // `java_class_content` is only reachable straight after that opener, a
     // state in which no other external token is valid — so AUTOMATIC_SEMICOLON
@@ -724,7 +804,21 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
     if (valid_symbols[CFML_COMMENT] && !valid_symbols[AUTOMATIC_SEMICOLON] &&
         !valid_symbols[TERNARY_QMARK] && !valid_symbols[ELVIS_OPERATOR]) {
         while (cf_isspace(lexer->lookahead)) skip(lexer);
-        return lexer->lookahead == '<' && scan_cfml_comment(lexer);
+        if (lexer->lookahead == '<' && scan_cfml_comment(lexer)) {
+            return true;
+        }
+        // This branch owns a statement head, and it must stay TERMINAL: letting
+        // it fall through ran automatic-semicolon insertion with the whitespace
+        // above already consumed, and a trailing comment then attached to the
+        // wrong node — one `(comment)` silently vanished from a Mura file with
+        // no `java` or `cfml` in it at all. So `_static_type_prefix`, which is
+        // also valid at a statement head, gets its turn HERE instead. The
+        // whitespace is already skipped, hence the `false`.
+        if (valid_symbols[STATIC_TYPE_PREFIX] &&
+            scan_java_or_cfml_word(lexer, valid_symbols, false)) {
+            return true;
+        }
+        return false;
     }
 
     if (valid_symbols[AUTOMATIC_SEMICOLON] && !valid_symbols[TAG_LINEFEED]) {
@@ -771,9 +865,9 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
     // caught. Placed here it only ever sees a position nothing else claimed.
     //
     // It needs no recovery guard: it rejects within a few characters of
-    // anything that is not the word `java`.
-    if (valid_symbols[JAVA_BLOCK_OPEN] && !valid_symbols[AUTOMATIC_SEMICOLON] &&
-        scan_java_block_open(lexer)) {
+    // anything that is not the word `java` or `cfml`.
+    if ((valid_symbols[JAVA_BLOCK_OPEN] || valid_symbols[STATIC_TYPE_PREFIX]) &&
+        scan_java_or_cfml_word(lexer, valid_symbols, true)) {
         return true;
     }
 
