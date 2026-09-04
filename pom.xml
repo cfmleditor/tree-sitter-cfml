@@ -7,7 +7,7 @@
   <groupId>io.github.cfmleditor</groupId>
   <artifactId>tree-sitter-cfml</artifactId>
   <name>TreeSitter CFML</name>
-  <version>0.26.33</version>
+  <version>0.26.34</version>
   <description>CFML grammar for tree-sitter</description>
   <url>https://github.com/cfmleditor/tree-sitter-cfml</url>
   <licenses>

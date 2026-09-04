@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.34]
 
 ### cfml / cfquery
 - **Fix a deep run of unpaired custom tags collapsing the whole document to one ERROR** ([#55](https://github.com/cfmleditor/tree-sitter-cfml/issues/55)). An unpaired `<cf_foo>` opens a block the next one nests inside, so a run of them is a stack one level per tag. Past roughly 1KB of stack the document was lost entirely — a single ERROR at `1:1`, taking a perfectly good `<cfscript>` block down with it. RustCFML's `runner.cfm` drives its whole suite this way with 624 `<cf_runtest>` tags. **Corpus 722 → 682 error nodes across 143 → 140 files**, with `runner.cfm` and Slatwall's `menu.cfm` (36 nodes) both going to zero and no file moving the other way. Scanner-only: no grammar change, no new parse states in any of the three grammars, no new conflicts.
