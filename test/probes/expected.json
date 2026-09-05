@@ -25,7 +25,7 @@
     "cfscript/array_param_type.cfc": "pass",
     "cfscript/array_return_type.cfc": "pass",
     "cfscript/cfml_template_after_bare_statement.cfc": "fail",
-    "cfscript/commaless_params.cfc": "fail",
+    "cfscript/commaless_params.cfc": "pass",
     "cfscript/debugger_identifier.cfc": "pass",
     "cfscript/empty_struct_literal.cfc": "pass",
     "cfscript/final_member_declaration.cfc": "pass",

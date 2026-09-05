@@ -41,6 +41,7 @@ module.exports = grammar({
     $.java_class_content,
     $._java_block_open,
     $._static_type_prefix,
+    $._parameter_separator,
   ],
 
   extras: ($) => [
@@ -1759,10 +1760,24 @@ module.exports = grammar({
       optional($._initializer),
     ),
 
+    // Lucee, ACF and BoxLang all treat a NEWLINE between parameters as a soft
+    // separator, so the comma may simply be missing. TestBox's `BaseSpec.cfc`
+    // `createMock` relies on it, and mixes the two — three commas, then one
+    // omitted before a line break.
+    //
+    // The separator is an EXTERNAL token because it has to be newline-anchored.
+    // Making the comma merely `optional(',')` does not generate: with a bare
+    // `a b`, "type `a` named `b`" and "two parameters" are both valid readings,
+    // and the resulting conflict (`pattern` / `primary_expression` /
+    // `query_expression` at `( QueryExecute (`) is live at every parameter list
+    // in the language — the shape `CLAUDE.md` records as costing 2.8x. Requiring
+    // a line terminator removes the ambiguity outright: same-line `f( a b )`
+    // keeps its current reading and is untouched.
     formal_parameters: ($) => seq(
       '(',
       optional(seq(
-        commaSep1($._formal_parameter),
+        $._formal_parameter,
+        repeat(seq(choice(',', $._parameter_separator), $._formal_parameter)),
         optional(','),
       )),
       ')',
