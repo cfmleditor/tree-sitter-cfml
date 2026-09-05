@@ -17,7 +17,8 @@ enum TokenType {
     CFML_COMMENT,
     JAVA_CLASS_CONTENT,
     JAVA_BLOCK_OPEN,
-    STATIC_TYPE_PREFIX
+    STATIC_TYPE_PREFIX,
+    PARAMETER_SEPARATOR
 };
 
 void *tree_sitter_cfscript_external_scanner_create() { return NULL; }
@@ -751,7 +752,107 @@ static bool scan_java_or_cfml_word(TSLexer *lexer, const bool *valid_symbols, bo
     return false;
 }
 
+
+// A newline acting as a parameter separator, for a parameter list whose comma
+// was left out — Lucee, ACF and BoxLang all tolerate it, and TestBox's
+// `BaseSpec.cfc` depends on it.
+//
+// Zero-width, like AUTOMATIC_SEMICOLON: `mark_end` fixes the token at the
+// current position and everything past it is lookahead. The line terminator is
+// mandatory, which is what keeps this unambiguous — same-line `f( a b )` is not
+// this construct and must keep whatever reading it already had.
+static bool scan_parameter_separator(TSLexer *lexer) {
+    lexer->result_symbol = PARAMETER_SEPARATOR;
+    lexer->mark_end(lexer);
+
+    bool saw_newline = false;
+    for (;;) {
+        if (lexer->lookahead == '\n' || lexer->lookahead == 0x2028 || lexer->lookahead == 0x2029) {
+            saw_newline = true;
+            skip(lexer);
+            continue;
+        }
+        if (cf_isspace(lexer->lookahead)) {
+            skip(lexer);
+            continue;
+        }
+        break;
+    }
+    if (!saw_newline) return false;
+
+    // What follows has to look like the START OF A PARAMETER, and the check has
+    // to be this strict. A `(` is ambiguous with an arrow function's parameter
+    // list, so this token is valid inside every parenthesised expression — and
+    // a multi-line boolean is the commonest thing in the language:
+    //
+    //     if (
+    //         Len( arguments.name )
+    //         && ( … )          <- a newline, then a token that is not `)` or `,`
+    //     ) {
+    //
+    // Accepting that took `wheels/Controller.cfc` from 0 to 96 error nodes and
+    // `ColdBox`'s `Router.cfc` from 0 to 18. A parameter can only begin with a
+    // letter or `_`, never an operator, a digit or a quote.
+    if (!cf_isalpha(lexer->lookahead) && lexer->lookahead != '_') {
+        return false;
+    }
+
+    // …and CFML's WORD operators are the other half of the same trap, because
+    // they begin with letters: `foo` newline `AND bar` is one expression, not
+    // two parameters. They are excluded by name. A parameter genuinely named
+    // `and`, first on its line with the comma left out, is a shape no corpus
+    // file writes — and `_operator_shaped_name` still covers those names in
+    // every position the grammar reaches normally.
+    {
+        char word[10];
+        unsigned n = 0;
+        while (n < sizeof(word) - 1 && (cf_isalnum(lexer->lookahead) || lexer->lookahead == '_')) {
+            word[n++] = (char)cf_tolower(lexer->lookahead);
+            advance(lexer);
+        }
+        word[n] = '\0';
+        static const char *const OPERATORS[] = {
+            "and", "or", "not", "xor", "eq", "neq", "lt", "gt", "lte", "gte",
+            "is", "isnot", "contains", "mod", "imp", "does", "greater",
+            "less", "equal",
+        };
+        for (unsigned i = 0; i < sizeof(OPERATORS) / sizeof(OPERATORS[0]); i++) {
+            if (strcmp(word, OPERATORS[i]) == 0) return false;
+        }
+    }
+    return true;
+}
+
 bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, const bool *valid_symbols) {
+    // TERMINAL, and first, for the reason #93 documents: this scan consumes
+    // whitespace with `skip` before it can decide, and tree-sitter does not
+    // rewind between functions inside a single scan() call. Letting it fall
+    // through would hand every later branch a lexer already past the newline
+    // they make their own decisions from.
+    // TERMINAL, and first, for the reason #93 documents: this scan consumes
+    // whitespace with `skip` before it can decide, and tree-sitter does not
+    // rewind between functions inside a single scan() call. Falling through
+    // would hand every later branch a lexer already past the newline they make
+    // their own decisions from.
+    //
+    // A `(` is ambiguous with an arrow function's parameter list, so this token
+    // is valid inside an ordinary parenthesised expression too — which is how
+    // the first version of this broke `x = a ? ( b ? 1 : 2 ) : 3`, eating the
+    // space before the `?` and never letting the ternary scan run. Excluding
+    // the competing symbols outright does not work either: at the position this
+    // token actually has to fire, after a parameter default, TERNARY, ELVIS,
+    // ASI and LOGICAL_OR are ALL live. So the ternary gets its turn here
+    // instead, once the separator has declined.
+    if (valid_symbols[PARAMETER_SEPARATOR]) {
+        if (scan_parameter_separator(lexer)) {
+            return true;
+        }
+        if ((valid_symbols[TERNARY_QMARK] || valid_symbols[ELVIS_OPERATOR]) &&
+            lexer->lookahead == '?') {
+            return scan_ternary_qmark(lexer);
+        }
+        return false;
+    }
     // `java_class_content` is only reachable straight after that opener, a
     // state in which no other external token is valid — so AUTOMATIC_SEMICOLON
     // being valid alongside it means the parser is in error recovery, where

@@ -4089,3 +4089,166 @@ myNumb[4] = "4";
         (number))
       (string
         (string_fragment)))))
+
+===================================
+comma-less function parameters (#49)
+===================================
+
+component {
+	function f(
+		boolean a = false
+		boolean b = true
+	) {}
+	function g(
+		required string name
+		numeric count = 5
+	) {}
+	function h(
+		string className,
+		any object,
+		boolean clearMethods = false
+		boolean callLogging = true
+	) {}
+	function i(
+		x,
+		y
+	) {}
+	function j(x, y) {}
+	function k() {}
+	function l(
+		x,
+	) {}
+	function m() {
+		if (
+			Len(x)
+			&& (
+				y
+			)
+		) { z(); }
+		if (
+			foo
+			AND bar
+		) { z(); }
+		var t = a ? ( b ? 1 : 2 ) : 3;
+		var u = (v) => v * 2;
+	}
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (assignment_pattern
+            (identifier)
+            (false))
+          (parameter_type)
+          (assignment_pattern
+            (identifier)
+            (true)))
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier)
+          (parameter_type)
+          (assignment_pattern
+            (identifier)
+            (number)))
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (parameter_type)
+          (identifier)
+          (parameter_type)
+          (identifier)
+          (parameter_type)
+          (assignment_pattern
+            (identifier)
+            (false))
+          (parameter_type)
+          (assignment_pattern
+            (identifier)
+            (true)))
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (parameter_type
+            (identifier))
+          (parameter_type
+            (identifier)))
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (parameter_type
+            (identifier))
+          (parameter_type
+            (identifier)))
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (parameter_type
+            (identifier)))
+        (statement_block))
+      (function_declaration
+        (identifier)
+        (formal_parameters)
+        (statement_block
+          (if_statement
+            (parenthesized_expression
+              (binary_expression
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (identifier)))
+                (parenthesized_expression
+                  (identifier))))
+            (statement_block
+              (expression_statement
+                (call_expression
+                  (identifier)
+                  (arguments)))))
+          (if_statement
+            (parenthesized_expression
+              (binary_expression
+                (identifier)
+                (identifier)))
+            (statement_block
+              (expression_statement
+                (call_expression
+                  (identifier)
+                  (arguments)))))
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (ternary_expression
+                (identifier)
+                (parenthesized_expression
+                  (ternary_expression
+                    (identifier)
+                    (number)
+                    (number)))
+                (number))))
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (arrow_function
+                (formal_parameters
+                  (parameter_type
+                    (identifier)))
+                (binary_expression
+                  (identifier)
+                  (number))))))))))

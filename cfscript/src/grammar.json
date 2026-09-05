@@ -8074,16 +8074,16 @@
               "type": "SEQ",
               "members": [
                 {
-                  "type": "SEQ",
-                  "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "_formal_parameter"
-                    },
-                    {
-                      "type": "REPEAT",
-                      "content": {
-                        "type": "SEQ",
+                  "type": "SYMBOL",
+                  "name": "_formal_parameter"
+                },
+                {
+                  "type": "REPEAT",
+                  "content": {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "CHOICE",
                         "members": [
                           {
                             "type": "STRING",
@@ -8091,12 +8091,16 @@
                           },
                           {
                             "type": "SYMBOL",
-                            "name": "_formal_parameter"
+                            "name": "_parameter_separator"
                           }
                         ]
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_formal_parameter"
                       }
-                    }
-                  ]
+                    ]
+                  }
                 },
                 {
                   "type": "CHOICE",
@@ -10468,6 +10472,10 @@
     {
       "type": "SYMBOL",
       "name": "_static_type_prefix"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_parameter_separator"
     }
   ],
   "inline": [
