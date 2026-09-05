@@ -130,7 +130,7 @@ with bare reserved words.
 
 `<cfprocessingdirective>` can be used with or without a body. When used without a closing tag, the grammar treats it as a paired tag and consumes content until EOF or another implicit close trigger. Use self-closing syntax (`/>`) for bodyless usage.
 
-`<cfsetting>` is now a void tag — `</cfsetting>` never appears in the 12,549-file corpus, while `<cfsetting …>` appears 336 times — so it no longer swallows the rest of the template.
+`<cfsetting>` is now a void tag — `</cfsetting>` never appears in the 15,083-file corpus, while `<cfsetting …>` appears 417 times — so it no longer swallows the rest of the template.
 
 ### Dynamic tag names not fully evaluated
 
