@@ -1,7 +1,7 @@
 # Failing patterns
 
 An assessment of every ERROR / MISSING node the three grammars produce over the
-real-world corpus, as of `82cc7dc`. Method and corpus are described in
+real-world corpus, as of `b60470f`. Method and corpus are described in
 [`../CORPUS.md`](../CORPUS.md); reproduce with:
 
 ```bash
@@ -9,28 +9,40 @@ npm run corpus:fetch && npm run scan corpus > scan.txt
 npm run corpus:report -- --from scan.txt
 ```
 
-This is the second baseline. The first, at `d06ff66`, is what the fixes under
-[What has been fixed](#what-has-been-fixed) were argued from. Two things about
-that document turned out to be wrong in ways worth carrying forward; both are
-described under [How to read these numbers](#how-to-read-these-numbers) rather
-than quietly corrected.
+This is the **third** baseline, refreshed at `b60470f`. The second was `82cc7dc`
+and the first `d06ff66`; the fixes under
+[What has been fixed](#what-has-been-fixed) were argued from those. Two things
+about the first document turned out to be wrong in ways worth carrying forward;
+both are described under
+[How to read these numbers](#how-to-read-these-numbers) rather than quietly
+corrected.
+
+**The figures below drifted badly before this refresh, and that is itself the
+lesson.** The `82cc7dc` numbers described a 12,549-file corpus; the corpus is
+now 15,083 files, and eight fixes have landed since. The three category totals
+had come to sum to 749 nodes against an actual 653. A stale baseline is worse
+than none, because it reads as current — every number in
+[The numbers](#the-numbers) is re-derived from a fresh scan, and the category
+totals are recomputed rather than adjusted.
 
 ## The numbers
 
-| | |
-|---|---|
-| Files scanned | 12,549 |
-| Files parsed with no error at all | 12,388 (**98.7%**) |
-| ERROR / MISSING nodes | 766 |
-| Files carrying at least one | 161 |
-| …of which carry exactly one | 92 |
+| | `82cc7dc` | **`b60470f`** |
+|---|---|---|
+| Files scanned | 12,549 | **15,083** |
+| Files parsed with no error at all | 12,388 (98.7%) | **14,957 (99.2%)** |
+| ERROR / MISSING nodes | 766 | **653** |
+| Files carrying at least one | 161 | **126** |
+| …of which carry exactly one | 92 | **69** |
 
-Split by grammar: **cfscript 484**, **cfml 281**, **cfquery 1**. The `cfquery`
-figure has been 1 or 0 since bitwise operators landed — 2,247 `<cfquery>` bodies
-and a single failing construct in all of them.
+Split by grammar: **cfscript 398**, **cfml 254**, **cfquery 1**. The `cfquery`
+figure has been 1 or 0 since bitwise operators landed — a single failing
+construct across every `<cfquery>` body in the corpus.
 
-Still concentrated, though less than before: the top 10 files hold 445 nodes,
-58% of the total.
+**More concentrated than before, not less:** the top 10 files hold **406 nodes,
+62%** of the total, and two files alone (`PerformanceSuite.cfc` 185,
+`debug/Simple.cfc` 71) hold 39%. Both are in the "not grammar defects" category
+below, so the genuinely addressable remainder is smaller than 653 suggests.
 
 ## How to read these numbers
 
@@ -57,21 +69,42 @@ several small ones. `DirectoryCreate.cfc` went 5 → 6 that way, while its first
 error moved from `1:1` to `13:11`. Judge a change by per-file totals, and reduce
 any suspect line to a one-liner before concluding anything.
 
-## Not grammar defects — 271 nodes, 8 files (35%)
+## Not grammar defects — 265 nodes, 9 files (41%)
 
-Listed first so they do not distort the rest.
+Listed first so they do not distort the rest. **This category has grown from 35%
+to 41% of all failures**, not because more bad input appeared but because eight
+real gaps were fixed out from under it.
 
 | Nodes | Files | Cause | Example |
 |---|---|---|---|
-| 199 | 2 | Bare `#` inside a cfscript string | `md.append( "# ColdBox Performance Analysis Report" )` — CFML needs `##`, and the engines reject this too |
-| 43 | 5 | JavaScript served from a `.cfm` template | Lucee's `context/form.cfm`, Mura's `*.js.cfm` — no `<script>` element anywhere, and nothing marks the content as JavaScript |
-| 29 | 1 | Generator template with placeholders | cfwheels' `basic-model.cfc`, containing `{{ModelName}}` and `{{#associations}}` |
+| 185 | 1 | Bare `#` inside a cfscript string | `md.append( "# ColdBox Performance Analysis Report" )` — CFML needs `##`. `PerformanceSuite.cfc`, which cascades from line 1 |
+| 44 | 4 | Generator template with placeholders | cfwheels' `basic-model.cfc` (`{{ModelName}}`), its vscode-ext `controller.cfc` and `view-index.cfm` (`${modelName}`), Mura's `web.config.template.cfm` |
+| 36 | 4 | JavaScript served from a `.cfm` template | Lucee's `context/form.cfm`, Mura's `*.js.cfm` — no `<script>` element anywhere |
 
-`PerformanceSuite.cfc` alone is 198 of the 199. JavaScript inside a real
+`PerformanceSuite.cfc` was 198 nodes at the last baseline and is 185 now; the
+file did not change, the parser's recovery did. JavaScript inside a real
 `<script>` element parses fine — `test/probes/cfml/script_block_js.cfm` covers
 that.
 
-## Genuine gaps — 174 nodes, 27 files
+The template row grew from 29 nodes in 1 file to 44 in 4. Three of those four
+files sit under a `templates/` directory and are not CFML at all. Beware the
+obvious grep: `ServerService.cfc`, `LargeMethod.cfc` and Preside's
+`ScaffoldingService.cfc` all contain `${…}` **inside string literals** and are
+ordinary CFML — a first pass at re-deriving this table counted them here
+incorrectly.
+
+## Genuine gaps — 176 nodes, 27 files
+
+**Re-verified at `b60470f` only in part, and it matters which.** The two largest
+rows were re-counted exactly against a fresh scan and are unchanged: CSS in
+`<style>` (71, `debug/Simple.cfc`) and the dotted key in a struct literal (30,
+`RelationshipGuidanceTest.cfc`). The two dynamic-tag rows are **carried forward
+unverified** — their counts come from signature-matching the *source*, which a
+grep over error text cannot reproduce, so re-deriving them needs the same manual
+pass that produced them. Treat 48 and 19 as the last measured values, not as
+confirmed-current. The three small rows (2, 4, 2) are each pinned by a probe and
+all three probes still fail, so those constructs are certainly still open.
+
 
 | Nodes | Files | Pattern | Example | Probe |
 |---|---|---|---|---|
@@ -127,10 +160,16 @@ scanner's tag stack, so all three are scanner work rather than grammar rules.
 `<style>` all parse individually, and the shortest failing extract is 20 lines
 of its stylesheet — whatever the trigger is, it emerges from accumulation.
 
-## What is left over — 304 nodes, 126 files
+## What is left over — ~212 nodes, ~90 files
 
-The remainder resists signature-matching, and 81 of those 126 files carry a
-single node. Spot-checking finds no further cluster: they are individually odd
+**Computed as a residual, not measured directly:** 653 total − 265 not-grammar
+defects − 176 genuine gaps = 212 nodes, and 126 files − 9 − 27 = 90 files. It
+inherits whatever error is in the genuine-gaps rows above, so read it as an
+order of magnitude rather than a count. The previous baseline recorded 304 nodes
+across 126 files.
+
+The remainder resists signature-matching, and **69 of the 126 failing files carry
+a single node** (92 of 161 at the last baseline). Spot-checking finds no further cluster: they are individually odd
 constructs, plus cascades whose triggers are already listed above.
 
 One worked example, and it is worth keeping because the worked example was
@@ -170,6 +209,22 @@ Since the `d06ff66` baseline, in rough order of value delivered:
 | Word-shaped operator as a parameter name ([#50](https://github.com/cfmleditor/tree-sitter-cfml/issues/50)) | 1 | 2 nodes, the affected file to zero. A shared `_operator_shaped_name` rule aliased to `identifier` in the parameter-name slot of both grammars. No new conflicts and **one** extra state per grammar |
 | `queryExecute("` infinite loop | — | not a node count: the parser hung forever |
 | Heap over-read in the scanner's `deserialize` ([#57](https://github.com/cfmleditor/tree-sitter-cfml/issues/57)) | — | not a node count either: the parser **segfaulted**. Zero corpus movement (803 nodes before and after, byte-identical), because every input that reached it died rather than reporting errors |
+| Function-listener callback `f():cb` ([#87](https://github.com/cfmleditor/tree-sitter-cfml/issues/87)) | 1 | 22 nodes; `FunctionListener.cfc` 19 → 2. Also fixed two *silently wrong* trees the error count could not see |
+| Deep run of unpaired custom tags ([#55](https://github.com/cfmleditor/tree-sitter-cfml/issues/55)) | 3 | 40 nodes; `runner.cfm` and Slatwall's `menu.cfm` (36) both to zero. Scanner-only, **no new parse states** |
+| Comma-less function parameters ([#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49)) | 11 | 15 nodes across TestBox, ColdBox, BoxLang, CommandBox, Preside and RustCFML — far wider than the issue's one file |
+| Non-identifier struct key in write position ([#86](https://github.com/cfmleditor/tree-sitter-cfml/issues/86)) | 4 | 14 nodes. The cause was the `number` token out-lexing `.`, not the property rule |
+| `java:` / `cfml:` prefix on a static call ([#93](https://github.com/cfmleditor/tree-sitter-cfml/issues/93)) | 1 | 0 nodes — it parsed without error and *wrongly*, as a JS label. Found by tree-shape diff, invisible to the scan |
+| Ordered-struct literals `${…}` / `$[…]` ([#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80)) | 1 | 4 nodes — **open in [#107](https://github.com/cfmleditor/tree-sitter-cfml/pull/107)**, not yet merged |
+
+**Three of these were filed with a control that did not hold.** [#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49),
+[#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80) and
+[#86](https://github.com/cfmleditor/tree-sitter-cfml/issues/86) each named a
+form that supposedly parsed, proving the gap was narrow. In each case the
+"control" produced an **error-free but wrong tree** — `$[ x: 1 ]` was a subscript
+on a variable named `$`, and #49's evidence came from parsing a `<cfscript>`
+block with the `cfml` grammar, where the body is opaque and literal garbage
+passes too. Since neither the scan nor the probes assert on tree *shape*, a
+control has to be checked by reading the tree, not by the absence of an error.
 
 ## Cost and risk of what remains
 
@@ -350,8 +405,11 @@ one-line `choice` arms with no measurable effect.
 
 1. **Nothing here is now clearly worth the risk.** The largest genuine gap is 71
    nodes in one file, and the two scanner clusters are 67 nodes between them.
-   Against 12,549 files at 98.7% clean, what remains is maintenance rather than
-   a backlog.
+   Against **15,083 files at 99.2% clean**, what remains is maintenance rather
+   than a backlog — and more so than at the last baseline, since the
+   not-grammar-defect share has risen from 35% to **41%** as real gaps were
+   fixed out from under it. Two files, `PerformanceSuite.cfc` (185) and
+   `debug/Simple.cfc` (71), now hold 39% of every remaining node.
 2. **Dotted keys in struct literals is no longer the recommendation** it was at
    the start of this baseline. It is cheap to write and was written, but the one
    conflict it needs is live at every member access and costs 1.8× on cfscript
