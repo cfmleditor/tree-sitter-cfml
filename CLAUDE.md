@@ -122,7 +122,7 @@ Three layers, each catching what the one above misses:
 
 - `cf*/test/corpus/` — the committed expectations. `npm test` runs them.
 - `test/probes/` — minimal reductions of constructs found in real code, with their current pass/fail status in `test/probes/expected.json`. `npm run probe` fails on drift **in either direction**, so a gap closing is as visible as a regression.
-- the real-world corpus (`npm run corpus:fetch`) — 14,974 files from public CFML projects, kept in `~/corpus` when that exists. Not in CI; run it by hand before and after a grammar change and diff the two scans. Three changes in the last round looked self-contained, passed the test suite, and were only caught here.
+- the real-world corpus (`npm run corpus:fetch`) — 15,083 files from public CFML projects, kept in `~/corpus` when that exists. Not in CI; run it by hand before and after a grammar change and diff the two scans. Three changes in the last round looked self-contained, passed the test suite, and were only caught here.
 
 ### Bindings (`bindings/`)
 
