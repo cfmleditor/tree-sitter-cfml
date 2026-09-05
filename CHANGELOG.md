@@ -1,5 +1,21 @@
 # Changelog
 
+## [Unreleased]
+
+### cfscript
+- **Support comma-less function parameters** — `function f( boolean a = false ⏎ boolean b = true )` ([#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49)). Lucee, ACF and BoxLang all treat a newline between parameters as a soft separator; TestBox's `BaseSpec.cfc` `createMock` mixes the two, three commas then one omitted before a line break. The result is the same tree as the comma form. **+34 parse states, no new conflicts, `cfscript` only. Corpus 682 → 667 error nodes across 140 → 130 files — 11 files improved, none regressed**, and the tree-shape diff reports **zero** changed files in both grammars.
+
+  **The issue's premise was wrong, and the cost rating with it.** #49 was filed as "the rule already exists and is tested in `common/define-grammar.js`, so this is porting, not designing" and rated Low complexity on that basis. That evidence came from parsing a `<cfscript>` block with the `cfml` grammar — which keeps script bodies opaque as `cf_script_content`, so literal garbage "passes" the same way. Where that copy of the rules is genuinely reachable (`<cfset f = function(…){}>` and `#…#`, both of which correctly reject garbage) it failed identically, and the two rule definitions were character-identical. Nothing existed to port.
+
+  **It cannot be a grammar rule.** Making the comma `optional(',')` does not generate: with a bare `a b`, "type `a` named `b`" and "two parameters" are both valid readings, and the resulting conflict — `pattern` / `primary_expression` / `query_expression` at `( QueryExecute (` — is live at **every parameter list in the language**, the shape `CLAUDE.md` records as costing 2.8×. Anchoring the separator to a newline removes the ambiguity outright: same-line `f( a b )` keeps whatever reading it had.
+
+  So `_parameter_separator` is external and zero-width, modelled on `_automatic_semicolon`. Two things cost a cycle each and are commented at the site:
+
+  - **The dispatcher branch must be first and terminal**, because it consumes whitespace with `skip` before it can decide and tree-sitter does not rewind between functions inside one `scan()` call — the lesson from [#93](https://github.com/cfmleditor/tree-sitter-cfml/issues/93). But a `(` is ambiguous with an arrow function's parameter list, so the token is valid inside *every* parenthesised expression, and the first version ate the space before a `?` and broke `x = a ? ( b ? 1 : 2 ) : 3`. Excluding the competing symbols outright does not work either: at the position the separator actually has to fire, after a parameter default, `TERNARY`, `ELVIS`, `ASI` and `LOGICAL_OR` are **all** live. The ternary gets its turn inside the branch instead.
+  - **The "next token" test has to be tight.** Accepting anything that was not `)` or `,` fired the separator on multi-line booleans and took `wheels/Controller.cfc` from **0 to 96** error nodes and ColdBox's `Router.cfc` from 0 to 18 — the corpus scan caught both. A parameter can only begin with a letter or `_`, so that is now required; and CFML's **word** operators (`AND`, `OR`, `EQ`, `CONTAINS`, …) begin with letters too, so they are excluded by name.
+
+  `common/define-grammar.js` is deliberately unchanged, on the [#87](https://github.com/cfmleditor/tree-sitter-cfml/issues/87) precedent: `injections.scm` routes every script body to the `cfscript` grammar, which covers TestBox, ColdBox, BoxLang, CommandBox, Preside and RustCFML — every file this fixed. Extending to `common/` would buy only `<cfset f = function(a⏎b){}>` at the cost of landing in two grammars at once.
+
 ## [0.26.34]
 
 ### cfml / cfquery
