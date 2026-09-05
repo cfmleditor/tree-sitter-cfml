@@ -3981,3 +3981,111 @@ v = cfml::foo();
           (static_chain)
           (property_identifier))
         (arguments)))))
+
+===================================
+numeric struct key in write position (#86)
+===================================
+
+myNumb.4 = "4";
+myNumb.4b = "4";
+myNumb.4.5 = "x";
+a.b.4 = 1;
+var myNumb.4 = 1;
+x = myNumb.4;
+x = .5;
+x = 1 + .5;
+f(.5);
+x = [.5, .25];
+x = -.0123456789;
+x = .5e3;
+x = 1.5;
+myNumb[4] = "4";
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (string
+        (string_fragment))))
+  (expression_statement
+    (assignment_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (string
+        (string_fragment))))
+  (expression_statement
+    (assignment_expression
+      (member_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (property_identifier))
+      (string
+        (string_fragment))))
+  (expression_statement
+    (assignment_expression
+      (member_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (property_identifier))
+      (number)))
+  (variable_declaration
+    (variable_declarator
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (number)
+        (number))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (number))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (array
+        (number)
+        (number))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (unary_expression
+        (unary_operator)
+        (number))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (subscript_expression
+        (identifier)
+        (number))
+      (string
+        (string_fragment)))))

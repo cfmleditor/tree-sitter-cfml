@@ -1,5 +1,22 @@
 # Changelog
 
+## [Unreleased]
+
+### cfscript
+- **Fix a numeric (or otherwise non-identifier) struct key by dot notation in write position** — `myNumb.4 = "4";` ([#86](https://github.com/cfmleditor/tree-sitter-cfml/issues/86), Lucee `StructToSorted.cfc` and `structsort.cfc`). **Corpus 682 → 668 error nodes across 140 → 136 files**, +8 parse states (5272 → 5280), no new conflicts, and the tree-shape diff reports **zero** changed files in both grammars.
+
+  **The cause is not the property rule, which is what both the issue and `LIMITATIONS.md` had assumed.** `identifier` is a permissive negated character class that matches `4` and `4b` perfectly well — that is why the read position always worked. The culprit is the **number** token: `.4` is a legal leading-dot float, and as the longer match it out-lexed `.` followed by a property wherever a number was *also* valid. At a statement head the `tag_statement` reading keeps a number valid, and that is the entire difference: `var myNumb.4 = 1` and `a.b.4 = 1` already parsed on master, because `var` and the first `.` each commit the parser and remove the tag reading.
+
+  **Leading-dot floats are real CFML and could not simply be dropped** — `x = .5` parses today, Mura writes `<cfset variables.instance.imageQuality=.95 />`, and Lucee has a ticket (`LDEV4480`) about treating `.0` as a number. So the fix splits that one form out of the `number` token into `token(prec(-1, …))`. Explicit lexical precedence is weighed before match length, so `.` wins wherever `.` is valid — which is exactly member access, after a complete expression — while the float still wins in every position a number literal can appear: `x = .5`, `1 + .5`, `f(.5)`, `[.5, .25]`, `-.0123456789`, `.5e3`. All of those are pinned by the corpus test and the probe.
+
+  **This is the opposite of the move that failed here before.** `.claude/skills/parse-gap/SKILL.md` records an earlier attempt at this same construct with a single `token()` covering the ambiguous prefix, which measured five times worse and broke `f( a.b )`; that note is updated with the lesson — narrow the token that is over-reaching rather than add one that covers both.
+
+  **It also fixes a silent misparse neither the issue nor the docs mentioned.** `myNumb.4.5 = "x"` was error-free and wrong on master, reading `myNumb` as a **tag name** and `4.5` as a member expression of the number `4`. No scan or probe could see that, since both assert on error nodes.
+
+  Four files go to zero: the two the issue names, plus `cfwheels`' `global/plugins.cfm` and Lucee's `LDEV1656/test.cfm`. One file moves the other way — `PerformanceSuite.cfc` 184 → 185 — and it is the file `docs/FAILING-PATTERNS.md` already documents as invalid CFML (a bare `#` where the language needs `##`) that cascades from line 1 both before and after; the change only shifts where recovery gives up.
+
+  `common/define-grammar.js` is deliberately unchanged. It carries the same number rule, but the `cfml` grammar does not have the bug — `<cfset myNumb.4 = "4">` parses on master, because a tag body commits the parser and the ambiguous statement head never arises. Editing `common/` would land in two grammars for no gain.
+
 ## [0.26.34]
 
 ### cfml / cfquery

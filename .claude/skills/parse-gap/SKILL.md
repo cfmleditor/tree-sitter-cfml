@@ -193,6 +193,17 @@ the same trick that made array return types free but out-lexes `identifier`
 wherever it is valid. Tried on the dotted struct key, it was five times worse
 again and broke `f( a.b )`.
 
+That one was eventually fixed by the opposite move, which is the transferable
+lesson: **narrow the token that is winning rather than add one that covers
+both.** `myNumb.4 = 1` failed because `.4` is a legal leading-dot float and, as
+the longer match, out-lexed `.` followed by a property — the property rule was
+never the problem, since `identifier` already matches `4`. Splitting just that
+form out at `token(prec(-1, …))` makes it lose to `.` wherever `.` is valid and
+win everywhere a number literal can actually appear. +8 states, no conflicts,
+corpus 682 → 668 nodes ([#86](https://github.com/cfmleditor/tree-sitter-cfml/issues/86)).
+When a token is out-lexing something, ask which of the two is over-reaching
+before reaching for a bigger one.
+
 This is a local gate, not a CI one: the benchmark needs the 100 MB corpus, and
 shared runners are too noisy for it — `bench.js` will tell you when the machine
 is too busy to conclude anything.
