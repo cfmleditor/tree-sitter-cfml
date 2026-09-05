@@ -39,6 +39,7 @@
     "cfscript/mixed_case_keywords.cfc": "pass",
     "cfscript/new_dotted_java_path.cfc": "pass",
     "cfscript/no_semicolon_before_brace.cfc": "pass",
+    "cfscript/numeric_struct_key_write.cfc": "pass",
     "cfscript/param_typed_assignment.cfc": "pass",
     "cfscript/script_tag_call.cfc": "pass",
     "cfscript/spaced_param_defaults.cfc": "pass",

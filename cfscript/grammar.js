@@ -1529,18 +1529,29 @@ module.exports = grammar({
 
       const decimalLiteral = choice(
         seq(decimalIntegerLiteral, '.', optional(decimalDigits), optional(exponentPart)),
-        seq('.', decimalDigits, optional(exponentPart)),
         seq(decimalIntegerLiteral, exponentPart),
         decimalDigits,
       );
 
-      return token(choice(
-        hexLiteral,
-        decimalLiteral,
-        binaryLiteral,
-        octalLiteral,
-        bigintLiteral,
-      ));
+      // `.95` is real CFML — Mura writes `imageQuality=.95`, and Lucee has a
+      // ticket (LDEV4480) about treating `.0` as a number — so it cannot simply
+      // be dropped. But as part of the main `number` token it out-lexes `.`
+      // followed by a property, because it is the longer match: `myNumb.4 = 1`
+      // lexed `.4` as a float and the assignment died (#86). Splitting it into
+      // its own token at prec -1 makes `.` win wherever `.` is ALSO valid —
+      // i.e. after a complete expression, which is exactly member access — while
+      // leaving it to win wherever `.` is not valid, which is every position a
+      // number literal actually appears (`x = .5`, `1 + .5`, `f(.5)`, `[.5]`).
+      return choice(
+        token(choice(
+          hexLiteral,
+          decimalLiteral,
+          binaryLiteral,
+          octalLiteral,
+          bigintLiteral,
+        )),
+        token(prec(-1, seq('.', decimalDigits, optional(exponentPart)))),
+      );
     },
 
     // 'undefined' is syntactically a regular identifier in JavaScript.

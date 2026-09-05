@@ -2137,6 +2137,11 @@
     "fields": {}
   },
   {
+    "type": "number",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "object",
     "named": true,
     "fields": {},
@@ -3761,10 +3766,6 @@
   {
     "type": "null",
     "named": false
-  },
-  {
-    "type": "number",
-    "named": true
   },
   {
     "type": "numeric",
