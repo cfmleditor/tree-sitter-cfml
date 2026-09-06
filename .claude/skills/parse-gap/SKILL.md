@@ -208,6 +208,45 @@ This is a local gate, not a CI one: the benchmark needs the 100 MB corpus, and
 shared runners are too noisy for it — `bench.js` will tell you when the machine
 is too busy to conclude anything.
 
+### Benchmark with a control, and do not trust a small n
+
+`bench.js` reports a spread, but the spread does not bound the error. Two
+binaries built from *different* sources differ in code layout and alignment, and
+that alone shifts the number by more than most grammar changes do. A single
+before/after run measures that as readily as it measures your change.
+
+**Use a grammar you did not touch as an internal control.** This repo makes that
+easy: most changes land in one grammar, and `git diff` over `cf*/src/parser.c`
+will tell you which tables are byte-identical between the two commits — a
+`patch_version` line is the only difference a release introduces, and it does not
+affect parsing. Bench all three. A control's true delta is zero, so whatever it
+reads is your measurement bias, and the subject's real cost is its delta *minus*
+that bias.
+
+Then alternate, do not run A-then-B: swap the compiled `.node` addon between runs
+rather than rebuilding (a rebuild between measurements adds a variable), order
+the runs ABBA so linear drift cannot favour either side, and take the **minimum**
+across runs rather than the mean — noise only ever adds time.
+
+**n matters more than it looks.** Measuring the cumulative cost of one session's
+grammar work (+244 cfscript states, +4.8% table growth), the answer moved every
+time the sample grew:
+
+| n per config | control 1 | control 2 | subject | conclusion it supported |
+|---|---|---|---|---|
+| 4 | −5.4% | −1.5% | +1.3% | "no detectable cost" |
+| 8 | −2.1% | −1.5% | +1.3% | "about 3 points" |
+| 12 | −2.1% | −1.0% | +0.6% | **"about 2 points, and still falling"** |
+
+The controls converged and the subject's apparent cost halved. At n=4 the two
+controls disagreed by 3.9 points, which is what "the noise floor swallows this"
+actually looks like; by n=12 they agreed within 1.1, which is the resolution you
+can honestly claim. Minima converge from above, and the slowest to converge is
+whichever grammar takes longest per run — so a figure from a small n is an upper
+bound, not an answer. **Do not report a number from fewer than about 12 runs per
+side, and report the control readings alongside it** so the reader can see the
+bias you subtracted.
+
 Use `bench` rather than timing `npm run scan`: scan time moves with the error
 count, so a change that fixes parse errors reads as a huge speedup or slowdown
 that has nothing to do with the parser.
