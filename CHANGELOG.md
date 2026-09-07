@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.35]
 
 ### cfscript
 - **Fix a numeric (or otherwise non-identifier) struct key by dot notation in write position** — `myNumb.4 = "4";` ([#86](https://github.com/cfmleditor/tree-sitter-cfml/issues/86), Lucee `StructToSorted.cfc` and `structsort.cfc`). **Corpus 682 → 668 error nodes across 140 → 136 files**, +8 parse states (5272 → 5280), no new conflicts, and the tree-shape diff reports **zero** changed files in both grammars.
