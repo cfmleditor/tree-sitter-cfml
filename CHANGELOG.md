@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### cfml
+- **Fix a `<` that opens a run of template text** — `<- back` as the first non-whitespace on its line, `[<a href="x"><< Go Back</a>]` straight after a tag ([#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114), ContentBox `filelisting.cfm`). **Corpus 648 → 640 error nodes across 124 → 121 files**, no change to `STATE_COUNT` in either grammar (scanner-only; all three `parser.c` are byte-identical), and the tree-shape diff reports **zero** changed files. Probe `cfml/lt_at_line_start.cfm` added, beside the existing mid-line `lt_in_text.cfm`.
+
+  **Position on the line was never the real rule.** The issue reduced it to "first thing on a line", and the corpus says the condition is broader: a `<` that opens a *text run*, which is equally true straight after a tag. `scan_html_text` calls a `<` text when no name, `/`, `!`, `?` or `#` follows it — the rule browsers apply — but it refuses to apply that test until it has already collected some text, and **leading whitespace deliberately does not count**, because emitting it would put a whitespace-only `html_text` node in front of every indented tag in the corpus. So `<p> <- back` reached the test and `<p>⏎\t<- back` did not.
+
+  **The peek cannot happen where the decision is made.** Looking past the `<` consumes it, this scanner cannot rewind, and a `false` return then leaves the dispatcher's own branches looking at the character *after* the `<` — the failure mode already recorded in `.claude/skills/parse-gap/references/scanner.md`, which broke every CFML comment in the corpus the first time a bare `<` was treated as text. The fix moves the decision to the dispatcher's `case '<'`, where the `<` is consumed either way: if no tag can start there, the text scan is handed the `<` it has already eaten and carries on. Nothing in the whitespace handling changes, which is what keeps the tree diff at zero.
+
+  Five corpus files improve: ColdBox's TaskManager sample, cbsecurity's `firewall.cfm` (three `<< Global Validator >>` glyphs), a Slatwall client-side validator, and Lucee's `form.cfm` / `formtag-form.cfm` by one node each. None regressed. The construct reaches `cfquery` as well, since `common/scanner.h` backs both grammars; the one `[cfquery]` error in the corpus is unchanged.
+
 ### cfscript
 - **Fix a tag island after a statement that omits its semicolon** — `thread name="t" { … }` followed by a ` ``` ` block ([#118](https://github.com/cfmleditor/tree-sitter-cfml/issues/118), Lucee `LDEV4157.cfm` and `test4157.cfc`). **Corpus 654 → 648 error nodes across 127 → 124 files**, no change to `STATE_COUNT` (scanner-only; `parser.c`, `grammar.json` and `node-types.json` are byte-identical), and the tree-shape diff reports **zero** changed files in both grammars. Probes `cfscript/cfml_template_after_bare_statement.cfc` flips to `pass` and `cfscript/tag_island_after_thread.cfc` is added.
 

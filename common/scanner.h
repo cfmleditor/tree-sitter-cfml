@@ -611,8 +611,11 @@ static void skip_cfml_comment_body(TSLexer *lexer) {
     }
 }
 
+// `lt_consumed` means the caller has already advanced past a `<` that belongs
+// to this text run, having decided from the character after it that no tag can
+// start there. See the dispatcher's `case '<'`.
 static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context,
-                           const bool *valid_symbols, unsigned count) {
+                           const bool *valid_symbols, unsigned count, bool lt_consumed) {
     // Check if we're inside a script/style tag
     bool in_script_style = false;
     if (scanner->tags.size > 0) {
@@ -631,7 +634,7 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
 
     bool saw_any = false;
 
-    if (in_script_style) {
+    if (in_script_style && !lt_consumed) {
         // Inside script/style: consume until #, <cf, </cf, or </script|</style
         lexer->mark_end(lexer);
         while (lexer->lookahead != 0 && lexer->lookahead != '#') {
@@ -707,6 +710,13 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
         VS(valid_symbols, SELF_CLOSING_TAG_DELIMITER, count) ||
         VS(valid_symbols, CF_SELF_CLOSING_TAG_DELIMITER, count) ||
         VS(valid_symbols, CF_SELF_CLOSING_VOID_TAG_DELIMITER, count);
+
+    if (lt_consumed) {
+        // The `<` the caller consumed is the first character of this token.
+        lexer->mark_end(lexer);
+        saw_text = true;
+        saw_any = true;
+    }
 
     while (lexer->lookahead != 0 && lexer->lookahead != '{' &&
            lexer->lookahead != '}' && lexer->lookahead != '#') {
@@ -1949,7 +1959,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
     }
 
 
-    if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(scanner, lexer, is_cfquery_context, valid_symbols, count)) {
+    if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(scanner, lexer, is_cfquery_context, valid_symbols, count, false)) {
         return true;
     }
 
@@ -1964,6 +1974,28 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             if (VS(valid_symbols, CFML_COMMENT, count) && lexer->lookahead == '!') {
                 advance(lexer);
                 return scan_comment(lexer, is_cfquery_context);
+            }
+
+            // A `<` that opens a run of template text — `<- back` written as
+            // the first non-whitespace on its line, or `<< Go Back` straight
+            // after a tag. `scan_html_text` applies
+            // exactly this test mid-line and calls such a `<` text, but it
+            // refuses to peek past a `<` it has not already covered with text:
+            // peeking consumes the character, this scanner cannot rewind, and
+            // a `false` return would then leave the branches below looking at
+            // the character *after* the `<`. So the decision lands here
+            // instead, where the `<` is consumed either way and the text scan
+            // can simply be told to keep it. Leading whitespace does not count
+            // as text — deliberately, since emitting it would put a
+            // whitespace-only `html_text` in front of every indented tag — and
+            // that is what made the same `<` text mid-line and a tag at the
+            // start of a line.
+            if (VS(valid_symbols, HTML_TEXT, count) && lexer->lookahead != 0 &&
+                !cf_isalpha(lexer->lookahead) && lexer->lookahead != '/' &&
+                lexer->lookahead != '!' && lexer->lookahead != '?' &&
+                lexer->lookahead != '#' &&
+                scan_html_text(scanner, lexer, is_cfquery_context, valid_symbols, count, true)) {
+                return true;
             }
 
             if (implicit_cf_end_tag_valid(valid_symbols, count)) {
