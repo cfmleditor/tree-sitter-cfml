@@ -1362,6 +1362,47 @@ common: deeply nested tag chains
           (cf_tag_name))))))
 
 ================================================================================
+common: a `<` that opens a run of template text
+================================================================================
+
+<p>
+	<- back
+</p>
+[<a href="x"><< Go Back</a>]
+<p>
+	<= 3 and <5 too
+</p>
+
+--------------------------------------------------------------------------------
+
+(program
+  (element
+    (start_tag
+      (tag_name))
+    (html_text)
+    (end_tag
+      (tag_name)))
+  (html_text)
+  (element
+    (start_tag
+      (tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (attribute_value)))))
+    (html_text)
+    (end_tag
+      (tag_name)))
+  (html_text)
+  (element
+    (start_tag
+      (tag_name))
+    (html_text)
+    (end_tag
+      (tag_name))))
+
+================================================================================
 common: bare angle brackets in template text
 ================================================================================
 
