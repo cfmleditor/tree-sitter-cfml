@@ -106,6 +106,58 @@ operators reused `query_math_expression`. Neither needed a query change.
   dynamic-tag rows are marked "carried forward unverified" because their counts
   came from signature-matching the source rather than from a scan.
 
+## In flight — open issues with a solution not yet merged
+
+**Transient: delete each entry as its pull request lands.** It exists so the
+state of a half-finished round is not carried only in someone's head, and so the
+corpus and probe numbers quoted elsewhere can be read against the right baseline.
+
+Merged in this round and needing nothing further:
+[#118](https://github.com/cfmleditor/tree-sitter-cfml/issues/118) (tag island
+after a statement, PR #120) and
+[#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114) (a `<` opening
+a run of template text, PR #121).
+
+### [#115](https://github.com/cfmleditor/tree-sitter-cfml/issues/115) — PR #122, open
+
+An unquoted struct as a tag attribute value. **Fixed, not parked:** `{}` joins the
+excluded set of the unquoted `cf_attribute_value` token, so
+`<cfcomponent javasettings={ … }>` reports an ERROR at the `{` instead of parsing
+clean and wrong. Lucee rejects the syntax — `test/tickets/LDEV5763.cfc` asserts
+`toThrow` — so refusing is the correct tree, not a gap left open.
+
+No `STATE_COUNT` movement in either grammar; zero changed trees in `treediff`.
+**The corpus baseline moves the wrong way on purpose: 640 → 641 error nodes
+across 121 → 122 files**, the one new file being the Lucee test that exercises
+the construct. Anyone quoting a corpus number after this merges should use 641,
+and anyone seeing 641 where they expected 640 is looking at this change.
+
+Pinned by the corpus test `an unquoted struct as a tag attribute value is
+rejected (#115)` rather than a probe: `tree-sitter test --update` will not write
+an expectation containing an ERROR, so that tree is maintained by hand, and a
+probe keyed on error nodes would file the intended answer under "known gap".
+
+Not included, deliberately: the `cf_selfclose_void_tag_end` naming, which that
+issue reported as a third symptom and is not one. It is in Housekeeping above.
+
+### [#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119) — PR #123, open
+
+A start tag whose `>` sits inside a `<cfif>` branch. **Not fixed and not
+fixable as specified** — the write-up, the two failing probes and the cost table
+are the deliverable, and the issue stays open. The measurements are in
+[`FAILING-PATTERNS.md`](FAILING-PATTERNS.md) and `LIMITATIONS.md`; the short
+version is that every rule shape that makes the construct parse breaks the
+spelling that parses today, because the two diverge in the *lexer* rather than
+the parser.
+
+### Merge-order note for these two
+
+Both touch the same list in `LIMITATIONS.md`, and their entries were written as
+neighbours before the branches were split. They were separated by keeping each
+entry only on its own branch, so either order merges cleanly and no paragraph is
+duplicated. If a future split of this kind is needed, do the same thing rather
+than letting both branches carry the same text.
+
 ## Considered and deliberately not doing
 
 Recorded so they do not get re-proposed and re-argued.
