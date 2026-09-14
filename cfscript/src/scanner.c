@@ -226,7 +226,16 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
     }
 
     switch (lexer->lookahead) {
-        case '`':
+        // No backtick here, unlike the JavaScript scanner this list came from.
+        // There a backtick opens a template literal, which continues the
+        // expression, so a semicolon must not be inserted before it. CFScript
+        // has no template literal: its only backtick is the ``` fence of a tag
+        // island, which is a statement of its own and can never continue the
+        // one before it. Keeping the JS case meant the fence suppressed the
+        // semicolon, and every statement relying on insertion in front of one
+        // came out MISSING ";" — `thread name="t" { … }` then a fence (Lucee
+        // LDEV4157), `lock { … }` then a fence, and a bare `var q =
+        // queryNew("col")` then a fence (BoxLang QoQColumnNameTest). See #118.
         case ',':
         case ':':
         case ';':
