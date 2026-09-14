@@ -93,7 +93,7 @@ obvious grep: `ServerService.cfc`, `LargeMethod.cfc` and Preside's
 ordinary CFML — a first pass at re-deriving this table counted them here
 incorrectly.
 
-## Genuine gaps — 176 nodes, 27 files
+## Genuine gaps — 174 nodes, 26 files
 
 **Re-verified at `b60470f` only in part, and it matters which.** The two largest
 rows were re-counted exactly against a fresh scan and are unchanged: CSS in
@@ -102,8 +102,25 @@ rows were re-counted exactly against a fresh scan and are unchanged: CSS in
 unverified** — their counts come from signature-matching the *source*, which a
 grep over error text cannot reproduce, so re-deriving them needs the same manual
 pass that produced them. Treat 48 and 19 as the last measured values, not as
-confirmed-current. The three small rows (2, 4, 2) are each pinned by a probe and
-all three probes still fail, so those constructs are certainly still open.
+confirmed-current. The two small rows (2, 4) are each pinned by a probe and
+both probes still fail, so those constructs are certainly still open.
+
+**One row is gone, and it was mis-stated in a way worth recording.** "`thread {
+… }` followed by a tag island" (2 nodes, 1 file, no probe) named a construct
+that had nothing to do with the failure
+([#118](https://github.com/cfmleditor/tree-sitter-cfml/issues/118)). The fence
+never fired the automatic semicolon — `scan_automatic_semicolon` still carried
+the JavaScript scanner's "no semicolon before a backtick" case, which is right
+for a template literal and wrong for a tag island — so *any* statement needing
+insertion in front of a fence failed. Deleting one `case` label fixed it: no
+change to `STATE_COUNT`, zero tree-shape changes, corpus **654 → 648 nodes
+across 127 → 124 files**. The row's own count was low twice over: the two
+LDEV4157 files are 1 node each, not 2 in one file, and the remaining 4 nodes sat
+in BoxLang's `QoQColumnNameTest.cfc`, booked separately as the
+`cfml_template_after_bare_statement` probe because the visible symptom there is
+an expression statement rather than a `thread` block. Two rows, one cause. When
+a row describes the statement *in front of* the failure, that is the signal it
+is naming a witness and not a construct.
 
 
 | Nodes | Files | Pattern | Example | Probe |
@@ -114,7 +131,6 @@ all three probes still fail, so those constructs are certainly still open.
 | 19 | 13 | Dynamic tag opened and closed in different blocks | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | — |
 | 2 | 1 | Function-listener callback on a `new` **target** — tractable, rejected on cost | `var t = new Query():function( result, error ) { … };` | `function_listener_new.cfc` |
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
-| 2 | 1 | `thread { … }` followed by a tag island | a ` ``` ` block after `thread name="x" { … }`; each parses alone | — |
 
 A prior caution on reading this table at all: its node counts come from the
 corpus, so they measure what people have written, not what the language defines.

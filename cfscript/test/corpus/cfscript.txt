@@ -1972,6 +1972,47 @@ name = "World";
     (cfml_template_content)))
 
 ===================================
+cfml template block after a statement with no semicolon
+===================================
+thread name="t" {
+	thread.test = "thread";
+}
+
+```
+	<cfset res = "works">
+```
+thread action="join" name="t";
+---
+
+(program
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (string
+            (string_fragment))))))
+  (cfml_template
+    (cfml_template_content))
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))))
+
+===================================
 new inline component with attributes
 ===================================
 var msal = new component javaSettings='{"maven":["com.microsoft.azure:msal4j:1.23.1"]}' {

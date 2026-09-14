@@ -1,5 +1,18 @@
 # Changelog
 
+## [Unreleased]
+
+### cfscript
+- **Fix a tag island after a statement that omits its semicolon** — `thread name="t" { … }` followed by a ` ``` ` block ([#118](https://github.com/cfmleditor/tree-sitter-cfml/issues/118), Lucee `LDEV4157.cfm` and `test4157.cfc`). **Corpus 654 → 648 error nodes across 127 → 124 files**, no change to `STATE_COUNT` (scanner-only; `parser.c`, `grammar.json` and `node-types.json` are byte-identical), and the tree-shape diff reports **zero** changed files in both grammars. Probes `cfscript/cfml_template_after_bare_statement.cfc` flips to `pass` and `cfscript/tag_island_after_thread.cfc` is added.
+
+  **`thread` had nothing to do with it, and neither did the block.** The issue was filed as a combination failure — each half parses alone, only the pairing fails — and the pairing is not what mattered. The fence never fired the **automatic semicolon**, so any statement relying on insertion in front of one came out `MISSING ";"`: `lock name="t" { … }` fails identically, and so does a bare `var q = queryNew( "col" )`, which this repo already tracked as the *separate* probe `cfml_template_after_bare_statement.cfc`. Two probes, a `docs/FAILING-PATTERNS.md` row and one issue, all of them the same cause.
+
+  **The cause is inherited, not designed.** `scan_automatic_semicolon` in `cfscript/src/scanner.c` descends from the JavaScript scanner, whose list of characters that must *not* take a semicolon in front of them begins with a backtick — correct there, because a backtick opens a template literal and continues the expression. CFScript has no template literal. Its only backtick is the ` ``` ` fence of a tag island, which is a statement in its own right and can never continue the one before it, so the case is wrong in every position it can be reached from. The fix deletes the `case` label.
+
+  **`common/scanner.h` is deliberately unchanged.** It carries the same inherited backtick case, but the `cfml` and `cfquery` grammars have no ` ``` ` rule at all — `cfml_template` exists only in `cfscript/grammar.js`, and a `<cfscript>` body reaches it through the injection, not through that scanner. There the case is unreachable rather than wrong, and editing `common/` would land in two grammars for no gain.
+
+  Three corpus files go to zero — the issue's two, plus BoxLang's `QoQColumnNameTest.cfc` at 4 nodes. No file regressed.
+
 ## [0.26.35]
 
 ### cfscript
