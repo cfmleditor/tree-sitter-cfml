@@ -437,3 +437,99 @@ one-line `choice` arms with no measurable effect.
    for the riskiest change available is a poor trade on its own.
 4. The 304-node tail is not a project. It is 126 files of individually odd code,
    81 of them carrying a single error node.
+
+## Next experiment, by open issue
+
+Ordered by value per unit of risk, like the priorities above, and written so each
+can be picked up cold. Every one ends with a **stop rule**, because the expensive
+mistake in this repository has never been trying something — it has been not
+knowing when to revert.
+
+### [#117](https://github.com/cfmleditor/tree-sitter-cfml/issues/117) — a return type between two modifiers
+
+`component { public struct static function f() {} }`. The symptom has moved since
+the issue was filed: it is now `MISSING ;`, not `ERROR` at the type.
+
+The rule is the two-armed one in `cfscript/grammar.js` — *modifiers then an
+optional type*, or *type then `repeat1(access_type)`*. The interleaved spelling
+fits neither, because in the first arm nothing may follow the type but
+`function`. **Experiment:** allow `repeat($.access_type)` after the optional type
+in that first arm, and measure `STATE_COUNT` at once.
+
+**The hazard is named in the rule's own comments** and has been paid for once:
+making a modifier valid straight after a type word changes how the *next* word
+lexes, which is how `function static( … )` (Mura `MuraScope.cfc`) broke. Controls:
+that spelling, plus the four members of Lucee's `test/general/modifiers/All.cfc`.
+
+**Stop rule:** more than about +50 states, or any control regressing.
+
+### [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82) — `savecontent` as an expression
+
+The keyword route is closed and measured: `keyword('Savecontent')` generates
+cleanly at +31 states, then breaks `savecontent = 1`, `x = savecontent.foo` and
+`savecontent()`, because the keyword out-lexes `identifier` before
+`_reserved_identifier` can catch it.
+
+**The untried angle is the scanner.** An external token in
+`cfscript/src/scanner.c` that matches the word only when the next non-whitespace
+character is `{` keeps the identifier reading everywhere else, because the
+scanner can look ahead where the lexer cannot. `_parameter_separator`
+([#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49)) is the
+precedent for a context-gated external token in that file.
+
+**Stop rule:** if the token has to fire anywhere a `{` can legitimately follow an
+identifier, drop it — that is the over-broad shape the rejected
+`identifier statement_block` arm already had.
+
+### [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56) — `</cfscript>` inside a string literal
+
+**The issue's open question is answered and its text is stale.** It says the
+behaviour was never checked against an engine; `LIMITATIONS.md` now records it as
+a confirmed divergence from Lucee, read from `CFMLScriptTransformer`: the
+`tagdependent` body ends through `isFinish()` between complete statements, so the
+string is consumed by the expression parser and no raw-text search for
+`</cfscript>` happens at all. Say so on the issue before starting.
+
+**Work:** track string state in the raw-text scan in `common/scanner.h`. It lands
+in `cfml` and `cfquery` together, and a bug there breaks every `<cfscript>` block
+rather than an edge case, so the corpus scan and `treediff` are the gate, not the
+test suite. Probe `cfml/close_tag_in_script_string.cfm` flips when it works.
+
+**Watch for** the recovery-cost trap in `.claude/skills/parse-gap/references/scanner.md`:
+a string-aware scan that also runs during error recovery turns a bounded scan
+into an EOF scan. Check `valid_symbols` for the recovery signature first.
+
+### [#116](https://github.com/cfmleditor/tree-sitter-cfml/issues/116) — an arrow function with an empty body
+
+`x = () => ;`. At end of file it produces no ERROR node at all — a `number`
+holding a MISSING token — so the corpus scan is blind to it and the probe is the
+only gate.
+
+**Experiment:** make `field('body', …)` optional in `arrow_function` and let the
+existing `;` terminate the statement. If it lands, `common/define-grammar.js`
+needs the same arm for `<cfset f = function(){ x = () => ; }>`.
+
+**Stop rule, inherited from [#75](https://github.com/cfmleditor/tree-sitter-cfml/issues/75):**
+that issue's arrow-body change declared no conflicts, passed every gate, and took
+`STATE_COUNT` from 4,984 to 10,005. Past roughly +100 states this is not worth
+one Lucee test file.
+
+### [#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80) — the `${ … }` ordered struct
+
+Blocked on a decision, not on cost. The bracket form `$[ … ]` only *appears* to
+work: it parses as a `subscript_expression` whose object is the identifier `$`
+and whose index is a `slice_expression`. **Decide what `$[ … ]` should produce
+once `$` stops being an ordinary identifier**, then write one rule covering both
+spellings. Bolting a `${ … }` rule onto the existing misparse is how this gets
+done twice.
+
+### Parked, with the reasons already recorded
+
+- [#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98) — the `new.foo`
+  half shipped; the residual listener target measures **+14 states** on today's
+  base and is blocked by the `? new X() :` collision, not by table size.
+- [#75](https://github.com/cfmleditor/tree-sitter-cfml/issues/75) — implemented,
+  measured at 2× the table, reverted.
+- [#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119) — the fix and
+  the spelling that works today are mutually exclusive; the second shape would
+  need overlapping nodes and is not representable.

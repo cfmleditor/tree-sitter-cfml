@@ -89,7 +89,22 @@ operators reused `query_math_expression`. Neither needed a query change.
 
 ## Housekeeping
 
-Nothing outstanding.
+- **Three failing probes have no issue behind them.** `cfml/hash_in_script_string.cfm`
+  appears in no document at all; `cfml/prefixed_dynamic_tag.cfm` and
+  `cfscript/subscript_multiple_pairs.cfc` are rows in
+  [`FAILING-PATTERNS.md`](FAILING-PATTERNS.md) with no tracking issue. This is the
+  gap [#118](https://github.com/cfmleditor/tree-sitter-cfml/issues/118) was filed
+  to close for its own construct; the same argument applies to these.
+- **Split the `cf_selfclose_void_tag_end` naming out of
+  [#115](https://github.com/cfmleditor/tree-sitter-cfml/issues/115).** That node is
+  the tag-end of *every* `<cfcomponent …>` and `<cfargument …>`, including a bare
+  `<cfcomponent>`; a real `/>` is recorded as a `(self_closing_tag_delimiter)`
+  child inside it. The tree is right and the name is wrong, which made it look
+  like a symptom of that issue's misparse when it is not. A rename touches the
+  `.scm` queries and is breaking for consumers, so it needs its own issue.
+- **Re-derive the carried-forward counts in `FAILING-PATTERNS.md`.** Two
+  dynamic-tag rows are marked "carried forward unverified" because their counts
+  came from signature-matching the source rather than from a scan.
 
 ## Considered and deliberately not doing
 
