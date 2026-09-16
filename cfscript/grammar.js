@@ -814,7 +814,25 @@ module.exports = grammar({
     ),
 
     // `[ : ]` and `[ = ]` are both empty ordered structs; Lucee accepts either.
-    ordered_struct: ($) => prec(1, choice(seq('[', ':', ']'), seq('[', '=', ']'))),
+    // `[:]` and `[=]` are the empty ordered struct; `${ … }` is the populated
+    // one (Lucee LDEV3133). `$[ … ]` is deliberately NOT here: `$` is a legal
+    // variable name, so a bracket after it is an ordinary array-style
+    // reference and stays a `subscript_expression`.
+    //
+    // `'${'` is already a token of this grammar — `template_substitution`
+    // inside a backtick string — so admitting it here adds no new lexical
+    // form, only a new position for one. Every `${…}` in the corpus outside
+    // this construct sits inside a string literal, which lexes as one token
+    // and never reaches this rule.
+    ordered_struct: ($) => prec(1, choice(
+      seq('[', ':', ']'),
+      seq('[', '=', ']'),
+      seq('${', commaSep(optional(choice(
+        $.pair,
+        $.cf_pair,
+        $.spread_element,
+      ))), '}'),
+    )),
 
     array_pattern: ($) => seq(
       '[',

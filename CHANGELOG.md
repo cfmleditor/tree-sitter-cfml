@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### cfscript
+- **Support the `${ … }` ordered-struct literal** — `animals = ${ Aardwolf: "…", aardvark: "…" };` ([#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80), Lucee `LDEV3133/test.cfm`). It yields an `ordered_struct`, the same node the empty `[:]` and `[=]` forms already produced. **+46 parse states**, no new conflicts, zero changed trees in both grammars.
+
+  **The issue was blocked on a decision rather than on cost, and the decision is recorded here: `$` stays an ordinary identifier.** Only the brace form is the literal, so `$[ … ]` remains an ordinary array-style reference — a `subscript_expression` — and `$ = 1`, `x = $`, `$.foo`, `$( "sel" )` and `$[ 1 ]` all keep the trees they had. The jQuery-shaped spellings are common in the corpus and nothing asks them to change.
+
+  **That also settles Lucee's bracket spelling of the same literal**, `$[ a: "…", b: "…" ]`, as deliberately unsupported: one `key: value` inside brackets is Lucee's slice syntax and parses, while several comma-separated pairs are not an array reference at all. `LDEV3133/test.cfm` goes 4 → 3 error nodes for exactly that reason — the `${` half fixed, the `$[` half declined — and the probe `cfscript/subscript_multiple_pairs.cfc` now pins a decision rather than a gap.
+
+  **`'${'` was already a token of this grammar** (`template_substitution`, inside a backtick string), so this admits an existing lexical form in a new position rather than adding one. Every other `${…}` in the corpus sits inside a string literal — Java-style placeholders in Slatwall's shipping URLs, JS template literals in TestBox's coverage browser — and a string lexes as one token. **Corpus 640 → 645 error nodes across 121 files**, and the increase is a single file: `cfwheels`' `tools/vscode-ext/assets/templates/controller.cfc`, a VS Code snippet template rather than CFML, whose `${modelNamePlural}` placeholders sit in code position. It failed before (12 nodes) and fails after (18) — recovery reshaped, validity unchanged.
+
 ### cfml
 - **Fix a `<` that opens a run of template text** — `<- back` as the first non-whitespace on its line, `[<a href="x"><< Go Back</a>]` straight after a tag ([#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114), ContentBox `filelisting.cfm`). **Corpus 648 → 640 error nodes across 124 → 121 files**, no change to `STATE_COUNT` in either grammar (scanner-only; all three `parser.c` are byte-identical), and the tree-shape diff reports **zero** changed files. Probe `cfml/lt_at_line_start.cfm` added, beside the existing mid-line `lt_in_text.cfm`.
 

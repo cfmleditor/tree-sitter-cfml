@@ -514,14 +514,35 @@ that issue's arrow-body change declared no conflicts, passed every gate, and too
 `STATE_COUNT` from 4,984 to 10,005. Past roughly +100 states this is not worth
 one Lucee test file.
 
-### [#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80) — the `${ … }` ordered struct
+### [#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80) — the `${ … }` ordered struct — **done**
 
-Blocked on a decision, not on cost. The bracket form `$[ … ]` only *appears* to
-work: it parses as a `subscript_expression` whose object is the identifier `$`
-and whose index is a `slice_expression`. **Decide what `$[ … ]` should produce
-once `$` stops being an ordinary identifier**, then write one rule covering both
-spellings. Bolting a `${ … }` rule onto the existing misparse is how this gets
-done twice.
+Shipped at **+46 states**, no new conflicts, zero changed trees. Corpus 640 →
+645 across 121 files — see below, the increase is one file that was never CFML.
+
+**The plan said this was blocked on a decision, not on cost, and that was
+right.** The decision taken: **`$` stays an ordinary identifier**, so `$[ … ]`
+is an array-style reference and keeps its `subscript_expression`, and only the
+brace form is the literal. That leaves `$ = 1`, `x = $`, `$.foo`, `$( "sel" )`
+and `$[ 1 ]` untouched — the jQuery-shaped spellings are common in the corpus —
+and asks nothing of the bracket form at all.
+
+It also settles the neighbouring row: `$[ a: "…", b: "…" ]`, Lucee's
+bracket spelling of the same literal, is **deliberately not supported**. One
+`key: value` inside the brackets is Lucee's slice syntax and parses; several
+comma-separated pairs are not an array reference, and `subscript_multiple_pairs.cfc`
+now pins a decision rather than a gap. Lucee's `LDEV3133/test.cfm` goes 4 → 3
+error nodes for exactly that reason: the `${` half is fixed, the `$[` half is
+declined.
+
+**`'${'` was already a token** — `template_substitution` inside a backtick
+string — so this admits an existing lexical form in a new position. Every other
+`${…}` in the corpus is inside a string literal, which lexes as one token and
+never reaches the rule. The one exception is `cfwheels`'
+`tools/vscode-ext/assets/templates/controller.cfc`, a **VS Code snippet
+template, not CFML**: its `${modelNamePlural}` placeholders sit in code
+position, it failed before (12 nodes) and fails after (18). A file that never
+parsed shifting its recovery shape is the case this document already says not to
+back a fix out for.
 
 ### Parked, with the reasons already recorded
 

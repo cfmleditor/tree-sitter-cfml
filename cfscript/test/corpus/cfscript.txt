@@ -2563,6 +2563,54 @@ component {
                 (string_fragment)))))))))
 
 ===================================
+ordered struct literal, and $ as an ordinary variable (#80)
+===================================
+
+animals = ${ Aardwolf: "Proteles cristata", aardvark: "Orycteropus afer" };
+empty = ${};
+first = $[ 1 ];
+$ = 1;
+sel = $( "x" );
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct
+        (pair
+          (property_identifier)
+          (string
+            (string_fragment)))
+        (pair
+          (property_identifier)
+          (string
+            (string_fragment))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (subscript_expression
+        (identifier)
+        (number))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (string
+            (string_fragment)))))))
+
+===================================
 return type before the access modifiers
 ===================================
 
