@@ -3148,3 +3148,20 @@ word-shaped operator as a parameter name behind a type
           (identifier))
         (statement_block)))
     (cf_selfclose_void_tag_end)))
+
+===================================
+a close tag inside a string or comment does not end the script block (#56)
+===================================
+<cfscript>
+FileWrite( p, "<cfscript>function f(){ return 1; }</cfscript>" );
+// a </cfscript> in a line comment, and don't let the apostrophe matter
+/* nor one in a block comment: </cfscript> */
+result = '"#replaceNoCase( value, '"', '""', 'all' )#"';
+x = 2;
+</cfscript>
+
+---
+
+(program
+  (cf_script_tag
+    (cf_script_content)))

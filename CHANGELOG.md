@@ -3,6 +3,21 @@
 ## [Unreleased]
 
 ### cfml
+- **A `</cfscript>` inside a string or comment no longer ends the script block** — `FileWrite( p, "<cfscript>…</cfscript>" )` ([#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56), RustCFML `test_include_rewrite_freshness.cfm`, Lucee `LDEV0869.cfc`). The raw scan in `common/scanner.h` now tracks strings, `#…#` interpolations and all three comment forms. **Corpus 640 → 636 error nodes across 121 → 119 files**, zero changed trees, `npm run fuzz` clean, and no `STATE_COUNT` movement in either grammar — the change is entirely in the scanner.
+
+  **Lucee agrees, which was the issue's open question.** `cfscript` has a `tagdependent` body handled by `CFMLScriptTransformer`, which ends it through `isFinish()` between complete statements, so the string is consumed by the expression parser long before the tag inside it could be noticed. Read from Lucee's source; Adobe CF was not checked.
+
+  **Three assumptions about CFML's lexical rules had to be corrected, and the corpus scan caught all three while `npm test` stayed green:**
+
+  - Strings alone took the corpus to **7,932** error nodes. CFML has no backslash escape — a quote is escaped by doubling — so the apostrophe in `// don't do this` opens a string that runs to the end of the file. Comments have to be skipped too.
+  - A line comment ends at `\r` as well as `\n`. ColdBox ships CR-only files (`cbi18n`'s `i18n.cfc`; RustCFML has a fixture named `PresideFixCrEndings.cfc`), where one `//` otherwise swallows the whole file — 667 error nodes in that file alone.
+  - A string and an interpolation nest arbitrarily: `'"#replaceNoCase( v, '"', '""', 'all' )#"'` is one string containing an interpolation containing three more strings. A single boolean desynchronises on the first one, so the scan keeps a small context stack.
+
+  **Consequence worth knowing:** a `<cfscript>` block containing an *unterminated* string no longer parses, because the string swallows the close tag. That is invalid CFML and no corpus file does it — no file regressed.
+
+  The benchmark cannot resolve this change on a shared runner: reps varied by 76–86%, and `cfscript`, which `common/scanner.h` does not back, moved further than the subject did. The loop was already character-by-character and gained a few comparisons, with no new unbounded scanning.
+
+### cfml
 - **Fix a `<` that opens a run of template text** — `<- back` as the first non-whitespace on its line, `[<a href="x"><< Go Back</a>]` straight after a tag ([#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114), ContentBox `filelisting.cfm`). **Corpus 648 → 640 error nodes across 124 → 121 files**, no change to `STATE_COUNT` in either grammar (scanner-only; all three `parser.c` are byte-identical), and the tree-shape diff reports **zero** changed files. Probe `cfml/lt_at_line_start.cfm` added, beside the existing mid-line `lt_in_text.cfm`.
 
   **Position on the line was never the real rule.** The issue reduced it to "first thing on a line", and the corpus says the condition is broader: a `<` that opens a *text run*, which is equally true straight after a tag. `scan_html_text` calls a `<` text when no name, `/`, `!`, `?` or `#` follows it — the rule browsers apply — but it refuses to apply that test until it has already collected some text, and **leading whitespace deliberately does not count**, because emitting it would put a whitespace-only `html_text` node in front of every indented tag in the corpus. So `<p> <- back` reached the test and `<p>⏎\t<- back` did not.
