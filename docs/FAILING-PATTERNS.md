@@ -445,23 +445,31 @@ can be picked up cold. Every one ends with a **stop rule**, because the expensiv
 mistake in this repository has never been trying something — it has been not
 knowing when to revert.
 
-### [#117](https://github.com/cfmleditor/tree-sitter-cfml/issues/117) — a return type between two modifiers
+### [#117](https://github.com/cfmleditor/tree-sitter-cfml/issues/117) — a return type between two modifiers — **done**
 
-`component { public struct static function f() {} }`. The symptom has moved since
-the issue was filed: it is now `MISSING ;`, not `ERROR` at the type.
+`component { public struct static function f() {} }`. Shipped; kept here because
+the plan this replaces was right about the hazard and wrong about one thing, and
+both halves are worth the next person's time.
 
-The rule is the two-armed one in `cfscript/grammar.js` — *modifiers then an
-optional type*, or *type then `repeat1(access_type)`*. The interleaved spelling
-fits neither, because in the first arm nothing may follow the type but
-`function`. **Experiment:** allow `repeat($.access_type)` after the optional type
-in that first arm, and measure `STATE_COUNT` at once.
+**What the plan said:** widen the modifiers-first arm with `repeat($.access_type)`
+after the optional type, and watch for the lexing hazard the rule's own comments
+name — a modifier made valid straight after the word `function` re-lexes `static`
+in `function static( … )` (Mura `MuraScope.cfc`).
 
-**The hazard is named in the rule's own comments** and has been paid for once:
-making a modifier valid straight after a type word changes how the *next* word
-lexes, which is how `function static( … )` (Mura `MuraScope.cfc`) broke. Controls:
-that spelling, plus the four members of Lucee's `test/general/modifiers/All.cfc`.
+**What happened:** the hazard fired on the first attempt, exactly as predicted,
+at **+45 states**. The fix is the narrowing this repository keeps re-learning:
+the type slot in the new arm excludes `$._kw_function`, so a modifier can never
+follow that word, while `Query`, a `path` and an `identifier` still reach it.
+**+54 states in total** (5315 → 5369), no declared conflicts, no `common/` change.
 
-**Stop rule:** more than about +50 states, or any control regressing.
+**Where the plan was wrong:** its stop rule, "more than about +50 states", would
+have killed a change that cost 54 and closed the issue with every control intact.
+A budget set from the shape of a rule rather than from a measurement is a guess;
+treat a near miss as a reason to look at what the states bought, not as a verdict.
+
+Corpus 640 → 639 across 121 → 120 files — Lucee's `All.cfc`, the file that
+enumerates modifier spellings, goes to zero. Zero changed trees. Probe
+`cfscript/interleaved_return_type.cfc` records `pass`.
 
 ### [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82) — `savecontent` as an expression
 

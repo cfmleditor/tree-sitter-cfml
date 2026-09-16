@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+### cfscript
+- **Support a return type written between two modifiers** — `component { public struct static function f() {} }` ([#117](https://github.com/cfmleditor/tree-sitter-cfml/issues/117), Lucee `test/general/modifiers/All.cfc`). The type was already accepted at either end of the modifier run; this is the third position. **Corpus 640 → 639 error nodes across 121 → 120 files** — `All.cfc`, the file whose whole purpose is enumerating modifier spellings, goes to zero — **+54 parse states** (5315 → 5369), no new conflicts, and the tree-shape diff reports **zero** changed files in both grammars. Probe `cfscript/interleaved_return_type.cfc` added.
+
+  **The hazard the rule's own comments name fired on the first attempt.** Spelling it as `repeat($.access_type)` after the optional type costs +45 states and makes the construct parse — and breaks `function static( … )`, a function *named* `static` from Mura's `MuraScope.cfc`. Allowing a modifier to follow the word `function` is what re-lexes `static` as `_kw_static`; the same trap is recorded in that rule for the type-first spelling, where it bit once before.
+
+  **The fix is the narrowing, not the widening.** The new arm — type, then `repeat1($.access_type)` — excludes `$._kw_function` from the type slot, so a modifier can never follow that word, while `Query`, a `path` and an `identifier` still reach it. The `function`-as-type spelling keeps its own arm with no trailing modifiers. That is the same move as [#86](https://github.com/cfmleditor/tree-sitter-cfml/issues/86): narrow whichever token is over-reaching rather than add one that covers both.
+
+  `common/define-grammar.js` is deliberately unchanged, and for a stronger reason than usual: it has no `access_type` rule at all. A `<cfscript>` body is opaque to the `cfml` grammar, so `<cfscript>public struct static function f(){}</cfscript>` reports clean there whatever the text says, and the construct is reached through the injection into `cfscript` — which is what this change fixes.
+
 ### cfml
 - **Fix a `<` that opens a run of template text** — `<- back` as the first non-whitespace on its line, `[<a href="x"><< Go Back</a>]` straight after a tag ([#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114), ContentBox `filelisting.cfm`). **Corpus 648 → 640 error nodes across 124 → 121 files**, no change to `STATE_COUNT` in either grammar (scanner-only; all three `parser.c` are byte-identical), and the tree-shape diff reports **zero** changed files. Probe `cfml/lt_at_line_start.cfm` added, beside the existing mid-line `lt_in_text.cfm`.
 

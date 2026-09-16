@@ -37,6 +37,7 @@
     "cfscript/function_listener_new.cfc": "fail",
     "cfscript/function_listener.cfc": "pass",
     "cfscript/function_named_instanceof.cfc": "pass",
+    "cfscript/interleaved_return_type.cfc": "pass",
     "cfscript/keyword_shaped_param_types.cfc": "pass",
     "cfscript/leading_javadoc.cfc": "pass",
     "cfscript/mixed_case_keywords.cfc": "pass",
