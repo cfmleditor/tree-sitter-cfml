@@ -18,7 +18,8 @@ enum TokenType {
     JAVA_CLASS_CONTENT,
     JAVA_BLOCK_OPEN,
     STATIC_TYPE_PREFIX,
-    PARAMETER_SEPARATOR
+    PARAMETER_SEPARATOR,
+    SAVECONTENT_KW
 };
 
 void *tree_sitter_cfscript_external_scanner_create() { return NULL; }
@@ -762,6 +763,31 @@ static bool scan_java_or_cfml_word(TSLexer *lexer, const bool *valid_symbols, bo
 }
 
 
+// `savecontent { … }` used as an expression. The token covers the word only;
+// the `{` is left for the grammar's `statement_block`.
+//
+// Case-insensitive, like every CFML keyword. The word must end at a
+// non-identifier character — `savecontentFoo` is an ordinary identifier — and
+// the next non-whitespace character must be `{`, which is what separates this
+// from the statement form and from every other use of the word.
+static bool scan_savecontent_kw(TSLexer *lexer) {
+    static const char word[] = "savecontent";
+    for (unsigned i = 0; i < sizeof(word) - 1; i++) {
+        if (cf_tolower(lexer->lookahead) != word[i]) return false;
+        advance(lexer);
+    }
+    if (cf_isalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
+
+    // The token ends here; everything past it is lookahead.
+    lexer->mark_end(lexer);
+
+    while (cf_isspace(lexer->lookahead)) skip(lexer);
+    if (lexer->lookahead != '{') return false;
+
+    lexer->result_symbol = SAVECONTENT_KW;
+    return true;
+}
+
 // A newline acting as a parameter separator, for a parameter list whose comma
 // was left out — Lucee, ACF and BoxLang all tolerate it, and TestBox's
 // `BaseSpec.cfc` depends on it.
@@ -978,6 +1004,18 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
     // anything that is not the word `java` or `cfml`.
     if ((valid_symbols[JAVA_BLOCK_OPEN] || valid_symbols[STATIC_TYPE_PREFIX]) &&
         scan_java_or_cfml_word(lexer, valid_symbols, true)) {
+        return true;
+    }
+
+    // Also last, and for the same reason as the branch above: it consumes the
+    // word before it can tell whether the `{` that makes this a savecontent
+    // block follows, and nothing after it needs the position back. The word is
+    // only matched when the parser is actually expecting an expression here,
+    // and a `savecontent` not followed by `{` is declined, so the ordinary
+    // identifier reading — `savecontent = 1`, `x = savecontent.foo`,
+    // `savecontent()` — is untouched. See `savecontent_expression` in the
+    // grammar for why this cannot be a keyword token.
+    if (valid_symbols[SAVECONTENT_KW] && scan_savecontent_kw(lexer)) {
         return true;
     }
 

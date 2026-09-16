@@ -463,23 +463,26 @@ that spelling, plus the four members of Lucee's `test/general/modifiers/All.cfc`
 
 **Stop rule:** more than about +50 states, or any control regressing.
 
-### [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82) — `savecontent` as an expression
+### [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82) — `savecontent` as an expression — **done**
 
-The keyword route is closed and measured: `keyword('Savecontent')` generates
-cleanly at +31 states, then breaks `savecontent = 1`, `x = savecontent.foo` and
-`savecontent()`, because the keyword out-lexes `identifier` before
-`_reserved_identifier` can catch it.
-
-**The untried angle is the scanner.** An external token in
+Shipped by the route the plan named: an external token in
 `cfscript/src/scanner.c` that matches the word only when the next non-whitespace
-character is `{` keeps the identifier reading everywhere else, because the
-scanner can look ahead where the lexer cannot. `_parameter_separator`
-([#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49)) is the
-precedent for a context-gated external token in that file.
+character is `{`. **+28 states** (5315 → 5343), no new conflicts, zero changed
+trees, fuzz clean. Corpus 640 → 639 across 121 → 120 files.
 
-**Stop rule:** if the token has to fire anywhere a `{` can legitimately follow an
-identifier, drop it — that is the over-broad shape the rejected
-`identifier statement_block` arm already had.
+The plan was right that the keyword route is closed and that the scanner can do
+what the lexer cannot. It was wrong about one thing, and it is the kind of thing
+this table exists to correct: **the reach is one site, not three files.** The
+issue names three Lucee files; two of them write the *statement* form, which
+already parsed, and fail on unrelated constructs. `greeting = savecontent {`
+occurs exactly once in 15,392 files.
+
+The stop rule — drop it if the token has to fire wherever a `{` can follow an
+identifier — never had to be invoked: the token is only ever asked for where the
+grammar expects an expression, and it declines on anything but `{`. What that
+protects is pinned by tests rather than left to the reader: `savecontent = 1`,
+`x = savecontent.foo`, `savecontent()`, `savecontent = { a: 1 }` and the
+statement form all keep their existing trees.
 
 ### [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56) — `</cfscript>` inside a string literal
 

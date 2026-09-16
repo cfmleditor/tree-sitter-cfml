@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### cfscript
+- **Support `savecontent` as an expression** — `greeting = savecontent { writeOutput("G'day World") };` ([#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82), Lucee `test/tickets/_LDEV3623.cfc`). **+28 parse states** (5315 → 5343), no new conflicts, corpus **640 → 639 error nodes across 121 → 120 files**, zero changed trees in both grammars, `npm run fuzz` clean.
+
+  **The obvious route is a trap, and it is the one the issue invites.** The statement form has no `savecontent` rule at all — `savecontent variable="g" { … }` goes through the generic `tag_statement` with the word as an ordinary identifier — so an expression form looks like it needs `keyword('Savecontent')`. That generates cleanly at 31 states and then breaks the working statement form and every ordinary use of the word: `savecontent = 1`, `x = savecontent`, `x = savecontent.foo` and `savecontent()` all become ERRORs, because an extracted keyword out-lexes `identifier` wherever it is valid, before a `_reserved_identifier` fallback can be reached.
+
+  **The scanner can do what the lexer cannot.** `_savecontent_kw` matches the word only when the next non-whitespace character is `{`, and declines otherwise, so the word keeps its identifier reading everywhere else. Placed last in `scan()` for the reason the `java` / `cfml` branch above it already documents: it consumes the word before it can tell, and nothing after it needs the position back.
+
+  **The issue's file count was too high.** It names three Lucee files; only `_LDEV3623.cfc` writes the expression form. `CodeIsland.cfc` and `Jira2659.cfc` use the statement form, which already parsed, and their errors are unrelated — tag-island fences and `<cfbreak "outer">`. The expression form occurs **once** in 15,392 files.
+
+  What the first attempt broke is now pinned rather than trusted: the corpus test `savecontent as an expression (#82)` asserts the statement form still yields `tag_statement` and that `savecontent = 1`, `x = savecontent.foo` and `savecontent()` keep their trees, and the probe `cfscript/savecontent_expression.cfc` carries both forms.
+
 ### cfml
 - **Fix a `<` that opens a run of template text** — `<- back` as the first non-whitespace on its line, `[<a href="x"><< Go Back</a>]` straight after a tag ([#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114), ContentBox `filelisting.cfm`). **Corpus 648 → 640 error nodes across 124 → 121 files**, no change to `STATE_COUNT` in either grammar (scanner-only; all three `parser.c` are byte-identical), and the tree-shape diff reports **zero** changed files. Probe `cfml/lt_at_line_start.cfm` added, beside the existing mid-line `lt_in_text.cfm`.
 

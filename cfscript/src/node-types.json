@@ -178,6 +178,10 @@
         "named": true
       },
       {
+        "type": "savecontent_expression",
+        "named": true
+      },
+      {
         "type": "string",
         "named": true
       },
@@ -2653,6 +2657,32 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "savecontent_expression",
+    "named": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "statement_block",
+            "named": true
+          }
+        ]
+      },
+      "tag": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
