@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### cfscript
+- **Support a `new` expression as a function-listener target** — `threadName = new Query():function( result, error ) { … };` ([#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98), Lucee `FunctionListener.cfc`). That completes the eleven forms in Lucee's [Function Listeners](https://docs.lucee.org/recipes/function-listeners.html) recipe; the other ten landed in #96 and #97. **+53 parse states**, one declared conflict, corpus **640 → 638 error nodes across 121 → 120 files**, zero changed trees in both grammars. Probe `cfscript/function_listener_new.cfc` flips to `pass`.
+
+  **The `+591` this issue was parked on had expired.** It was measured when `new_expression` could complete on the bare keyword `new`; requiring its `arguments` — shipped separately — removed that, and the same widening then measured **+14**. A cost taken before a related change is not evidence about after it, which is the transferable part.
+
+  **What actually blocked it was precedence, not size.** With the target widened, `new Foo()` before a contested `:` is either a listener target or a ternary consequence, and only an open `?` tells them apart. The rule shipped in #87 sits at `prec.right('call', …)`, and `'call'` binds tighter than `'ternary'`, so the listener reading won inside `c ? new Foo() : obj` and that ternary stopped parsing — the failure every earlier attempt hit, including the +260 variant that restricted the listener side to a function literal.
+
+  So the `new` target is a **second arm below `'ternary'`**, with the conflict `[$.expression, $.function_listener_expression]` that `tree-sitter generate` asks for. Where a `?` is open the ternary wins; where none is, nothing competes for the colon. The call-target arm keeps `'call'` and is untouched.
+
+  **The conflict was benchmarked, as a declared conflict must be.** cfscript moved **+1.0%** against untouched controls spanning 4.2 points (cfml +2.5%, cfquery −1.7%) — inside the noise floor, which is what the prefix predicts: the conflict is live on a `new_expression` followed by `:` and nowhere else. Both ternary controls are pinned by corpus tests, because they are what every earlier attempt broke.
+
 ### cfml
 - **Fix a `<` that opens a run of template text** — `<- back` as the first non-whitespace on its line, `[<a href="x"><< Go Back</a>]` straight after a tag ([#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114), ContentBox `filelisting.cfm`). **Corpus 648 → 640 error nodes across 124 → 121 files**, no change to `STATE_COUNT` in either grammar (scanner-only; all three `parser.c` are byte-identical), and the tree-shape diff reports **zero** changed files. Probe `cfml/lt_at_line_start.cfm` added, beside the existing mid-line `lt_in_text.cfm`.
 

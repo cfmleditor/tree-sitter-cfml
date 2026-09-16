@@ -93,7 +93,7 @@ obvious grep: `ServerService.cfc`, `LargeMethod.cfc` and Preside's
 ordinary CFML — a first pass at re-deriving this table counted them here
 incorrectly.
 
-## Genuine gaps — 178 nodes, 28 files
+## Genuine gaps — 176 nodes, 27 files
 
 **Re-verified at `b60470f` only in part, and it matters which.** The two largest
 rows were re-counted exactly against a fresh scan and are unchanged: CSS in
@@ -129,7 +129,6 @@ is naming a witness and not a construct.
 | 48 | 10 | Dynamic tag name with a static prefix or namespace | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
 | 30 | 1 | Dotted key in a struct literal — **tractable, rejected on cost** | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
 | 19 | 13 | Dynamic tag opened and closed in different blocks | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | — |
-| 2 | 1 | Function-listener callback on a `new` **target** — tractable, rejected on cost | `var t = new Query():function( result, error ) { … };` | `function_listener_new.cfc` |
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
 | 4 | 2 | A start tag whose `>` sits inside a `<cfif>` branch — **tractable one way, rejected: the fix breaks the spelling that works** | `<a title="Back" <cfif x>⏎ href="a">⏎<cfelse>⏎ href="b">⏎</cfif>` | — |
 
@@ -525,9 +524,14 @@ done twice.
 
 ### Parked, with the reasons already recorded
 
-- [#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98) — the `new.foo`
-  half shipped; the residual listener target measures **+14 states** on today's
-  base and is blocked by the `? new X() :` collision, not by table size.
+- [#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98) — **no longer
+  parked: shipped.** The `? new X() :` collision was real and was not about
+  table size; it was resolved by giving the `new` target its own arm below
+  `'ternary'` plus the conflict the generator asks for. **+53 states**, corpus
+  640 → 638. The lesson worth carrying: the `+591` this issue was parked on was
+  measured before `new_expression`'s arguments became required, and the same
+  widening measured **+14** afterwards. A cost taken before a related change is
+  not evidence about after it.
 - [#75](https://github.com/cfmleditor/tree-sitter-cfml/issues/75) — implemented,
   measured at 2× the table, reverted.
 - [#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119) — the fix and

@@ -118,6 +118,14 @@ after a statement, PR #120) and
 [#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114) (a `<` opening
 a run of template text, PR #121).
 
+### [#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98) — fixed, PR pending
+
+A `new` expression as a function-listener target, through a second rule arm
+below `'ternary'` plus one declared conflict. +53 states, corpus 640 → 638, zero
+changed trees, benchmarked inside the noise floor. The parked `+591` had expired:
+it predated `new_expression`'s arguments becoming required, after which the same
+widening measured +14.
+
 ### [#115](https://github.com/cfmleditor/tree-sitter-cfml/issues/115) — PR #122, open
 
 An unquoted struct as a tag attribute value. **Fixed, not parked:** `{}` joins the

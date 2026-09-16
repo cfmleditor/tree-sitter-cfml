@@ -134,6 +134,13 @@ module.exports = grammar({
   ],
 
   conflicts: ($) => [
+    // `x = new Foo() : cb` against `c ? new Foo() : x` — a `new` expression
+    // before a contested `:` is a listener target or a ternary consequence,
+    // and only the presence of an open `?` settles it, which is exactly what
+    // GLR carries. Live on `new_expression` followed by `:` and nowhere else;
+    // the benchmark puts the cost inside the noise floor, with the two
+    // untouched grammars spanning more than the subject moved (#98).
+    [$.expression, $.function_listener_expression],
     [$.object, $.object_pattern],
     [$.primary_expression, $.pattern],
     [$.assignment_expression, $.pattern],
@@ -1234,11 +1241,28 @@ module.exports = grammar({
     // and far commoner reading, so it wins; nothing else reaches a state where
     // both survive, because the ternary's own `:` is required and the listener
     // reading leaves it dangling.
-    function_listener_expression: ($) => prec.dynamic(-1, prec.right('call', seq(
-      field('target', $.call_expression),
-      ':',
-      field('listener', choice($.primary_expression, $.new_expression)),
-    ))),
+    function_listener_expression: ($) => prec.dynamic(-1, choice(
+      prec.right('call', seq(
+        field('target', $.call_expression),
+        ':',
+        field('listener', choice($.primary_expression, $.new_expression)),
+      )),
+      // `threadName = new Query():function( … ) { … };` — a listener on a
+      // component instantiation, the last of the eleven forms in Lucee's
+      // Function Listeners recipe (#98).
+      //
+      // It is a SEPARATE arm from the call target above, and its precedence is
+      // the whole reason. At 'call' — the precedence the call-target arm uses,
+      // which binds tighter than 'ternary' — the listener reading wins inside
+      // `c ? new Foo() : obj` and that ternary stops parsing. Below 'ternary'
+      // the ternary wins where a `?` is open, and the listener still wins
+      // where there is none, because then nothing competes for the colon.
+      prec.right('elvis', seq(
+        field('target', $.new_expression),
+        ':',
+        field('listener', choice($.primary_expression, $.new_expression)),
+      )),
+    )),
 
     member_expression: $ => prec('member', seq(
       field('object', choice($.expression, $.primary_expression)),
