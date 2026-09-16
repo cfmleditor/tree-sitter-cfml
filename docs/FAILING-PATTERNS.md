@@ -499,20 +499,34 @@ test suite. Probe `cfml/close_tag_in_script_string.cfm` flips when it works.
 a string-aware scan that also runs during error recovery turns a bounded scan
 into an EOF scan. Check `valid_symbols` for the recovery signature first.
 
-### [#116](https://github.com/cfmleditor/tree-sitter-cfml/issues/116) — an arrow function with an empty body
+### [#116](https://github.com/cfmleditor/tree-sitter-cfml/issues/116) — an arrow function with an empty body — **done**
 
-`x = () => ;`. At end of file it produces no ERROR node at all — a `number`
-holding a MISSING token — so the corpus scan is blind to it and the probe is the
-only gate.
+Shipped in `cfscript` at **+21 states** (5315 → 5336), corpus 640 → 639 across
+121 → 120 files, zero changed trees, fuzz clean.
 
-**Experiment:** make `field('body', …)` optional in `arrow_function` and let the
-existing `;` terminate the statement. If it lands, `common/define-grammar.js`
-needs the same arm for `<cfset f = function(){ x = () => ; }>`.
+**The plan's experiment was the wrong one, and its stop rule would not have
+caught it.** Making the body `optional()` is the obvious move and it fails
+twice over: it does not generate at all without an associativity
+(`'let' '=>' • '('` is ambiguous), and with `prec.right` it generates at **zero
+extra states** and then takes the empty reading for
+`x = () => mod.create( a = 1 );`. That is not a corner case — it is
+`expect( () => obj.method( … ) )`, and it broke **13 cfwheels spec files** while
+`npm test` stayed green. A stop rule about table size cannot see that; only the
+corpus scan can.
 
-**Stop rule, inherited from [#75](https://github.com/cfmleditor/tree-sitter-cfml/issues/75):**
-that issue's arrow-body change declared no conflicts, passed every gate, and took
-`STATE_COUNT` from 4,984 to 10,005. Past roughly +100 states this is not worth
-one Lucee test file.
+**What works is the same shape as [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82):**
+an external, zero-width marker that the scanner offers only where an expression
+cannot start — before `;`, `)`, `}`, `,`, `]` or end of file. The body arm then
+wins wherever there is a body, with no precedence hint at all. Twice now the
+answer to "this rule needs one token of lookahead the grammar cannot express"
+has been the scanner rather than a `prec`.
+
+**`common/define-grammar.js` is deliberately unchanged**, so
+`<cfset f = function(){ x = () => ; }>` still fails. The reachable path — a
+`<cfscript>` body — goes through the injection into `cfscript` and is fixed;
+the `cfset` spelling has no corpus occurrence, and the shared externals list is
+dialect-conditional, so adding a token there means re-aligning indices that
+`cfml` and `cfquery` share. Not worth it for a construct nobody writes.
 
 ### [#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80) — the `${ … }` ordered struct
 

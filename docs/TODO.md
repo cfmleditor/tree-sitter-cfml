@@ -118,6 +118,14 @@ after a statement, PR #120) and
 [#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114) (a `<` opening
 a run of template text, PR #121).
 
+### [#116](https://github.com/cfmleditor/tree-sitter-cfml/issues/116) — fixed in cfscript, PR pending
+
+An arrow function with an empty body, through an external zero-width marker
+offered only before a terminator. +21 states, corpus 640 → 639, zero changed
+trees. `common/define-grammar.js` is left alone, so the `<cfset f = function(){
+x = () => ; }>` spelling still fails — no corpus occurrence, and the shared
+externals list is dialect-conditional.
+
 ### [#115](https://github.com/cfmleditor/tree-sitter-cfml/issues/115) — PR #122, open
 
 An unquoted struct as a tag attribute value. **Fixed, not parked:** `{}` joins the

@@ -3498,21 +3498,30 @@
           ]
         },
         {
-          "type": "FIELD",
-          "name": "body",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "expression"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "statement_block"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "FIELD",
+              "name": "body",
+              "content": {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "expression"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "statement_block"
+                  }
+                ]
               }
-            ]
-          }
+            },
+            {
+              "type": "SYMBOL",
+              "name": "_empty_arrow_body"
+            }
+          ]
         }
       ]
     },
@@ -10476,6 +10485,10 @@
     {
       "type": "SYMBOL",
       "name": "_parameter_separator"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_empty_arrow_body"
     }
   ],
   "inline": [

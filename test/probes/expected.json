@@ -30,6 +30,7 @@
     "cfscript/cfml_template_after_bare_statement.cfc": "pass",
     "cfscript/commaless_params.cfc": "pass",
     "cfscript/debugger_identifier.cfc": "pass",
+    "cfscript/empty_arrow_body.cfc": "pass",
     "cfscript/empty_struct_literal.cfc": "pass",
     "cfscript/final_member_declaration.cfc": "pass",
     "cfscript/for_in_reserved_name.cfc": "pass",
