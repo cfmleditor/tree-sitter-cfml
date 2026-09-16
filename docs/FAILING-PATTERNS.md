@@ -522,9 +522,16 @@ Shipped at **+46 states**, no new conflicts, zero changed trees. Corpus 640 →
 **The plan said this was blocked on a decision, not on cost, and that was
 right.** The decision taken: **`$` stays an ordinary identifier**, so `$[ … ]`
 is an array-style reference and keeps its `subscript_expression`, and only the
-brace form is the literal. That leaves `$ = 1`, `x = $`, `$.foo`, `$( "sel" )`
-and `$[ 1 ]` untouched — the jQuery-shaped spellings are common in the corpus —
-and asks nothing of the bracket form at all.
+brace form is the literal.
+
+**The reason is which postfix operators the language has, not anything about
+this rule.** `[` subscripts any expression, so `$[ … ]` already means something
+and taking it for a literal takes that meaning away. `{` is not a postfix
+operator on anything — a `$` followed by a brace cannot be a reference at all —
+so `${ … }` has no competing reading to lose. Stated that way the trade needs no
+corpus counting to settle, and it cannot be re-argued from prevalence: even if
+nobody in the corpus subscripts a variable named `$`, the expression is still
+well-formed CFML and the literal still is not.
 
 It also settles the neighbouring row: `$[ a: "…", b: "…" ]`, Lucee's
 bracket spelling of the same literal, is **deliberately not supported**. One

@@ -5,7 +5,9 @@
 ### cfscript
 - **Support the `${ … }` ordered-struct literal** — `animals = ${ Aardwolf: "…", aardvark: "…" };` ([#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80), Lucee `LDEV3133/test.cfm`). It yields an `ordered_struct`, the same node the empty `[:]` and `[=]` forms already produced. **+46 parse states**, no new conflicts, zero changed trees in both grammars.
 
-  **The issue was blocked on a decision rather than on cost, and the decision is recorded here: `$` stays an ordinary identifier.** Only the brace form is the literal, so `$[ … ]` remains an ordinary array-style reference — a `subscript_expression` — and `$ = 1`, `x = $`, `$.foo`, `$( "sel" )` and `$[ 1 ]` all keep the trees they had. The jQuery-shaped spellings are common in the corpus and nothing asks them to change.
+  **The issue was blocked on a decision rather than on cost, and the decision is recorded here: `$` stays an ordinary identifier.** Only the brace form is the literal, so `$[ … ]` remains an ordinary array-style reference — a `subscript_expression` — and `$ = 1`, `x = $`, `$.foo`, `$( "sel" )` and `$[ 1 ]` all keep the trees they had.
+
+  **The reason is which postfix operators exist, not how common each spelling is.** `[` subscripts any expression, so `$[ … ]` already means something and a literal reading would take that meaning away; `{` is not a postfix operator on anything, so `${ … }` has no competing reading to lose — a `$` followed by a brace cannot be a reference at all. That is what makes the brace form free to be the literal and the bracket form not, without counting a single corpus site.
 
   **That also settles Lucee's bracket spelling of the same literal**, `$[ a: "…", b: "…" ]`, as deliberately unsupported: one `key: value` inside brackets is Lucee's slice syntax and parses, while several comma-separated pairs are not an array reference at all. `LDEV3133/test.cfm` goes 4 → 3 error nodes for exactly that reason — the `${` half fixed, the `$[` half declined — and the probe `cfscript/subscript_multiple_pairs.cfc` now pins a decision rather than a gap.
 
