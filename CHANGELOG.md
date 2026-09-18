@@ -3,6 +3,15 @@
 ## [Unreleased]
 
 ### cfscript
+- **Support an arrow function with an empty body** — `x = () => ;` ([#116](https://github.com/cfmleditor/tree-sitter-cfml/issues/116), Lucee `LDEV4062.cfm`, whose own output string is *"lambda expression works without body({})"*). **+21 parse states** (5315 → 5336), corpus **640 → 639 error nodes across 121 → 120 files**, zero changed trees in both grammars, `npm run fuzz` clean.
+
+  **The obvious spelling generates at zero cost and is wrong.** Making the body `optional()` does not generate at all on its own — `'let' '=>' • '('` is ambiguous — and with `prec.right` it costs **nothing** in states and then takes the empty reading for `x = () => mod.create( a = 1 );`. That shape is `expect( () => obj.method( … ) )`, and it broke **13 cfwheels spec files** with `npm test` still green. The corpus scan is the only thing that saw it.
+
+  **The fix is an external, zero-width marker**, the same shape [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82) needed: the scanner offers `_empty_arrow_body` only where an expression cannot start — before `;`, `)`, `}`, `,`, `]` or end of file — so the body arm wins wherever a body exists, with no precedence hint at all. Twice now, "this rule needs one token of lookahead the grammar cannot express" has been answered by the scanner rather than by a `prec`.
+
+  **`common/define-grammar.js` is deliberately unchanged**, so `<cfset f = function(){ x = () => ; }>` still fails. The reachable path — a `<cfscript>` body — goes through the injection into `cfscript` and is fixed; the `cfset` spelling has no corpus occurrence, and the shared externals list is dialect-conditional, so adding a token there means re-aligning indices `cfml` and `cfquery` both depend on.
+
+  The corpus test and probe pin the bodies that must keep working, not just the empty one, because that is what the first attempt broke.
 - **Support the `${ … }` ordered-struct literal** — `animals = ${ Aardwolf: "…", aardvark: "…" };` ([#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80), Lucee `LDEV3133/test.cfm`). It yields an `ordered_struct`, the same node the empty `[:]` and `[=]` forms already produced. **+46 parse states**, no new conflicts, zero changed trees in both grammars.
 
   **The issue was blocked on a decision rather than on cost, and the decision is recorded here: `$` stays an ordinary identifier.** Only the brace form is the literal, so `$[ … ]` remains an ordinary array-style reference — a `subscript_expression` — and `$ = 1`, `x = $`, `$.foo`, `$( "sel" )` and `$[ 1 ]` all keep the trees they had.

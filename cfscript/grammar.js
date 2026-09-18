@@ -42,6 +42,7 @@ module.exports = grammar({
     $._java_block_open,
     $._static_type_prefix,
     $._parameter_separator,
+    $._empty_arrow_body,
   ],
 
   extras: ($) => [
@@ -1047,10 +1048,23 @@ module.exports = grammar({
       // they capture scope at runtime, not in shape, so one rule covers both
       // and the token itself records which was written.
       choice('=>', '->'),
-      field('body', choice(
-        $.expression,
-        $.statement_block,
-      )),
+      choice(
+        field('body', choice(
+          $.expression,
+          $.statement_block,
+        )),
+        // `x = () => ;` — Lucee accepts a lambda with no body at all
+        // (LDEV4062, whose own output string is "lambda expression works
+        // without body({})"). The marker is EXTERNAL and zero-width, and that
+        // is what keeps the arm unambiguous: spelling the body `optional()`
+        // instead generates only with an associativity, and then takes the
+        // empty reading for `x = () => mod.create( a = 1 );` — 13 cfwheels
+        // spec files, every one of them `expect( () => obj.method( … ) )`.
+        // The scanner offers the marker only where an expression cannot
+        // start — before `;`, `)`, `}`, `,`, `]` or end of file — so the body
+        // still wins wherever there is a body.
+        $._empty_arrow_body,
+      ),
     ),
 
     _call_signature: ($) => field('parameters', $.formal_parameters),
