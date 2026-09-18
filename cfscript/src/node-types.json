@@ -1641,6 +1641,10 @@
           {
             "type": "call_expression",
             "named": true
+          },
+          {
+            "type": "new_expression",
+            "named": true
           }
         ]
       }

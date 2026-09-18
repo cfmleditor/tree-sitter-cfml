@@ -3936,6 +3936,89 @@ msSQL.class: "net.sourceforge.jtds.jdbc.Driver";
       (string_fragment))))
 
 ===================================
+function listener on a new target (#98)
+===================================
+
+threadName = new Query():function( result, error ) { thread.result = result; };
+dotted = new org.lucee.cfml.Query():callback;
+listener = Query():function( r, e ) { x = r; };
+tern = cond ? new Foo() : other;
+bare = cond ? new() : other;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (function_listener_expression
+        (new_expression
+          (identifier)
+          (arguments))
+        (function_expression
+          (formal_parameters
+            (parameter_type
+              (identifier))
+            (parameter_type
+              (identifier)))
+          (statement_block
+            (expression_statement
+              (assignment_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (identifier))))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (function_listener_expression
+        (new_expression
+          (member_expression
+            (member_expression
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (property_identifier))
+            (property_identifier))
+          (arguments))
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (function_listener_expression
+        (call_expression
+          (identifier)
+          (arguments))
+        (function_expression
+          (formal_parameters
+            (parameter_type
+              (identifier))
+            (parameter_type
+              (identifier)))
+          (statement_block
+            (expression_statement
+              (assignment_expression
+                (identifier)
+                (identifier))))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ternary_expression
+        (identifier)
+        (new_expression
+          (identifier)
+          (arguments))
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ternary_expression
+        (identifier)
+        (new_expression
+          (arguments))
+        (identifier)))))
+
+===================================
 new requires its arguments (#98)
 ===================================
 

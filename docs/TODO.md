@@ -120,12 +120,20 @@ a run of template text, PR #121).
 
 ### [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56) — fixed, PR pending
 
-`</cfscript>` inside a string. Corpus 644 → 640 across 120 → 118 files, zero
+`</cfscript>` inside a string. Corpus 642 → 638 across 119 → 117 files, zero
 changed trees, scanner-only. The record in
 [`FAILING-PATTERNS.md`](FAILING-PATTERNS.md) carries the three wrong assumptions
 it took to get there — strings imply comments, comments imply `\r`, and
 interpolation implies nesting — each caught by the corpus scan and none by the
 test suite.
+
+### [#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98) — fixed, PR pending
+
+A `new` expression as a function-listener target, through a second rule arm
+below `'ternary'` plus one declared conflict. +53 states, corpus 644 → 642, zero
+changed trees, benchmarked inside the noise floor. The parked `+591` had expired:
+it predated `new_expression`'s arguments becoming required, after which the same
+widening measured +14.
 
 ### [#117](https://github.com/cfmleditor/tree-sitter-cfml/issues/117) — fixed, PR pending
 
