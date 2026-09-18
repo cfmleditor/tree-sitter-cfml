@@ -2668,6 +2668,43 @@ w = () => mod.create( a = 1 );
               (number))))))))
 
 ===================================
+return type between the access modifiers (#117)
+===================================
+
+component {
+	public struct static function a() { }
+	final whatever package function b() { }
+	package whatever final function c() { }
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (access_type)
+        (identifier)
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (access_type)
+        (identifier)
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (access_type)
+        (identifier)
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block)))))
+
+===================================
 return type before the access modifiers
 ===================================
 

@@ -118,6 +118,13 @@ after a statement, PR #120) and
 [#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114) (a `<` opening
 a run of template text, PR #121).
 
+### [#117](https://github.com/cfmleditor/tree-sitter-cfml/issues/117) — fixed, PR pending
+
+A return type between two modifiers. **Fixed at +54 parse states**, corpus
+645 → 644 across 121 → 120 files, zero changed trees. The plan entry in
+[`FAILING-PATTERNS.md`](FAILING-PATTERNS.md) has been rewritten as a record of
+what it cost and where the plan's own stop rule was wrong.
+
 ### [#116](https://github.com/cfmleditor/tree-sitter-cfml/issues/116) — fixed in cfscript, PR pending
 
 An arrow function with an empty body, through an external zero-width marker

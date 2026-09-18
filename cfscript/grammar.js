@@ -976,12 +976,29 @@ module.exports = grammar({
             $.access_type,
             repeat(choice($.access_type, alias($._kw_default, $.access_type))),
           )),
-          optional(seq(
-            choice($._kw_function, keyword('Query'), $.path, $.identifier),
-            // `IValidationError[] function getFieldErrors()` — an array of that
-            // type (cbvalidation). The brackets must be empty and adjacent: that
-            // is the only thing separating this from a subscript, `User[0]`.
-            optional($.array_return_suffix),
+          optional(choice(
+            seq(
+              choice($._kw_function, keyword('Query'), $.path, $.identifier),
+              // `IValidationError[] function getFieldErrors()` — an array of that
+              // type (cbvalidation). The brackets must be empty and adjacent: that
+              // is the only thing separating this from a subscript, `User[0]`.
+              optional($.array_return_suffix),
+            ),
+            // `public struct static function f()` — the type written between
+            // two modifiers rather than at either end of the run (#117, Lucee's
+            // All.cfc). It is a second arm rather than a `repeat` appended to
+            // the one above, and `_kw_function` is excluded from its type slot,
+            // both for the same reason: allowing a modifier to follow the word
+            // `function` re-lexes `static` in `function static( … )` — a
+            // function *named* `static`, from Mura's MuraScope.cfc — exactly as
+            // the type-first alternative below records. Spelled as a plain
+            // `repeat($.access_type)` on the arm above it costs 9 states fewer
+            // and breaks that file.
+            seq(
+              choice(keyword('Query'), $.path, $.identifier),
+              optional($.array_return_suffix),
+              repeat1($.access_type),
+            ),
           )),
         ),
         seq(
