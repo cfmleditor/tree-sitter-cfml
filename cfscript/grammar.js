@@ -42,6 +42,7 @@ module.exports = grammar({
     $._java_block_open,
     $._static_type_prefix,
     $._parameter_separator,
+    $._empty_arrow_body,
   ],
 
   extras: ($) => [
@@ -821,7 +822,32 @@ module.exports = grammar({
     ),
 
     // `[ : ]` and `[ = ]` are both empty ordered structs; Lucee accepts either.
-    ordered_struct: ($) => prec(1, choice(seq('[', ':', ']'), seq('[', '=', ']'))),
+    // `[:]` and `[=]` are the empty ordered struct; `${ … }` is the populated
+    // one (Lucee LDEV3133). `$[ … ]` is deliberately NOT here, and the reason
+    // is which postfix operators the language has rather than anything about
+    // this rule: `$` is a legal variable name and `[` subscripts any
+    // expression, so `$[ … ]` already means something — an array-style
+    // reference — and taking it for a literal would take that meaning away.
+    // `{` is not a postfix operator on anything, so `${ … }` has no competing
+    // reading to lose; a `$` followed by a brace cannot be a reference at all.
+    //
+    // That asymmetry is the whole design. It also explains why the two
+    // spellings cannot both be literals here, which is the trade
+    // https://github.com/cfmleditor/tree-sitter-cfml/pull/107 made the other
+    // way round.
+    //
+    // Incidentally `'${'` is already a token of this grammar —
+    // `template_substitution` inside a backtick string — so this admits an
+    // existing lexical form in a new position rather than adding one.
+    ordered_struct: ($) => prec(1, choice(
+      seq('[', ':', ']'),
+      seq('[', '=', ']'),
+      seq('${', commaSep(optional(choice(
+        $.pair,
+        $.cf_pair,
+        $.spread_element,
+      ))), '}'),
+    )),
 
     array_pattern: ($) => seq(
       '[',
@@ -957,12 +983,29 @@ module.exports = grammar({
             $.access_type,
             repeat(choice($.access_type, alias($._kw_default, $.access_type))),
           )),
-          optional(seq(
-            choice($._kw_function, keyword('Query'), $.path, $.identifier),
-            // `IValidationError[] function getFieldErrors()` — an array of that
-            // type (cbvalidation). The brackets must be empty and adjacent: that
-            // is the only thing separating this from a subscript, `User[0]`.
-            optional($.array_return_suffix),
+          optional(choice(
+            seq(
+              choice($._kw_function, keyword('Query'), $.path, $.identifier),
+              // `IValidationError[] function getFieldErrors()` — an array of that
+              // type (cbvalidation). The brackets must be empty and adjacent: that
+              // is the only thing separating this from a subscript, `User[0]`.
+              optional($.array_return_suffix),
+            ),
+            // `public struct static function f()` — the type written between
+            // two modifiers rather than at either end of the run (#117, Lucee's
+            // All.cfc). It is a second arm rather than a `repeat` appended to
+            // the one above, and `_kw_function` is excluded from its type slot,
+            // both for the same reason: allowing a modifier to follow the word
+            // `function` re-lexes `static` in `function static( … )` — a
+            // function *named* `static`, from Mura's MuraScope.cfc — exactly as
+            // the type-first alternative below records. Spelled as a plain
+            // `repeat($.access_type)` on the arm above it costs 9 states fewer
+            // and breaks that file.
+            seq(
+              choice(keyword('Query'), $.path, $.identifier),
+              optional($.array_return_suffix),
+              repeat1($.access_type),
+            ),
           )),
         ),
         seq(
@@ -1029,10 +1072,23 @@ module.exports = grammar({
       // they capture scope at runtime, not in shape, so one rule covers both
       // and the token itself records which was written.
       choice('=>', '->'),
-      field('body', choice(
-        $.expression,
-        $.statement_block,
-      )),
+      choice(
+        field('body', choice(
+          $.expression,
+          $.statement_block,
+        )),
+        // `x = () => ;` — Lucee accepts a lambda with no body at all
+        // (LDEV4062, whose own output string is "lambda expression works
+        // without body({})"). The marker is EXTERNAL and zero-width, and that
+        // is what keeps the arm unambiguous: spelling the body `optional()`
+        // instead generates only with an associativity, and then takes the
+        // empty reading for `x = () => mod.create( a = 1 );` — 13 cfwheels
+        // spec files, every one of them `expect( () => obj.method( … ) )`.
+        // The scanner offers the marker only where an expression cannot
+        // start — before `;`, `)`, `}`, `,`, `]` or end of file — so the body
+        // still wins wherever there is a body.
+        $._empty_arrow_body,
+      ),
     ),
 
     _call_signature: ($) => field('parameters', $.formal_parameters),

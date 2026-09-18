@@ -834,7 +834,7 @@ module.exports = function defineGrammar(dialect) {
 
       cf_attribute_value: $ => choice(
         $._hash_always_eval,
-        alias(/[^'"\s\n\r\t#:;<>]+/, $.attribute_value),
+        alias(/[^'"\s\n\r\t#:;<>{}]+/, $.attribute_value),
       ),
 
       cf_attribute_name: _ => /[^<>"'/=\s\n\r\t#0-9][^<>"'/=\s\n\r\t#]*/,
