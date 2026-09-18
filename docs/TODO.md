@@ -118,6 +118,14 @@ after a statement, PR #120) and
 [#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114) (a `<` opening
 a run of template text, PR #121).
 
+### [#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80) — fixed, PR pending
+
+The `${ … }` ordered-struct literal, +46 states, zero changed trees. The design
+question it was blocked on is answered in the diff: `$` stays an ordinary
+identifier, `$[ … ]` stays an array-style reference, and Lucee's `$[ a: …, b: … ]`
+spelling of the literal is deliberately declined. Corpus 640 → 645, the increase
+being one VS Code snippet template that never parsed.
+
 ### [#115](https://github.com/cfmleditor/tree-sitter-cfml/issues/115) — PR #122, open
 
 An unquoted struct as a tag attribute value. **Fixed, not parked:** `{}` joins the

@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### cfscript
+- **Support the `${ … }` ordered-struct literal** — `animals = ${ Aardwolf: "…", aardvark: "…" };` ([#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80), Lucee `LDEV3133/test.cfm`). It yields an `ordered_struct`, the same node the empty `[:]` and `[=]` forms already produced. **+46 parse states**, no new conflicts, zero changed trees in both grammars.
+
+  **The issue was blocked on a decision rather than on cost, and the decision is recorded here: `$` stays an ordinary identifier.** Only the brace form is the literal, so `$[ … ]` remains an ordinary array-style reference — a `subscript_expression` — and `$ = 1`, `x = $`, `$.foo`, `$( "sel" )` and `$[ 1 ]` all keep the trees they had.
+
+  **The reason is which postfix operators exist, not how common each spelling is.** `[` subscripts any expression, so `$[ … ]` already means something and a literal reading would take that meaning away; `{` is not a postfix operator on anything, so `${ … }` has no competing reading to lose — a `$` followed by a brace cannot be a reference at all. That is what makes the brace form free to be the literal and the bracket form not, without counting a single corpus site.
+
+  **That also settles Lucee's bracket spelling of the same literal**, `$[ a: "…", b: "…" ]`, as deliberately unsupported: one `key: value` inside brackets is Lucee's slice syntax and parses, while several comma-separated pairs are not an array reference at all. `LDEV3133/test.cfm` goes 4 → 3 error nodes for exactly that reason — the `${` half fixed, the `$[` half declined — and the probe `cfscript/subscript_multiple_pairs.cfc` now pins a decision rather than a gap.
+
+  **`'${'` was already a token of this grammar** (`template_substitution`, inside a backtick string), so this admits an existing lexical form in a new position rather than adding one. Every other `${…}` in the corpus sits inside a string literal — Java-style placeholders in Slatwall's shipping URLs, JS template literals in TestBox's coverage browser — and a string lexes as one token. **Corpus 640 → 645 error nodes across 121 files**, and the increase is a single file: `cfwheels`' `tools/vscode-ext/assets/templates/controller.cfc`, a VS Code snippet template rather than CFML, whose `${modelNamePlural}` placeholders sit in code position. It failed before (12 nodes) and fails after (18) — recovery reshaped, validity unchanged.
+
 ### cfml
 - **Reject an unquoted struct as a tag attribute value** — `<cfcomponent output="false" javasettings={ maven: ["x"] }>` ([#115](https://github.com/cfmleditor/tree-sitter-cfml/issues/115), Lucee `LDEV5763_tag_unquoted_struct.cfc`). It used to parse with **no ERROR node**, the struct shredded into six bogus attributes; it now reports an ERROR at the `{`. **No `STATE_COUNT` change** in either grammar, and the corpus moves *up* on purpose: 640 → 641 error nodes across 121 → 122 files, the one new file being the Lucee test that exercises the construct. The tree-shape diff reports zero changed files.
 
