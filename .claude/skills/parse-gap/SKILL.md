@@ -247,6 +247,13 @@ bound, not an answer. **Do not report a number from fewer than about 12 runs per
 side, and report the control readings alongside it** so the reader can see the
 bias you subtracted.
 
+**When the machine is too noisy to time anything, count instead.** Character
+advances are deterministic, so instrumenting the scanner's `advance` with
+per-function counters answers "where does the work go" on a runner where
+`bench` cannot resolve 5%. `references/scanner.md` has the snippet, the recovery
+test that goes with it, and a case study in which the two obvious readings of a
+71% hot spot were both wrong.
+
 Use `bench` rather than timing `npm run scan`: scan time moves with the error
 count, so a change that fixes parse errors reads as a huge speedup or slowdown
 that has nothing to do with the parser.

@@ -3165,3 +3165,34 @@ x = 2;
 (program
   (cf_script_tag
     (cf_script_content)))
+
+===================================
+an unquoted struct as a tag attribute value is rejected (#115)
+===================================
+<cfcomponent output="false" javasettings={ maven: ["x"] }>
+</cfcomponent>
+
+---
+
+(program
+  (cf_component_open_tag
+    (cf_tag_attributes
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value))))
+    (cf_tag_attributes
+      (cf_attribute
+        (cf_attribute_name)
+        (ERROR
+          (identifier))
+        (quoted_cf_attribute_value
+          (attribute_value))))
+    (cf_tag_attributes
+      (cf_attribute
+        (cf_attribute_name)))
+    (cf_tag_attributes
+      (cf_attribute
+        (cf_attribute_name)))
+    (cf_selfclose_void_tag_end))
+  (cf_component_close_tag))

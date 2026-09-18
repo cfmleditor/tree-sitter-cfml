@@ -18,7 +18,8 @@ enum TokenType {
     JAVA_CLASS_CONTENT,
     JAVA_BLOCK_OPEN,
     STATIC_TYPE_PREFIX,
-    PARAMETER_SEPARATOR
+    PARAMETER_SEPARATOR,
+    EMPTY_ARROW_BODY
 };
 
 void *tree_sitter_cfscript_external_scanner_create() { return NULL; }
@@ -762,6 +763,30 @@ static bool scan_java_or_cfml_word(TSLexer *lexer, const bool *valid_symbols, bo
 }
 
 
+// `x = () => ;` — an arrow function with no body at all (Lucee LDEV4062).
+// Zero-width, like AUTOMATIC_SEMICOLON: it reports that an expression cannot
+// start here, so the body arm of `arrow_function` does not apply. Offered only
+// before a terminator, which is what keeps the empty arm from competing with a
+// real body — `() => mod.create( a = 1 )` never reaches it.
+static bool scan_empty_arrow_body(TSLexer *lexer) {
+    lexer->result_symbol = EMPTY_ARROW_BODY;
+    lexer->mark_end(lexer);
+
+    while (cf_isspace(lexer->lookahead)) skip(lexer);
+
+    switch (lexer->lookahead) {
+        case 0:
+        case ';':
+        case ')':
+        case '}':
+        case ',':
+        case ']':
+            return true;
+        default:
+            return false;
+    }
+}
+
 // A newline acting as a parameter separator, for a parameter list whose comma
 // was left out — Lucee, ACF and BoxLang all tolerate it, and TestBox's
 // `BaseSpec.cfc` depends on it.
@@ -978,6 +1003,10 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
     // anything that is not the word `java` or `cfml`.
     if ((valid_symbols[JAVA_BLOCK_OPEN] || valid_symbols[STATIC_TYPE_PREFIX]) &&
         scan_java_or_cfml_word(lexer, valid_symbols, true)) {
+        return true;
+    }
+
+    if (valid_symbols[EMPTY_ARROW_BODY] && scan_empty_arrow_body(lexer)) {
         return true;
     }
 
