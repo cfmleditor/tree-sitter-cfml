@@ -815,7 +815,32 @@ module.exports = grammar({
     ),
 
     // `[ : ]` and `[ = ]` are both empty ordered structs; Lucee accepts either.
-    ordered_struct: ($) => prec(1, choice(seq('[', ':', ']'), seq('[', '=', ']'))),
+    // `[:]` and `[=]` are the empty ordered struct; `${ … }` is the populated
+    // one (Lucee LDEV3133). `$[ … ]` is deliberately NOT here, and the reason
+    // is which postfix operators the language has rather than anything about
+    // this rule: `$` is a legal variable name and `[` subscripts any
+    // expression, so `$[ … ]` already means something — an array-style
+    // reference — and taking it for a literal would take that meaning away.
+    // `{` is not a postfix operator on anything, so `${ … }` has no competing
+    // reading to lose; a `$` followed by a brace cannot be a reference at all.
+    //
+    // That asymmetry is the whole design. It also explains why the two
+    // spellings cannot both be literals here, which is the trade
+    // https://github.com/cfmleditor/tree-sitter-cfml/pull/107 made the other
+    // way round.
+    //
+    // Incidentally `'${'` is already a token of this grammar —
+    // `template_substitution` inside a backtick string — so this admits an
+    // existing lexical form in a new position rather than adding one.
+    ordered_struct: ($) => prec(1, choice(
+      seq('[', ':', ']'),
+      seq('[', '=', ']'),
+      seq('${', commaSep(optional(choice(
+        $.pair,
+        $.cf_pair,
+        $.spread_element,
+      ))), '}'),
+    )),
 
     array_pattern: ($) => seq(
       '[',

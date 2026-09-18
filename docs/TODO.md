@@ -125,6 +125,13 @@ offered only before a terminator. +21 states, corpus 640 → 639, zero changed
 trees. `common/define-grammar.js` is left alone, so the `<cfset f = function(){
 x = () => ; }>` spelling still fails — no corpus occurrence, and the shared
 externals list is dialect-conditional.
+### [#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80) — fixed, PR pending
+
+The `${ … }` ordered-struct literal, +46 states, zero changed trees. The design
+question it was blocked on is answered in the diff: `$` stays an ordinary
+identifier, `$[ … ]` stays an array-style reference, and Lucee's `$[ a: …, b: … ]`
+spelling of the literal is deliberately declined. Corpus 640 → 645, the increase
+being one VS Code snippet template that never parsed.
 
 ### [#115](https://github.com/cfmleditor/tree-sitter-cfml/issues/115) — PR #122, open
 
