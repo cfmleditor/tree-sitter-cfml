@@ -3,6 +3,16 @@
 ## [Unreleased]
 
 ### cfscript
+- **Support a `new` expression as a function-listener target** — `threadName = new Query():function( result, error ) { … };` ([#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98), Lucee `FunctionListener.cfc`). That completes the eleven forms in Lucee's [Function Listeners](https://docs.lucee.org/recipes/function-listeners.html) recipe; the other ten landed in #96 and #97. **+53 parse states**, one declared conflict, corpus **644 → 642 error nodes across 120 → 119 files**, zero changed trees in both grammars. Probe `cfscript/function_listener_new.cfc` flips to `pass`.
+
+  **The `+591` this issue was parked on had expired.** It was measured when `new_expression` could complete on the bare keyword `new`; requiring its `arguments` — shipped separately — removed that, and the same widening then measured **+14**. A cost taken before a related change is not evidence about after it, which is the transferable part.
+
+  **What actually blocked it was precedence, not size.** With the target widened, `new Foo()` before a contested `:` is either a listener target or a ternary consequence, and only an open `?` tells them apart. The rule shipped in #87 sits at `prec.right('call', …)`, and `'call'` binds tighter than `'ternary'`, so the listener reading won inside `c ? new Foo() : obj` and that ternary stopped parsing — the failure every earlier attempt hit, including the +260 variant that restricted the listener side to a function literal.
+
+  So the `new` target is a **second arm below `'ternary'`**, with the conflict `[$.expression, $.function_listener_expression]` that `tree-sitter generate` asks for. Where a `?` is open the ternary wins; where none is, nothing competes for the colon. The call-target arm keeps `'call'` and is untouched.
+
+  **The conflict was benchmarked, as a declared conflict must be.** cfscript moved **+0.5%** against untouched controls spanning 3.8 points (cfml +0.9%, cfquery −2.9%) — inside the noise floor, which is what the prefix predicts: the conflict is live on a `new_expression` followed by `:` and nowhere else. Both ternary controls are pinned by corpus tests, because they are what every earlier attempt broke.
+
 - **Support a return type written between two modifiers** — `component { public struct static function f() {} }` ([#117](https://github.com/cfmleditor/tree-sitter-cfml/issues/117), Lucee `test/general/modifiers/All.cfc`). The type was already accepted at either end of the modifier run; this is the third position. **Corpus 645 → 644 error nodes across 121 → 120 files** — `All.cfc`, the file whose whole purpose is enumerating modifier spellings, goes to zero — **+54 parse states** (5382 → 5436), no new conflicts, and the tree-shape diff reports **zero** changed files in both grammars. Probe `cfscript/interleaved_return_type.cfc` added.
 
   **The hazard the rule's own comments name fired on the first attempt.** Spelling it as `repeat($.access_type)` after the optional type costs +45 states and makes the construct parse — and breaks `function static( … )`, a function *named* `static` from Mura's `MuraScope.cfc`. Allowing a modifier to follow the word `function` is what re-lexes `static` as `_kw_static`; the same trap is recorded in that rule for the type-first spelling, where it bit once before.

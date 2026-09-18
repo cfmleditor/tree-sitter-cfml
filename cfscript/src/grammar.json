@@ -4186,42 +4186,85 @@
       "type": "PREC_DYNAMIC",
       "value": -1,
       "content": {
-        "type": "PREC_RIGHT",
-        "value": "call",
-        "content": {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "FIELD",
-              "name": "target",
-              "content": {
-                "type": "SYMBOL",
-                "name": "call_expression"
-              }
-            },
-            {
-              "type": "STRING",
-              "value": ":"
-            },
-            {
-              "type": "FIELD",
-              "name": "listener",
-              "content": {
-                "type": "CHOICE",
-                "members": [
-                  {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "PREC_RIGHT",
+            "value": "call",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "target",
+                  "content": {
                     "type": "SYMBOL",
-                    "name": "primary_expression"
-                  },
-                  {
+                    "name": "call_expression"
+                  }
+                },
+                {
+                  "type": "STRING",
+                  "value": ":"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "listener",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "primary_expression"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "new_expression"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "PREC_RIGHT",
+            "value": "elvis",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "FIELD",
+                  "name": "target",
+                  "content": {
                     "type": "SYMBOL",
                     "name": "new_expression"
                   }
-                ]
-              }
+                },
+                {
+                  "type": "STRING",
+                  "value": ":"
+                },
+                {
+                  "type": "FIELD",
+                  "name": "listener",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "primary_expression"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "new_expression"
+                      }
+                    ]
+                  }
+                }
+              ]
             }
-          ]
-        }
+          }
+        ]
       }
     },
     "member_expression": {
@@ -10168,6 +10211,10 @@
     }
   ],
   "conflicts": [
+    [
+      "expression",
+      "function_listener_expression"
+    ],
     [
       "object",
       "object_pattern"

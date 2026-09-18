@@ -118,6 +118,14 @@ after a statement, PR #120) and
 [#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114) (a `<` opening
 a run of template text, PR #121).
 
+### [#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98) — fixed, PR pending
+
+A `new` expression as a function-listener target, through a second rule arm
+below `'ternary'` plus one declared conflict. +53 states, corpus 644 → 642, zero
+changed trees, benchmarked inside the noise floor. The parked `+591` had expired:
+it predated `new_expression`'s arguments becoming required, after which the same
+widening measured +14.
+
 ### [#117](https://github.com/cfmleditor/tree-sitter-cfml/issues/117) — fixed, PR pending
 
 A return type between two modifiers. **Fixed at +54 parse states**, corpus
