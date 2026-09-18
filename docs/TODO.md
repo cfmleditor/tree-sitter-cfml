@@ -121,9 +121,24 @@ a run of template text, PR #121).
 ### [#117](https://github.com/cfmleditor/tree-sitter-cfml/issues/117) — fixed, PR pending
 
 A return type between two modifiers. **Fixed at +54 parse states**, corpus
-640 → 639 across 121 → 120 files, zero changed trees. The plan entry in
+645 → 644 across 121 → 120 files, zero changed trees. The plan entry in
 [`FAILING-PATTERNS.md`](FAILING-PATTERNS.md) has been rewritten as a record of
 what it cost and where the plan's own stop rule was wrong.
+
+### [#116](https://github.com/cfmleditor/tree-sitter-cfml/issues/116) — fixed in cfscript, PR pending
+
+An arrow function with an empty body, through an external zero-width marker
+offered only before a terminator. +21 states, corpus 640 → 639, zero changed
+trees. `common/define-grammar.js` is left alone, so the `<cfset f = function(){
+x = () => ; }>` spelling still fails — no corpus occurrence, and the shared
+externals list is dialect-conditional.
+### [#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80) — fixed, PR pending
+
+The `${ … }` ordered-struct literal, +46 states, zero changed trees. The design
+question it was blocked on is answered in the diff: `$` stays an ordinary
+identifier, `$[ … ]` stays an array-style reference, and Lucee's `$[ a: …, b: … ]`
+spelling of the literal is deliberately declined. Corpus 640 → 645, the increase
+being one VS Code snippet template that never parsed.
 
 ### [#115](https://github.com/cfmleditor/tree-sitter-cfml/issues/115) — PR #122, open
 
