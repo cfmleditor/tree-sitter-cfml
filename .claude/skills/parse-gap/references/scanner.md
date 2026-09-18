@@ -10,6 +10,7 @@ before editing either, and when a parse hangs or crashes.
 - [Infinite loops](#infinite-loops)
 - [Diagnosing a hang](#diagnosing-a-hang)
 - [Hunting for a bad input](#hunting-for-a-bad-input)
+- [Profiling: counting character advances](#profiling-counting-character-advances)
 
 ## Which scanner
 
@@ -46,6 +47,18 @@ delimiter is valid — `CLOSE_TAG_DELIM`, `CLOSE_CF_TAG_DELIM`,
 `SELF_CLOSING_TAG_DELIMITER`, `CF_SELF_CLOSING_TAG_DELIMITER`,
 `CF_SELF_CLOSING_VOID_TAG_DELIMITER`. Where none is expected, the parser is not
 inside a tag, so `>` cannot be closing one.
+
+**`skip` after `advance` throws the token away.** `skip` does not mean "move on
+without consuming" — it means *what came before this was whitespace*, so it
+resets the token's START to the current position. Advancing over a word and then
+`skip`ping the spaces after it to peek at the next character leaves a zero-width
+token sitting where you stopped, with the word covered by no node at all. Use
+`advance` for that lookahead instead: once `mark_end` has fixed the end,
+advancing past it is the supported way to look further, and the token keeps both
+its start and its marked end. This shipped once in `_savecontent_kw` (#82) and
+nothing caught it: `npm test` compares S-expressions, which carry no ranges, so
+a correctly-shaped tree with a zero-width leaf passes. Print `startIndex` /
+`endIndex`, or the node's text, for any token your scanner produces.
 
 **Zero-width tokens are legal but must not repeat.** ASI works by returning
 `true` having consumed nothing. That is fine as long as the resulting parse
@@ -145,6 +158,91 @@ inserts/deletes in a loop, writing each candidate to disk before parsing, and
 run the whole thing under `timeout`. Whatever is on disk when it dies is the
 culprit. Bias the inserted characters toward the ones the scanner branches on —
 `{ } ; " # < > ( ) = :` — rather than uniform ASCII.
+
+## Profiling: counting character advances
+
+`npm run bench` measures time, and on a shared runner time is often
+unmeasurable — a real session recorded **76-86% variance between reps**, with an
+untouched control grammar moving further than the change under test. Counting
+what the scanner *does* has no such problem: character advances are
+deterministic, identical on every run, and unaffected by load.
+
+Instrument `advance`/`skip` with a per-function counter, set a current-function
+id at the top of each scan function, and dump from a destructor behind an
+environment variable so an ordinary build is untouched when it is off:
+
+```c
+/* scratch, never committed */
+enum { PF_NONE = 0, PF_scan_html_text, PF_scan_raw_text, /* … */ PF_COUNT };
+static const char *pf_names[PF_COUNT] = { "other", "scan_html_text", /* … */ };
+static unsigned long pf_adv[PF_COUNT], pf_calls[PF_COUNT];
+static int pf_cur = PF_NONE;
+__attribute__((destructor)) static void pf_dump(void) {
+    if (getenv("CFPROF") == NULL) return;
+    for (int i = 0; i < PF_COUNT; i++)
+        if (pf_calls[i] || pf_adv[i])
+            fprintf(stderr, "PROF\t%s\t%lu\t%lu\n", pf_names[i], pf_calls[i], pf_adv[i]);
+}
+#define PF_ENTER(id) do { pf_cur = (id); pf_calls[id]++; } while (0)
+```
+
+with `advance` becoming `{ pf_adv[pf_cur]++; lexer->advance(lexer, false); }`
+and `PF_ENTER(PF_scan_x);` as the first line of each `scan_x`. Then
+`npm run build && CFPROF=1 npm run scan corpus 2>prof.txt`.
+
+Three things to know before reading the output:
+
+- **Attribution is last-set-wins.** A helper called from a scan function is
+  charged to whichever id was set most recently, which is usually what you want
+  (`skip_cfml_comment_body` billed to its caller) but is not a call graph.
+- **`common/scanner.h` is compiled twice**, so `cfml` and `cfquery` each print
+  their own set of rows. They are separate libraries, not a double count.
+- **`npm run scan` parses injected regions by re-parsing them.** When that
+  matters, drive the parse from a script that reads each file and calls
+  `parser.parse()` exactly once instead.
+
+### Detecting error recovery
+
+In recovery tree-sitter marks *every* external token valid, so the exact test is
+to count them at the top of the dispatcher:
+
+```c
+unsigned n = 0;
+for (unsigned i = 0; i < count; i++) if (valid_symbols[i]) n++;
+bool in_recovery = (n == count);
+```
+
+Split any counter by that flag when you suspect a scan is firing where the
+grammar would never reach it — the failure mode this file documents for
+`cfml_template_content`.
+
+### The case study, because both obvious answers were wrong
+
+A profile of the 15,392-file corpus put **71% of all `cfml` scanner character
+advances (39.1M of 55.1M) in one function**, `scan_cf_component_content`, which
+consumes a whole script component file as a single opaque token. Two hypotheses
+followed, and the same instrumentation killed both:
+
+- **"It is firing in error recovery."** Split by the flag above: **0** of 8,824
+  full-file scans were in recovery, against 25 cheap calls that were. A recovery
+  guard would have saved nothing.
+- **"It is scanning files more than once."** 8,824 full scans against a baseline
+  of 7,066 files looked like 1.25x. The baseline was wrong: the scan also
+  accepts `.cfm` files and the heads `property`, `interface` and `import`, not
+  only `component` in a `.cfc`. Counting exactly what it accepts gives **8,239
+  files, 36.2 MB** against **8,824 scans, 37.2M characters** — **1.03x**, one
+  pass per file, nothing to remove.
+
+**Get the denominator right before believing a ratio.** A hot function is not a
+slow one: reading every component body once is what that token costs, and no
+scanner change makes it cheaper, because the lexer API has no bulk skip.
+
+What the profile did establish is where *not* to look. The `cfscript` scanner
+does 12.6M advances against `cfml`'s 55.1M while parsing ~4x slower per byte, so
+its cost is in the parse table rather than the scanner — chase `STATE_COUNT`
+there, not character work. And `bench`'s own split is worth reading first: on
+that corpus, error-recovery input was 4% of the bytes but **26% of the time**,
+which makes fixing a parse gap a throughput change as much as a correctness one.
 
 ## Before you commit a scanner change
 

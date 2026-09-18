@@ -2563,6 +2563,111 @@ component {
                 (string_fragment)))))))))
 
 ===================================
+ordered struct literal, and $ as an ordinary variable (#80)
+===================================
+
+animals = ${ Aardwolf: "Proteles cristata", aardvark: "Orycteropus afer" };
+empty = ${};
+first = $[ 1 ];
+$ = 1;
+sel = $( "x" );
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct
+        (pair
+          (property_identifier)
+          (string
+            (string_fragment)))
+        (pair
+          (property_identifier)
+          (string
+            (string_fragment))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ordered_struct)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (subscript_expression
+        (identifier)
+        (number))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (call_expression
+        (identifier)
+        (arguments
+          (string
+            (string_fragment)))))))
+
+===================================
+arrow function with an empty body (#116)
+===================================
+
+x = () => ;
+y = (a) => ;
+z = () -> ;
+list.each( (v) => v * 2 );
+w = () => mod.create( a = 1 );
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (arrow_function
+        (formal_parameters))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (arrow_function
+        (formal_parameters
+          (parameter_type
+            (identifier))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (arrow_function
+        (formal_parameters))))
+  (expression_statement
+    (call_expression
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (arguments
+        (arrow_function
+          (formal_parameters
+            (parameter_type
+              (identifier)))
+          (binary_expression
+            (identifier)
+            (number))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (arrow_function
+        (formal_parameters)
+        (call_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (arguments
+            (assignment_expression
+              (identifier)
+              (number))))))))
+
+===================================
 savecontent as an expression (#82)
 ===================================
 
@@ -2624,6 +2729,43 @@ component {
             (call_expression
               (identifier)
               (arguments))))))))
+
+===================================
+return type between the access modifiers (#117)
+===================================
+
+component {
+	public struct static function a() { }
+	final whatever package function b() { }
+	package whatever final function c() { }
+}
+
+---
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (access_type)
+        (identifier)
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (access_type)
+        (identifier)
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block))
+      (function_declaration
+        (access_type)
+        (identifier)
+        (access_type)
+        (identifier)
+        (formal_parameters)
+        (statement_block)))))
 
 ===================================
 return type before the access modifiers
@@ -3855,6 +3997,89 @@ msSQL.class: "net.sourceforge.jtds.jdbc.Driver";
       (property_identifier))
     (string
       (string_fragment))))
+
+===================================
+function listener on a new target (#98)
+===================================
+
+threadName = new Query():function( result, error ) { thread.result = result; };
+dotted = new org.lucee.cfml.Query():callback;
+listener = Query():function( r, e ) { x = r; };
+tern = cond ? new Foo() : other;
+bare = cond ? new() : other;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (function_listener_expression
+        (new_expression
+          (identifier)
+          (arguments))
+        (function_expression
+          (formal_parameters
+            (parameter_type
+              (identifier))
+            (parameter_type
+              (identifier)))
+          (statement_block
+            (expression_statement
+              (assignment_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (identifier))))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (function_listener_expression
+        (new_expression
+          (member_expression
+            (member_expression
+              (member_expression
+                (identifier)
+                (property_identifier))
+              (property_identifier))
+            (property_identifier))
+          (arguments))
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (function_listener_expression
+        (call_expression
+          (identifier)
+          (arguments))
+        (function_expression
+          (formal_parameters
+            (parameter_type
+              (identifier))
+            (parameter_type
+              (identifier)))
+          (statement_block
+            (expression_statement
+              (assignment_expression
+                (identifier)
+                (identifier))))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ternary_expression
+        (identifier)
+        (new_expression
+          (identifier)
+          (arguments))
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ternary_expression
+        (identifier)
+        (new_expression
+          (arguments))
+        (identifier)))))
 
 ===================================
 new requires its arguments (#98)

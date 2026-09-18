@@ -19,6 +19,7 @@ enum TokenType {
     JAVA_BLOCK_OPEN,
     STATIC_TYPE_PREFIX,
     PARAMETER_SEPARATOR,
+    EMPTY_ARROW_BODY,
     SAVECONTENT_KW
 };
 
@@ -763,6 +764,30 @@ static bool scan_java_or_cfml_word(TSLexer *lexer, const bool *valid_symbols, bo
 }
 
 
+// `x = () => ;` — an arrow function with no body at all (Lucee LDEV4062).
+// Zero-width, like AUTOMATIC_SEMICOLON: it reports that an expression cannot
+// start here, so the body arm of `arrow_function` does not apply. Offered only
+// before a terminator, which is what keeps the empty arm from competing with a
+// real body — `() => mod.create( a = 1 )` never reaches it.
+static bool scan_empty_arrow_body(TSLexer *lexer) {
+    lexer->result_symbol = EMPTY_ARROW_BODY;
+    lexer->mark_end(lexer);
+
+    while (cf_isspace(lexer->lookahead)) skip(lexer);
+
+    switch (lexer->lookahead) {
+        case 0:
+        case ';':
+        case ')':
+        case '}':
+        case ',':
+        case ']':
+            return true;
+        default:
+            return false;
+    }
+}
+
 // `savecontent { … }` used as an expression. The token covers the word only;
 // the `{` is left for the grammar's `statement_block`.
 //
@@ -781,7 +806,13 @@ static bool scan_savecontent_kw(TSLexer *lexer) {
     // The token ends here; everything past it is lookahead.
     lexer->mark_end(lexer);
 
-    while (cf_isspace(lexer->lookahead)) skip(lexer);
+    // `advance`, not `skip`, for that lookahead. `skip` moves the token's START
+    // to the current position — it means "what came before was whitespace" —
+    // so skipping here threw away the eleven characters already advanced and
+    // left a zero-width token sitting on the `{`, with the word covered by no
+    // node at all. Advancing past `mark_end` is the supported way to look
+    // further: the token still ends where it was marked.
+    while (cf_isspace(lexer->lookahead)) advance(lexer);
     if (lexer->lookahead != '{') return false;
 
     lexer->result_symbol = SAVECONTENT_KW;
@@ -1007,9 +1038,15 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
         return true;
     }
 
-    // Also last, and for the same reason as the branch above: it consumes the
-    // word before it can tell whether the `{` that makes this a savecontent
-    // block follows, and nothing after it needs the position back. The word is
+    if (valid_symbols[EMPTY_ARROW_BODY] && scan_empty_arrow_body(lexer)) {
+        return true;
+    }
+
+    // Last, and for the same reason as the `java` / `cfml` word branch above:
+    // it consumes the word before it can tell whether the `{` that makes this a
+    // savecontent block follows, and nothing after it needs the position back.
+    // It sits below EMPTY_ARROW_BODY for that reason too — both are valid after
+    // `=>`, and the zero-width one has to get its answer first. The word is
     // only matched when the parser is actually expecting an expression here,
     // and a `savecontent` not followed by `{` is declined, so the ordinary
     // identifier reading — `savecontent = 1`, `x = savecontent.foo`,

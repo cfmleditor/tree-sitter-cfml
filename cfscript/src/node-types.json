@@ -397,7 +397,7 @@
     "fields": {
       "body": {
         "multiple": false,
-        "required": true,
+        "required": false,
         "types": [
           {
             "type": "expression",
@@ -1645,6 +1645,10 @@
           {
             "type": "call_expression",
             "named": true
+          },
+          {
+            "type": "new_expression",
+            "named": true
           }
         ]
       }
@@ -2240,7 +2244,25 @@
   {
     "type": "ordered_struct",
     "named": true,
-    "fields": {}
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "cf_pair",
+          "named": true
+        },
+        {
+          "type": "pair",
+          "named": true
+        },
+        {
+          "type": "spread_element",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "pair",
