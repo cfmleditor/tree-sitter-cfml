@@ -243,6 +243,17 @@ block with the `cfml` grammar, where the body is opaque and literal garbage
 passes too. Since neither the scan nor the probes assert on tree *shape*, a
 control has to be checked by reading the tree, not by the absence of an error.
 
+[#115](https://github.com/cfmleditor/tree-sitter-cfml/issues/115) is the sharpest
+case of that blindness so far, and it is now closed by **adding** an error rather
+than removing one. `<cfcomponent javasettings={ … }>` parsed with no ERROR node,
+the struct torn into six bogus attributes, because every piece matched a legal
+token — a one-character unquoted value, then attribute names made of the struct's
+own punctuation. Lucee rejects that syntax (`test/tickets/LDEV5763.cfc` asserts
+`toThrow`), so the right tree is a refusal, and the corpus count went 640 → 641
+on purpose. Two lessons for this table: a construct with **zero** error nodes can
+still be a defect, and a probe keyed on error nodes would have filed the fix
+under "known gap" — the pin has to be a corpus test asserting the tree.
+
 ## Cost and risk of what remains
 
 Estimates come from this repository's own history. That history now includes
