@@ -8044,6 +8044,11 @@ static const TSCharacterRange aux_sym_query_identifier_token1_character_set_1[] 
   {0x1681, 0x1fff}, {0x200c, 0x2027}, {0x202a, 0x202e}, {0x2030, 0x205e}, {0x2061, 0x2fff}, {0x3001, 0xfefe}, {0xff00, 0x10ffff},
 };
 
+static const TSCharacterRange aux_sym_cf_attribute_value_token1_character_set_1[] = {
+  {0, 0x08}, {0x0e, 0x1f}, {'!', '!'}, {'$', '&'}, {'(', '9'}, {'=', '='}, {'?', 'z'}, {'|', '|'},
+  {'~', 0x10ffff},
+};
+
 static const TSCharacterRange sym_private_property_identifier_character_set_1[] = {
   {'$', '$'}, {'A', 'Z'}, {'\\', '\\'}, {'_', '_'}, {'a', 'z'}, {0x7f, 0x9f}, {0xa1, 0x167f}, {0x1681, 0x1fff},
   {0x200c, 0x2027}, {0x202a, 0x202e}, {0x2030, 0x205e}, {0x2061, 0x2fff}, {0x3001, 0xfefe}, {0xff00, 0x10ffff},
@@ -10585,7 +10590,9 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       if (set_contains(extras_character_set_1, 10, lookahead)) ADVANCE(777);
       if (lookahead != 0 &&
           (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(779);
+          lookahead != '>' &&
+          lookahead != '{' &&
+          lookahead != '}') ADVANCE(779);
       END_STATE();
     case 50:
       if (lookahead == '"') ADVANCE(378);
@@ -16227,14 +16234,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       ACCEPT_TOKEN(aux_sym_cf_attribute_value_token1);
       if (lookahead == '*') ADVANCE(926);
       if (lookahead == '/') ADVANCE(914);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != ' ' &&
-          lookahead != '"' &&
-          lookahead != '#' &&
-          lookahead != '\'' &&
-          (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(779);
+      if ((!eof && set_contains(aux_sym_cf_attribute_value_token1_character_set_1, 9, lookahead))) ADVANCE(779);
       END_STATE();
     case 777:
       ACCEPT_TOKEN(aux_sym_cf_attribute_value_token1);
@@ -16243,37 +16243,16 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       if ((set_contains(extras_character_set_1, 10, lookahead)) &&
           (lookahead < '\t' || '\r' < lookahead) &&
           lookahead != ' ') ADVANCE(777);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != ' ' &&
-          lookahead != '"' &&
-          lookahead != '#' &&
-          lookahead != '\'' &&
-          (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(779);
+      if ((!eof && set_contains(aux_sym_cf_attribute_value_token1_character_set_1, 9, lookahead))) ADVANCE(779);
       END_STATE();
     case 778:
       ACCEPT_TOKEN(aux_sym_cf_attribute_value_token1);
-      if (lookahead == '-') ADVANCE(898);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != ' ' &&
-          lookahead != '"' &&
-          lookahead != '#' &&
-          lookahead != '\'' &&
-          (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(779);
+      if (lookahead == '-') ADVANCE(897);
+      if ((!eof && set_contains(aux_sym_cf_attribute_value_token1_character_set_1, 9, lookahead))) ADVANCE(779);
       END_STATE();
     case 779:
       ACCEPT_TOKEN(aux_sym_cf_attribute_value_token1);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != ' ' &&
-          lookahead != '"' &&
-          lookahead != '#' &&
-          lookahead != '\'' &&
-          (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(779);
+      if ((!eof && set_contains(aux_sym_cf_attribute_value_token1_character_set_1, 9, lookahead))) ADVANCE(779);
       END_STATE();
     case 780:
       ACCEPT_TOKEN(sym_cf_attribute_name);
@@ -16293,7 +16272,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 781:
       ACCEPT_TOKEN(sym_cf_attribute_name);
-      if (lookahead == '-') ADVANCE(897);
+      if (lookahead == '-') ADVANCE(898);
       if (lookahead != 0 &&
           (lookahead < '\t' || '\r' < lookahead) &&
           lookahead != ' ' &&
@@ -16778,14 +16757,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 897:
       ACCEPT_TOKEN(anon_sym_DASH_DASH);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != ' ' &&
-          lookahead != '"' &&
-          lookahead != '#' &&
-          lookahead != '\'' &&
-          lookahead != '/' &&
-          (lookahead < '<' || '>' < lookahead)) ADVANCE(782);
+      if ((!eof && set_contains(aux_sym_cf_attribute_value_token1_character_set_1, 9, lookahead))) ADVANCE(779);
       END_STATE();
     case 898:
       ACCEPT_TOKEN(anon_sym_DASH_DASH);
@@ -16795,8 +16767,8 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           lookahead != '"' &&
           lookahead != '#' &&
           lookahead != '\'' &&
-          (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(779);
+          lookahead != '/' &&
+          (lookahead < '<' || '>' < lookahead)) ADVANCE(782);
       END_STATE();
     case 899:
       ACCEPT_TOKEN(anon_sym_DASH_DASH);
@@ -16906,14 +16878,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 914:
       ACCEPT_TOKEN(anon_sym_SLASH_SLASH);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != ' ' &&
-          lookahead != '"' &&
-          lookahead != '#' &&
-          lookahead != '\'' &&
-          (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(779);
+      if ((!eof && set_contains(aux_sym_cf_attribute_value_token1_character_set_1, 9, lookahead))) ADVANCE(779);
       END_STATE();
     case 915:
       ACCEPT_TOKEN(anon_sym_SLASH_SLASH);
@@ -17005,14 +16970,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 926:
       ACCEPT_TOKEN(anon_sym_SLASH_STAR);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != ' ' &&
-          lookahead != '"' &&
-          lookahead != '#' &&
-          lookahead != '\'' &&
-          (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(779);
+      if ((!eof && set_contains(aux_sym_cf_attribute_value_token1_character_set_1, 9, lookahead))) ADVANCE(779);
       END_STATE();
     case 927:
       ACCEPT_TOKEN(anon_sym_SLASH_STAR);

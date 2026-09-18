@@ -9854,6 +9854,11 @@ static const TSCharacterRange extras_character_set_1[] = {
   {0x3000, 0x3000}, {0xfeff, 0xfeff},
 };
 
+static const TSCharacterRange aux_sym_cf_attribute_value_token1_character_set_1[] = {
+  {0, 0x08}, {0x0e, 0x1f}, {'!', '!'}, {'$', '&'}, {'(', '9'}, {'=', '='}, {'?', 'z'}, {'|', '|'},
+  {'~', 0x10ffff},
+};
+
 static const TSCharacterRange sym_identifier_character_set_1[] = {
   {'$', '$'}, {'0', '9'}, {'A', 'Z'}, {'\\', '\\'}, {'_', '_'}, {'a', 'z'}, {0x7f, 0x9f}, {0xa1, 0x167f},
   {0x1681, 0x1fff}, {0x200c, 0x2027}, {0x202a, 0x202e}, {0x2030, 0x205e}, {0x2061, 0x2fff}, {0x3001, 0xfefe}, {0xff00, 0x10ffff},
@@ -11688,7 +11693,9 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       if (set_contains(extras_character_set_1, 10, lookahead)) ADVANCE(374);
       if (lookahead != 0 &&
           (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(375);
+          lookahead != '>' &&
+          lookahead != '{' &&
+          lookahead != '}') ADVANCE(375);
       END_STATE();
     case 42:
       ADVANCE_MAP(
@@ -13570,14 +13577,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       ACCEPT_TOKEN(aux_sym_cf_attribute_value_token1);
       if (lookahead == '*') ADVANCE(539);
       if (lookahead == '/') ADVANCE(527);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != ' ' &&
-          lookahead != '"' &&
-          lookahead != '#' &&
-          lookahead != '\'' &&
-          (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(375);
+      if ((!eof && set_contains(aux_sym_cf_attribute_value_token1_character_set_1, 9, lookahead))) ADVANCE(375);
       END_STATE();
     case 374:
       ACCEPT_TOKEN(aux_sym_cf_attribute_value_token1);
@@ -13585,25 +13585,11 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       if ((set_contains(extras_character_set_1, 10, lookahead)) &&
           (lookahead < '\t' || '\r' < lookahead) &&
           lookahead != ' ') ADVANCE(374);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != ' ' &&
-          lookahead != '"' &&
-          lookahead != '#' &&
-          lookahead != '\'' &&
-          (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(375);
+      if ((!eof && set_contains(aux_sym_cf_attribute_value_token1_character_set_1, 9, lookahead))) ADVANCE(375);
       END_STATE();
     case 375:
       ACCEPT_TOKEN(aux_sym_cf_attribute_value_token1);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != ' ' &&
-          lookahead != '"' &&
-          lookahead != '#' &&
-          lookahead != '\'' &&
-          (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(375);
+      if ((!eof && set_contains(aux_sym_cf_attribute_value_token1_character_set_1, 9, lookahead))) ADVANCE(375);
       END_STATE();
     case 376:
       ACCEPT_TOKEN(sym_cf_attribute_name);
@@ -14248,14 +14234,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 527:
       ACCEPT_TOKEN(anon_sym_SLASH_SLASH);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != ' ' &&
-          lookahead != '"' &&
-          lookahead != '#' &&
-          lookahead != '\'' &&
-          (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(375);
+      if ((!eof && set_contains(aux_sym_cf_attribute_value_token1_character_set_1, 9, lookahead))) ADVANCE(375);
       END_STATE();
     case 528:
       ACCEPT_TOKEN(anon_sym_SLASH_SLASH);
@@ -14344,14 +14323,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       END_STATE();
     case 539:
       ACCEPT_TOKEN(anon_sym_SLASH_STAR);
-      if (lookahead != 0 &&
-          (lookahead < '\t' || '\r' < lookahead) &&
-          lookahead != ' ' &&
-          lookahead != '"' &&
-          lookahead != '#' &&
-          lookahead != '\'' &&
-          (lookahead < ':' || '<' < lookahead) &&
-          lookahead != '>') ADVANCE(375);
+      if ((!eof && set_contains(aux_sym_cf_attribute_value_token1_character_set_1, 9, lookahead))) ADVANCE(375);
       END_STATE();
     case 540:
       ACCEPT_TOKEN(anon_sym_SLASH_STAR);

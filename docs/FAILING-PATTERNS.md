@@ -243,6 +243,17 @@ block with the `cfml` grammar, where the body is opaque and literal garbage
 passes too. Since neither the scan nor the probes assert on tree *shape*, a
 control has to be checked by reading the tree, not by the absence of an error.
 
+[#115](https://github.com/cfmleditor/tree-sitter-cfml/issues/115) is the sharpest
+case of that blindness so far, and it is now closed by **adding** an error rather
+than removing one. `<cfcomponent javasettings={ … }>` parsed with no ERROR node,
+the struct torn into six bogus attributes, because every piece matched a legal
+token — a one-character unquoted value, then attribute names made of the struct's
+own punctuation. Lucee rejects that syntax (`test/tickets/LDEV5763.cfc` asserts
+`toThrow`), so the right tree is a refusal, and the corpus count went 640 → 641
+on purpose. Two lessons for this table: a construct with **zero** error nodes can
+still be a defect, and a probe keyed on error nodes would have filed the fix
+under "known gap" — the pin has to be a corpus test asserting the tree.
+
 ## Cost and risk of what remains
 
 Estimates come from this repository's own history. That history now includes
@@ -557,7 +568,15 @@ back a fix out for.
   half shipped; the residual listener target measures **+14 states** on today's
   base and is blocked by the `? new X() :` collision, not by table size.
 - [#75](https://github.com/cfmleditor/tree-sitter-cfml/issues/75) — implemented,
-  measured at 2× the table, reverted.
+  measured at 2× the table, reverted, and **re-measured on today's base after
+  #98 showed a parked cost can expire**. This one did not: `$.if_statement` in
+  the arrow body still doubles the table (5,315 → 10,704, `parser.c` 19.5 →
+  39.3 MB). Two further routes were tried and recorded in `LIMITATIONS.md`:
+  gating the arm on an external zero-width marker buys **nothing** (10,758),
+  and a purpose-built conditional whose branches are expressions still costs
+  **+38%** (7,330). The middle result is the one to remember — the marker
+  technique that made #82 and #116 affordable answers a one-token lookahead
+  problem, not a rule category becoming reachable in a new context.
 - [#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119) — the fix and
   the spelling that works today are mutually exclusive; the second shape would
   need overlapping nodes and is not representable.
