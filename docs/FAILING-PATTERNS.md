@@ -529,7 +529,15 @@ done twice.
   half shipped; the residual listener target measures **+14 states** on today's
   base and is blocked by the `? new X() :` collision, not by table size.
 - [#75](https://github.com/cfmleditor/tree-sitter-cfml/issues/75) — implemented,
-  measured at 2× the table, reverted.
+  measured at 2× the table, reverted, and **re-measured on today's base after
+  #98 showed a parked cost can expire**. This one did not: `$.if_statement` in
+  the arrow body still doubles the table (5,315 → 10,704, `parser.c` 19.5 →
+  39.3 MB). Two further routes were tried and recorded in `LIMITATIONS.md`:
+  gating the arm on an external zero-width marker buys **nothing** (10,758),
+  and a purpose-built conditional whose branches are expressions still costs
+  **+38%** (7,330). The middle result is the one to remember — the marker
+  technique that made #82 and #116 affordable answers a one-token lookahead
+  problem, not a rule category becoming reachable in a new context.
 - [#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119) — the fix and
   the spelling that works today are mutually exclusive; the second shape would
   need overlapping nodes and is not representable.
