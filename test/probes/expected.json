@@ -3,6 +3,8 @@
   "probes": {
     "cfml/cfcontinue_in_cfloop.cfm": "pass",
     "cfml/cfif_function_call.cfm": "pass",
+    "cfml/cfif_supplies_close_delimiter.cfm": "fail",
+    "cfml/cfif_supplies_tag_opening.cfm": "fail",
     "cfml/cfquery_hash_params.cfm": "pass",
     "cfml/cfsetting_void.cfc": "pass",
     "cfml/cftimer_with_body.cfm": "pass",

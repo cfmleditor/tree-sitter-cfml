@@ -93,7 +93,7 @@ obvious grep: `ServerService.cfc`, `LargeMethod.cfc` and Preside's
 ordinary CFML — a first pass at re-deriving this table counted them here
 incorrectly.
 
-## Genuine gaps — 174 nodes, 26 files
+## Genuine gaps — 178 nodes, 28 files
 
 **Re-verified at `b60470f` only in part, and it matters which.** The two largest
 rows were re-counted exactly against a fresh scan and are unchanged: CSS in
@@ -131,6 +131,7 @@ is naming a witness and not a construct.
 | 19 | 13 | Dynamic tag opened and closed in different blocks | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | — |
 | 2 | 1 | Function-listener callback on a `new` **target** — tractable, rejected on cost | `var t = new Query():function( result, error ) { … };` | `function_listener_new.cfc` |
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
+| 4 | 2 | A start tag whose `>` sits inside a `<cfif>` branch — **tractable one way, rejected: the fix breaks the spelling that works** | `<a title="Back" <cfif x>⏎ href="a">⏎<cfelse>⏎ href="b">⏎</cfif>` | — |
 
 A prior caution on reading this table at all: its node counts come from the
 corpus, so they measure what people have written, not what the language defines.
@@ -284,6 +285,7 @@ Three properties of this grammar drive most of the risk:
 | Dotted key in a struct literal | **Low** | **Low** to write, **rejected on runtime cost** | Cheap to implement — one conflict, not the five the estimate assumed, by putting the dotted form in `pair` and `cf_pair` instead of widening `_property_name`. Rejected anyway: that one conflict is live at **every member access in the language**, and measured a 1.8× slowdown on cfscript for 30 nodes in one file. Lexing the key as a single token, the trick that made array return types free, is five times worse again and breaks `f( a.b )`. See [#42](https://github.com/cfmleditor/tree-sitter-cfml/pull/42) |
 | CSS in `<style>` with many `#` | **Med-High** | **Med** | Does not reduce below 20 lines, so the mechanism is not yet understood — understand it before estimating again. One file, but a whole stylesheet is a plausible shape for any CFML admin template |
 | Dynamic tag opened and closed in different blocks | **High** | **High** | Scanner tag-stack work on the shared header. 13 files but only 19 nodes: the surrounding markup still recovers, so the errors stay small |
+| A start tag whose `>` sits inside a `<cfif>` branch | **Low** to write | **rejected: no fix keeps both spellings** | Making `start_tag` terminable by the conditional costs **+18 states** narrowed to `cf_if_tag` (+128 for any `_cf_tags`) and makes the construct parse — while breaking `<a <cfif x>href="a"<cfelse>href="b"</cfif>>`, which parses today and is pinned by two corpus tests. Precedence does not choose between them and a declared conflict reads as **unnecessary**, because the divergence is lexical, not structural: `>` is an external token that is `_close_tag_delim` in one reading and `html_text` in the other, and the choice is already made when `</cfif>` reduces. The issue's second shape — the tag *opening* inside the branches — would need the tag and the conditional to overlap and is not representable at all. 2 files. See [#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119) and `LIMITATIONS.md` |
 | Prefixed / namespaced dynamic tag | **High** | **High** | Same tag stack, same shared header. Called the largest cluster at the last baseline; now 48 nodes |
 | Function-listener `f():callback` | ~~**Med-High**~~ **Low** | ~~**High**~~ **Low** | **Done, and the rating was wrong by two steps in both columns.** Shipped as one rule, one declared conflict and **+176 parse states**; see [#87](https://github.com/cfmleditor/tree-sitter-cfml/issues/87). The reasoning that produced Med-High/High — "another `:` reading in the most contested character in the grammar" — is the part to correct. Contention is not a property of the *character*; it is a property of the *state and lookahead* where two readings meet. `:` serves five rules, but the only one reachable after a `call_expression` is the ternary, so the conflict is live at `call` `:` and nowhere else — about 1,160 sites against 26k ternaries in the 15k-file corpus, and unmeasurable even on a workload saturated with it. A **second** wrong conclusion sat on top of it: an earlier attempt reported the rule "fails to generate", having tried only the resolutions the error message lists in order rather than the conflict declaration it also offers. Two readings that diverge in the *parser* are what conflicts are for; only two that diverge in the *lexer* are the hard case. The genuinely expensive half was the one nobody rated: `new_expression` as the target, +578 states, now the residual gap |
 | Subscript with more than one pair | **High** | **High** | Re-admits `pair` inside subscripts — the ambiguity the casing branch removed. One file, non-idiomatic syntax |
@@ -446,3 +448,99 @@ one-line `choice` arms with no measurable effect.
    for the riskiest change available is a poor trade on its own.
 4. The 304-node tail is not a project. It is 126 files of individually odd code,
    81 of them carrying a single error node.
+
+## Next experiment, by open issue
+
+Ordered by value per unit of risk, like the priorities above, and written so each
+can be picked up cold. Every one ends with a **stop rule**, because the expensive
+mistake in this repository has never been trying something — it has been not
+knowing when to revert.
+
+### [#117](https://github.com/cfmleditor/tree-sitter-cfml/issues/117) — a return type between two modifiers
+
+`component { public struct static function f() {} }`. The symptom has moved since
+the issue was filed: it is now `MISSING ;`, not `ERROR` at the type.
+
+The rule is the two-armed one in `cfscript/grammar.js` — *modifiers then an
+optional type*, or *type then `repeat1(access_type)`*. The interleaved spelling
+fits neither, because in the first arm nothing may follow the type but
+`function`. **Experiment:** allow `repeat($.access_type)` after the optional type
+in that first arm, and measure `STATE_COUNT` at once.
+
+**The hazard is named in the rule's own comments** and has been paid for once:
+making a modifier valid straight after a type word changes how the *next* word
+lexes, which is how `function static( … )` (Mura `MuraScope.cfc`) broke. Controls:
+that spelling, plus the four members of Lucee's `test/general/modifiers/All.cfc`.
+
+**Stop rule:** more than about +50 states, or any control regressing.
+
+### [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82) — `savecontent` as an expression
+
+The keyword route is closed and measured: `keyword('Savecontent')` generates
+cleanly at +31 states, then breaks `savecontent = 1`, `x = savecontent.foo` and
+`savecontent()`, because the keyword out-lexes `identifier` before
+`_reserved_identifier` can catch it.
+
+**The untried angle is the scanner.** An external token in
+`cfscript/src/scanner.c` that matches the word only when the next non-whitespace
+character is `{` keeps the identifier reading everywhere else, because the
+scanner can look ahead where the lexer cannot. `_parameter_separator`
+([#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49)) is the
+precedent for a context-gated external token in that file.
+
+**Stop rule:** if the token has to fire anywhere a `{` can legitimately follow an
+identifier, drop it — that is the over-broad shape the rejected
+`identifier statement_block` arm already had.
+
+### [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56) — `</cfscript>` inside a string literal
+
+**The issue's open question is answered and its text is stale.** It says the
+behaviour was never checked against an engine; `LIMITATIONS.md` now records it as
+a confirmed divergence from Lucee, read from `CFMLScriptTransformer`: the
+`tagdependent` body ends through `isFinish()` between complete statements, so the
+string is consumed by the expression parser and no raw-text search for
+`</cfscript>` happens at all. Say so on the issue before starting.
+
+**Work:** track string state in the raw-text scan in `common/scanner.h`. It lands
+in `cfml` and `cfquery` together, and a bug there breaks every `<cfscript>` block
+rather than an edge case, so the corpus scan and `treediff` are the gate, not the
+test suite. Probe `cfml/close_tag_in_script_string.cfm` flips when it works.
+
+**Watch for** the recovery-cost trap in `.claude/skills/parse-gap/references/scanner.md`:
+a string-aware scan that also runs during error recovery turns a bounded scan
+into an EOF scan. Check `valid_symbols` for the recovery signature first.
+
+### [#116](https://github.com/cfmleditor/tree-sitter-cfml/issues/116) — an arrow function with an empty body
+
+`x = () => ;`. At end of file it produces no ERROR node at all — a `number`
+holding a MISSING token — so the corpus scan is blind to it and the probe is the
+only gate.
+
+**Experiment:** make `field('body', …)` optional in `arrow_function` and let the
+existing `;` terminate the statement. If it lands, `common/define-grammar.js`
+needs the same arm for `<cfset f = function(){ x = () => ; }>`.
+
+**Stop rule, inherited from [#75](https://github.com/cfmleditor/tree-sitter-cfml/issues/75):**
+that issue's arrow-body change declared no conflicts, passed every gate, and took
+`STATE_COUNT` from 4,984 to 10,005. Past roughly +100 states this is not worth
+one Lucee test file.
+
+### [#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80) — the `${ … }` ordered struct
+
+Blocked on a decision, not on cost. The bracket form `$[ … ]` only *appears* to
+work: it parses as a `subscript_expression` whose object is the identifier `$`
+and whose index is a `slice_expression`. **Decide what `$[ … ]` should produce
+once `$` stops being an ordinary identifier**, then write one rule covering both
+spellings. Bolting a `${ … }` rule onto the existing misparse is how this gets
+done twice.
+
+### Parked, with the reasons already recorded
+
+- [#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98) — the `new.foo`
+  half shipped; the residual listener target measures **+14 states** on today's
+  base and is blocked by the `? new X() :` collision, not by table size.
+- [#75](https://github.com/cfmleditor/tree-sitter-cfml/issues/75) — implemented,
+  measured at 2× the table, reverted.
+- [#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119) — the fix and
+  the spelling that works today are mutually exclusive; the second shape would
+  need overlapping nodes and is not representable.
