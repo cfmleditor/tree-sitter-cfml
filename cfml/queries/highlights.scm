@@ -224,6 +224,15 @@
 ;------
 (parameter_type) @type
 
+; The parent capture above covers a built-in type name, which is a leaf. A
+; custom type and a dotted path are not: they carry `identifier` children, and
+; `(identifier) @variable` earlier in this file matches those over the very same
+; range. Which of the two a given highlighter renders is not something this file
+; should leave to chance, so the children are captured as `@type` explicitly,
+; after the generic rule they need to beat.
+(parameter_type (identifier) @type)
+(parameter_type (path (identifier) @type))
+
 (catch_clause
   type: (catch_type) @type)
 

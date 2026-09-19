@@ -330,6 +330,15 @@
 ; Reachable inside `#...#` through a `function(...)` expression or a typed
 ; arrow-function parameter, even though a `<cfscript>` block is not.
 (parameter_type) @type
+
+; The parent capture above covers a built-in type name, which is a leaf. A
+; custom type and a dotted path are not: they carry `identifier` children, and
+; `(identifier) @variable` earlier in this file matches those over the very same
+; range. Which of the two a given highlighter renders is not something this file
+; should leave to chance, so the children are captured as `@type` explicitly,
+; after the generic rule they need to beat.
+(parameter_type (identifier) @type)
+(parameter_type (path (identifier) @type))
 ; `User[] v` - one token, so the anonymous "[" / "]" rule cannot reach it.
 (array_return_suffix) @punctuation.bracket
 
