@@ -118,6 +118,15 @@ after a statement, PR #120) and
 [#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114) (a `<` opening
 a run of template text, PR #121).
 
+### [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56) — fixed, PR pending
+
+`</cfscript>` inside a string. Corpus 642 → 638 across 119 → 117 files, zero
+changed trees, scanner-only. The record in
+[`FAILING-PATTERNS.md`](FAILING-PATTERNS.md) carries the three wrong assumptions
+it took to get there — strings imply comments, comments imply `\r`, and
+interpolation implies nesting — each caught by the corpus scan and none by the
+test suite.
+
 ### [#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98) — fixed, PR pending
 
 A `new` expression as a function-listener target, through a second rule arm
