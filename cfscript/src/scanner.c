@@ -19,7 +19,8 @@ enum TokenType {
     JAVA_BLOCK_OPEN,
     STATIC_TYPE_PREFIX,
     PARAMETER_SEPARATOR,
-    EMPTY_ARROW_BODY
+    EMPTY_ARROW_BODY,
+    SAVECONTENT_KW
 };
 
 void *tree_sitter_cfscript_external_scanner_create() { return NULL; }
@@ -787,6 +788,37 @@ static bool scan_empty_arrow_body(TSLexer *lexer) {
     }
 }
 
+// `savecontent { … }` used as an expression. The token covers the word only;
+// the `{` is left for the grammar's `statement_block`.
+//
+// Case-insensitive, like every CFML keyword. The word must end at a
+// non-identifier character — `savecontentFoo` is an ordinary identifier — and
+// the next non-whitespace character must be `{`, which is what separates this
+// from the statement form and from every other use of the word.
+static bool scan_savecontent_kw(TSLexer *lexer) {
+    static const char word[] = "savecontent";
+    for (unsigned i = 0; i < sizeof(word) - 1; i++) {
+        if (cf_tolower(lexer->lookahead) != word[i]) return false;
+        advance(lexer);
+    }
+    if (cf_isalnum(lexer->lookahead) || lexer->lookahead == '_') return false;
+
+    // The token ends here; everything past it is lookahead.
+    lexer->mark_end(lexer);
+
+    // `advance`, not `skip`, for that lookahead. `skip` moves the token's START
+    // to the current position — it means "what came before was whitespace" —
+    // so skipping here threw away the eleven characters already advanced and
+    // left a zero-width token sitting on the `{`, with the word covered by no
+    // node at all. Advancing past `mark_end` is the supported way to look
+    // further: the token still ends where it was marked.
+    while (cf_isspace(lexer->lookahead)) advance(lexer);
+    if (lexer->lookahead != '{') return false;
+
+    lexer->result_symbol = SAVECONTENT_KW;
+    return true;
+}
+
 // A newline acting as a parameter separator, for a parameter list whose comma
 // was left out — Lucee, ACF and BoxLang all tolerate it, and TestBox's
 // `BaseSpec.cfc` depends on it.
@@ -1007,6 +1039,20 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
     }
 
     if (valid_symbols[EMPTY_ARROW_BODY] && scan_empty_arrow_body(lexer)) {
+        return true;
+    }
+
+    // Last, and for the same reason as the `java` / `cfml` word branch above:
+    // it consumes the word before it can tell whether the `{` that makes this a
+    // savecontent block follows, and nothing after it needs the position back.
+    // It sits below EMPTY_ARROW_BODY for that reason too — both are valid after
+    // `=>`, and the zero-width one has to get its answer first. The word is
+    // only matched when the parser is actually expecting an expression here,
+    // and a `savecontent` not followed by `{` is declined, so the ordinary
+    // identifier reading — `savecontent = 1`, `x = savecontent.foo`,
+    // `savecontent()` — is untouched. See `savecontent_expression` in the
+    // grammar for why this cannot be a keyword token.
+    if (valid_symbols[SAVECONTENT_KW] && scan_savecontent_kw(lexer)) {
         return true;
     }
 

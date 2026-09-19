@@ -48,6 +48,18 @@ delimiter is valid — `CLOSE_TAG_DELIM`, `CLOSE_CF_TAG_DELIM`,
 `CF_SELF_CLOSING_VOID_TAG_DELIMITER`. Where none is expected, the parser is not
 inside a tag, so `>` cannot be closing one.
 
+**`skip` after `advance` throws the token away.** `skip` does not mean "move on
+without consuming" — it means *what came before this was whitespace*, so it
+resets the token's START to the current position. Advancing over a word and then
+`skip`ping the spaces after it to peek at the next character leaves a zero-width
+token sitting where you stopped, with the word covered by no node at all. Use
+`advance` for that lookahead instead: once `mark_end` has fixed the end,
+advancing past it is the supported way to look further, and the token keeps both
+its start and its marked end. This shipped once in `_savecontent_kw` (#82) and
+nothing caught it: `npm test` compares S-expressions, which carry no ranges, so
+a correctly-shaped tree with a zero-width leaf passes. Print `startIndex` /
+`endIndex`, or the node's text, for any token your scanner produces.
+
 **Zero-width tokens are legal but must not repeat.** ASI works by returning
 `true` having consumed nothing. That is fine as long as the resulting parse
 state no longer accepts the token; if it does, the parser loops forever emitting

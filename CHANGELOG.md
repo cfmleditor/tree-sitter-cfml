@@ -3,6 +3,18 @@
 ## [Unreleased]
 
 ### cfscript
+- **Support `savecontent` as an expression** — `greeting = savecontent { writeOutput("G'day World") };` ([#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82), Lucee `test/tickets/_LDEV3623.cfc`). **+28 parse states** (5489 → 5517), no new conflicts, corpus **642 → 641 error nodes across 119 → 118 files**, zero changed trees in both grammars, `npm run fuzz` clean.
+
+  **A zero-width token got through the whole gate once.** The first working version `skip`ped the whitespace after the word to peek for the `{`, and `skip` resets a token's start — so the token came out empty, on the `{`, with `savecontent` covered by no node. Tests, probe, corpus scan, tree-shape diff and fuzz were all green, because a corpus test compares S-expressions and those carry no ranges. `advance` past `mark_end` is the lookahead that keeps the token; the rule is now in the parse-gap skill.
+
+  **The obvious route is a trap, and it is the one the issue invites.** The statement form has no `savecontent` rule at all — `savecontent variable="g" { … }` goes through the generic `tag_statement` with the word as an ordinary identifier — so an expression form looks like it needs `keyword('Savecontent')`. That generates cleanly at 31 states and then breaks the working statement form and every ordinary use of the word: `savecontent = 1`, `x = savecontent`, `x = savecontent.foo` and `savecontent()` all become ERRORs, because an extracted keyword out-lexes `identifier` wherever it is valid, before a `_reserved_identifier` fallback can be reached.
+
+  **The scanner can do what the lexer cannot.** `_savecontent_kw` matches the word only when the next non-whitespace character is `{`, and declines otherwise, so the word keeps its identifier reading everywhere else. Placed last in `scan()` for the reason the `java` / `cfml` branch above it already documents: it consumes the word before it can tell, and nothing after it needs the position back.
+
+  **The issue's file count was too high.** It names three Lucee files; only `_LDEV3623.cfc` writes the expression form. `CodeIsland.cfc` and `Jira2659.cfc` use the statement form, which already parsed, and their errors are unrelated — tag-island fences and `<cfbreak "outer">`. The expression form occurs **once** in 15,392 files.
+
+  What the first attempt broke is now pinned rather than trusted: the corpus test `savecontent as an expression (#82)` asserts the statement form still yields `tag_statement` and that `savecontent = 1`, `x = savecontent.foo` and `savecontent()` keep their trees, and the probe `cfscript/savecontent_expression.cfc` carries both forms.
+
 - **Support a `new` expression as a function-listener target** — `threadName = new Query():function( result, error ) { … };` ([#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98), Lucee `FunctionListener.cfc`). That completes the eleven forms in Lucee's [Function Listeners](https://docs.lucee.org/recipes/function-listeners.html) recipe; the other ten landed in #96 and #97. **+53 parse states**, one declared conflict, corpus **644 → 642 error nodes across 120 → 119 files**, zero changed trees in both grammars. Probe `cfscript/function_listener_new.cfc` flips to `pass`.
 
   **The `+591` this issue was parked on had expired.** It was measured when `new_expression` could complete on the bare keyword `new`; requiring its `arguments` — shipped separately — removed that, and the same widening then measured **+14**. A cost taken before a related change is not evidence about after it, which is the transferable part.

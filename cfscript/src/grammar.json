@@ -2012,6 +2012,36 @@
         {
           "type": "SYMBOL",
           "name": "call_expression"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "savecontent_expression"
+        }
+      ]
+    },
+    "savecontent_expression": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "tag",
+          "content": {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_savecontent_kw"
+            },
+            "named": true,
+            "value": "identifier"
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "body",
+          "content": {
+            "type": "SYMBOL",
+            "name": "statement_block"
+          }
         }
       ]
     },
@@ -10688,6 +10718,10 @@
     {
       "type": "SYMBOL",
       "name": "_empty_arrow_body"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_savecontent_kw"
     }
   ],
   "inline": [
