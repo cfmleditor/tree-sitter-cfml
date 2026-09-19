@@ -2,8 +2,8 @@
 
 Every file in the real-world corpus that still fails to parse, with the reason.
 
-**Measured on 2026-09-19 at `b6ce191` plus the `elseif` fix: 640 error nodes
-across 117 files of 15,392.** Every node is accounted for — there is no unexplained residue, which
+**Measured on 2026-09-19 at `76fc7bc` plus the parenthesised-type-keyword fix:
+623 error nodes across 116 files of 15,392.** Every node is accounted for — there is no unexplained residue, which
 is the difference between this document and the residual estimate it replaces
 in [`FAILING-PATTERNS.md`](FAILING-PATTERNS.md).
 
@@ -27,7 +27,8 @@ That distinction is not pedantic. Six first-pass labels taken from the error
 text were wrong, and each was caught only by reduction:
 
 - Preside's `DateFormatService.cfc` looked like a missing semicolon or a `<=`
-  comparison. It is neither: `x = (date)` fails where `x = date` parses.
+  comparison. It was neither: `x = (date)` failed where `x = date` parsed.
+  Fixed — see `FAILING-PATTERNS.md`.
 - `elseif` looked like the trigger in two files. A single `elseif` appeared to
   parse — but as a `tag_statement`, not as part of the `if`. Reducing it found a
   **wrong tree in five files where only two reported an error**, and the fix is
@@ -87,7 +88,7 @@ rows are already fixed in open pull requests and will disappear when those land.
 | 3 | 1 | `$[ … ]` subscript holding multiple pairs — declined in #80 |
 | 1 | 1 | `savecontent` as an expression — fixed by PR #125 |
 
-## Gaps not previously recorded — 121 nodes, 49 files (19%)
+## Gaps not previously recorded — 104 nodes, 48 files (17%)
 
 This is the part worth acting on. Every row here reduces to a one- or two-line
 case, and most are a single file.
@@ -95,7 +96,6 @@ case, and most are a single file.
 | Nodes | Files | Construct |
 |---|---|---|
 | 17 | 5 | space-separated attributes in a script-syntax tag call |
-| 17 | 1 | type keyword parenthesised as an expression — `x = (date)` |
 | 13 | 1 | space-separated attrs + `var x &= …` compound assignment |
 | 7 | 1 | not reducible — only fails in whole-file context |
 | 7 | 1 | `<!--- --->` tag comment inside an argument list |
@@ -124,34 +124,11 @@ case, and most are a single file.
 | 1 | 1 | `final` on a parameter |
 | 1 | 1 | spaced elvis `? :` inside a `#…#` tag interpolation |
 
-## Two findings worth pulling out
+## The finding worth pulling out
 
-### `x = (date)` does not parse, and `x = date` does
-
-A type keyword is fine bare, fine as a call argument and fine in an array
-literal, but not as the first token of a parenthesised expression:
-
-```cfml
-x = date;            // parses
-x = f( date );       // parses
-x = [ date ];        // parses
-if ( date ) { }      // parses
-x = (date);          // ERROR
-x = (date + 1);      // ERROR
-x = (date[1]);       // ERROR
-return (date);       // ERROR
-```
-
-`date`, `string`, `numeric`, `boolean`, `any`, `void` and `function` all fail
-this way; `struct`, `array`, `query`, `component` and `time` do not. The split
-follows which words are extracted keywords, so this is the keyword-extraction
-hazard `CLAUDE.md` warns about, seen from the other side.
-
-It is one file in the corpus today. That is not a reason to rank it low: the
-construct is ordinary CFML and the corpus only shows what people happened to
-write. The function-listener case in `FAILING-PATTERNS.md` is the precedent —
-a form with zero corpus occurrences turned out to be real, and reading the
-vendor documentation found it where no scan could.
+Two constructs called out when this document was first written have since been
+fixed, and their write-ups moved to `FAILING-PATTERNS.md`: `x = (date)` and
+`elseif` as one word. What follows is the one still open.
 
 ### Space-separated tag-call attributes is now the largest open gap
 
@@ -188,7 +165,7 @@ forward.
 
 ## Appendix — every failing file
 
-All 117, alphabetical. **Cat** is the section above: **A** not a parser defect,
+All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 **B** already on record, **C** newly recorded here.
 
 | File (under `corpus/`) | Nodes | Cat | Why |
@@ -290,7 +267,6 @@ All 117, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `Ortus-Solutions_ContentBox/modules/contentbox/modules/contentbox-admin/views/settings/rawSettingsTable.cfm` | 3 | B | start tag whose `>` sits inside a `<cfif>` branch |
 | `Ortus-Solutions_DocBox/strategy/json/JSONAPIStrategy.cfc` | 3 | C | `component` as a function return type |
 | `pixl8_preside-cms/system/services/devtools/ScaffoldingService.cfc` | 2 | C | missing comma between parameters |
-| `pixl8_preside-cms/system/services/l10n/DateFormatService.cfc` | 17 | C | type keyword parenthesised as an expression — `x = (date)` |
 | `pixl8_preside-cms/system/views/admin/assetmanager/editFolder.cfm` | 1 | C | spaced elvis `? :` inside a `#…#` tag interpolation |
 | `pixl8_preside-cms/system/views/webflow/default/stepTitle.cfm` | 1 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
 | `pixl8_preside-cms/tests/unit/api/presideObjects/RelationshipGuidanceTest.cfc` | 30 | B | dotted key in a struct literal — `{ a.b = 1 }` |

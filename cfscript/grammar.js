@@ -958,17 +958,8 @@ module.exports = grammar({
     // keywords here because `_reserved_identifier` makes them valid at the start
     // of a parameter, so accept them as a type name too.
     parameter_type: ($) => choice(
-      keyword('Any'),
-      keyword('String'),
-      keyword('Numeric'),
-      keyword('Xml'),
-      keyword('Binary'),
-      keyword('Boolean'),
-      keyword('Date'),
       $._kw_function,
-      keyword('Guid'),
       keyword('Query'),
-      keyword('Void'),
       // `Component listener` — `component` lexes as a keyword here because
       // `_reserved_identifier` makes it valid at the start of a parameter, so it
       // never reaches `$.identifier` below.

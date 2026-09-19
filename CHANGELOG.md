@@ -3,6 +3,14 @@
 ## [Unreleased]
 
 ### cfscript
+- **A built-in type name can be a parenthesised expression** — `x = (date)` was an ERROR while `x = date` parsed (Preside `system/services/l10n/DateFormatService.cfc`, where the real shape is `( date[ 2 ] > 0 && … )`). **+0 parse states in all three grammars**; `cfml` and `cfquery` generated files are byte-identical. Corpus **642 → 625 error nodes across 119 → 118 files**, the whole delta being that one file going to zero.
+
+  **Inside `(` the arrow-function reading keeps `formal_parameters` alive**, so the word lexes at parameter-start, where `parameter_type` spelled it as a keyword token and no identifier reading was reachable. The failing set was exactly the `keyword()` entries in that rule with no identifier alternative — `any`, `string`, `numeric`, `xml`, `binary`, `boolean`, `date`, `guid`, `void`, `function`. `query` and `component` never had the problem because they are also in `_reserved_identifier`; `struct`, `array` and `time` because they are not keyword tokens at all.
+
+  **BREAKING — the tree shape of `parameter_type` changes.** It had two shapes already: a leaf for built-in type names, `(parameter_type (identifier))` for custom ones. Dropping the `keyword()` spellings unifies them on the second. `npm run treediff` reports **2,844 changed corpus files** with a single-node-type delta of **+27,361 `identifier`** — the shape change and nothing else. `(parameter_type) @type` still matches, so highlighting is unchanged except that `void` moves from `@keyword` to `@type`, and it is dropped from the keyword list in `cfscript/queries/highlights.scm`.
+
+  **The alternative that looks right and is not**, recorded in `docs/FAILING-PATTERNS.md`: adding the type words to `_reserved_identifier`. It fixes the construct at +0 states too, and breaks five corpus tests — `param boolean x` loses its type to an ERROR, because `tag_statement`'s type slot is a plain `$.identifier` and the new keyword tokens out-lex it. The same hazard as the `loop array=data` regression, in mirror image.
+
 - **Support `elseif` written as one word** — `if ( a ) { … } elseif ( b ) { … } else { … }` ([Lucee's own `org/lucee/cfml/Query.cfc`](https://github.com/lucee/Lucee), cfwheels `Public.cfc`, CommandBox `server/status.cfc`, Preside `emailCenter/Layouts.cfc`). **+12 parse states** (5489 → 5501), no new conflicts, corpus **642 → 640 error nodes across 119 → 117 files**.
 
   **The corpus scan was the wrong instrument for this one, and nearly hid it.** A single `elseif ( c ) { … }` *parsed* before this change — as a `tag_statement`, with the branch becoming a sibling of the `if` rather than its alternative. Only a second `elseif`, or an `elseif` followed by `else`, produced an error. So the scan saw 2 files and the real number was **5**: `npm run treediff` reports two more whose trees were wrong while clean, Lucee's `Query.cfc` among them.

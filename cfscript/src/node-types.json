@@ -3665,10 +3665,6 @@
     "named": false
   },
   {
-    "type": "any",
-    "named": false
-  },
-  {
     "type": "array_return_suffix",
     "named": true
   },
@@ -3679,14 +3675,6 @@
   {
     "type": "attribute_label",
     "named": true
-  },
-  {
-    "type": "binary",
-    "named": false
-  },
-  {
-    "type": "boolean",
-    "named": false
   },
   {
     "type": "break",
@@ -3723,10 +3711,6 @@
   },
   {
     "type": "continue",
-    "named": false
-  },
-  {
-    "type": "date",
     "named": false
   },
   {
@@ -3782,10 +3766,6 @@
     "named": false
   },
   {
-    "type": "guid",
-    "named": false
-  },
-  {
     "type": "hash_empty",
     "named": true
   },
@@ -3835,10 +3815,6 @@
   },
   {
     "type": "null",
-    "named": false
-  },
-  {
-    "type": "numeric",
     "named": false
   },
   {
@@ -3934,10 +3910,6 @@
     "named": true
   },
   {
-    "type": "string",
-    "named": false
-  },
-  {
     "type": "string_fragment",
     "named": true
   },
@@ -3982,19 +3954,11 @@
     "named": false
   },
   {
-    "type": "void",
-    "named": false
-  },
-  {
     "type": "while",
     "named": false
   },
   {
     "type": "with",
-    "named": false
-  },
-  {
-    "type": "xml",
     "named": false
   },
   {
