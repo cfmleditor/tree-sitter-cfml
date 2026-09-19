@@ -178,6 +178,11 @@ of its stylesheet — whatever the trigger is, it emerges from accumulation.
 
 ## What is left over — ~212 nodes, ~90 files
 
+> **Superseded by [`CORPUS-FAILURES.md`](CORPUS-FAILURES.md)**, which lists all
+> 119 failing files individually with a reduced cause for each, and leaves no
+> residue. This section is kept because its worked example is still worth
+> reading; read its *numbers* as history.
+
 **Computed as a residual, not measured directly:** 653 total − 265 not-grammar
 defects − 176 genuine gaps = 212 nodes, and 126 files − 9 − 27 = 90 files. It
 inherits whatever error is in the genuine-gaps rows above, so read it as an

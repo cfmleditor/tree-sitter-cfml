@@ -143,7 +143,7 @@ Beyond the standard `highlights.scm`, `indents.scm`, `injections.scm`, `tags.scm
 - **CFML engine target:** Use [Lucee](https://lucee.org/) as the reference runtime. Avoid Adobe-only or Lucee-only constructs; prefer portable CFML.
 - **Node version:** `>=18 <=24` (`.nvmrc` in repo root).
 - **`tree-sitter` CLI:** Scripts use the locally installed binary (`node_modules/tree-sitter-cli/`); a global install is not required.
-- **Known parser limitations** are documented in [`LIMITATIONS.md`](LIMITATIONS.md) — check there before investigating a surprising parse result. [`docs/FAILING-PATTERNS.md`](docs/FAILING-PATTERNS.md) has the longer version: every construct in the real-world corpus that still fails, how many files it affects, and an estimate of what fixing it would cost, calibrated against changes that have actually landed here.
+- **Known parser limitations** are documented in [`LIMITATIONS.md`](LIMITATIONS.md) — check there before investigating a surprising parse result. [`docs/FAILING-PATTERNS.md`](docs/FAILING-PATTERNS.md) has the longer version: every construct in the real-world corpus that still fails, how many files it affects, and an estimate of what fixing it would cost, calibrated against changes that have actually landed here. [`docs/CORPUS-FAILURES.md`](docs/CORPUS-FAILURES.md) is the per-file inventory behind it: every failing corpus file with the construct it fails on, each one reduced to a standalone case rather than read off the scan's error text.
 - **Open non-parser work** lives in [`docs/TODO.md`](docs/TODO.md), including a section on what was considered and deliberately left undone, so those decisions do not get re-argued.
 
 ## Skills
