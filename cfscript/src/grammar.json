@@ -9625,7 +9625,7 @@
         ]
       },
       "named": false,
-      "value": "elseIf"
+      "value": "elseif"
     },
     "_kw_final": {
       "type": "ALIAS",

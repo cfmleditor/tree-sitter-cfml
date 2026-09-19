@@ -2180,7 +2180,12 @@ module.exports = grammar({
     _kw_default: (_) => keyword('Default'),
     _kw_do: (_) => keyword('Do'),
     _kw_else: (_) => keyword('Else'),
-    _kw_elseif: (_) => keyword('ElseIf'),
+    // The node name is given explicitly. `keyword()` derives it with
+    // `lowerFirst`, which turns `ElseIf` into `elseIf` — the only non-lowercase
+    // keyword node in the grammar, and an odd name to expose in `highlights.scm`
+    // beside `"else"` and `"if"`. The PascalCase spelling is kept as the word
+    // because that is what generates all four casings, `elseIf` among them.
+    _kw_elseif: (_) => keyword('ElseIf', 'elseif'),
     _kw_final: (_) => keyword('Final'),
     _kw_finally: (_) => keyword('Finally'),
     _kw_for: (_) => keyword('For'),
