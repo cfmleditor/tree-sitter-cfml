@@ -780,13 +780,104 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "SYMBOL",
-              "name": "_initializer"
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_initializer"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_compound_initializer"
+                }
+              ]
             },
             {
               "type": "BLANK"
             }
           ]
+        }
+      ]
+    },
+    "_compound_initializer": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "FIELD",
+          "name": "operator",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": "+="
+              },
+              {
+                "type": "STRING",
+                "value": "-="
+              },
+              {
+                "type": "STRING",
+                "value": "*="
+              },
+              {
+                "type": "STRING",
+                "value": "/="
+              },
+              {
+                "type": "STRING",
+                "value": "%="
+              },
+              {
+                "type": "STRING",
+                "value": "^="
+              },
+              {
+                "type": "STRING",
+                "value": "&="
+              },
+              {
+                "type": "STRING",
+                "value": "|="
+              },
+              {
+                "type": "STRING",
+                "value": ">>="
+              },
+              {
+                "type": "STRING",
+                "value": ">>>="
+              },
+              {
+                "type": "STRING",
+                "value": "<<="
+              },
+              {
+                "type": "STRING",
+                "value": "**="
+              },
+              {
+                "type": "STRING",
+                "value": "&&="
+              },
+              {
+                "type": "STRING",
+                "value": "||="
+              },
+              {
+                "type": "STRING",
+                "value": "??="
+              }
+            ]
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "expression"
+          }
         }
       ]
     },
@@ -10310,6 +10401,10 @@
       "assignment_expression",
       "_initializer",
       "binary_expression"
+    ],
+    [
+      "variable_declarator",
+      "_augmented_assignment_lhs"
     ],
     [
       "method_definition",
