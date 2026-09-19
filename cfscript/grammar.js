@@ -70,6 +70,7 @@ module.exports = grammar({
     $._kw_default,
     $._kw_do,
     $._kw_else,
+    $._kw_elseif,
     $._kw_final,
     $._kw_finally,
     $._kw_for,
@@ -500,11 +501,33 @@ module.exports = grammar({
 
     else_clause: ($) => seq($._kw_else, $.statement),
 
+    // `elseif ( … ) { … }` written as one word, beside the two-word `else if`.
+    // Lucee's own `org/lucee/cfml/Query.cfc` uses it, as do cfwheels, CommandBox
+    // and Preside.
+    //
+    // It needs its own rule rather than falling out of `else_clause`, because
+    // `elseif` is one token: there is no `else` for `else_clause` to match and
+    // no `if` to start an `if_statement`. Without it the word lexes as an
+    // ordinary identifier and `elseif ( c ) { … }` parses as a `tag_statement`
+    // — a clean parse of the wrong tree, which is why only 2 of the 5 corpus
+    // files using it ever showed up as errors.
+    //
+    // `_kw_elseif` is only ever valid here, in the same position as `_kw_else`,
+    // so `elseif` keeps its identifier reading at statement start and
+    // everywhere else — `elseif = 1`, `elseif()`, `x.elseif`, `{ elseif: 1 }`
+    // all still parse, and are pinned by the corpus test.
+    else_if_clause: ($) => prec.right(seq(
+      $._kw_elseif,
+      field('condition', $.parenthesized_expression),
+      field('consequence', $.statement),
+      optional(field('alternative', choice($.else_clause, $.else_if_clause))),
+    )),
+
     if_statement: ($) => prec.right(seq(
       $._kw_if,
       field('condition', $.parenthesized_expression),
       field('consequence', $.statement),
-      optional(field('alternative', $.else_clause)),
+      optional(field('alternative', choice($.else_clause, $.else_if_clause))),
     )),
 
     switch_statement: ($) => seq(
@@ -962,17 +985,8 @@ module.exports = grammar({
     // keywords here because `_reserved_identifier` makes them valid at the start
     // of a parameter, so accept them as a type name too.
     parameter_type: ($) => choice(
-      keyword('Any'),
-      keyword('String'),
-      keyword('Numeric'),
-      keyword('Xml'),
-      keyword('Binary'),
-      keyword('Boolean'),
-      keyword('Date'),
       $._kw_function,
-      keyword('Guid'),
       keyword('Query'),
-      keyword('Void'),
       // `Component listener` — `component` lexes as a keyword here because
       // `_reserved_identifier` makes it valid at the start of a parameter, so it
       // never reaches `$.identifier` below.
@@ -2166,6 +2180,7 @@ module.exports = grammar({
     _kw_default: (_) => keyword('Default'),
     _kw_do: (_) => keyword('Do'),
     _kw_else: (_) => keyword('Else'),
+    _kw_elseif: (_) => keyword('ElseIf'),
     _kw_final: (_) => keyword('Final'),
     _kw_finally: (_) => keyword('Finally'),
     _kw_for: (_) => keyword('For'),

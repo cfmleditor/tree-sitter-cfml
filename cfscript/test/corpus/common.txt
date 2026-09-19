@@ -295,7 +295,8 @@ component {
       (function_declaration
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (statement_block
           (return_statement
@@ -780,7 +781,8 @@ function doThing( required string arg ) {
   (function_declaration
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block
       (return_statement
@@ -948,7 +950,8 @@ component {
         (identifier)
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (assignment_expression
           (identifier)
@@ -1173,7 +1176,8 @@ component {
         (array_return_suffix)
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (statement_block
           (return_statement

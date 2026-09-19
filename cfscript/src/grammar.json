@@ -930,6 +930,60 @@
         }
       ]
     },
+    "else_if_clause": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_kw_elseif"
+          },
+          {
+            "type": "FIELD",
+            "name": "condition",
+            "content": {
+              "type": "SYMBOL",
+              "name": "parenthesized_expression"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "consequence",
+            "content": {
+              "type": "SYMBOL",
+              "name": "statement"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "alternative",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "else_clause"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "else_if_clause"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "if_statement": {
       "type": "PREC_RIGHT",
       "value": 0,
@@ -963,8 +1017,17 @@
                 "type": "FIELD",
                 "name": "alternative",
                 "content": {
-                  "type": "SYMBOL",
-                  "name": "else_clause"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "else_clause"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "else_if_clause"
+                    }
+                  ]
                 }
               },
               {
@@ -3074,184 +3137,8 @@
       "type": "CHOICE",
       "members": [
         {
-          "type": "ALIAS",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "Any"
-              },
-              {
-                "type": "STRING",
-                "value": "any"
-              },
-              {
-                "type": "STRING",
-                "value": "ANY"
-              }
-            ]
-          },
-          "named": false,
-          "value": "any"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "String"
-              },
-              {
-                "type": "STRING",
-                "value": "string"
-              },
-              {
-                "type": "STRING",
-                "value": "STRING"
-              }
-            ]
-          },
-          "named": false,
-          "value": "string"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "Numeric"
-              },
-              {
-                "type": "STRING",
-                "value": "numeric"
-              },
-              {
-                "type": "STRING",
-                "value": "NUMERIC"
-              }
-            ]
-          },
-          "named": false,
-          "value": "numeric"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "Xml"
-              },
-              {
-                "type": "STRING",
-                "value": "xml"
-              },
-              {
-                "type": "STRING",
-                "value": "XML"
-              }
-            ]
-          },
-          "named": false,
-          "value": "xml"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "Binary"
-              },
-              {
-                "type": "STRING",
-                "value": "binary"
-              },
-              {
-                "type": "STRING",
-                "value": "BINARY"
-              }
-            ]
-          },
-          "named": false,
-          "value": "binary"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "Boolean"
-              },
-              {
-                "type": "STRING",
-                "value": "boolean"
-              },
-              {
-                "type": "STRING",
-                "value": "BOOLEAN"
-              }
-            ]
-          },
-          "named": false,
-          "value": "boolean"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "Date"
-              },
-              {
-                "type": "STRING",
-                "value": "date"
-              },
-              {
-                "type": "STRING",
-                "value": "DATE"
-              }
-            ]
-          },
-          "named": false,
-          "value": "date"
-        },
-        {
           "type": "SYMBOL",
           "name": "_kw_function"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "Guid"
-              },
-              {
-                "type": "STRING",
-                "value": "guid"
-              },
-              {
-                "type": "STRING",
-                "value": "GUID"
-              }
-            ]
-          },
-          "named": false,
-          "value": "guid"
         },
         {
           "type": "ALIAS",
@@ -3274,28 +3161,6 @@
           },
           "named": false,
           "value": "query"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "Void"
-              },
-              {
-                "type": "STRING",
-                "value": "void"
-              },
-              {
-                "type": "STRING",
-                "value": "VOID"
-              }
-            ]
-          },
-          "named": false,
-          "value": "void"
         },
         {
           "type": "ALIAS",
@@ -9736,6 +9601,32 @@
       "named": false,
       "value": "else"
     },
+    "_kw_elseif": {
+      "type": "ALIAS",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "ElseIf"
+          },
+          {
+            "type": "STRING",
+            "value": "elseif"
+          },
+          {
+            "type": "STRING",
+            "value": "ELSEIF"
+          },
+          {
+            "type": "STRING",
+            "value": "elseIf"
+          }
+        ]
+      },
+      "named": false,
+      "value": "elseIf"
+    },
     "_kw_final": {
       "type": "ALIAS",
       "content": {
@@ -10796,6 +10687,7 @@
     "_kw_default",
     "_kw_do",
     "_kw_else",
+    "_kw_elseif",
     "_kw_final",
     "_kw_finally",
     "_kw_for",
