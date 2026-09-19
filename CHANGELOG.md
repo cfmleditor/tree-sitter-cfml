@@ -3,6 +3,13 @@
 ## [Unreleased]
 
 ### cfscript
+- **Support `elseif` written as one word** — `if ( a ) { … } elseif ( b ) { … } else { … }` ([Lucee's own `org/lucee/cfml/Query.cfc`](https://github.com/lucee/Lucee), cfwheels `Public.cfc`, CommandBox `server/status.cfc`, Preside `emailCenter/Layouts.cfc`). **+12 parse states** (5489 → 5501), no new conflicts, corpus **642 → 640 error nodes across 119 → 117 files**.
+
+  **The corpus scan was the wrong instrument for this one, and nearly hid it.** A single `elseif ( c ) { … }` *parsed* before this change — as a `tag_statement`, with the branch becoming a sibling of the `if` rather than its alternative. Only a second `elseif`, or an `elseif` followed by `else`, produced an error. So the scan saw 2 files and the real number was **5**: `npm run treediff` reports two more whose trees were wrong while clean, Lucee's `Query.cfc` among them.
+
+  **`common/define-grammar.js` is deliberately unchanged.** Adding the rule there too costs **+15 cfml and +12 cfquery states** and buys nothing: a `<cfscript>` body is `cf_script_content` and a script component is `cf_component_content`, both opaque to the `cfml` grammar and reached by injection into `cfscript`. No `cfml` or `cfquery` corpus test has ever produced an `else_clause`. Both grammars' generated files are byte-identical to the previous release.
+
+  `_kw_elseif` is valid only where `_kw_else` is, so the word keeps its identifier reading everywhere else — `elseif = 1`, `elseif()`, `x.elseif`, `{ elseif: 1 }` and `var elseif = 1` all still parse, and the corpus test pins them.
 - **Support a `new` expression as a function-listener target** — `threadName = new Query():function( result, error ) { … };` ([#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98), Lucee `FunctionListener.cfc`). That completes the eleven forms in Lucee's [Function Listeners](https://docs.lucee.org/recipes/function-listeners.html) recipe; the other ten landed in #96 and #97. **+53 parse states**, one declared conflict, corpus **644 → 642 error nodes across 120 → 119 files**, zero changed trees in both grammars. Probe `cfscript/function_listener_new.cfc` flips to `pass`.
 
   **The `+591` this issue was parked on had expired.** It was measured when `new_expression` could complete on the bare keyword `new`; requiring its `arguments` — shipped separately — removed that, and the same widening then measured **+14**. A cost taken before a related change is not evidence about after it, which is the transferable part.
