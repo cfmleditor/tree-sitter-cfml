@@ -486,6 +486,51 @@ Corpus 645 → 644 across 121 → 120 files — Lucee's `All.cfc`, the file that
 enumerates modifier spellings, goes to zero. Zero changed trees. Probe
 `cfscript/interleaved_return_type.cfc` records `pass`.
 
+### A built-in type name in parentheses — **done**
+
+`x = (date)` was an ERROR while `x = date` parsed. Shipped at **+0 parse states
+in all three grammars**, corpus 642 → 625 across 119 → 118 files.
+
+**The cause is the arrow-function lookahead.** Inside `(` the parser keeps
+`formal_parameters` alive, so the word lexes at parameter-start, where
+`parameter_type` spelled it as a `keyword()` token and no identifier reading was
+reachable. The failing set was exactly that keyword list minus the entries with
+an identifier alternative: `any`, `string`, `numeric`, `xml`, `binary`,
+`boolean`, `date`, `guid`, `void`, `function` failed; `query` and `component`
+did not, because they are also in `_reserved_identifier`, and `struct`, `array`
+and `time` did not, because they are not keyword tokens at all. **That the
+failing set is predicted exactly by one list is what identified the cause** —
+worth trying before reducing, when a construct fails for some words and not
+others.
+
+**Two fixes, both +0 states, and the obvious one is wrong.**
+
+| attempt | result |
+|---|---|
+| add the type words to `_reserved_identifier` | fixes it, **breaks 5 corpus tests** |
+| drop the `keyword()` spellings from `parameter_type` | fixes it, 9 tests to update, shape change |
+
+The first is the natural reading of "restore the identifier reading" and it
+poisons `tag_statement`: `param boolean x` loses its type to an ERROR, because
+that rule's type slot is a plain `$.identifier` — deliberately, with a comment
+saying so — and the new keyword tokens out-lex it. This is the `loop array=data`
+hazard in mirror image: there, adding keywords broke identifiers; here, adding
+identifier-aliased keywords broke a slot that needed the bare identifier.
+
+The second is what `hazards.md` recommends and what `tag_statement` already
+does. It costs a **published tree-shape change**: `parameter_type` had a leaf
+for built-in names and `(parameter_type (identifier))` for custom ones, and this
+unifies them on the second. `treediff` reports **2,844 files** and a
+single-node-type delta of **+27,361 `identifier`** — one node type moving one
+direction, which is how you tell a shape change from a behaviour change. The
+nine corpus-test updates were checked mechanically, not by eye: every deleted
+line is `(parameter_type)` and every added line is `(parameter_type` or
+`(identifier))`.
+
+**Estimating note.** This was booked at 17 nodes in 1 file, and that is what it
+delivered — but the construct is generic CFML and the corpus only shows what
+people wrote. It was shipped on that reasoning, not on the node count.
+
 ### [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82) — `savecontent` as an expression
 
 The keyword route is closed and measured: `keyword('Savecontent')` generates
