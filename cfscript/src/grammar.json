@@ -839,6 +839,60 @@
         }
       ]
     },
+    "else_if_clause": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_kw_elseif"
+          },
+          {
+            "type": "FIELD",
+            "name": "condition",
+            "content": {
+              "type": "SYMBOL",
+              "name": "parenthesized_expression"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "consequence",
+            "content": {
+              "type": "SYMBOL",
+              "name": "statement"
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "alternative",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "else_clause"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "else_if_clause"
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
     "if_statement": {
       "type": "PREC_RIGHT",
       "value": 0,
@@ -872,8 +926,17 @@
                 "type": "FIELD",
                 "name": "alternative",
                 "content": {
-                  "type": "SYMBOL",
-                  "name": "else_clause"
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "else_clause"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "else_if_clause"
+                    }
+                  ]
                 }
               },
               {
@@ -9447,6 +9510,32 @@
       "named": false,
       "value": "else"
     },
+    "_kw_elseif": {
+      "type": "ALIAS",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "ElseIf"
+          },
+          {
+            "type": "STRING",
+            "value": "elseif"
+          },
+          {
+            "type": "STRING",
+            "value": "ELSEIF"
+          },
+          {
+            "type": "STRING",
+            "value": "elseIf"
+          }
+        ]
+      },
+      "named": false,
+      "value": "elseIf"
+    },
     "_kw_final": {
       "type": "ALIAS",
       "content": {
@@ -10503,6 +10592,7 @@
     "_kw_default",
     "_kw_do",
     "_kw_else",
+    "_kw_elseif",
     "_kw_final",
     "_kw_finally",
     "_kw_for",
