@@ -294,6 +294,7 @@
   "default"
   "do"
   "else"
+  "elseif"
   "export"
   "finally"
   "for"
