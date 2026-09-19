@@ -486,6 +486,35 @@ Corpus 645 → 644 across 121 → 120 files — Lucee's `All.cfc`, the file that
 enumerates modifier spellings, goes to zero. Zero changed trees. Probe
 `cfscript/interleaved_return_type.cfc` records `pass`.
 
+### `elseif` as one word — **done**
+
+`if ( a ) { … } elseif ( b ) { … }`. Shipped at **+12 states** in `cfscript`
+only, corpus 642 → 640 across 119 → 117 files.
+
+**This is the case the corpus scan is worst at, and it is worth knowing the
+shape.** The construct did not fail loudly. `elseif ( c ) { … }` lexed `elseif`
+as an ordinary identifier and parsed as a `tag_statement` — a clean parse of a
+tree where the branch is a *sibling* of the `if` instead of its `alternative`.
+Only a second `elseif`, or an `elseif` before `else`, left the `else` with
+nothing to attach to and produced an ERROR. So the scan reported **2 files** and
+the truth was **5**; `npm run treediff` found the other three, one of them
+Lucee's own `org/lucee/cfml/Query.cfc`.
+
+The rule of thumb this supports: when a construct has a keyword head and the
+grammar has no rule for it, check what it parses *as* before concluding it is
+unsupported. `tag_statement` and `call_expression` will absorb almost any
+`word ( … ) { … }` without complaint.
+
+**The `common/define-grammar.js` copy was written, measured, and reverted.**
+It costs +15 cfml and +12 cfquery states and is unreachable: `<cfscript>` bodies
+are `cf_script_content` and script components are `cf_component_content`, both
+opaque to that grammar and injected into `cfscript`. No `cfml` or `cfquery`
+corpus test has ever produced an `else_clause`. The same reasoning that kept
+[#116](https://github.com/cfmleditor/tree-sitter-cfml/issues/116) and
+[#117](https://github.com/cfmleditor/tree-sitter-cfml/issues/117) out of that
+file applies here — but this time the rule was added first and the state count
+is what said no. Writing it and reverting it took one build.
+
 ### [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82) — `savecontent` as an expression
 
 The keyword route is closed and measured: `keyword('Savecontent')` generates

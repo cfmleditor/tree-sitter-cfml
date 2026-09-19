@@ -2,8 +2,8 @@
 
 Every file in the real-world corpus that still fails to parse, with the reason.
 
-**Measured at `7d64da4` on 2026-09-19: 642 error nodes across 119 files of
-15,392.** Every node is accounted for — there is no unexplained residue, which
+**Measured on 2026-09-19 at `b6ce191` plus the `elseif` fix: 640 error nodes
+across 117 files of 15,392.** Every node is accounted for — there is no unexplained residue, which
 is the difference between this document and the residual estimate it replaces
 in [`FAILING-PATTERNS.md`](FAILING-PATTERNS.md).
 
@@ -28,8 +28,10 @@ text were wrong, and each was caught only by reduction:
 
 - Preside's `DateFormatService.cfc` looked like a missing semicolon or a `<=`
   comparison. It is neither: `x = (date)` fails where `x = date` parses.
-- `elseif` looked like the trigger in two files. A single `elseif` parses fine;
-  what fails is a *second* one, or an `elseif` followed by `else`.
+- `elseif` looked like the trigger in two files. A single `elseif` appeared to
+  parse — but as a `tag_statement`, not as part of the `if`. Reducing it found a
+  **wrong tree in five files where only two reported an error**, and the fix is
+  now shipped; see `FAILING-PATTERNS.md`.
 - Preside's `ScaffoldingService.cfc` looked like `${…}` in a string — the trap
   `FAILING-PATTERNS.md` already warns about. It is a missing comma between two
   parameters.
@@ -85,7 +87,7 @@ rows are already fixed in open pull requests and will disappear when those land.
 | 3 | 1 | `$[ … ]` subscript holding multiple pairs — declined in #80 |
 | 1 | 1 | `savecontent` as an expression — fixed by PR #125 |
 
-## Gaps not previously recorded — 123 nodes, 51 files (19%)
+## Gaps not previously recorded — 121 nodes, 49 files (19%)
 
 This is the part worth acting on. Every row here reduces to a one- or two-line
 case, and most are a single file.
@@ -109,7 +111,6 @@ case, and most are a single file.
 | 3 | 1 | `component` as a function return type |
 | 3 | 1 | `<cfsavecontent>` body holding an unbalanced `</cfoutput>` |
 | 2 | 2 | `<nav id="#…#">` dynamic attribute in a `<cfif>` body |
-| 2 | 2 | second `elseif`, or `elseif` before `else` |
 | 2 | 1 | `if ( … );` with an empty body before `else` |
 | 2 | 1 | `<cfbreak "outer">` / `<cfcontinue "outer">` label argument |
 | 2 | 1 | `<!ENTITY … >` raw markup inside `<cfoutput>` |
@@ -187,7 +188,7 @@ forward.
 
 ## Appendix — every failing file
 
-All 119, alphabetical. **Cat** is the section above: **A** not a parser defect,
+All 117, alphabetical. **Cat** is the section above: **A** not a parser defect,
 **B** already on record, **C** newly recorded here.
 
 | File (under `corpus/`) | Nodes | Cat | Why |
@@ -277,7 +278,6 @@ All 119, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `ortus-boxlang_BoxLang/src/test/java/ortus/boxlang/compiler/LargeMethod.cfc` | 1 | C | arrow function with a statement body — `=> return x` |
 | `ortus-boxlang_BoxLang/src/test/java/TestCases/phase3/StaticTestCF.cfc` | 1 | C | `static foo = 9000;` field declaration |
 | `ortus-boxlang_BoxLang/src/test/java/TestCases/phase3/StaticTestCF2.cfc` | 1 | C | `static foo = 9000;` field declaration |
-| `Ortus-Solutions_commandbox/src/cfml/system/modules_app/server-commands/commands/server/status.cfc` | 1 | C | second `elseif`, or `elseif` before `else` |
 | `Ortus-Solutions_commandbox/src/cfml/system/modules_app/system-commands/commands/run.cfc` | 1 | C | `var` declaration inside a `while` condition |
 | `Ortus-Solutions_commandbox/src/cfml/system/services/ServerService.cfc` | 1 | C | arrow function with a statement body — `=> return x` |
 | `Ortus-Solutions_commandbox/src/cfml/system/util/FileSystem.cfc` | 1 | C | `var` declaration inside a `while` condition |
@@ -289,7 +289,6 @@ All 119, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `Ortus-Solutions_ContentBox/modules/contentbox/modules/contentbox-admin/views/authors/editor.cfm` | 1 | B | start tag whose `>` sits inside a `<cfif>` branch |
 | `Ortus-Solutions_ContentBox/modules/contentbox/modules/contentbox-admin/views/settings/rawSettingsTable.cfm` | 3 | B | start tag whose `>` sits inside a `<cfif>` branch |
 | `Ortus-Solutions_DocBox/strategy/json/JSONAPIStrategy.cfc` | 3 | C | `component` as a function return type |
-| `pixl8_preside-cms/system/handlers/admin/emailCenter/Layouts.cfc` | 1 | C | second `elseif`, or `elseif` before `else` |
 | `pixl8_preside-cms/system/services/devtools/ScaffoldingService.cfc` | 2 | C | missing comma between parameters |
 | `pixl8_preside-cms/system/services/l10n/DateFormatService.cfc` | 17 | C | type keyword parenthesised as an expression — `x = (date)` |
 | `pixl8_preside-cms/system/views/admin/assetmanager/editFolder.cfm` | 1 | C | spaced elvis `? :` inside a `#…#` tag interpolation |
