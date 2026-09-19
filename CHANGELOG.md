@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 ### cfscript
+- **`elseif` is highlighted, and its token node is renamed `elseIf` → `elseif`** — follow-up to the `elseif` support merged in #137, which shipped without either. The word was in no capture list, so the head of an `elseif` chain rendered unstyled beside the `if` and `else` around it.
+
+  Adding it to `@keyword` exposed the rename. `keyword()` derives a node name with `lowerFirst`, which is right for every single-word keyword and wrong for the only two-word one: `_kw_elseif` was the **sole rule in the grammar producing a non-lowercase node name**, so the query had to spell it `"elseIf"` beside `"else"` and `"if"`. The helper already takes an explicit node name, so it is given one. The PascalCase spelling stays as the *word*, because that is what generates the four accepted casings.
+
+  **This renames a node, which is public API** — a query matching `"elseIf"` must become `"elseif"`. Nothing in this repository did, since the token was one commit old. The `cfscript/src/parser.c` diff is eight lines, all of them that display name; `STATE_COUNT` is unchanged in all three grammars, `cfml` and `cfquery` generated files are byte-identical, and the corpus scan is identical at 623 error nodes across 116 files. All four casings still parse, and the corpus test now exercises all four rather than only the lowercase spelling.
 - **A built-in type name can be a parenthesised expression** — `x = (date)` was an ERROR while `x = date` parsed (Preside `system/services/l10n/DateFormatService.cfc`, where the real shape is `( date[ 2 ] > 0 && … )`). **+0 parse states in all three grammars**; `cfml` and `cfquery` generated files are byte-identical. Corpus **642 → 625 error nodes across 119 → 118 files**, the whole delta being that one file going to zero.
 
   **Inside `(` the arrow-function reading keeps `formal_parameters` alive**, so the word lexes at parameter-start, where `parameter_type` spelled it as a keyword token and no identifier reading was reachable. The failing set was exactly the `keyword()` entries in that rule with no identifier alternative — `any`, `string`, `numeric`, `xml`, `binary`, `boolean`, `date`, `guid`, `void`, `function`. `query` and `component` never had the problem because they are also in `_reserved_identifier`; `struct`, `array` and `time` because they are not keyword tokens at all.

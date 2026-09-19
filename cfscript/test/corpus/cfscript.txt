@@ -2754,8 +2754,10 @@ elseif as one word
 
 if ( a ) { x = 1; }
 elseif ( b ) { x = 2; }
-elseif ( c ) { x = 3; }
-else { x = 4; }
+ELSEIF ( c ) { x = 3; }
+elseIf ( d ) { x = 4; }
+ElseIf ( e ) { x = 5; }
+else { x = 6; }
 
 elseif = 1;
 elseif();
@@ -2789,12 +2791,28 @@ m = obj.elseif;
             (assignment_expression
               (identifier)
               (number))))
-        (else_clause
+        (else_if_clause
+          (parenthesized_expression
+            (identifier))
           (statement_block
             (expression_statement
               (assignment_expression
                 (identifier)
-                (number))))))))
+                (number))))
+          (else_if_clause
+            (parenthesized_expression
+              (identifier))
+            (statement_block
+              (expression_statement
+                (assignment_expression
+                  (identifier)
+                  (number))))
+            (else_clause
+              (statement_block
+                (expression_statement
+                  (assignment_expression
+                    (identifier)
+                    (number))))))))))
   (expression_statement
     (assignment_expression
       (identifier)
