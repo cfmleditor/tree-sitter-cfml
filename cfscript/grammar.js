@@ -180,6 +180,12 @@ module.exports = grammar({
     // `for ( var x = y in z )` — the initializer, an assignment and a binary
     // `in` expression all fit the same prefix.
     [$.assignment_expression, $._initializer, $.binary_expression],
+    // `var jql &= '…'` — a declarator name and an augmented-assignment LHS are
+    // spelled identically (identifier, member, subscript, reserved word), so
+    // both readings survive until the operator. Live only after `var`/`final`
+    // and settled by the very next token, which is why it is cheap; benchmarked
+    // against the two untouched grammars.
+    [$.variable_declarator, $._augmented_assignment_lhs],
     [$.method_definition, $.access_type],
     // `pair` (expression ':' expression) is reachable from `arguments` and
     // `array`, so `case <expr> :` is ambiguous with the start of a pair.
@@ -462,7 +468,28 @@ module.exports = grammar({
         $.subscript_expression,
         $._destructuring_pattern,
       )),
-      optional($._initializer),
+      optional(choice($._initializer, $._compound_initializer)),
+    ),
+
+    // `var jql &= ' ORDER BY key DESC';` — a `var` declaration whose initializer
+    // is a compound assignment rather than a plain one. Lucee's own admin
+    // `Jira.cfc` writes it against a name it already declared with `var` earlier
+    // in the same function; Slatwall, CommandBox and cfwheels do the same.
+    //
+    // It is a SEPARATE rule from `_initializer` rather than a widened operator
+    // set inside it, because `_initializer` is shared with the member
+    // declaration (`public prop = "x"`), the for-header declarator and the
+    // property declaration. None of those has a compound form in the corpus and
+    // `for ( var i &= 1; … )` is not meaningful, so widening the shared rule
+    // would admit three constructs nobody writes to reach the one that is.
+    //
+    // The operator list is the same one `augmented_assignment_expression` uses,
+    // deliberately: the declaration form should accept exactly what the
+    // expression form does, and the tokens already exist.
+    _compound_initializer: ($) => seq(
+      field('operator', choice('+=', '-=', '*=', '/=', '%=', '^=', '&=', '|=', '>>=', '>>>=',
+        '<<=', '**=', '&&=', '||=', '??=')),
+      field('value', $.expression),
     ),
 
     statement_block: ($) => prec.right(seq(

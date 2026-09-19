@@ -2749,6 +2749,80 @@ h = ( s ) => s;
         (identifier)))))
 
 ===================================
+var declaration with a compound assignment
+===================================
+
+var jql = "project = x";
+var jql &= " ORDER BY key DESC";
+var total += getReviews()[ 1 ].getRating();
+var local.note &= "b";
+final y &= 1;
+
+var a = 1, b = 2;
+var mappings[ key ] = value;
+var new = 1;
+bare &= "no var";
+
+---
+
+(program
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (string
+        (string_fragment))))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (string
+        (string_fragment))))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (call_expression
+        (member_expression
+          (subscript_expression
+            (call_expression
+              (identifier)
+              (arguments))
+            (number))
+          (property_identifier))
+        (arguments))))
+  (variable_declaration
+    (variable_declarator
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (string
+        (string_fragment))))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (number)))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (number))
+    (variable_declarator
+      (identifier)
+      (number)))
+  (variable_declaration
+    (variable_declarator
+      (subscript_expression
+        (identifier)
+        (identifier))
+      (identifier)))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (number)))
+  (expression_statement
+    (augmented_assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))))
+
+===================================
 elseif as one word
 ===================================
 
