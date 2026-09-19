@@ -316,7 +316,6 @@
   "throw"
   "try"
   "var"
-  "void"
   "while"
   "with"
   "abstract"

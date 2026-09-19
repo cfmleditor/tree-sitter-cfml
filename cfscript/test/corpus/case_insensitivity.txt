@@ -730,13 +730,15 @@ function j(FUNCTION callback) {}
   (function_declaration
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block))
   (function_declaration
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block))
   (expression_statement
@@ -845,51 +847,68 @@ function d(any a, xml x, binary bin, guid g, void v) {}
   (function_declaration
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block))
   (function_declaration
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block))
   (function_declaration
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block))
   (function_declaration
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block)))
 

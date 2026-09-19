@@ -192,14 +192,17 @@ public string function doThing(string firstName = "blah",required string firstNa
     (identifier)
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (assignment_pattern
         (identifier)
         (string
           (string_fragment)))
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block)))
 
@@ -217,14 +220,16 @@ public function function doThing(string firstName = "blah",required function fir
     (access_type)
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (assignment_pattern
         (identifier)
         (string
           (string_fragment)))
       (parameter_type)
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block)))
 
@@ -242,7 +247,8 @@ public function doThing(string name = "" taffy_minlength="1" taffy_maxlength="25
     (access_type)
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (assignment_pattern
         (identifier)
         (string))
@@ -254,7 +260,8 @@ public function doThing(string name = "" taffy_minlength="1" taffy_maxlength="25
         (identifier)
         (string
           (string_fragment)))
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (assignment_pattern
         (identifier)
         (string))
@@ -2321,7 +2328,8 @@ function f( string[] v, User[][] w, required numeric[] x = [] ) {}
   (function_declaration
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (array_return_suffix)
       (identifier)
       (parameter_type
@@ -2329,7 +2337,8 @@ function f( string[] v, User[][] w, required numeric[] x = [] ) {}
       (array_return_suffix)
       (array_return_suffix)
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (array_return_suffix)
       (assignment_pattern
         (identifier)
@@ -2460,9 +2469,11 @@ function i() { return a eq b and c contains d; }
   (function_declaration
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block))
   (function_declaration
@@ -2471,7 +2482,8 @@ function i() { return a eq b and c contains d; }
       (parameter_type
         (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block))
   (function_declaration
@@ -2847,7 +2859,8 @@ interface {
         (identifier)
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (statement_block
           (return_statement
@@ -2857,7 +2870,8 @@ interface {
         (identifier)
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (statement_block
           (return_statement
@@ -3108,7 +3122,8 @@ component displayname:"X" foo:bar {
       (function_declaration
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (component_attribute
           (attribute_label)
@@ -3120,7 +3135,8 @@ component displayname:"X" foo:bar {
       (function_declaration
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (component_attribute
           (attribute_label)
@@ -4408,11 +4424,13 @@ component {
       (function_declaration
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (assignment_pattern
             (identifier)
             (false))
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (assignment_pattern
             (identifier)
             (true)))
@@ -4420,9 +4438,11 @@ component {
       (function_declaration
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier)
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (assignment_pattern
             (identifier)
             (number)))
@@ -4430,15 +4450,19 @@ component {
       (function_declaration
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier)
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier)
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (assignment_pattern
             (identifier)
             (false))
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (assignment_pattern
             (identifier)
             (true)))
