@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.36]
 
 ### cfscript
 - **`elseif` is highlighted, and its token node is renamed `elseIf` → `elseif`** — follow-up to the `elseif` support merged in #137, which shipped without either. The word was in no capture list, so the head of an `elseif` chain rendered unstyled beside the `if` and `else` around it.
