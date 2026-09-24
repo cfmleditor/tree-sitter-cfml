@@ -9,8 +9,8 @@ Everything here that carries a number was **measured**, not estimated: each
 recommendation was prototyped in a scratch worktree and put through the gate the
 `parse-gap` skill describes — `npm run build`, `npm test`, `npm run probe`, a
 full corpus scan diffed against the baseline, `npm run treediff` against the
-committed parser, and `STATE_COUNT` / `parser.c` size. Performance was measured
-with `npm run bench`, interleaved ABCCBA. None of the prototypes is committed;
+committed parser, and `STATE_COUNT` / `parser.c` size. Performance was checked
+with `npm run bench`, but only to indicative precision. None of the prototypes is committed;
 this document is the deliverable. The corpus was a fresh `npm run corpus:fetch`
 (47 repositories, 15,530 files); the baseline scan reports 422 error lines
 across 112 files.
@@ -34,7 +34,8 @@ finding here changes the explanation of an existing entry, it says so.
 | 7 | Smaller scanner fixes | support, robustness | see section | a few lines each | Low |
 | 8 | CI: state-count budget and a keyword-extraction check | process | automates the #75 lesson | small script | None |
 
-Performance figures for #1 and #4 are in [Benchmark](#benchmark).
+Neither #1 nor #4 makes parsing slower; indicative figures are in
+[Benchmark](#benchmark).
 
 ---
 
@@ -143,8 +144,10 @@ which is why [#8](#8-ci-checks) proposes a check for it.
 | `cfscript/src/parser.c` | 20.3 MB | 14.8 MB | −27% |
 | Node addon (all three) | 10.1 MB | 6.8 MB | −33% |
 
-- `npm test` 353/353, `npm run probe` no drift, corpus scan identical except one
-  recovery-position shift inside `debug/Simple.cfc` (a known-bad file).
+- `npm test` 353/353, `npm run probe` no drift. The corpus scan (taken before the
+  `get`/`set`/`let` fix) differed from the baseline only in the Taffy
+  `{ get=false }` regression that fix removes, and one recovery-position shift
+  inside `debug/Simple.cfc`, a known-bad file.
 - `npm run treediff`: **no tree shape changed** in 5,235 `cfml` and 8,942
   `cfscript` files.
 - Every hazard spelling in `LIMITATIONS.md` and `hazards.md` parses as before —
@@ -436,11 +439,31 @@ This compounds with #1; the two were measured separately.
 
 ## Benchmark
 
-`npm run bench`, `--reps 5` per run, runs interleaved A B C C B A A B C C B A
-(A = base, B = #1, C = #4 naive fall-through), minimum across runs, on a 4-core
-shared container. Read the spread before the deltas.
+`npm run bench`, `--reps 5` per run, runs interleaved (A = base, B = #1,
+C = #4 naive fall-through), minimum across runs, on a 4-core shared container.
+**Indicative only:** the series was stopped at n = 3 / 2 / 2, well short of the
+~12 per side the `parse-gap` skill asks for before quoting a number. It answers
+"does either change make parsing slower" (no), not "by how much is it faster".
 
-_Filled in below from the run._
+| grammar | base | #1 keywords | #4 recovery |
+|---|---|---|---|
+| `cfml` | 3,901 ms | 3,574 ms (−8%) | 3,201 ms (−18%) |
+| `cfml` error-recovery input | 2,540 bytes/ms | 3,025 bytes/ms | 5,539 bytes/ms |
+| `cfscript` | 14,133 ms | 14,313 ms (+1.3%) | 14,352 ms (+1.6%) |
+| `cfquery` | 458 ms | 475 ms (+3.5%) | 456 ms (−0.5%) |
+
+- **#4 is its own control on `cfscript`**: it changes only `common/scanner.h`,
+  which `cfscript` does not compile, so its +1.6% there is measurement bias.
+  #1's +1.3% on `cfscript` is inside it.
+- `cfquery` is a 0.5-second workload whose reps spread by up to 18%; nothing
+  under that is resolvable.
+- The `cfml` gain for #4 is concentrated where it should be: error-recovery
+  input, which `bench` already reported as 4% of bytes and 26–28% of the time,
+  parses about twice as fast.
+- One caution from the run itself: base's first two `cfml` runs came in at
+  6,208 ms, 60% slower than its third, on an unchanged binary. A single
+  before/after pair on this machine would have reported a 45% speedup that did
+  not exist.
 
 ---
 
