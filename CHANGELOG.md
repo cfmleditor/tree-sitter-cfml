@@ -1,5 +1,31 @@
 # Changelog
 
+## [Unreleased]
+
+### cfml, cfquery & cfscript
+- **Each keyword is one token, and keywords are fully case-insensitive** — recommendation 1 of [`docs/GRAMMAR-SCANNER-REVIEW.md`](docs/GRAMMAR-SCANNER-REVIEW.md). `keyword('Break')` was a `choice` of the string casings `Break` / `break` / `BREAK`, three or four terminal symbols per keyword in every state it is valid in. It is now one character-class regex, `/[bB][rR][eE][aA][kK]/` at `prec(1)`, aliased to the same node name as before.
+
+  | | `STATE_COUNT` | large states | `parser.c` |
+  |---|---|---|---|
+  | `cfml` | 5,494 → 4,918 (−10.5%) | 2,814 → 2,167 | 14.8 → 10.6 MB (−28%) |
+  | `cfquery` | 4,152 → 3,792 (−8.7%) | 2,770 → 2,191 | 13.4 → 9.9 MB (−26%) |
+  | `cfscript` | 5,511 → 4,866 (−11.7%) | 3,954 → 2,659 | 20.3 → 13.7 MB (−33%) |
+
+  About 14 MB of committed C goes, and the Node addon drops from 10.1 to 6.6 MB; every binding, and the WASM build an editor downloads, compiles the same `parser.c`. **No tree shape changed** across 14,177 cleanly-parsed corpus files (`npm run treediff`), the corpus scan is unchanged at 422 error lines across 112 files, and no existing corpus test moved. Node names are unchanged, so no query needed editing.
+
+  **Support gained:** interior mixed casing, which the old helper deliberately skipped, is now a keyword — `reTURN x;` was a `tag_statement` and is a `return_statement`, `nULL` is `(null)`, and `<cFiF …>` opens a `cf_if_tag` where it was an ERROR. Pinned by a new `interior mixed casing is a keyword too` test in both `case_insensitivity.txt` files.
+
+  **Why it needs three changes, not one.** A plain regex in place of the strings fails 149 corpus tests, because it drops out of keyword extraction, and keyword extraction is the only thing that stops a keyword token splitting a longer identifier (`while_value` → `while` + `_value`). `tree-sitter generate --log` shows why:
+  - a regex only wins a same-length tie with `identifier` or with the JavaScript regex literal's `regex_flags` (`/[a-z]+/`) on rule order, which it loses — strings won it on specificity. `prec(1)` settles the tie;
+  - sixteen `cfscript` keywords — `else`, `elseif`, `catch`, `finally`, `in`, `instanceof`, `of`, `while`, `function`, `static`, `final`, `abstract`, `public`, `private`, `package`, `remote` — and six in `cfml` and `cfquery` **were never extracted, even as strings**, because `identifier` accepted a JavaScript `\uXXXX` escape and could therefore start with `\`, the integer-division operator. CFML has no such escape; removing it from `identifier` makes all of them extractable;
+  - `common/define-grammar.js` spelled `get`, `set` and `let` as plain strings in `method_definition` and `_for_header` while `_reserved_identifier` used `keyword()`. As strings the two unified; as a regex beside a string they are two tokens matching one word, both are excluded, and `<cfset x = { get=false }>` (Taffy's dashboard) stopped parsing. They now reference `$._kw_get`, `$._kw_set` and `$._kw_let`.
+
+  The prototype also moved every `keyword()` rule above `identifier` to win the tie on order; with `prec(1)` that turned out unnecessary, and leaving the rules where they are gives a smaller `cfscript` table (4,866 states against 5,281).
+
+  **`LIMITATIONS.md` said "never write a keyword as `token(prec(1, /…/))`"**, and that is right for a token that is not extracted and wrong for one that is: the keyword lexer only runs after `identifier` has matched a whole word. So the change is safe exactly as long as every keyword stays extracted, and `generate` excludes silently. **New `npm run check:keywords`**, run in CI, reads the committed tables and fails on any `keyword()` token the keyword lexer does not own. It was checked against both failure modes above: putting the `\u` escape back fails it in all three grammars (16 keywords in `cfscript`, 5 in `cfml` and `cfquery`), and a `'get'` beside `keyword('Get')` fails it with two.
+
+  Verified with `npm test` (355/355), `npm run probe` (no drift), `npm run fuzz`, `npm run lint`, `npm run testbindings`, the corpus scan and `treediff` against a clean build of `master`, and 38 hand-picked keyword-hazard spellings from `LIMITATIONS.md` and `hazards.md`, of which the only changed trees are the three casing gains above. Benchmarked only to indicative precision: no slowdown in any grammar, `cfml` about 8% faster.
+
 ## [0.26.36]
 
 ### cfscript

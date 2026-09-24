@@ -968,8 +968,9 @@ module.exports = grammar({
     )),
 
     // NOTE: these overlap with `_reserved_identifier` (they must stay usable as
-    // plain identifiers), so they cannot become `token(prec(1, ...))` keywords
-    // without breaking `static['key']` / `query.newQuery()`. Left case-sensitive.
+    // plain identifiers, `static['key']` / `query.newQuery()`). That works only
+    // because keyword extraction hands the word back to `identifier` wherever
+    // the keyword is not valid — see `keyword()`.
     access_type: ($) => choice(
       $._kw_public,
       $._kw_private,
@@ -1685,8 +1686,12 @@ module.exports = grammar({
     ),
 
     identifier: (_) => {
+      // No `\uXXXX` / `\u{\u2026}` escape alternative, unlike the JavaScript grammar
+      // this descends from: CFML has no such escape, and allowing one lets an
+      // identifier start with `\`, which kept a third of the keywords out of
+      // keyword extraction. See `keyword()` at the bottom of this file.
       // @ts-ignore
-      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+#\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+      const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+#\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]/;
       return token(seq(alphanumeric, repeat(alphanumeric)));
     },
 
@@ -1993,9 +1998,10 @@ module.exports = grammar({
       ']',
     ),
 
-    // NOTE: these stay case-sensitive on purpose. They must remain usable as
-    // plain identifiers (`static['key']`, `query.newQuery()`), and a
-    // `token(prec(1, ...))` keyword would always win in the lexer.
+    // NOTE: these must remain usable as plain identifiers (`static['key']`,
+    // `query.newQuery()`). That relies on every keyword here being extracted:
+    // an extracted keyword never out-lexes a longer identifier, whatever its
+    // precedence. See `keyword()`.
     _reserved_identifier: ($) => choice(
       'get',
       'set',
@@ -2183,8 +2189,8 @@ module.exports = grammar({
     // The node name is given explicitly. `keyword()` derives it with
     // `lowerFirst`, which turns `ElseIf` into `elseIf` — the only non-lowercase
     // keyword node in the grammar, and an odd name to expose in `highlights.scm`
-    // beside `"else"` and `"if"`. The PascalCase spelling is kept as the word
-    // because that is what generates all four casings, `elseIf` among them.
+    // beside `"else"` and `"if"`. The word stays PascalCase like every other
+    // keyword; the token matches any casing either way.
     _kw_elseif: (_) => keyword('ElseIf', 'elseif'),
     _kw_final: (_) => keyword('Final'),
     _kw_finally: (_) => keyword('Finally'),
@@ -2216,36 +2222,46 @@ module.exports = grammar({
 });
 
 /**
- * CFML keywords are case-insensitive. Keywords are written in PascalCase and
- * matched in any of the accepted casings, then aliased back to a canonical node
- * name so node names and `.scm` queries stay stable.
+ * CFML keywords are case-insensitive. A keyword is ONE token — a regex with a
+ * character class per letter, `Break` → `/[bB][rR][eE][aA][kK]/` — aliased to a
+ * canonical node name, so `.scm` queries match whatever casing the source uses.
+ *
+ * It used to be a `choice` of four string casings (`Break`, `break`, `BREAK`,
+ * camelCase). That put three or four terminal symbols per keyword into every
+ * state the keyword is valid in — between a quarter and a third of each grammar's
+ * `parser.c`, and it still missed interior casings such as `reTURN`.
+ *
+ * The token must stay eligible for keyword extraction (`word: $.identifier`),
+ * because extraction is what makes it safe: the keyword lexer only runs after
+ * `identifier` has matched a whole word, so `while_value` stays one identifier.
+ * A keyword that is NOT extracted is lexed by the main lexer instead, where the
+ * `prec(1)` below lets it out-lex a longer identifier — `while_value` becomes
+ * `while` + `_value`. `npm run check:keywords` fails if any keyword is excluded.
+ *
+ * Two things keep every keyword extracted, and both are load-bearing:
+ *
+ * - `prec(1)`. A candidate for extraction has to win a same-length tie against
+ *   `identifier`, and against `regex_flags` (`/[a-z]+/`). A string won those on
+ *   specificity; a regex ties on rule order, which it loses. The precedence
+ *   decides the tie instead.
+ * - `identifier` accepts no `\uXXXX` escape. With one, `identifier` could start
+ *   with `\`, the integer-division operator, and tree-sitter excluded every
+ *   keyword valid straight after an expression — `else`, `catch`, `finally`,
+ *   `in`, `instanceof`, `of`, `while`, `function` and the modifiers — leaving
+ *   them in the main lexer even as strings.
+ *
+ * And a keyword must never also be spelled as a plain string elsewhere (`'get'`
+ * beside a `keyword('Get')`): the two are then different tokens matching the
+ * same word. Reference the `$._kw_<word>` rule instead. `common/define-grammar.js`
+ * carries the same helper; keep the two in step.
  *
  * @param {string} word PascalCase spelling of the keyword, e.g. `Break`.
  * @param {string} [nodeName] Canonical node name. Defaults to `lowerFirst(word)`;
  *   pass it explicitly for tokens starting with punctuation, e.g. `('<Cf', '<cf')`.
  */
 function keyword(word, nodeName = lowerFirst(word)) {
-  return alias(choice(...casings(word)), nodeName);
-}
-
-/**
- * Casings accepted for a keyword. Keywords are written in PascalCase
- * (`Break`, `QueryExecute`, `<Cf`) so all four real-world forms fall out of the
- * one spelling: PascalCase, lowercase, UPPERCASE and camelCase.
- *
- * Interior mixed casing such as `reTURN` is deliberately not matched — it does
- * not occur in real code, and enumerating 2^n variants inflates the lexer.
- *
- * @param {string} word
- * @returns {string[]}
- */
-function casings(word) {
-  return [...new Set([
-    word,
-    word.toLowerCase(),
-    word.toUpperCase(),
-    lowerFirst(word),
-  ])];
+  const pattern = word.split('').map((c) => /[a-z]/i.test(c) ? `[${c.toLowerCase()}${c.toUpperCase()}]` : c).join('');
+  return alias(token(prec(1, new RegExp(pattern))), nodeName);
 }
 
 /**

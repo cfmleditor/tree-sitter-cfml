@@ -526,3 +526,26 @@ cf tag name casings across tag types
     (cf_selfclose_void_tag_end))
   (cf_selfclose_tag
     (cf_selfclose_void_tag_end)))
+
+===================================
+interior mixed casing is a keyword too
+===================================
+<cFsEt x = nULL>
+<cFiF x EQ tRUE>y<cFeLsE>z</cFiF>
+
+---
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (null))
+    (cf_selfclose_void_tag_end))
+  (cf_if_tag
+    (binary_expression
+      (identifier)
+      (true))
+    (html_text)
+    (cf_if_alt
+      (cf_else_tag)
+      (html_text))))

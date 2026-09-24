@@ -9,26 +9,19 @@ of them.
 
 ### Keyword casing coverage
 
-CFML keywords are case-insensitive. Keywords are written in **PascalCase** in
-the grammar (`Break`, `QueryExecute`, `<Cf`) and go through the `keyword()`
-helper, which enumerates the accepted casings as plain string literals and
-aliases them back to a canonical node name.
-
-The one PascalCase spelling yields every real-world form:
-
-| form | `Break` | `QueryExecute` |
-|------|---------|----------------|
-| PascalCase (as written) | `Break` | `QueryExecute` |
-| lowercase | `break` | `queryexecute` |
-| UPPERCASE | `BREAK` | `QUERYEXECUTE` |
-| camelCase | `break` | `queryExecute` |
-
-Interior mixed casing (`reTURN`, `vAr`) is **not** matched and parses as an
-identifier. This is deliberate — it does not occur in real code, and
-enumerating 2^n variants inflates the lexer for no benefit.
+CFML keywords are case-insensitive, and so is every keyword here, in any casing
+— `reTURN` and `vAr` included. Keywords are written in **PascalCase** in the
+grammar (`Break`, `QueryExecute`, `<Cf`) and go through the `keyword()` helper,
+which turns the word into one token, a character class per letter
+(`/[bB][rR][eE][aA][kK]/`) at `prec(1)`, aliased to a canonical node name.
 
 The node name is `lowerFirst(word)`, so `.scm` queries keep matching
 (`"break"`, `"queryExecute"`) regardless of the casing in the source.
+
+Until the change recorded in `CHANGELOG.md` under `[Unreleased]`, the helper
+enumerated four string casings instead and interior mixed casing parsed as an
+identifier. That cost three or four terminal symbols per keyword, between a
+quarter and a third of each grammar's `parser.c`.
 
 #### `<Cf` needs an explicit node name
 
@@ -45,33 +38,43 @@ _cf_close_tag: $ => prec.right(1, keyword('</Cf', '</cf')),
 This is a known, deliberate decision. Any future keyword whose first character
 is not a letter needs the same treatment.
 
-#### `keyword()` vs. case-insensitive regex — which to use
+#### `keyword()` vs. a bare case-insensitive regex — which to use
 
-Both mechanisms exist on purpose and are **not** interchangeable. Do not
-"consistency-fix" one into the other; each is a regression in the other's
-territory.
+Both are character-class regexes now, and they are still **not**
+interchangeable. What separates them is keyword extraction and precedence, not
+casing coverage. Do not "consistency-fix" one into the other; each is a
+regression in the other's territory.
 
-| | `keyword('Word')` | regex char class `/[wW][oO].../` |
+| | `keyword('Word')` | bare regex `/[wW][oO].../` |
 |---|---|---|
 | **use when** | the token competes with `identifier` in the same position, **or** a `.scm` query matches its literal | operator or SQL token that cannot collide with an identifier, or whose node name is uniform anyway |
-| **gives you** | eligible for keyword extraction; stable node name via the alias | full 2^n casing coverage; one compact DFA |
-| **costs you** | only 4 casings (see above) | no keyword extraction; node name varies with the matched text |
+| **gives you** | keyword extraction; stable node name via the alias | one compact DFA; longest-match protects identifiers |
+| **costs you** | must stay extracted — see below | no keyword extraction; node name varies with the matched text |
 
-**Never** write a keyword as `token(prec(1, /[rR][eE].../))`. Such a token is
-not eligible for keyword extraction, and the explicit precedence overrides
-longest-match, so it out-lexes a *longer* identifier wherever the keyword is
-valid: `while_value = 1;` parses as `while` + `_value`, and
-`<cfset x = functionalImpact>` as `function` + `alImpact`.
+**A `keyword()` token must be keyword-extracted, and nothing in `generate`
+tells you when one is not.** It is `token(prec(1, …))`, and a precedence
+overrides longest-match, so an *un*-extracted keyword out-lexes a longer
+identifier wherever the keyword is valid: `while_value = 1;` parses as
+`while` + `_value`, and `<cfset x = functionalImpact>` as `function` +
+`alImpact`. An extracted one cannot, because the keyword lexer only runs after
+`identifier` has matched the whole word. `npm run check:keywords` reads the
+committed tables and fails on any keyword the keyword lexer does not own; CI
+runs it. Things that have silently excluded keywords here, with the fix for
+each, are listed in `keyword()` in `cfscript/grammar.js` — a `\uXXXX` escape in
+`identifier`, a missing precedence, and the same word also spelled as a plain
+string (`'get'` beside `keyword('Get')`).
 
-The regexes currently in the grammar are all correctly on the regex side:
+The regexes currently in the grammar are all correctly on the bare-regex side:
 
 - **word operators** (`eq`, `is`, `neq`, `ct`, `gt`, `gte`, `contains`,
   `does not contain`, …) — bare regexes with no explicit precedence, so
   longest-match protects identifiers. Verified: `containsKey`, `eqValue`,
   `isValue`, `gteLimit`, `notFlag`, `modValue`, `greaterThanY` all parse
   correctly. No query matches an operator literal, so the alias would buy
-  nothing, and converting would *lose* casings that work today such as `eQ`
-  and `DoEs NoT cOnTaIn`.
+  nothing, and converting one would add a `prec(1)` token that has to survive
+  keyword extraction — which these do not: they are excluded as matching the
+  same strings as `regex_flags`, in every grammar, before and after the
+  keyword change.
 - **SQL tables** (`query_keyword`, `query_function_name`) — `token(choice(...))`
   with no precedence, and every alternative collapses into the single
   `query_keyword` node, so the node name does not vary by which alternative
