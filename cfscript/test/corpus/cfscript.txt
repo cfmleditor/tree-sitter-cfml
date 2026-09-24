@@ -1075,14 +1075,14 @@ Lucee operators (NOT, XOR, MOD, CT, NCT, <>)
 (program
   (if_statement
     (parenthesized_expression
-      (unary_expression
-        (unary_operator)
+      (not_expression
+        (not_operator)
         (identifier)))
     (statement_block))
   (if_statement
     (parenthesized_expression
-      (unary_expression
-        (unary_operator)
+      (not_expression
+        (not_operator)
         (identifier)))
     (statement_block))
   (if_statement

@@ -144,6 +144,7 @@
   "#" @punctuation.special)
 
 (unary_operator) @operator
+(not_operator) @operator
 
 (spread_element
   "..." @operator)

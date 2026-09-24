@@ -2035,6 +2035,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "not_expression"
+        },
+        {
+          "type": "SYMBOL",
           "name": "binary_expression"
         },
         {
@@ -3809,6 +3813,14 @@
         },
         {
           "type": "PATTERN",
+          "value": "[eE][qQ][vV]"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[iI][mM][pP]"
+        },
+        {
+          "type": "PATTERN",
           "value": "[mM][oO][dD]"
         },
         {
@@ -4979,6 +4991,72 @@
         },
         {
           "type": "PREC_LEFT",
+          "value": "logical_eqv",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[eE][qQ][vV]"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": "logical_imp",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[iI][mM][pP]"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
           "value": "binary_shift",
           "content": {
             "type": "SEQ",
@@ -5078,7 +5156,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "bitwise_and",
+          "value": "binary_concat",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5111,7 +5189,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "bitwise_xor",
+          "value": "binary_exp",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5309,7 +5387,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_times",
+          "value": "binary_mod",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5342,7 +5420,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_times",
+          "value": "binary_intdiv",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5375,7 +5453,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_times",
+          "value": "binary_mod",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5441,7 +5519,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5474,7 +5552,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5507,7 +5585,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5540,7 +5618,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5573,7 +5651,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5606,7 +5684,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5639,7 +5717,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5672,7 +5750,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5705,7 +5783,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5738,7 +5816,40 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "FIELD",
+                "name": "left",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "operator",
+                "content": {
+                  "type": "PATTERN",
+                  "value": "[iI][sS]\\s+[nN][oO][tT]"
+                }
+              },
+              {
+                "type": "FIELD",
+                "name": "right",
+                "content": {
+                  "type": "SYMBOL",
+                  "name": "expression"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "PREC_LEFT",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5771,7 +5882,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5804,7 +5915,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5837,7 +5948,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5870,7 +5981,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5903,7 +6014,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5936,7 +6047,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5969,7 +6080,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -5986,7 +6097,7 @@
                 "name": "operator",
                 "content": {
                   "type": "PATTERN",
-                  "value": "[dD][oO][eE][sS]\\s[nN][oO][tT]\\s[cC][oO][nN][tT][aA][iI][nN]"
+                  "value": "[dD][oO][eE][sS]\\s+[nN][oO][tT]\\s+[cC][oO][nN][tT][aA][iI][nN]"
                 }
               },
               {
@@ -6002,7 +6113,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6035,7 +6146,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6068,7 +6179,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6101,7 +6212,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6134,7 +6245,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6167,7 +6278,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6200,7 +6311,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6233,7 +6344,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6266,7 +6377,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6299,7 +6410,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6332,7 +6443,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_equality",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6398,7 +6509,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6431,7 +6542,7 @@
         },
         {
           "type": "PREC_LEFT",
-          "value": "binary_relation",
+          "value": "binary_compare",
           "content": {
             "type": "SEQ",
             "members": [
@@ -6469,10 +6580,6 @@
       "members": [
         {
           "type": "STRING",
-          "value": "!"
-        },
-        {
-          "type": "STRING",
           "value": "~"
         },
         {
@@ -6482,15 +6589,6 @@
         {
           "type": "STRING",
           "value": "+"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "PATTERN",
-            "value": "[nN][oO][tT]"
-          },
-          "named": false,
-          "value": "not"
         }
       ]
     },
@@ -6506,6 +6604,49 @@
             "content": {
               "type": "SYMBOL",
               "name": "unary_operator"
+            }
+          },
+          {
+            "type": "FIELD",
+            "name": "argument",
+            "content": {
+              "type": "SYMBOL",
+              "name": "expression"
+            }
+          }
+        ]
+      }
+    },
+    "not_operator": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "!"
+        },
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[nN][oO][tT]"
+          },
+          "named": false,
+          "value": "not"
+        }
+      ]
+    },
+    "not_expression": {
+      "type": "PREC_LEFT",
+      "value": "binary_not",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "FIELD",
+            "name": "operator",
+            "content": {
+              "type": "SYMBOL",
+              "name": "not_operator"
             }
           },
           {
@@ -10502,11 +10643,19 @@
       },
       {
         "type": "STRING",
+        "value": "binary_intdiv"
+      },
+      {
+        "type": "STRING",
+        "value": "binary_mod"
+      },
+      {
+        "type": "STRING",
         "value": "binary_plus"
       },
       {
         "type": "STRING",
-        "value": "binary_shift"
+        "value": "binary_concat"
       },
       {
         "type": "STRING",
@@ -10514,23 +10663,7 @@
       },
       {
         "type": "STRING",
-        "value": "binary_relation"
-      },
-      {
-        "type": "STRING",
-        "value": "binary_equality"
-      },
-      {
-        "type": "STRING",
-        "value": "bitwise_and"
-      },
-      {
-        "type": "STRING",
-        "value": "bitwise_xor"
-      },
-      {
-        "type": "STRING",
-        "value": "bitwise_or"
+        "value": "binary_not"
       },
       {
         "type": "STRING",
@@ -10538,11 +10671,19 @@
       },
       {
         "type": "STRING",
+        "value": "logical_or"
+      },
+      {
+        "type": "STRING",
         "value": "logical_xor"
       },
       {
         "type": "STRING",
-        "value": "logical_or"
+        "value": "logical_eqv"
+      },
+      {
+        "type": "STRING",
+        "value": "logical_imp"
       },
       {
         "type": "STRING",
@@ -10559,6 +10700,14 @@
       {
         "type": "SYMBOL",
         "name": "arrow_function"
+      },
+      {
+        "type": "STRING",
+        "value": "binary_shift"
+      },
+      {
+        "type": "STRING",
+        "value": "bitwise_or"
       }
     ],
     [
