@@ -56,6 +56,12 @@
 
   `STATE_COUNT` is unchanged in all three grammars. No corpus file uses the new spellings, so the scan is unchanged at 422 error lines across 112 files and `treediff` reports no changed tree. Pinned by a new test in each `common.txt`.
 
+- **A `<` just before `</cfscript>`, `</cfquery>` or `</cfxml>` no longer hides the close tag** ([#150](https://github.com/cfmleditor/tree-sitter-cfml/issues/150)). The scans for those bodies match the close delimiter a character at a time, and on a mismatch they reset and stepped past the character that broke the match. When that character was a `<` — `x = 1 <</cfscript>` — it was the start of the real close tag, which was never seen, and the rest of the document was lost to one ERROR. It is now re-tested after the reset: `<` only ever opens these delimiters, so one character is enough and no general string matcher is needed. `scan_raw_text` had the same flaw in its generic path, reachable after a partial match inside `<script>` or `<style>` (`</s</script>`); `cfsavecontent` already re-tested. The shape is typical of a half-typed edit, where the whole document below the cursor stopped highlighting. Pinned by a new `cfml` corpus test covering all four; fuzz and truncated inputs are clean.
+
+- **Scanner robustness** ([#151](https://github.com/cfmleditor/tree-sitter-cfml/issues/151)). `cfscript`'s `QUERY_TEXT` branch now stands down in error recovery, as `JAVA_CLASS_CONTENT`, `CFML_TEMPLATE_CONTENT` and `TEMPLATE_CHARS` already did. The parse tables show it is valid alongside `AUTOMATIC_SEMICOLON` only in state 1, the recovery state, so no real parse loses it; unguarded, it scanned to the next `"` at every recovery step and could hand recovery a `query_text` token from anywhere. And the shared scanner's automatic-semicolon check compared its `WhitespaceResult` with `false` and `true`: the first is `REJECT` by luck, the second `NO_NEWLINE`, the opposite of the `ACCEPT` the `cfscript` copy tests. Both now compare against the enum.
+
+  Neither this nor #150 changes a generated file. The corpus scan is identical line for line at 422 error lines across 112 files, and `treediff` reports no changed tree.
+
 ## [0.26.36]
 
 ### cfscript
