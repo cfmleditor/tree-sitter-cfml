@@ -48,6 +48,13 @@ delimiter is valid — `CLOSE_TAG_DELIM`, `CLOSE_CF_TAG_DELIM`,
 `CF_SELF_CLOSING_VOID_TAG_DELIMITER`. Where none is expected, the parser is not
 inside a tag, so `>` cannot be closing one.
 
+**You can read past the token once its end is marked.** Characters advanced
+over after `mark_end` are looked at, not consumed. `peek_output_attribute_is_true`
+relies on this: it marks the end at `<cffunction`'s name and then reads the
+attributes up to the tag's `>`. Tree-sitter records how far the scanner looked,
+so editing `output` later re-lexes the name. Handle end of input and unclosed
+quotes inside such a peek, because the tag may be truncated.
+
 **`skip` after `advance` throws the token away.** `skip` does not mean "move on
 without consuming" — it means *what came before this was whitespace*, so it
 resets the token's START to the current position. Advancing over a word and then
@@ -276,5 +283,11 @@ which makes fixing a parse gap a throughput change as much as a correctness one.
 - Full corpus scan diffed against a pre-change baseline; deletions only
 - `npm run bench` against a baseline taken on the base commit. A scanner change
   moves throughput without moving a single test — in both directions
+- If the serialized state changed size (a field added to `Scanner`, a byte
+  added per tag), the #55 budget for runs of unpaired custom tags moved with it,
+  and a file on that threshold changes. Slatwall's
+  `admin/views/toolbar/menu.cfm`, with 67 unpaired `<cf_SlatwallActionCaller>`,
+  is the known one. Its tree was unchanged by #146's 4 bytes, but the LSP's
+  rewrite of it stopped parsing.
 - Spot-check truncated inputs by hand: `<cf`, `<!--- x`, `<cfoutput>#a`,
   `<cfquery>SELECT 1`, `queryExecute("`, `x = {`. Each should recover, not hang.

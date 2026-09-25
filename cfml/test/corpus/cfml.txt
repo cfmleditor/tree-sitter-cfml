@@ -74,7 +74,7 @@ cfif with elseif and else
 cffunction
 ===================================
 
-<cffunction name="Test">
+<cffunction name="Test" output="true">
 
     #testAND AND ANDtestOR#
 
@@ -96,6 +96,10 @@ cffunction
 
 (program
   (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
     (cf_attribute
       (cf_attribute_name)
       (quoted_cf_attribute_value
@@ -3315,3 +3319,271 @@ a dynamic end tag closed in a later block is an erroneous end tag
   (cf_output_tag
     (erroneous_end_tag
       (erroneous_end_tag_name))))
+
+================================================================================
+a hash in a function body is text unless its tag evaluates it
+================================================================================
+
+<cfcomponent>
+<cffunction name="f">
+<style>#box { color: #FFF; }</style>
+<div>#x#</div>
+<cfoutput><div>#x#</div></cfoutput>
+<cfmail to="a">Hi #name#</cfmail>
+</cffunction>
+</cfcomponent>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_component_open_tag
+    (cf_selfclose_void_tag_end))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (style_element
+      (start_tag
+        (tag_name))
+      (hash_single)
+      (style_text)
+      (end_tag
+        (tag_name)))
+    (element
+      (start_tag
+        (tag_name))
+      (hash_single)
+      (html_text)
+      (hash_single)
+      (end_tag
+        (tag_name)))
+    (cf_output_tag
+      (element
+        (start_tag
+          (tag_name))
+        (hash_expression
+          (identifier))
+        (end_tag
+          (tag_name))))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))))
+      (html_text)
+      (hash_expression
+        (identifier))
+      (cf_end_tag
+        (cf_tag_name))))
+  (cf_component_close_tag))
+
+================================================================================
+a function or component whose output is a literal true evaluates hashes
+================================================================================
+
+<cffunction name="a" hint="x > 'y'" output="true"><b>#x#</b></cffunction>
+<cffunction name="b" output=yes><b>#x#</b></cffunction>
+<cffunction name="c" output="#true#"><b>#x#</b></cffunction>
+<cffunction name="d" output="false"><b>#x#</b></cffunction>
+<cffunction name="e" output="#f("x")#"><b>#x#</b></cffunction>
+<cfcomponent output="true">
+<cffunction name="f" output="false"><b>#x#</b></cffunction>
+</cfcomponent>
+<cffunction name="g"><b>#x#</b></cffunction>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (element
+      (start_tag
+        (tag_name))
+      (hash_expression
+        (identifier))
+      (end_tag
+        (tag_name))))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (cf_attribute_value
+        (attribute_value)))
+    (element
+      (start_tag
+        (tag_name))
+      (hash_expression
+        (identifier))
+      (end_tag
+        (tag_name))))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (hash_expression
+          (true))))
+    (element
+      (start_tag
+        (tag_name))
+      (hash_expression
+        (identifier))
+      (end_tag
+        (tag_name))))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (element
+      (start_tag
+        (tag_name))
+      (hash_single)
+      (html_text)
+      (hash_single)
+      (end_tag
+        (tag_name))))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (hash_expression
+          (call_expression
+            (identifier)
+            (arguments
+              (string
+                (string_fragment)))))))
+    (element
+      (start_tag
+        (tag_name))
+      (hash_single)
+      (html_text)
+      (hash_single)
+      (end_tag
+        (tag_name))))
+  (cf_component_open_tag
+    (cf_tag_attributes
+      (cf_attribute
+        (cf_attribute_name)
+        (quoted_cf_attribute_value
+          (attribute_value))))
+    (cf_selfclose_void_tag_end))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (element
+      (start_tag
+        (tag_name))
+      (hash_expression
+        (identifier))
+      (end_tag
+        (tag_name))))
+  (cf_component_close_tag)
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (element
+      (start_tag
+        (tag_name))
+      (hash_single)
+      (html_text)
+      (hash_single)
+      (end_tag
+        (tag_name)))))
+
+================================================================================
+a style block evaluates hashes where its enclosing tag does
+================================================================================
+
+<cffunction name="f" output="true"><style>a #b# c</style></cffunction>
+<cfmail to="a"><style>a #b# c</style></cfmail>
+<cffunction name="g"><style>a #b# c</style></cffunction>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (style_element
+      (start_tag
+        (tag_name))
+      (style_text)
+      (hash_expression
+        (identifier))
+      (style_text)
+      (end_tag
+        (tag_name))))
+  (cf_tag
+    (cf_start_tag
+      (cf_tag_name)
+      (cf_tag_attributes
+        (cf_attribute
+          (cf_attribute_name)
+          (quoted_cf_attribute_value
+            (attribute_value)))))
+    (style_element
+      (start_tag
+        (tag_name))
+      (style_text)
+      (hash_expression
+        (identifier))
+      (style_text)
+      (end_tag
+        (tag_name)))
+    (cf_end_tag
+      (cf_tag_name)))
+  (cf_function_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (style_element
+      (start_tag
+        (tag_name))
+      (style_text)
+      (end_tag
+        (tag_name)))))
