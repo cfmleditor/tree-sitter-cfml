@@ -38,6 +38,12 @@
 
   New corpus tests pin the precedence in both grammars, `IS NOT` against the following word (`x IS NOT1` keeps `NOT1` an identifier), the bitwise operators, and the `#` openers Lucee accepts. Against `master` with #141 merged: corpus **430 → 422 error lines across 115 → 112 files**; `treediff` shows **no** changed `cfscript` tree and one changed `cfml` file, Mura's legacy `dsp_adzones.cfm`, whose `'name','esapiEncode(…` is missing a `#` and which #141's scanner guard had accepted by accident. `STATE_COUNT` with both changes in: `cfml` 5,135, `cfquery` 4,009, `cfscript` 5,114, against 5,738 / 4,306 / 5,687 on `master` with #141.
 
+- **A word operator starting a line continues the expression** — recommendation 3 of [`docs/GRAMMAR-SCANNER-REVIEW.md`](docs/GRAMMAR-SCANNER-REVIEW.md). Automatic semicolon insertion is suppressed before a line that begins with a CFML word operator, so a condition broken across lines stays one expression. The check went by first letter and only knew `and`, `or`, `eq`, `neq`, `not`, `gt`, `gte`, `ge`, `lt`, `lte`, `le`, `mod`, `in` and `instanceof`, and only a *lowercase* `i` reached it: 14 of the 16 line-leading forms either split into a second, error-free `tag_statement` (`x = a ⏎ IS b`, `CONTAINS`, `CT`, `NCT`, `EQUAL`, `XOR`, `EQV`, `IMP`, uppercase `IN`, `INSTANCEOF`, `GREATER THAN`) or errored (`is not`, `DOES NOT CONTAIN`, `LESS THAN OR EQUAL TO`). Every letter now goes through one table of the operators in `binary_expression`, with `DOES NOT CONTAIN`, `GREATER THAN` and `LESS THAN` matched as whole phrases so that `does`, `greater` and `less` stay ordinary identifiers. This matches Lucee, whose expression parser skips the newline and then looks for the operator word.
+
+  **A second defect in the same check:** it stopped reading at `_` and `$`, so a new statement starting with an identifier such as `in_stock`, `or_else` or `eq$` looked like an operator, lost its semicolon, and errored. An operator now has to be a whole word. Both scanners carry the fix — `common/scanner.h` as well as `cfscript/src/scanner.c` — though in `cfml` a closure inside `<cfset>` does not get automatic semicolons at all, before or after this change.
+
+  Scanner-only: no `parser.c` changed. No corpus file writes either shape: the corpus scan is identical and `treediff` reports no changed tree in 14,177 files. Pinned by two new `cfscript` corpus tests; fuzz and truncated inputs (`x = a ⏎ DOES NOT` at end of file) are clean.
+
 ## [0.26.36]
 
 ### cfscript

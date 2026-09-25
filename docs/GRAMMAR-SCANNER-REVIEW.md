@@ -27,7 +27,7 @@ finding here changes the explanation of an existing entry, it says so.
 |---|---|---|---|---|---|
 | 1 | **Done** — one case-insensitive regex per keyword, and drop the JS `\uXXXX` escape from `identifier` | size, perf, support | as shipped: `parser.c` **−29%** across the three grammars (48.4 → 34.2 MB), `STATE_COUNT` −10.5% / −8.7% / −11.7%, addon 10.1 → 6.6 MB; **zero** tree changes over 14,177 files; `reTURN` now a keyword | ~15 lines plus comments | Low, guarded by `npm run check:keywords` |
 | 2 | **Done** — CFML operator precedence: `&`, `^`, `NOT`/`!`, `XOR`, `IS NOT`, `EQV`/`IMP` | support (wrong trees) | landed as #141 (@bokic), with the `IS NOT` word-boundary and bitwise corrections below made after merge; see `CHANGELOG.md` | — | — |
-| 3 | Automatic semicolon before a line-leading `IS`, `CONTAINS`, `XOR`, `IN`, … | support (wrong trees) | silent split into a `tag_statement` today | scanner only | Low |
+| 3 | **Done** — automatic semicolon before a line-leading `IS`, `CONTAINS`, `XOR`, `IN`, … | support (wrong trees) | fixed in both scanners, with a second defect found on the way (`in_stock` at a line start errored); see `CHANGELOG.md` | scanner only | Low |
 | 4 | Give the `cfml` scanner an explicit error-recovery policy | recovery quality, perf | naive version: ERROR-covered bytes **−22%**, error lines 422 → 365, `debug/Simple.cfc` 40,907 bytes of ERROR → 0 | scanner only | Med: 7 files regress in the naive version |
 | 5 | `#` in template text is only an expression inside `<cfoutput>` | support | the real cause of `debug/Simple.cfc`'s residual errors | scanner | Med: semantic |
 | 6 | Stop carrying a full CFScript statement grammar in `cfml` and `cfquery` | size | trimming it to the six statement kinds the corpus uses: **−16% / −19%** states | design choice | Med |
@@ -240,6 +240,10 @@ tree — so it wants a changelog note rather than a major version.
 ---
 
 ## 3. Automatic semicolon before a line-leading word operator
+
+> **Implemented** — see `CHANGELOG.md` under `[Unreleased]`. The failure was
+> wider than the list below (14 of 16 line-leading forms), and the same check
+> also broke identifiers such as `in_stock` at the start of a statement.
 
 Both scanners suppress ASI before a line that starts with a CFML word operator,
 so a multi-line condition stays one expression. The list is short, and one case
