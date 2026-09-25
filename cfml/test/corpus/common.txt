@@ -1480,6 +1480,75 @@ common: new with a java: type prefix and a dotted java path
     (cf_selfclose_void_tag_end)))
 
 ================================================================================
+common: the new type prefix in any casing, with class: and cfc:
+================================================================================
+
+<cfset a = new Java:java.io.File( p )>
+<cfset b = new CLASS:java.io.File( p )>
+<cfset c = new CFML:foo.Bar()>
+<cfset d = new cfc:foo.Bar()>
+<cfset e = new class.Foo()>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments
+          (identifier))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments
+          (identifier))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments)))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments)))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments)))
+    (cf_selfclose_void_tag_end)))
+
+================================================================================
 common: debugger as an ordinary identifier
 ================================================================================
 

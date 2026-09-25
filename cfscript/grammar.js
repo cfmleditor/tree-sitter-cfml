@@ -1294,7 +1294,14 @@ module.exports = grammar({
       ),
     )),
 
-    _new_type_prefix: (_) => token(seq(choice('java', 'cfml'), ':')),
+    // Lucee's four spellings, in any casing: `java:` and its synonym `class:`,
+    // `cfml:` and its synonym `cfc:` (`AbstrCFMLExprTransformer.newOp`, which
+    // matches against a lowercased copy of the source). Only `new` takes the
+    // synonyms; the static-call prefix below stays `java` / `cfml`.
+    _new_type_prefix: (_) => token(seq(
+      choice(/[jJ][aA][vV][aA]/, /[cC][lL][aA][sS][sS]/, /[cC][fF][mM][lL]/, /[cC][fF][cC]/),
+      ':',
+    )),
 
     // `cfml:Query::new( … )` — Lucee's type prefix on a STATIC call. The prefix
     // is an EXTERNAL token, unlike `_new_type_prefix` above, and that is the

@@ -50,6 +50,12 @@
 
   **Free only because of `_operator_shaped_name`.** That rule, which lets `eq` or `contains` be a parameter name, used the same regexes without an alias. Aliasing only the operators left the alias on every `binary_expression` arm, which split their right-operand states: **+651 states and +2.2 MB `parser.c` in `cfml` and `cfquery`, +744 and +2.7 MB in `cfscript`**, with every test green. Spelled through `wordOperator()` there too, each alias is its token's default, and tree-sitter names the token itself. `npm run check:keywords` now fails if any word-operator alias stops being a default; it was checked against the expensive variant, where it reports 19 operators. The same words inside a parameter name now carry an anonymous child, as `in` and `instanceof` already did, which is why the highlight is scoped.
 
+- **`new`'s type prefix is case-insensitive, and takes Lucee's `class:` and `cfc:`** ([#144](https://github.com/cfmleditor/tree-sitter-cfml/issues/144)). It was two lowercase strings, so `new Java:java.io.File( p )` and `new CFML:foo.Bar()` were errors, which the keyword change above had not reached: the prefix is one token with its colon inside, not a `keyword()`. Lucee's `AbstrCFMLExprTransformer.newOp` accepts `java:` or its synonym `class:`, and `cfml:` or its synonym `cfc:`, matched against a lowercased copy of the source, and the grammar now does the same. `new class.Foo()` is still an ordinary dotted path, since the token includes the colon.
+
+  **The static-call prefix is unchanged:** `cfml:Query::new()` already matched `java` and `cfml` in any casing. It does not take the synonyms, because there is no engine behaviour to copy for them: in the Lucee source consulted, the prefix handling in `readComponentPath`, which reads a static call's path, is commented out.
+
+  `STATE_COUNT` is unchanged in all three grammars. No corpus file uses the new spellings, so the scan is unchanged at 422 error lines across 112 files and `treediff` reports no changed tree. Pinned by a new test in each `common.txt`.
+
 ## [0.26.36]
 
 ### cfscript

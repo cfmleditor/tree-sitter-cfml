@@ -309,7 +309,7 @@ parses as a `labeled_statement` rather than an assignment; the two spellings are
 indistinguishable without a semantic pass, and no corpus file depends on it. The
 `new java:` / `new cfml:`
 type prefix now works in both CFScript grammars, where it had been
-`cfscript`-only.
+`cfscript`-only, in any casing and with Lucee's `class:` / `cfc:` synonyms.
 
 Two words are deliberately not accepted in the *leading* return-type slot, only
 in the modifiers-first spelling: `query`, which collides with the head of

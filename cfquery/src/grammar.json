@@ -5334,12 +5334,20 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "STRING",
-                "value": "java"
+                "type": "PATTERN",
+                "value": "[jJ][aA][vV][aA]"
               },
               {
-                "type": "STRING",
-                "value": "cfml"
+                "type": "PATTERN",
+                "value": "[cC][lL][aA][sS][sS]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[cC][fF][mM][lL]"
+              },
+              {
+                "type": "PATTERN",
+                "value": "[cC][fF][cC]"
               }
             ]
           },

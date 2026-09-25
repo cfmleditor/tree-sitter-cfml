@@ -1728,7 +1728,13 @@ module.exports = function defineGrammar(dialect) {
         field('arguments', optional(prec.dynamic(1, $.arguments))),
       )),
 
-      _new_type_prefix: (_) => token(seq(choice('java', 'cfml'), ':')),
+      // Lucee's four spellings, in any casing: `java:` and its synonym
+      // `class:`, `cfml:` and its synonym `cfc:` (`AbstrCFMLExprTransformer.newOp`,
+      // which matches against a lowercased copy of the source).
+      _new_type_prefix: (_) => token(seq(
+        choice(/[jJ][aA][vV][aA]/, /[cC][lL][aA][sS][sS]/, /[cC][fF][mM][lL]/, /[cC][fF][cC]/),
+        ':',
+      )),
 
       member_expression: $ => prec('member', seq(
         field('object', choice($.expression, $.primary_expression)),
