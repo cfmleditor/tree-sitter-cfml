@@ -580,23 +580,33 @@ precedent for a context-gated external token in that file.
 identifier, drop it — that is the over-broad shape the rejected
 `identifier statement_block` arm already had.
 
-### [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56) — `</cfscript>` inside a string literal
+### [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56) — `</cfscript>` inside a string — **done**
 
-**The issue's open question is answered and its text is stale.** It says the
-behaviour was never checked against an engine; `LIMITATIONS.md` now records it as
-a confirmed divergence from Lucee, read from `CFMLScriptTransformer`: the
-`tagdependent` body ends through `isFinish()` between complete statements, so the
-string is consumed by the expression parser and no raw-text search for
-`</cfscript>` happens at all. Say so on the issue before starting.
+Shipped. Corpus 642 → **638** error nodes across 119 → 117 files, zero changed
+trees, fuzz clean, no `STATE_COUNT` movement (scanner only).
 
-**Work:** track string state in the raw-text scan in `common/scanner.h`. It lands
-in `cfml` and `cfquery` together, and a bug there breaks every `<cfscript>` block
-rather than an edge case, so the corpus scan and `treediff` are the gate, not the
-test suite. Probe `cfml/close_tag_in_script_string.cfm` flips when it works.
+**The plan called this the riskiest item left and was right, but not about
+which part.** It warned about the recovery-cost trap; that never materialised,
+because the scan was already character-by-character and bounded by the close
+tag. What actually bit was three separate assumptions about CFML's own lexical
+rules, each of which passed `npm test` and was caught only by the corpus scan:
 
-**Watch for** the recovery-cost trap in `.claude/skills/parse-gap/references/scanner.md`:
-a string-aware scan that also runs during error recovery turns a bounded scan
-into an EOF scan. Check `valid_symbols` for the recovery signature first.
+The four rows below were measured during the experiment, against the baseline
+of 640 that `master` carried at the time; the shipped figures above are the
+re-measurement after rebasing.
+
+| attempt | corpus | what it missed |
+|---|---|---|
+| track strings | 640 → **7,932** | the apostrophe in `// don't` opens a string that runs to EOF — comments have to be skipped too |
+| + skip comments | 640 → **705** | a line comment ends at `\r` as well: ColdBox ships CR-only files, one of them worth 667 nodes on its own |
+| + `\r` as a line end | 640 → **705** | a string and a `#…#` interpolation nest arbitrarily, so one boolean desynchronises on `'"#f( v, '"', '""' )#"'` |
+| + a context stack | 640 → **636** | — |
+
+The lesson generalises past this issue: **a raw-text scan that starts caring
+about one lexical construct has signed up for all of them.** Strings imply
+comments, comments imply line terminators, and interpolation implies nesting.
+The corpus scan is what makes that discoverable — three of those four rows are
+green on `npm test`.
 
 ### [#116](https://github.com/cfmleditor/tree-sitter-cfml/issues/116) — an arrow function with an empty body — **done**
 
