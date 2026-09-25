@@ -47,6 +47,13 @@
 
   `treediff` changes two other files, the two copies of cfwheels' `Test.cfc`. There a struct literal after `=` is now an `object` rather than an `object_pattern`, which is the right node. In cfmleditor-lsp's formatter audit, the three fixed files move from refused to formatted, with no other change. **For consumers:** `node-types.json` gains `path` as a possible key of `pair` and `cf_pair`.
 
+
+- **A `{` that starts a statement is a block.** `if (x) { a = 1 }` parsed as an `if` whose body was a struct literal: an `expression_statement` holding an `object_pattern`. The same happened after `else`, `for` and `while`, and for a bare `{ a = 1 }`. A block holding one assignment without a semicolon is, character for character, also a struct with one key, and the struct reading won. Lucee never reads it that way: `statement()` in `AbstrCFMLScriptTransformer` tries `block()` on any `{` before `expressionStatement()`.
+  - `statement_block` now carries `prec.dynamic(1)`, in both grammars, so a block wins any tie it is in. After `=`, in `return` and as an argument, no block is possible, so nothing changes there.
+  - `labeled_statement` moves from −1 to −2. A block whose only content is a label (`{ a: 1 }`, `(x) => { a: 1 }`) therefore still loses to the struct, as it did before. Without this the change would have created a new tie there, and cfml and cfscript broke it differently.
+
+  No `STATE_COUNT` change, and every existing corpus test passes unchanged. `treediff` changes one corpus file: Preside's `SiteTreeService.cfc`, whose `for( var p in existingPage ) { existingPage = p };` loop body is now a block. The corpus scan is unchanged.
+
 ### cfscript
 - **Support `savecontent` as an expression** — `greeting = savecontent { writeOutput("G'day World") };` ([#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82), Lucee `test/tickets/_LDEV3623.cfc`). **+28 parse states** (5489 → 5517), no new conflicts, corpus **642 → 641 error nodes across 119 → 118 files**, zero changed trees in both grammars, `npm run fuzz` clean.
 

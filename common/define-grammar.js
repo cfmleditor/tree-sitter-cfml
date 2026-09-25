@@ -1204,12 +1204,18 @@ module.exports = function defineGrammar(dialect) {
         optional($._initializer),
       ),
 
-      statement_block: ($) => prec.right(seq(
+      // A `{` that starts a statement is always a block: Lucee's `statement()`
+      // tries `block()` before `expressionStatement()`, so a struct literal can
+      // never begin one. `if (x) { a = 1 }` is also a struct with one key, and
+      // without a preference that reading used to win. The +1 only decides ties,
+      // so a struct after `=`, in `return` or as an argument, where no block can
+      // go, is unaffected.
+      statement_block: ($) => prec.right(prec.dynamic(1, seq(
         '{',
         repeat($.statement),
         '}',
         optional($._automatic_semicolon),
-      )),
+      ))),
 
       else_clause: ($) => seq($._kw_else, $.statement),
 
@@ -1357,7 +1363,10 @@ module.exports = function defineGrammar(dialect) {
 
       empty_statement: (_) => ';',
 
-      labeled_statement: ($) => prec.dynamic(-1, seq(
+      // -2, not -1: `statement_block` carries +1, and a block holding only a
+      // label must still lose to a struct, as it did before that: `{ a: 1 }`
+      // and `(x) => { a: 1 }` stay struct literals, 0 against 1 - 2.
+      labeled_statement: ($) => prec.dynamic(-2, seq(
         field('label', alias(choice($.identifier, $._reserved_identifier), $.statement_identifier)),
         ':',
         field('body', $.statement),

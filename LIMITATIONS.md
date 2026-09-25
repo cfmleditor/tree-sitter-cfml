@@ -351,6 +351,8 @@ the corpus's 2,247 `<cfquery>` bodies and now parse as `query_math_expression`.
 
 ## Constructs that parse, but produce the wrong tree
 
+- **A block holding one assignment without a semicolon, read as a struct — fixed.** `if (x) { a = 1 }` gave the `if` a struct literal as its body. A `{` that starts a statement is now always a block, as in Lucee, through `prec.dynamic(1)` on `statement_block`. A block whose only content is a label, such as `{ a: 1 }` or `(x) => { a: 1 }`, still reads as a struct; `labeled_statement` is at −2 to keep that.
+
 These are not gaps — every input below parses cleanly, with no ERROR or MISSING
 node. What differs from what a reader would expect is the *shape* of the tree,
 which makes these invisible to `npm run scan` and untrackable by a probe: probes

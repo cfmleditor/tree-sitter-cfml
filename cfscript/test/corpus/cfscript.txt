@@ -5282,3 +5282,55 @@ expect( provider.objectExists( path = p ) ).toBeTrue;
                 (identifier)
                 (identifier))))))
       (property_identifier))))
+
+===================================
+a brace that starts a statement is a block
+===================================
+
+if (x) { a = 1 } else { b = 2 }
+for (p in q) { r = p };
+{ a: 1 }
+g = (x) => { a: 1 };
+
+---
+
+(program
+  (if_statement
+    (parenthesized_expression
+      (identifier))
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (number))))
+    (else_clause
+      (statement_block
+        (expression_statement
+          (assignment_expression
+            (identifier)
+            (number))))))
+  (for_in_statement
+    (identifier)
+    (identifier)
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (identifier)))))
+  (empty_statement)
+  (expression_statement
+    (object
+      (pair
+        (property_identifier)
+        (number))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (arrow_function
+        (formal_parameters
+          (parameter_type
+            (identifier)))
+        (object
+          (pair
+            (property_identifier)
+            (number)))))))
