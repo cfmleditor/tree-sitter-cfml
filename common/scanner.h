@@ -1637,37 +1637,58 @@ static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer, bo
     return false;
 }
 
-// Check if the current position matches a CFML word operator (case-insensitive).
-static bool scan_cfml_word_operator(TSLexer *lexer) {
-    char buf[11] = {0};
-    int len = 0;
-    for (; len < 10 && cf_isalpha(lexer->lookahead); len++) {
-        buf[len] = cf_tolower(lexer->lookahead);
+// CFML's word operators. A line that starts with one continues the expression
+// on the line before it, so no automatic semicolon may go in front of it —
+// `x = a ⏎ CONTAINS b` is one statement, not `x = a;` and a stray
+// `CONTAINS b`. Keep in step with `binary_expression`'s operator table.
+// Multi-word operators are matched as whole phrases below, not listed here, so
+// that `does`, `greater` and `less` stay ordinary identifiers on their own.
+static const char *const CFML_WORD_OPERATORS[] = {
+    "and", "or", "xor", "eqv", "imp", "not",
+    "eq", "neq", "equal", "is", "gt", "gte", "ge", "lt", "lte", "le",
+    "ct", "nct", "contains", "mod", "in", "instanceof",
+};
+
+// Reads the word at the lexer into `buf`, lower-cased, and reports whether it
+// is a WHOLE ASCII word — the only shape an operator has. A digit, `_`, `$` or
+// non-ASCII letter straight after the letters means an identifier such as
+// `in_stock`, `or_else`, `eq$` or `contains2`, which must NOT suppress the
+// semicolon; neither must a word longer than the buffer. Consumes with `skip`,
+// so it is lookahead only: the caller has already fixed the token with
+// `mark_end`.
+static bool scan_whole_word(TSLexer *lexer, char *buf, unsigned size) {
+    unsigned len = 0;
+    while ((lexer->lookahead >= 'a' && lexer->lookahead <= 'z') ||
+           (lexer->lookahead >= 'A' && lexer->lookahead <= 'Z')) {
+        if (len + 1 >= size) return false;
+        buf[len++] = (char)cf_tolower(lexer->lookahead);
         skip(lexer);
     }
-    bool at_end = !cf_isalnum(lexer->lookahead);
-    if (!at_end) return false;
+    buf[len] = '\0';
+    return len > 0 && !cf_isalnum(lexer->lookahead) && lexer->lookahead != '_' &&
+           lexer->lookahead != '$';
+}
 
-    return (len == 2 && (
-        (buf[0] == 'o' && buf[1] == 'r') ||
-        (buf[0] == 'e' && buf[1] == 'q') ||
-        (buf[0] == 'g' && buf[1] == 't') ||
-        (buf[0] == 'g' && buf[1] == 'e') ||
-        (buf[0] == 'l' && buf[1] == 't') ||
-        (buf[0] == 'l' && buf[1] == 'e') ||
-        (buf[0] == 'i' && buf[1] == 'n')
-    )) || (len == 3 && (
-        (buf[0] == 'a' && buf[1] == 'n' && buf[2] == 'd') ||
-        (buf[0] == 'n' && buf[1] == 'e' && buf[2] == 'q') ||
-        (buf[0] == 'n' && buf[1] == 'o' && buf[2] == 't') ||
-        (buf[0] == 'g' && buf[1] == 't' && buf[2] == 'e') ||
-        (buf[0] == 'l' && buf[1] == 't' && buf[2] == 'e') ||
-        (buf[0] == 'm' && buf[1] == 'o' && buf[2] == 'd')
-    )) || (len == 10 &&
-        buf[0] == 'i' && buf[1] == 'n' && buf[2] == 's' && buf[3] == 't' &&
-        buf[4] == 'a' && buf[5] == 'n' && buf[6] == 'c' && buf[7] == 'e' &&
-        buf[8] == 'o' && buf[9] == 'f'
-    );
+static bool scan_next_word_is(TSLexer *lexer, const char *expected) {
+    while (cf_isspace(lexer->lookahead)) skip(lexer);
+    char buf[12];
+    return scan_whole_word(lexer, buf, sizeof buf) && strcmp(buf, expected) == 0;
+}
+
+// Whether the word at the lexer is a CFML word operator, case-insensitively.
+static bool scan_cfml_word_operator(TSLexer *lexer) {
+    char word[12];
+    if (!scan_whole_word(lexer, word, sizeof word)) return false;
+    for (unsigned i = 0; i < sizeof(CFML_WORD_OPERATORS) / sizeof(CFML_WORD_OPERATORS[0]); i++) {
+        if (strcmp(word, CFML_WORD_OPERATORS[i]) == 0) return true;
+    }
+    if (strcmp(word, "does") == 0) {       // DOES NOT CONTAIN
+        return scan_next_word_is(lexer, "not") && scan_next_word_is(lexer, "contain");
+    }
+    if (strcmp(word, "greater") == 0 || strcmp(word, "less") == 0) {   // … THAN [OR EQUAL TO]
+        return scan_next_word_is(lexer, "than");
+    }
+    return false;
 }
 
 static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, bool *scanned_comment, bool is_cfquery_context) {
@@ -1751,19 +1772,15 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
             skip(lexer);
             return lexer->lookahead != '=';
 
-        // Don't insert a semicolon before CFML word operators
-        // (and, or, eq, neq, not, gt, gte, ge, lt, lte, le, mod, in, instanceof)
-        case 'i':
-        case 'a': case 'A':
-        case 'o': case 'O':
-        case 'e': case 'E':
-        case 'n': case 'N':
-        case 'g': case 'G':
-        case 'l': case 'L':
-        case 'm': case 'M':
-            return !scan_cfml_word_operator(lexer);
-
         default:
+            // A letter may start a CFML word operator, in any casing. Every
+            // letter goes through the check rather than a list of first
+            // letters: the list had drifted from the operator table and missed
+            // `IS`, `XOR`, `CONTAINS`, `DOES NOT CONTAIN`, uppercase `IN` and
+            // more, each of which then split into a second statement.
+            if (cf_isalpha(lexer->lookahead)) {
+                return !scan_cfml_word_operator(lexer);
+            }
             break;
     }
 
@@ -1897,33 +1914,6 @@ static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
     return true;
 }
 
-// A `#` in an output/eval context opens an embedded expression only when the
-// character that follows can begin an expression.  The closing `#` of an
-// in-flight hash (e.g. the trailing `#` of `#"x"#`, where the string
-// self-terminated the hash) is followed by content/tag/EOF instead.  The
-// scanner uses this to keep the regular lexer in control of the close token.
-static bool hash_expr_start_char(int32_t c) {
-    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
-        return true;
-    }
-    switch (c) {
-        case '_':
-        case '$':
-        case '"':
-        case '\'':
-        case '(':
-        case '[':
-        case '{':
-        case '+':
-        case '-':
-        case '~':
-        case '!':
-            return true;
-        default:
-            return false;
-    }
-}
-
 static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols, unsigned count, bool is_cfquery_context) {
 
     if (!VS(valid_symbols, HTML_TEXT, count) && !VS(valid_symbols, RAW_TEXT, count)) {
@@ -1940,17 +1930,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             lexer->mark_end(lexer);
             lexer->result_symbol = HASH_EMPTY;
         } else if (scanner_in_hash_eval_context(scanner, is_cfquery_context)) {
-            if (hash_expr_start_char(lexer->lookahead)) {
-                lexer->result_symbol = START_HASH_EXPRESSION;
-            } else {
-                // The character after `#` cannot start an expression: this is
-                // the close of an in-flight hash, not a new open.  Emit
-                // nothing so the regular lexer produces the plain `_hash`
-                // close token (if this state does not accept the plain `#`,
-                // the parse errors just as it would have when this `#` opened
-                // a degenerate hash-expression).
-                return false;
-            }
+            lexer->result_symbol = START_HASH_EXPRESSION;
         } else {
             lexer->mark_end(lexer);
             lexer->result_symbol = SINGLE_HASH;

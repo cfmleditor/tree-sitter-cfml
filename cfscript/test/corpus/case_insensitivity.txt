@@ -940,3 +940,34 @@ c = x INSTANCEOF y;
       (binary_expression
         (identifier)
         (identifier)))))
+
+===================================
+interior mixed casing is a keyword too
+===================================
+function f() {
+  vAr x = nULL;
+  iF (x) { reTURN tRUE; } eLSE { tHROW "no"; }
+}
+
+---
+
+(program
+  (function_declaration
+    (identifier)
+    (formal_parameters)
+    (statement_block
+      (variable_declaration
+        (variable_declarator
+          (identifier)
+          (null)))
+      (if_statement
+        (parenthesized_expression
+          (identifier))
+        (statement_block
+          (return_statement
+            (true)))
+        (else_clause
+          (statement_block
+            (throw_statement
+              (string
+                (string_fragment)))))))))

@@ -9,6 +9,7 @@ npm install        # install deps, build native addon, download tree-sitter CLI 
 npm run build      # regenerate parsers (tree-sitter generate) + rebuild native addon
 npm test           # run corpus tests for all three grammars
 npm run probe      # parse test/probes/* and fail on any drift from expected.json
+npm run check:keywords  # fail if any keyword() token lost keyword extraction
 npm run fuzz       # tree-sitter's own fuzzer over the corpus tests
 npm run lint       # ESLint
 npm run lint:fix   # ESLint with auto-fix

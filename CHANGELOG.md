@@ -1,5 +1,49 @@
 # Changelog
 
+## [Unreleased]
+
+### cfml, cfquery & cfscript
+- **Each keyword is one token, and keywords are fully case-insensitive** — recommendation 1 of [`docs/GRAMMAR-SCANNER-REVIEW.md`](docs/GRAMMAR-SCANNER-REVIEW.md). `keyword('Break')` was a `choice` of the string casings `Break` / `break` / `BREAK`, three or four terminal symbols per keyword in every state it is valid in. It is now one character-class regex, `/[bB][rR][eE][aA][kK]/` at `prec(1)`, aliased to the same node name as before.
+
+  | | `STATE_COUNT` | large states | `parser.c` |
+  |---|---|---|---|
+  | `cfml` | 5,494 → 4,918 (−10.5%) | 2,814 → 2,167 | 14.8 → 10.6 MB (−28%) |
+  | `cfquery` | 4,152 → 3,792 (−8.7%) | 2,770 → 2,191 | 13.4 → 9.9 MB (−26%) |
+  | `cfscript` | 5,511 → 4,866 (−11.7%) | 3,954 → 2,659 | 20.3 → 13.7 MB (−33%) |
+
+  About 14 MB of committed C goes, and the Node addon drops from 10.1 to 6.6 MB; every binding, and the WASM build an editor downloads, compiles the same `parser.c`. **No tree shape changed** across 14,177 cleanly-parsed corpus files (`npm run treediff`), the corpus scan is unchanged at 422 error lines across 112 files, and no existing corpus test moved. Node names are unchanged, so no query needed editing.
+
+  **Support gained:** interior mixed casing, which the old helper deliberately skipped, is now a keyword — `reTURN x;` was a `tag_statement` and is a `return_statement`, `nULL` is `(null)`, and `<cFiF …>` opens a `cf_if_tag` where it was an ERROR. Pinned by a new `interior mixed casing is a keyword too` test in both `case_insensitivity.txt` files.
+
+  **Why it needs three changes, not one.** A plain regex in place of the strings fails 149 corpus tests, because it drops out of keyword extraction, and keyword extraction is the only thing that stops a keyword token splitting a longer identifier (`while_value` → `while` + `_value`). `tree-sitter generate --log` shows why:
+  - a regex only wins a same-length tie with `identifier` or with the JavaScript regex literal's `regex_flags` (`/[a-z]+/`) on rule order, which it loses — strings won it on specificity. `prec(1)` settles the tie;
+  - sixteen `cfscript` keywords — `else`, `elseif`, `catch`, `finally`, `in`, `instanceof`, `of`, `while`, `function`, `static`, `final`, `abstract`, `public`, `private`, `package`, `remote` — and six in `cfml` and `cfquery` **were never extracted, even as strings**, because `identifier` accepted a JavaScript `\uXXXX` escape and could therefore start with `\`, the integer-division operator. CFML has no such escape; removing it from `identifier` makes all of them extractable;
+  - `common/define-grammar.js` spelled `get`, `set` and `let` as plain strings in `method_definition` and `_for_header` while `_reserved_identifier` used `keyword()`. As strings the two unified; as a regex beside a string they are two tokens matching one word, both are excluded, and `<cfset x = { get=false }>` (Taffy's dashboard) stopped parsing. They now reference `$._kw_get`, `$._kw_set` and `$._kw_let`.
+
+  The prototype also moved every `keyword()` rule above `identifier` to win the tie on order; with `prec(1)` that turned out unnecessary, and leaving the rules where they are gives a smaller `cfscript` table (4,866 states against 5,281).
+
+  **`LIMITATIONS.md` said "never write a keyword as `token(prec(1, /…/))`"**, and that is right for a token that is not extracted and wrong for one that is: the keyword lexer only runs after `identifier` has matched a whole word. So the change is safe exactly as long as every keyword stays extracted, and `generate` excludes silently. **New `npm run check:keywords`**, run in CI, reads the committed tables and fails on any `keyword()` token the keyword lexer does not own. It was checked against both failure modes above: putting the `\u` escape back fails it in all three grammars (16 keywords in `cfscript`, 5 in `cfml` and `cfquery`), and a `'get'` beside `keyword('Get')` fails it with two.
+
+  Verified with `npm test` (355/355), `npm run probe` (no drift), `npm run fuzz`, `npm run lint`, `npm run testbindings`, the corpus scan and `treediff` against a clean build of `master`, and 38 hand-picked keyword-hazard spellings from `LIMITATIONS.md` and `hazards.md`, of which the only changed trees are the three casing gains above. Benchmarked only to indicative precision: no slowdown in any grammar, `cfml` about 8% faster.
+
+- **CFML operator precedence** ([#141](https://github.com/cfmleditor/tree-sitter-cfml/pull/141), @bokic, with corrections below). The binary-operator ladder was JavaScript's, and several CFML operators sat at the precedence of the JavaScript operator with the same character. It now follows Lucee's `AbstrCFMLExprTransformer`: `&` is string concatenation, above the comparisons (`a & b EQ c` is `(a & b) EQ c`); `^` is exponentiation (`2 ^ 3 * 2` is `(2 ^ 3) * 2`); `MOD`/`%` and `\` have their own levels; every comparison shares one level; `XOR` sits below `OR`; `EQV` and `IMP` are new; and `IS NOT` is `NEQ` rather than `IS (NOT …)`.
+
+  **BREAKING — `!` and `NOT` produce a new node.** They bind *looser* than the comparisons in CFML — `NOT a EQ b` is `NOT (a EQ b)`, and in Lucee so is `!a == b` — so they get their own `binary_not` level and a `not_expression` / `not_operator` node in place of `unary_expression` / `unary_operator`, which keeps `-`, `+` and `~`. Across the corpus that is about 13,700 nodes in `cfscript` and 1,750 in `cfml`; the shipped `highlights.scm` files capture `(not_operator)`, and any other query matching `unary_expression` for `!` or `NOT` must follow.
+
+  **Corrections made on top of #141:**
+  - `IS NOT` was one `/is\s+not/` token, which out-lexed `is` followed by any word beginning `not` — `a is nothing` read as `a IS NOT hing`, `status IS NOTE` as `… IS NOT E` — with no error node. It is now two tokens, so the lexer keeps the following word whole, and `IS NOT(x)` still reads as `NEQ`, as in Lucee. The `a IS • NOT` ambiguity with a prefix `NOT` is settled statically by giving `not_operator` the `binary_not` precedence; no conflict is declared.
+  - `|`, `<<` and `>>` (JavaScript leftovers) had been moved below `arrow_function` and the ternary, so `(x) => x | 1` read as `((x) => x) | 1`. They are back in their old places relative to the comparisons.
+  - `hash_string_expression` is removed. It accepted `#"x"` with no closing `#` inside `<cfoutput>`, which Lucee rejects ("missing terminating [#] for expression", `CFMLTransformer`), and together with the keyword change above its extra state — a binary operator and an HTML attribute name valid at once — knocked `in` and `instanceof` out of keyword extraction, so `<cfset f = function(array instanceOfX){}>` split the parameter name and errored. `npm run check:keywords` caught it before anything shipped.
+  - The scanner change from #141 is reverted. It opened a `#` expression only when the next character could start one, which served `hash_string_expression`; without that rule it changed no test and no corpus result except to reject valid CFML — `# expr#` with a space (Lucee's own admin writes `# stText.debug.type#`), `#<!--- … --->expr#`, `#.5#` and non-ASCII names — 10 new error lines in 4 files.
+
+  New corpus tests pin the precedence in both grammars, `IS NOT` against the following word (`x IS NOT1` keeps `NOT1` an identifier), the bitwise operators, and the `#` openers Lucee accepts. Against `master` with #141 merged: corpus **430 → 422 error lines across 115 → 112 files**; `treediff` shows **no** changed `cfscript` tree and one changed `cfml` file, Mura's legacy `dsp_adzones.cfm`, whose `'name','esapiEncode(…` is missing a `#` and which #141's scanner guard had accepted by accident. `STATE_COUNT` with both changes in: `cfml` 5,135, `cfquery` 4,009, `cfscript` 5,114, against 5,738 / 4,306 / 5,687 on `master` with #141.
+
+- **A word operator starting a line continues the expression** — recommendation 3 of [`docs/GRAMMAR-SCANNER-REVIEW.md`](docs/GRAMMAR-SCANNER-REVIEW.md). Automatic semicolon insertion is suppressed before a line that begins with a CFML word operator, so a condition broken across lines stays one expression. The check went by first letter and only knew `and`, `or`, `eq`, `neq`, `not`, `gt`, `gte`, `ge`, `lt`, `lte`, `le`, `mod`, `in` and `instanceof`, and only a *lowercase* `i` reached it: 14 of the 16 line-leading forms either split into a second, error-free `tag_statement` (`x = a ⏎ IS b`, `CONTAINS`, `CT`, `NCT`, `EQUAL`, `XOR`, `EQV`, `IMP`, uppercase `IN`, `INSTANCEOF`, `GREATER THAN`) or errored (`is not`, `DOES NOT CONTAIN`, `LESS THAN OR EQUAL TO`). Every letter now goes through one table of the operators in `binary_expression`, with `DOES NOT CONTAIN`, `GREATER THAN` and `LESS THAN` matched as whole phrases so that `does`, `greater` and `less` stay ordinary identifiers. This matches Lucee, whose expression parser skips the newline and then looks for the operator word.
+
+  **A second defect in the same check:** it stopped reading at `_` and `$`, so a new statement starting with an identifier such as `in_stock`, `or_else` or `eq$` looked like an operator, lost its semicolon, and errored. An operator now has to be a whole word. Both scanners carry the fix — `common/scanner.h` as well as `cfscript/src/scanner.c` — though in `cfml` a closure inside `<cfset>` does not get automatic semicolons at all, before or after this change.
+
+  Scanner-only: no `parser.c` changed. No corpus file writes either shape: the corpus scan is identical and `treediff` reports no changed tree in 14,177 files. Pinned by two new `cfscript` corpus tests; fuzz and truncated inputs (`x = a ⏎ DOES NOT` at end of file) are clean.
+
 ## [0.26.36]
 
 ### cfscript

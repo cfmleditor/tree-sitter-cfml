@@ -509,10 +509,6 @@
         {
           "type": "hash_single",
           "named": true
-        },
-        {
-          "type": "hash_string_expression",
-          "named": true
         }
       ]
     }
@@ -579,10 +575,6 @@
         },
         {
           "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "hash_string_expression",
           "named": true
         }
       ]
@@ -707,7 +699,7 @@
         ]
       },
       "operator": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
@@ -813,6 +805,10 @@
           {
             "type": "logical_or",
             "named": true
+          },
+          {
+            "type": "not",
+            "named": false
           },
           {
             "type": "|",
@@ -1051,10 +1047,6 @@
         {
           "type": "hash_single",
           "named": true
-        },
-        {
-          "type": "hash_string_expression",
-          "named": true
         }
       ]
     }
@@ -1257,10 +1249,6 @@
           "named": true
         },
         {
-          "type": "hash_string_expression",
-          "named": true
-        },
-        {
           "type": "html_text",
           "named": true
         },
@@ -1384,10 +1372,6 @@
           "named": true
         },
         {
-          "type": "hash_string_expression",
-          "named": true
-        },
-        {
           "type": "html_text",
           "named": true
         },
@@ -1496,10 +1480,6 @@
         },
         {
           "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "hash_string_expression",
           "named": true
         },
         {
@@ -1615,10 +1595,6 @@
         },
         {
           "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "hash_string_expression",
           "named": true
         },
         {
@@ -1818,10 +1794,6 @@
         },
         {
           "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "hash_string_expression",
           "named": true
         },
         {
@@ -2195,10 +2167,6 @@
           "named": true
         },
         {
-          "type": "hash_string_expression",
-          "named": true
-        },
-        {
           "type": "html_text",
           "named": true
         },
@@ -2472,10 +2440,6 @@
         },
         {
           "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "hash_string_expression",
           "named": true
         },
         {
@@ -2982,21 +2946,6 @@
       "types": [
         {
           "type": "expression",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "hash_string_expression",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "string",
           "named": true
         }
       ]
@@ -3791,10 +3740,6 @@
           "named": true
         },
         {
-          "type": "hash_string_expression",
-          "named": true
-        },
-        {
           "type": "html_text",
           "named": true
         },
@@ -3883,10 +3828,6 @@
         },
         {
           "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "hash_string_expression",
           "named": true
         }
       ]
@@ -4065,10 +4006,6 @@
         },
         {
           "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "hash_string_expression",
           "named": true
         },
         {
@@ -4294,10 +4231,6 @@
         },
         {
           "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "hash_string_expression",
           "named": true
         },
         {
@@ -4540,10 +4473,6 @@
         },
         {
           "type": "hash_single",
-          "named": true
-        },
-        {
-          "type": "hash_string_expression",
           "named": true
         }
       ]

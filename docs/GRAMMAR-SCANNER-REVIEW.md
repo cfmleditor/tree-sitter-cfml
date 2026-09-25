@@ -9,8 +9,8 @@ Everything here that carries a number was **measured**, not estimated: each
 recommendation was prototyped in a scratch worktree and put through the gate the
 `parse-gap` skill describes — `npm run build`, `npm test`, `npm run probe`, a
 full corpus scan diffed against the baseline, `npm run treediff` against the
-committed parser, and `STATE_COUNT` / `parser.c` size. Performance was measured
-with `npm run bench`, interleaved ABCCBA. None of the prototypes is committed;
+committed parser, and `STATE_COUNT` / `parser.c` size. Performance was checked
+with `npm run bench`, but only to indicative precision. None of the prototypes is committed;
 this document is the deliverable. The corpus was a fresh `npm run corpus:fetch`
 (47 repositories, 15,530 files); the baseline scan reports 422 error lines
 across 112 files.
@@ -25,20 +25,29 @@ finding here changes the explanation of an existing entry, it says so.
 
 | # | Recommendation | Kind | Measured effect | Cost | Risk |
 |---|---|---|---|---|---|
-| 1 | One case-insensitive regex per keyword, hoisted above `identifier`, and drop the JS `\uXXXX` escape from `identifier` | size, perf, support | `parser.c` **−27%** across the three grammars (48.4 → 35.3 MB), `STATE_COUNT` −10.5% / −8.7% / −4.2%, addon 10.1 → 6.8 MB; **zero** tree changes over 14,177 files; `reTURN` now a keyword | ~130 lines, mostly moved | Low, with one guard (below) |
-| 2 | CFML operator precedence: `&`, `^`, `NOT`/`!`, `XOR`, `IS NOT`, `EQV`/`IMP` | support (wrong trees) | 81 corpus files carry a mis-nested expression today; +154 / +154 / +176 states | ~40 lines | Med: published tree-shape change |
-| 3 | Automatic semicolon before a line-leading `IS`, `CONTAINS`, `XOR`, `IN`, … | support (wrong trees) | silent split into a `tag_statement` today | scanner only | Low |
+| 1 | **Done** — one case-insensitive regex per keyword, and drop the JS `\uXXXX` escape from `identifier` | size, perf, support | as shipped: `parser.c` **−29%** across the three grammars (48.4 → 34.2 MB), `STATE_COUNT` −10.5% / −8.7% / −11.7%, addon 10.1 → 6.6 MB; **zero** tree changes over 14,177 files; `reTURN` now a keyword | ~15 lines plus comments | Low, guarded by `npm run check:keywords` |
+| 2 | **Done** — CFML operator precedence: `&`, `^`, `NOT`/`!`, `XOR`, `IS NOT`, `EQV`/`IMP` | support (wrong trees) | landed as #141 (@bokic), with the `IS NOT` word-boundary and bitwise corrections below made after merge; see `CHANGELOG.md` | — | — |
+| 3 | **Done** — automatic semicolon before a line-leading `IS`, `CONTAINS`, `XOR`, `IN`, … | support (wrong trees) | fixed in both scanners, with a second defect found on the way (`in_stock` at a line start errored); see `CHANGELOG.md` | scanner only | Low |
 | 4 | Give the `cfml` scanner an explicit error-recovery policy | recovery quality, perf | naive version: ERROR-covered bytes **−22%**, error lines 422 → 365, `debug/Simple.cfc` 40,907 bytes of ERROR → 0 | scanner only | Med: 7 files regress in the naive version |
 | 5 | `#` in template text is only an expression inside `<cfoutput>` | support | the real cause of `debug/Simple.cfc`'s residual errors | scanner | Med: semantic |
 | 6 | Stop carrying a full CFScript statement grammar in `cfml` and `cfquery` | size | trimming it to the six statement kinds the corpus uses: **−16% / −19%** states | design choice | Med |
 | 7 | Smaller scanner fixes | support, robustness | see section | a few lines each | Low |
 | 8 | CI: state-count budget and a keyword-extraction check | process | automates the #75 lesson | small script | None |
 
-Performance figures for #1 and #4 are in [Benchmark](#benchmark).
+Neither #1 nor #4 makes parsing slower; indicative figures are in
+[Benchmark](#benchmark).
 
 ---
 
 ## 1. Keyword tokens: one case-insensitive regex each
+
+> **Implemented** — see `CHANGELOG.md` under `[Unreleased]` for the shipped
+> numbers. One thing below turned out to be unnecessary: with `prec(1)` on the
+> token, hoisting the `keyword()` rules above `identifier` is not needed, and
+> leaving them in place gives a smaller `cfscript` table (4,866 states rather
+> than the 5,281 measured here). The guard proposed in #8 shipped with it as
+> `npm run check:keywords`. The rest of this section is the investigation as it
+> was run.
 
 ### What is there
 
@@ -143,8 +152,10 @@ which is why [#8](#8-ci-checks) proposes a check for it.
 | `cfscript/src/parser.c` | 20.3 MB | 14.8 MB | −27% |
 | Node addon (all three) | 10.1 MB | 6.8 MB | −33% |
 
-- `npm test` 353/353, `npm run probe` no drift, corpus scan identical except one
-  recovery-position shift inside `debug/Simple.cfc` (a known-bad file).
+- `npm test` 353/353, `npm run probe` no drift. The corpus scan (taken before the
+  `get`/`set`/`let` fix) differed from the baseline only in the Taffy
+  `{ get=false }` regression that fix removes, and one recovery-position shift
+  inside `debug/Simple.cfc`, a known-bad file.
 - `npm run treediff`: **no tree shape changed** in 5,235 `cfml` and 8,942
   `cfscript` files.
 - Every hazard spelling in `LIMITATIONS.md` and `hazards.md` parses as before —
@@ -164,6 +175,12 @@ the committed tree.
 ---
 
 ## 2. CFML operator precedence
+
+> **Implemented** in #141 by @bokic, which reached the same ladder
+> independently (and unified the comparisons into one level, which is closer to
+> Lucee than the prototype here). The two defects this section predicts — `IS
+> NOT` as one regex splitting `x is nothing`, and a need for a changelog note on
+> the new `not_expression` node — were fixed after merge; see `CHANGELOG.md`.
 
 ### What is there
 
@@ -223,6 +240,10 @@ tree — so it wants a changelog note rather than a major version.
 ---
 
 ## 3. Automatic semicolon before a line-leading word operator
+
+> **Implemented** — see `CHANGELOG.md` under `[Unreleased]`. The failure was
+> wider than the list below (14 of 16 line-leading forms), and the same check
+> also broke identifiers such as `in_stock` at the start of a statement.
 
 Both scanners suppress ASI before a line that starts with a CFML word operator,
 so a multi-line condition stays one expression. The list is short, and one case
@@ -436,11 +457,31 @@ This compounds with #1; the two were measured separately.
 
 ## Benchmark
 
-`npm run bench`, `--reps 5` per run, runs interleaved A B C C B A A B C C B A
-(A = base, B = #1, C = #4 naive fall-through), minimum across runs, on a 4-core
-shared container. Read the spread before the deltas.
+`npm run bench`, `--reps 5` per run, runs interleaved (A = base, B = #1,
+C = #4 naive fall-through), minimum across runs, on a 4-core shared container.
+**Indicative only:** the series was stopped at n = 3 / 2 / 2, well short of the
+~12 per side the `parse-gap` skill asks for before quoting a number. It answers
+"does either change make parsing slower" (no), not "by how much is it faster".
 
-_Filled in below from the run._
+| grammar | base | #1 keywords | #4 recovery |
+|---|---|---|---|
+| `cfml` | 3,901 ms | 3,574 ms (−8%) | 3,201 ms (−18%) |
+| `cfml` error-recovery input | 2,540 bytes/ms | 3,025 bytes/ms | 5,539 bytes/ms |
+| `cfscript` | 14,133 ms | 14,313 ms (+1.3%) | 14,352 ms (+1.6%) |
+| `cfquery` | 458 ms | 475 ms (+3.5%) | 456 ms (−0.5%) |
+
+- **#4 is its own control on `cfscript`**: it changes only `common/scanner.h`,
+  which `cfscript` does not compile, so its +1.6% there is measurement bias.
+  #1's +1.3% on `cfscript` is inside it.
+- `cfquery` is a 0.5-second workload whose reps spread by up to 18%; nothing
+  under that is resolvable.
+- The `cfml` gain for #4 is concentrated where it should be: error-recovery
+  input, which `bench` already reported as 4% of bytes and 26–28% of the time,
+  parses about twice as fast.
+- One caution from the run itself: base's first two `cfml` runs came in at
+  6,208 ms, 60% slower than its third, on an unchanged binary. A single
+  before/after pair on this machine would have reported a 45% speedup that did
+  not exist.
 
 ---
 
