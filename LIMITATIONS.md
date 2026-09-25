@@ -123,6 +123,11 @@ identifiers wherever it is valid — the hazard described above under
 `keyword()` vs. regex. The grammar is deliberately permissive here, as it is
 with bare reserved words.
 
+### `#` in cfscript
+
+- **A lone `#` in a string is an error, as it is in Lucee** ([#134](https://github.com/cfmleditor/tree-sitter-cfml/issues/134)). `"# Report"` must be written `"## Report"`: Lucee's string parser starts an expression at every `#` and throws "Invalid Syntax Closing [#] not found" when the closing `#` is missing. The grammar reports it too, and the error stays inside that statement. A heading, `#1 item`, `Price: #`, a CSS colour and a URL fragment were all checked, and none spills onto the next line. The probe `cfml/hash_in_script_string.cfm` records `fail` on purpose. Its source, ColdBox's `PerformanceSuite.cfc`, has since been fixed upstream to `##`.
+- **`#a#.b` and `#a#[1]` are accepted, though Lucee rejects them.** Lucee drops the hashes around a bare `#expr#` in code (`arrayLen(#arr#)` is `arrayLen(arr)`), but `sharp()` returns before any member or subscript is read. The grammar is lenient here and attaches the suffix to the hash: `(#a#).b`. `x = #a#++` is valid in both.
+
 ## cfml
 
 ### IE conditional comments
@@ -159,7 +164,7 @@ assessment, including how many files each affects and what fixing it would cost.
 ### cfscript
 
 - **Script-syntax tag calls where the *first* separator is a comma** — `cfdirectory(action="list", directory=trg, name="x" recurse=true)` (Lucee tests). The space-separated form parses, including calls that switch to commas after the first junction (`cflog(file="#n#" text="t", type="error")`). Requiring the space at the first junction is what keeps the rule unambiguous with an ordinary comma-separated call; 11 calls across 4 files put a comma there instead.
-- **Dotted key in a struct literal** — `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` (Preside tests). Cheap to implement and implemented once, but the conflict it needs is live at every member access and cost 1.8× on cfscript parse time for 30 nodes in one file, so it was reverted. See the cost table in [`docs/FAILING-PATTERNS.md`](docs/FAILING-PATTERNS.md).
+- **Dotted key in a struct literal — fixed** ([#136](https://github.com/cfmleditor/tree-sitter-cfml/issues/136)). `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` (Preside tests) parses in both grammars, with the key as a `path`. The first implementation was reverted at 1.8× cfscript parse time; the same change measured +1–3% on today's grammar. A `{` at the start of a statement is still read as a block, so `if (x) { a.b = 1 }` keeps its `statement_block`. The known mislabel below still applies to the `=` spelling: `x = { a.b = 1 }` is an `object_pattern`.
 - **Subscript index holding more than one pair** — `animals = $[ Aardwolf: "…", aardvark: "…" ];` (Lucee tests). **Deliberately not supported, and no longer described as a gap in the ordered-struct feature.** `$` is a legal variable name and `[` subscripts any expression, so `$[ … ]` is an ordinary array-style reference and stays a `subscript_expression`; a single `key: value` inside it is Lucee's own slice syntax, and more than one comma-separated pair is not a reference at all. Lucee means that spelling as an ordered-struct literal; this grammar spells that `${ … }` (below) and leaves the brackets to the variable. Probe `cfscript/subscript_multiple_pairs.cfc` stays `fail` and now records a decision rather than a missing rule.
 - **The `${ … }` ordered-struct literal — fixed** ([#80](https://github.com/cfmleditor/tree-sitter-cfml/issues/80)). `animals = ${ Aardwolf: "…", aardvark: "…" };` yields an `ordered_struct`, the same node the empty `[:]` and `[=]` forms already produced. **+46 parse states**, no new conflicts, zero changed trees.
 

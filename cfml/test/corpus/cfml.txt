@@ -3632,3 +3632,40 @@ an operator after a bare hash on the right of an assignment
         (string
           (string_fragment))))
     (cf_selfclose_void_tag_end)))
+
+================================================================================
+a dotted key in a struct literal (#136)
+================================================================================
+
+<cfset a = { C.d: "test" }>
+<cfset b = { C.d = "test", "e.f" = 1 }>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (object
+        (pair
+          (path
+            (identifier)
+            (identifier))
+          (string
+            (string_fragment)))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (object_pattern
+        (cf_pair
+          (path
+            (identifier)
+            (identifier))
+          (string
+            (string_fragment)))
+        (cf_pair
+          (string
+            (string_fragment))
+          (number))))
+    (cf_selfclose_void_tag_end)))

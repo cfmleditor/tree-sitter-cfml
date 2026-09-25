@@ -49,7 +49,7 @@ text were wrong, and each was caught only by reduction:
 the construct.** Reduce before you label.
 
 The counts in each row are error *nodes*, not files, and a single trigger can
-cascade: `PerformanceSuite.cfc` is 185 nodes from one unescaped `#` on line 474.
+cascade: `PerformanceSuite.cfc` was 185 nodes from one unescaped `#` on line 474. It is fixed upstream now, and the same error today stays inside its statement (#134).
 Node counts measure what people happened to write, not what the language
 defines — see the function-listener case in `FAILING-PATTERNS.md` for how badly
 that can mislead.
@@ -81,7 +81,7 @@ as the record of what each fix removed.
 |---|---|---|
 | 71 | 1 | CSS in `<style>` with many `#` tokens — **fixed by #146**: the trigger was a `#` in a function with no `output`, not the CSS |
 | 53 | 11 | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
-| 45 | 3 | dotted key in a struct literal — `{ a.b = 1 }` |
+| 45 | 3 | dotted key in a struct literal — `{ a.b = 1 }` — **fixed in #136** |
 | 13 | 9 | dynamic close tag opened in a different block — `</#expr#>` — **fixed in #154** except Mura `dsp_content_list.cfm` (2 nodes) |
 | 12 | 5 | start tag whose `>` sits inside a `<cfif>` branch |
 | 9 | 1 | backtick tag-island fences nested in one line |
@@ -182,7 +182,7 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `cfwheels_cfwheels/examples/tweet/.claude/skills/wheels-model-generator/templates/basic-model.cfc` | 29 | A | generator template, not CFML (`{{…}}` / `${…}` placeholders) |
 | `cfwheels_cfwheels/tools/vscode-ext/assets/templates/controller.cfc` | 18 | A | generator template, not CFML (`{{…}}` / `${…}` placeholders) |
 | `cfwheels_cfwheels/tools/vscode-ext/assets/templates/view-index.cfm` | 1 | A | generator template, not CFML (`{{…}}` / `${…}` placeholders) |
-| `ColdBox_coldbox-platform/tests/perf-harness/PerformanceSuite.cfc` | 185 | A | bare `#` in a cfscript string (needs `##`) — cascades from line 1 |
+| `ColdBox_coldbox-platform/tests/perf-harness/PerformanceSuite.cfc` | 185 | A | bare `#` in a cfscript string (needs `##`) — cascades from line 1 — **fixed upstream**: ColdBox now writes `##` (#134) |
 | `ColdBox_coldbox-samples/applications/feedGenerator/modules/cbfeeds/models/util/SharedGenerator.cfc` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
 | `ColdBox_coldbox-samples/applications/feedReader/modules/cbfeeds/models/util/SharedGenerator.cfc` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
 | `ColdBox_coldbox-samples/applications/sampleloginapp/models/securityInterceptor.cfc` | 1 | A | source typo: misspelled `required` → 3-word parameter |
@@ -228,7 +228,7 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `lucee_Lucee/test/tickets/LDEV2629/LDEV2629.cfm` | 1 | C | space-separated attributes in a script-syntax tag call |
 | `lucee_Lucee/test/tickets/LDEV3060/invalidcomponent.cfc` | 1 | A | deliberately-invalid vendor fixture |
 | `lucee_Lucee/test/tickets/LDEV3060/invalidcomponent1.cfc` | 1 | A | deliberately-invalid vendor fixture |
-| `lucee_Lucee/test/tickets/LDEV3113.cfc` | 1 | B | dotted key in a struct literal — `{ a.b = 1 }` |
+| `lucee_Lucee/test/tickets/LDEV3113.cfc` | 1 | B | dotted key in a struct literal — `{ a.b = 1 }` — **fixed in #136** |
 | `lucee_Lucee/test/tickets/LDEV3133/test.cfm` | 3 | B | `$[ … ]` subscript holding multiple pairs — declined in #80 |
 | `lucee_Lucee/test/tickets/LDEV3671/test3671.cfc` | 1 | C | `final` on a parameter |
 | `lucee_Lucee/test/tickets/LDEV4895/ldev4895.cfs` | 1 | A | deliberately-invalid vendor fixture |
@@ -270,7 +270,7 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `pixl8_preside-cms/system/services/devtools/ScaffoldingService.cfc` | 2 | C | missing comma between parameters |
 | `pixl8_preside-cms/system/views/admin/assetmanager/editFolder.cfm` | 1 | C | spaced elvis `? :` inside a `#…#` tag interpolation |
 | `pixl8_preside-cms/system/views/webflow/default/stepTitle.cfm` | 1 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
-| `pixl8_preside-cms/tests/unit/api/presideObjects/RelationshipGuidanceTest.cfc` | 30 | B | dotted key in a struct literal — `{ a.b = 1 }` |
+| `pixl8_preside-cms/tests/unit/api/presideObjects/RelationshipGuidanceTest.cfc` | 30 | B | dotted key in a struct literal — `{ a.b = 1 }` — **fixed in #136** |
 | `pixl8_preside-ext-saml2-sso/views/page-types/saml_slo_page/index.cfm` | 1 | A | deliberately-invalid vendor fixture |
 | `RustCFML_RustCFML/tests/core/test_parser_lucee_shapes.cfm` | 1 | C | elvis `?:` split across a newline |
 | `RustCFML_RustCFML/tests/java_shims/test_minimal.cfm` | 1 | A | `<cfscript>` never closed before EOF |
@@ -280,7 +280,7 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `RustCFML_RustCFML/tests/tags/unclosed/cfoutput.cfm` | 1 | A | deliberately-invalid vendor fixture |
 | `RustCFML_RustCFML/tests/tags/unclosed/cfquery.cfm` | 1 | A | deliberately-invalid vendor fixture |
 | `RustCFML_RustCFML/tests/tags/unclosed/cfsavecontent.cfm` | 1 | A | deliberately-invalid vendor fixture |
-| `RustCFML_RustCFML/tests/types/test_dotted_key_struct_literals.cfm` | 14 | B | dotted key in a struct literal — `{ a.b = 1 }` |
+| `RustCFML_RustCFML/tests/types/test_dotted_key_struct_literals.cfm` | 14 | B | dotted key in a struct literal — `{ a.b = 1 }` — **fixed in #136** |
 | `valtech-cfml_Slatwall/com/entity/Product.cfc` | 1 | C | compound assignment in a `var` declaration — `var x &= …` |
 | `valtech-cfml_Slatwall/org/entitySmartList/SmartList.cfc` | 2 | C | compound assignment in a `var` declaration — `var x &= …` |
 | `valtech-cfml_Slatwall/org/ValidateThis/client/jQuery/ClientRuleScripter_FutureDate.cfc` | 1 | B | start tag whose `>` sits inside a `<cfif>` branch |

@@ -2023,16 +2023,14 @@ module.exports = grammar({
       field('body', $.statement_block),
     ),
 
-    pair: ($) => seq(
-      field('key', $._property_name),
-      ':',
-      field('value', $.expression),
+    pair: ($) => choice(
+      seq(field('key', $._property_name), ':', field('value', $.expression)),
+      prec.dynamic(-1, seq(field('key', $.path), ':', field('value', $.expression))),
     ),
 
-    cf_pair: ($) => seq(
-      field('key', $._property_name),
-      '=',
-      field('value', $.expression),
+    cf_pair: ($) => choice(
+      seq(field('key', $._property_name), '=', field('value', $.expression)),
+      prec.dynamic(-1, seq(field('key', $.path), '=', field('value', $.expression))),
     ),
 
     pair_pattern: ($) => seq(
@@ -2206,7 +2204,11 @@ module.exports = grammar({
       // the typed branch above (type `foo`, `bar="1"` as the `default`). The
       // typed branch already accepts every attribute-carrying spelling —
       // `param x default="0";` reads `x` as the type — so nothing is lost.
-      seq(
+      // Only a call can compete with this reading: `expect( a.b() ).toBeTrue;` is
+      // also tag `expect` with the name `( a.b() ).toBeTrue`. The two used to tie
+      // on dynamic precedence, which left the choice to symbol order, and any
+      // new rule could flip it.
+      prec.dynamic(-1, seq(
         field('tag', $.identifier),
         // A bare string argument covers `exit "exitTemplate";` (#81) and
         // `pageencoding "utf-8";` (#89) — the same `tag <word-or-string>;`
@@ -2215,7 +2217,7 @@ module.exports = grammar({
         // but the positional string had no reading.
         field('name', choice($.identifier, $.member_expression, $.string)),
         $._semicolon,
-      ),
+      )),
       seq(
         field('tag', $.identifier),
         optional($.tag_linefeed),

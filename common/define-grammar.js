@@ -2182,16 +2182,14 @@ module.exports = function defineGrammar(dialect) {
         field('body', $.statement_block),
       ),
 
-      pair: ($) => seq(
-        field('key', $._property_name),
-        ':',
-        field('value', $.expression),
+      pair: ($) => choice(
+        seq(field('key', $._property_name), ':', field('value', $.expression)),
+        prec.dynamic(-1, seq(field('key', $.path), ':', field('value', $.expression))),
       ),
 
-      cf_pair: ($) => seq(
-        field('key', $._property_name),
-        '=',
-        field('value', $.expression),
+      cf_pair: ($) => choice(
+        seq(field('key', $._property_name), '=', field('value', $.expression)),
+        prec.dynamic(-1, seq(field('key', $.path), '=', field('value', $.expression))),
       ),
 
       pair_pattern: ($) => seq(
