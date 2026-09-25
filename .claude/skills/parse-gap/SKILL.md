@@ -91,7 +91,7 @@ Every step, in order, on the *whole* project — not the dialect you edited:
 npm run build          # full build; DIALECT=… skips the native addon rebuild
 npm test               # corpus tests, all three grammars
 npm run probe          # drift in either direction is a signal
-npm run check:keywords # every keyword() token is still keyword-extracted
+npm run check:keywords # keyword() tokens still extracted; wordOperator() aliases still default
 npm run lint
 ```
 

@@ -754,6 +754,58 @@
             "named": false
           },
           {
+            "type": "and",
+            "named": false
+          },
+          {
+            "type": "contains",
+            "named": false
+          },
+          {
+            "type": "ct",
+            "named": false
+          },
+          {
+            "type": "does not contain",
+            "named": false
+          },
+          {
+            "type": "eq",
+            "named": false
+          },
+          {
+            "type": "equal",
+            "named": false
+          },
+          {
+            "type": "eqv",
+            "named": false
+          },
+          {
+            "type": "ge",
+            "named": false
+          },
+          {
+            "type": "greater than",
+            "named": false
+          },
+          {
+            "type": "greater than or equal to",
+            "named": false
+          },
+          {
+            "type": "gt",
+            "named": false
+          },
+          {
+            "type": "gte",
+            "named": false
+          },
+          {
+            "type": "imp",
+            "named": false
+          },
+          {
             "type": "in",
             "named": false
           },
@@ -762,11 +814,59 @@
             "named": false
           },
           {
+            "type": "is",
+            "named": false
+          },
+          {
+            "type": "le",
+            "named": false
+          },
+          {
+            "type": "less than",
+            "named": false
+          },
+          {
+            "type": "less than or equal to",
+            "named": false
+          },
+          {
             "type": "logical_or",
             "named": true
           },
           {
+            "type": "lt",
+            "named": false
+          },
+          {
+            "type": "lte",
+            "named": false
+          },
+          {
+            "type": "mod",
+            "named": false
+          },
+          {
+            "type": "nct",
+            "named": false
+          },
+          {
+            "type": "neq",
+            "named": false
+          },
+          {
             "type": "not",
+            "named": false
+          },
+          {
+            "type": "not equal",
+            "named": false
+          },
+          {
+            "type": "or",
+            "named": false
+          },
+          {
+            "type": "xor",
             "named": false
           },
           {
@@ -3770,6 +3870,10 @@
     "named": false
   },
   {
+    "type": "and",
+    "named": false
+  },
+  {
     "type": "array_return_suffix",
     "named": true
   },
@@ -3815,7 +3919,15 @@
     "named": false
   },
   {
+    "type": "contains",
+    "named": false
+  },
+  {
     "type": "continue",
+    "named": false
+  },
+  {
+    "type": "ct",
     "named": false
   },
   {
@@ -3831,11 +3943,27 @@
     "named": false
   },
   {
+    "type": "does not contain",
+    "named": false
+  },
+  {
     "type": "else",
     "named": false
   },
   {
     "type": "elseif",
+    "named": false
+  },
+  {
+    "type": "eq",
+    "named": false
+  },
+  {
+    "type": "equal",
+    "named": false
+  },
+  {
+    "type": "eqv",
     "named": false
   },
   {
@@ -3867,7 +3995,27 @@
     "named": false
   },
   {
+    "type": "ge",
+    "named": false
+  },
+  {
     "type": "get",
+    "named": false
+  },
+  {
+    "type": "greater than",
+    "named": false
+  },
+  {
+    "type": "greater than or equal to",
+    "named": false
+  },
+  {
+    "type": "gt",
+    "named": false
+  },
+  {
+    "type": "gte",
     "named": false
   },
   {
@@ -3876,6 +4024,10 @@
   },
   {
     "type": "if",
+    "named": false
+  },
+  {
+    "type": "imp",
     "named": false
   },
   {
@@ -3899,8 +4051,24 @@
     "named": false
   },
   {
+    "type": "is",
+    "named": false
+  },
+  {
     "type": "java_class_content",
     "named": true
+  },
+  {
+    "type": "le",
+    "named": false
+  },
+  {
+    "type": "less than",
+    "named": false
+  },
+  {
+    "type": "less than or equal to",
+    "named": false
   },
   {
     "type": "let",
@@ -3911,11 +4079,35 @@
     "named": true
   },
   {
+    "type": "lt",
+    "named": false
+  },
+  {
+    "type": "lte",
+    "named": false
+  },
+  {
+    "type": "mod",
+    "named": false
+  },
+  {
+    "type": "nct",
+    "named": false
+  },
+  {
+    "type": "neq",
+    "named": false
+  },
+  {
     "type": "new",
     "named": false
   },
   {
     "type": "not",
+    "named": false
+  },
+  {
+    "type": "not equal",
     "named": false
   },
   {
@@ -3929,6 +4121,10 @@
   {
     "type": "optional_chain",
     "named": true
+  },
+  {
+    "type": "or",
+    "named": false
   },
   {
     "type": "package",
@@ -4064,6 +4260,10 @@
   },
   {
     "type": "with",
+    "named": false
+  },
+  {
+    "type": "xor",
     "named": false
   },
   {

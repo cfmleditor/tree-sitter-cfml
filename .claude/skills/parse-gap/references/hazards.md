@@ -52,6 +52,15 @@ order before `prec(1)` was added, and a plain `'get'` string elsewhere beside
 `keyword('Get')`. `npm run check:keywords` catches all three from the committed
 tables, and is part of the gate.
 
+**The word operators have a sibling hazard that costs size instead.** They are
+not keywords; `wordOperator()` aliases each regex so a query can capture it.
+The alias is free only while every use of the regex carries it, which lets
+tree-sitter name the token itself. A single bare `/[eE][qQ]/` anywhere puts
+the alias back on every `binary_expression` arm, and the arms' right-operand
+states stop merging: about 13% more states and 2–3 MB of `parser.c`, with
+every test green. `_operator_shaped_name` is the easy place to do it, since it
+lists the same words. `check:keywords` catches this too.
+
 The general move: **when a rule needs a word in a slot, reach for
 `$.identifier` before reaching for `keyword()`**. A closed set of keyword tokens
 feels more precise and is usually more dangerous. If you genuinely need keyword

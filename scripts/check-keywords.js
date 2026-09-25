@@ -33,6 +33,14 @@
  *
  * Every terminal carrying a keyword's name must be accepted by the keyword
  * lexer. A second token with the same name (the `'get'` case) fails too.
+ *
+ * It also checks `wordOperator()`'s aliases (`and`, `eq`, `does not contain`),
+ * which have the same silent failure mode with a different cost. Each must be
+ * the token's *default* alias — the name of the terminal itself — which holds
+ * only while every use of the regex carries it. One bare use anywhere keeps the
+ * alias on every `binary_expression` arm instead, and `parser.c` then declares
+ * it as a separate alias symbol, numbered from `SYMBOL_COUNT` up. That costs
+ * about 13% more states and nothing else notices.
  */
 
 const fs = require('fs');
@@ -42,12 +50,14 @@ const root = resolve(process.argv[2] ?? join(__dirname, '..'));
 const dialects = process.env.DIALECT ? [process.env.DIALECT] : ['cfml', 'cfscript', 'cfquery'];
 
 const KEYWORD_PATTERN = /^(?:\[[a-z][A-Z]\])+$/;
+const WORD_OPERATOR_PATTERN = /^(?:\[[a-z][A-Z]\]|\\s\+)+$/;
 
 /**
  * @param {unknown} rule - A node of `grammar.json`'s rule tree
  * @param {Set<string>} names - Collects keyword alias names
+ * @param {Set<string>} operators - Collects word-operator alias names
  */
-function collectKeywordNames(rule, names) {
+function collectAliasNames(rule, names, operators) {
   if (!rule || typeof rule !== 'object') return;
   // ALIAS → TOKEN → PREC → PATTERN, the shape keyword() emits.
   const token = rule.type === 'ALIAS' ? rule.content : undefined;
@@ -56,7 +66,11 @@ function collectKeywordNames(rule, names) {
   if (pattern?.type === 'PATTERN' && KEYWORD_PATTERN.test(pattern.value)) {
     names.add(rule.value);
   }
-  for (const value of Object.values(rule)) collectKeywordNames(value, names);
+  // ALIAS → PATTERN, the shape wordOperator() emits.
+  if (token?.type === 'PATTERN' && WORD_OPERATOR_PATTERN.test(token.value)) {
+    operators.add(rule.value);
+  }
+  for (const value of Object.values(rule)) collectAliasNames(value, names, operators);
 }
 
 /**
@@ -69,16 +83,18 @@ function check(dialect) {
   const parser = fs.readFileSync(join(src, 'parser.c'), 'utf8');
 
   const keywords = new Set();
-  for (const rule of Object.values(grammar.rules)) collectKeywordNames(rule, keywords);
+  const operators = new Set();
+  for (const rule of Object.values(grammar.rules)) collectAliasNames(rule, keywords, operators);
   if (keywords.size === 0) {
     return [`no keyword() tokens found in ${dialect}/src/grammar.json — has keyword() changed shape?`];
   }
 
   const tokenCount = Number(/^#define TOKEN_COUNT (\d+)$/m.exec(parser)?.[1]);
+  const symbolCount = Number(/^#define SYMBOL_COUNT (\d+)$/m.exec(parser)?.[1]);
   const enumBody = /enum ts_symbol_identifiers \{([\s\S]*?)\n\};/.exec(parser)?.[1];
   const namesBody = /static const char \* const ts_symbol_names\[\] = \{([\s\S]*?)\n\};/.exec(parser)?.[1];
   const keywordLexer = /static bool ts_lex_keywords\([\s\S]*?\n\}\n/.exec(parser)?.[0];
-  if (!tokenCount || !enumBody || !namesBody || !keywordLexer) {
+  if (!tokenCount || !symbolCount || !enumBody || !namesBody || !keywordLexer) {
     return [`could not read the tables in ${dialect}/src/parser.c — has the generated layout changed?`];
   }
 
@@ -89,14 +105,18 @@ function check(dialect) {
 
   /** @type {Map<string, string[]>} name -> terminal symbols carrying it */
   const terminals = new Map();
+  const problems = [];
   for (const m of namesBody.matchAll(/^\s+\[(\w+)\] = "((?:[^"\\]|\\.)*)",$/gm)) {
     const [, symbol, name] = m;
     const i = index.get(symbol);
+    if (i !== undefined && i >= symbolCount && operators.has(name)) {
+      problems.push(`${dialect}: word operator "${name}" (${symbol}) is not its token's default alias` +
+        ' — some use of its regex is not spelled through wordOperator()');
+    }
     if (i === undefined || i >= tokenCount || !keywords.has(name)) continue;
     terminals.set(name, [...(terminals.get(name) ?? []), symbol]);
   }
 
-  const problems = [];
   for (const name of [...keywords].sort()) {
     for (const symbol of terminals.get(name) ?? []) {
       if (!extracted.has(symbol)) {
@@ -105,14 +125,16 @@ function check(dialect) {
     }
   }
   console.log(`${dialect.padEnd(9)} ${keywords.size} keywords, ` +
-    `${[...terminals.values()].flat().length} terminals, ${problems.length} not extracted`);
+    `${[...terminals.values()].flat().length} terminals, ${operators.size} word operators, ` +
+    `${problems.length} problems`);
   return problems;
 }
 
 const problems = dialects.flatMap(check);
 if (problems.length > 0) {
   console.error('\n' + problems.join('\n'));
-  console.error('\nRun `tree-sitter generate --log` in that dialect and grep "Keywords - exclude"' +
-    ' for the reason; see keyword() in cfscript/grammar.js.');
+  console.error('\nFor a keyword, run `tree-sitter generate --log` in that dialect and grep' +
+    ' "Keywords - exclude" for the reason. For either, see keyword() and wordOperator()' +
+    ' in cfscript/grammar.js.');
   process.exitCode = 1;
 }

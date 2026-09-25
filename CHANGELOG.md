@@ -44,6 +44,12 @@
 
   Scanner-only: no `parser.c` changed. No corpus file writes either shape: the corpus scan is identical and `treediff` reports no changed tree in 14,177 files. Pinned by two new `cfscript` corpus tests; fuzz and truncated inputs (`x = a ⏎ DOES NOT` at end of file) are clean.
 
+- **Word operators are visible in the tree, and highlighted.** Every CFML word operator — `AND`, `OR`, `EQ`, `CONTAINS`, `DOES NOT CONTAIN`, `GREATER THAN OR EQUAL TO`, and #141's new `XOR`, `EQV` and `IMP` — was a bare regex, which tree-sitter makes a hidden token: it has no node, `binary_expression`'s `operator` field was empty, and no query could capture it. Only `in`, `instanceof` and, since #141, the `NOT` of `IS NOT` were visible, so `a IS NOT b` could have highlighted half its operator. A new `wordOperator()` helper spells each one and aliases it to its lowercase text (`"and"`, `"does not contain"`), and all three `highlights.scm` files capture them as `@keyword.operator`, scoped to `binary_expression`. The prefix `NOT` moves from `@operator` to `@keyword.operator` with them, so `NOT a AND b` renders both words alike; `!` stays `@operator`. `\` (integer division), missing from every operator list, is now `@operator`.
+
+  **Additive, and free.** Each `binary_expression` with a word operator gains one anonymous child; no named node moved, so no corpus test changed. `STATE_COUNT`, large states and symbol count are identical in all three grammars, and each `parser.c` is 564 bytes smaller. The regexes are unchanged, so lexing is too, and `treediff` reports no changed tree in 14,177 corpus files.
+
+  **Free only because of `_operator_shaped_name`.** That rule, which lets `eq` or `contains` be a parameter name, used the same regexes without an alias. Aliasing only the operators left the alias on every `binary_expression` arm, which split their right-operand states: **+651 states and +2.2 MB `parser.c` in `cfml` and `cfquery`, +744 and +2.7 MB in `cfscript`**, with every test green. Spelled through `wordOperator()` there too, each alias is its token's default, and tree-sitter names the token itself. `npm run check:keywords` now fails if any word-operator alias stops being a default; it was checked against the expensive variant, where it reports 19 operators. The same words inside a parameter name now carry an anonymous child, as `in` and `instanceof` already did, which is why the highlight is scoped.
+
 ## [0.26.36]
 
 ### cfscript

@@ -4981,80 +4981,175 @@
           "name": "_kw_instanceof"
         },
         {
-          "type": "PATTERN",
-          "value": "[aA][nN][dD]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[aA][nN][dD]"
+          },
+          "named": false,
+          "value": "and"
         },
         {
-          "type": "PATTERN",
-          "value": "[oO][rR]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[oO][rR]"
+          },
+          "named": false,
+          "value": "or"
         },
         {
-          "type": "PATTERN",
-          "value": "[xX][oO][rR]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[xX][oO][rR]"
+          },
+          "named": false,
+          "value": "xor"
         },
         {
-          "type": "PATTERN",
-          "value": "[eE][qQ][vV]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[eE][qQ][vV]"
+          },
+          "named": false,
+          "value": "eqv"
         },
         {
-          "type": "PATTERN",
-          "value": "[iI][mM][pP]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[iI][mM][pP]"
+          },
+          "named": false,
+          "value": "imp"
         },
         {
-          "type": "PATTERN",
-          "value": "[mM][oO][dD]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[mM][oO][dD]"
+          },
+          "named": false,
+          "value": "mod"
         },
         {
-          "type": "PATTERN",
-          "value": "[lL][tT]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[lL][tT]"
+          },
+          "named": false,
+          "value": "lt"
         },
         {
-          "type": "PATTERN",
-          "value": "[lL][tT][eE]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[lL][tT][eE]"
+          },
+          "named": false,
+          "value": "lte"
         },
         {
-          "type": "PATTERN",
-          "value": "[lL][eE]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[lL][eE]"
+          },
+          "named": false,
+          "value": "le"
         },
         {
-          "type": "PATTERN",
-          "value": "[eE][qQ]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[eE][qQ]"
+          },
+          "named": false,
+          "value": "eq"
         },
         {
-          "type": "PATTERN",
-          "value": "[eE][qQ][uU][aA][lL]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[eE][qQ][uU][aA][lL]"
+          },
+          "named": false,
+          "value": "equal"
         },
         {
-          "type": "PATTERN",
-          "value": "[iI][sS]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[iI][sS]"
+          },
+          "named": false,
+          "value": "is"
         },
         {
-          "type": "PATTERN",
-          "value": "[nN][eE][qQ]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[nN][eE][qQ]"
+          },
+          "named": false,
+          "value": "neq"
         },
         {
-          "type": "PATTERN",
-          "value": "[cC][oO][nN][tT][aA][iI][nN][sS]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[cC][oO][nN][tT][aA][iI][nN][sS]"
+          },
+          "named": false,
+          "value": "contains"
         },
         {
-          "type": "PATTERN",
-          "value": "[cC][tT]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[cC][tT]"
+          },
+          "named": false,
+          "value": "ct"
         },
         {
-          "type": "PATTERN",
-          "value": "[nN][cC][tT]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[nN][cC][tT]"
+          },
+          "named": false,
+          "value": "nct"
         },
         {
-          "type": "PATTERN",
-          "value": "[gG][tT][eE]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[gG][tT][eE]"
+          },
+          "named": false,
+          "value": "gte"
         },
         {
-          "type": "PATTERN",
-          "value": "[gG][eE]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[gG][eE]"
+          },
+          "named": false,
+          "value": "ge"
         },
         {
-          "type": "PATTERN",
-          "value": "[gG][tT]"
+          "type": "ALIAS",
+          "content": {
+            "type": "PATTERN",
+            "value": "[gG][tT]"
+          },
+          "named": false,
+          "value": "gt"
         }
       ]
     },
@@ -5882,8 +5977,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[aA][nN][dD]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[aA][nN][dD]"
+                  },
+                  "named": false,
+                  "value": "and"
                 }
               },
               {
@@ -5957,8 +6057,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[oO][rR]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[oO][rR]"
+                  },
+                  "named": false,
+                  "value": "or"
                 }
               },
               {
@@ -5990,8 +6095,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[xX][oO][rR]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[xX][oO][rR]"
+                  },
+                  "named": false,
+                  "value": "xor"
                 }
               },
               {
@@ -6023,8 +6133,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[eE][qQ][vV]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[eE][qQ][vV]"
+                  },
+                  "named": false,
+                  "value": "eqv"
                 }
               },
               {
@@ -6056,8 +6171,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[iI][mM][pP]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[iI][mM][pP]"
+                  },
+                  "named": false,
+                  "value": "imp"
                 }
               },
               {
@@ -6485,8 +6605,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[mM][oO][dD]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[mM][oO][dD]"
+                  },
+                  "named": false,
+                  "value": "mod"
                 }
               },
               {
@@ -6584,8 +6709,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[lL][tT]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[lL][tT]"
+                  },
+                  "named": false,
+                  "value": "lt"
                 }
               },
               {
@@ -6650,8 +6780,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[lL][tT][eE]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[lL][tT][eE]"
+                  },
+                  "named": false,
+                  "value": "lte"
                 }
               },
               {
@@ -6683,8 +6818,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[lL][eE]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[lL][eE]"
+                  },
+                  "named": false,
+                  "value": "le"
                 }
               },
               {
@@ -6782,8 +6922,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[eE][qQ]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[eE][qQ]"
+                  },
+                  "named": false,
+                  "value": "eq"
                 }
               },
               {
@@ -6815,8 +6960,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[eE][qQ][uU][aA][lL]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[eE][qQ][uU][aA][lL]"
+                  },
+                  "named": false,
+                  "value": "equal"
                 }
               },
               {
@@ -6851,8 +7001,13 @@
                   "type": "SEQ",
                   "members": [
                     {
-                      "type": "PATTERN",
-                      "value": "[iI][sS]"
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[iI][sS]"
+                      },
+                      "named": false,
+                      "value": "is"
                     },
                     {
                       "type": "ALIAS",
@@ -6895,8 +7050,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[iI][sS]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[iI][sS]"
+                  },
+                  "named": false,
+                  "value": "is"
                 }
               },
               {
@@ -7027,8 +7187,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[nN][eE][qQ]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[nN][eE][qQ]"
+                  },
+                  "named": false,
+                  "value": "neq"
                 }
               },
               {
@@ -7060,8 +7225,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[cC][oO][nN][tT][aA][iI][nN][sS]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[cC][oO][nN][tT][aA][iI][nN][sS]"
+                  },
+                  "named": false,
+                  "value": "contains"
                 }
               },
               {
@@ -7093,8 +7263,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[cC][tT]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[cC][tT]"
+                  },
+                  "named": false,
+                  "value": "ct"
                 }
               },
               {
@@ -7126,8 +7301,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[dD][oO][eE][sS]\\s+[nN][oO][tT]\\s+[cC][oO][nN][tT][aA][iI][nN]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[dD][oO][eE][sS]\\s+[nN][oO][tT]\\s+[cC][oO][nN][tT][aA][iI][nN]"
+                  },
+                  "named": false,
+                  "value": "does not contain"
                 }
               },
               {
@@ -7159,8 +7339,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[nN][cC][tT]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[nN][cC][tT]"
+                  },
+                  "named": false,
+                  "value": "nct"
                 }
               },
               {
@@ -7225,8 +7410,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[gG][tT][eE]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[gG][tT][eE]"
+                  },
+                  "named": false,
+                  "value": "gte"
                 }
               },
               {
@@ -7258,8 +7448,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[gG][eE]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[gG][eE]"
+                  },
+                  "named": false,
+                  "value": "ge"
                 }
               },
               {
@@ -7324,8 +7519,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[gG][tT]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[gG][tT]"
+                  },
+                  "named": false,
+                  "value": "gt"
                 }
               },
               {
@@ -7357,8 +7557,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[gG][rR][eE][aA][tT][eE][rR]\\s+[tT][hH][aA][nN]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[gG][rR][eE][aA][tT][eE][rR]\\s+[tT][hH][aA][nN]"
+                  },
+                  "named": false,
+                  "value": "greater than"
                 }
               },
               {
@@ -7390,8 +7595,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[lL][eE][sS][sS]\\s+[tT][hH][aA][nN]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[lL][eE][sS][sS]\\s+[tT][hH][aA][nN]"
+                  },
+                  "named": false,
+                  "value": "less than"
                 }
               },
               {
@@ -7423,8 +7633,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[gG][rR][eE][aA][tT][eE][rR]\\s+[tT][hH][aA][nN]\\s+[oO][rR]\\s+[eE][qQ][uU][aA][lL]\\s+[tT][oO]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[gG][rR][eE][aA][tT][eE][rR]\\s+[tT][hH][aA][nN]\\s+[oO][rR]\\s+[eE][qQ][uU][aA][lL]\\s+[tT][oO]"
+                  },
+                  "named": false,
+                  "value": "greater than or equal to"
                 }
               },
               {
@@ -7456,8 +7671,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[lL][eE][sS][sS]\\s+[tT][hH][aA][nN]\\s+[oO][rR]\\s+[eE][qQ][uU][aA][lL]\\s+[tT][oO]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[lL][eE][sS][sS]\\s+[tT][hH][aA][nN]\\s+[oO][rR]\\s+[eE][qQ][uU][aA][lL]\\s+[tT][oO]"
+                  },
+                  "named": false,
+                  "value": "less than or equal to"
                 }
               },
               {
@@ -7489,8 +7709,13 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[nN][oO][tT]\\s+[eE][qQ][uU][aA][lL]"
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "PATTERN",
+                    "value": "[nN][oO][tT]\\s+[eE][qQ][uU][aA][lL]"
+                  },
+                  "named": false,
+                  "value": "not equal"
                 }
               },
               {
