@@ -2,6 +2,31 @@
 
 ## [Unreleased]
 
+### cfml, cfquery & cfscript
+- **An operator after a bare `#…#` on the right of `=` no longer swallows the assignment.** Six shapes used to parse with no error and the wrong tree: the suffix or operator applied to the whole assignment instead of to the hash.
+
+  | code | was parsed as |
+  |---|---|
+  | `x = #a#.b` | `(x = #a#).b` |
+  | `x = #a#[1]` | `(x = #a#)[1]` |
+  | `x = #a#++` | `(x = #a#)++` |
+  | `x = #a# & "s"` | `(x = #a#) & "s"` |
+  | `x = #a# ? 1 : 2` | a ternary whose condition was the assignment |
+  | `x = y = #a#.b` | `x = ((y = #a#).b)` |
+
+  The cause was `assignment_expression`'s right side. It listed `_hash_always_eval` beside `$.expression`, which already contains it, so a bare hash had a second, direct route that finished the assignment at the closing `#`. GLR kept both routes and chose that one. Removing the duplicate leaves one reading. It also removes a declared conflict, `[expression, assignment_expression]`, that no longer has a job, and it **shrinks every table**:
+
+  | grammar | `STATE_COUNT` | large states | `parser.c` |
+  |---|---|---|---|
+  | cfml | 5,135 → 4,989 (−2.8%) | 2,529 → 2,390 | 11.1 → 10.6 MB |
+  | cfquery | 4,009 → 3,863 (−3.6%) | 2,558 → 2,419 | 10.5 → 10.0 MB |
+  | cfscript | 5,142 → 4,986 (−3.0%) | 3,406 → 3,259 | 14.8 → 14.2 MB |
+
+  - **Corpus:** `treediff` changes exactly one file, ColdBox's `tests/suites/eventCachingCollisions/runTest.cfm`, whose three `testURL = #getWebURL()# & "index.cfm?…"` lines now keep the concatenation inside the assignment. The corpus scan is identical to master. No cfscript tree changed: every bare-hash right-hand side in the corpus's script files is a statement, an argument or a tag attribute, where the route did not matter.
+  - **Unchanged:** every existing corpus test passes without an expectation change.
+  - **Consumers:** cfmleditor-lsp's formatter audit shows no verdict change.
+  - **What Lucee accepts:** `x = #a#++` is valid; postfix `++` applies to the variable inside the hashes. `#a#.b` and `#a#[1]` are compile errors, because `sharp()` returns before any member or subscript is read. The grammar stays lenient and attaches them to the hash, as it already did in every other position (`f(#a#.b)`, `1 + #a#.b`).
+
 ### cfscript
 - **Support `savecontent` as an expression** — `greeting = savecontent { writeOutput("G'day World") };` ([#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82), Lucee `test/tickets/_LDEV3623.cfc`). **+28 parse states** (5489 → 5517), no new conflicts, corpus **642 → 641 error nodes across 119 → 118 files**, zero changed trees in both grammars, `npm run fuzz` clean.
 
