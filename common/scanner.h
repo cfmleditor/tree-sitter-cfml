@@ -501,6 +501,38 @@ static bool scan_tag_name_hash_span(TSLexer *lexer, String *name) {
     return ok;
 }
 
+// `</#expr#>` with no element open for it to close (#132, second shape).
+// Taffy's anythingtoxml opens `<#name#>` in one `<cfoutput>` and closes it in a
+// later one, so by the time the end tag arrives its element is gone — the first
+// block's end closed it. A stray static end tag is an `erroneous_end_tag`
+// already; a stray dynamic one fell into `scan_end_tag_name`'s `</#` branch,
+// which answers END_TAG_NAME whether or not that is valid, and here it is not:
+// the parse failed and took the rest of the file. It is an `erroneous_end_tag`
+// now too, named by the whole `#…#` span. Nothing is pushed or popped, so no
+// length cap applies; a span must still close on its line without `<` or `>`.
+static bool scan_erroneous_dynamic_end_tag_name(TSLexer *lexer) {
+    bool any = false;
+    while (lexer->lookahead == '#') {
+        advance(lexer);
+        // `##` is a literal hash, not an expression.
+        if (lexer->lookahead == '#') break;
+        while (lexer->lookahead != '#' && lexer->lookahead != 0 && lexer->lookahead != '\n' &&
+               lexer->lookahead != '\r' && lexer->lookahead != '<' && lexer->lookahead != '>') {
+            advance(lexer);
+        }
+        if (lexer->lookahead != '#') break;
+        advance(lexer);
+        while (cf_isalnum(lexer->lookahead) || lexer->lookahead == '-' ||
+               lexer->lookahead == '_' || lexer->lookahead == ':') {
+            advance(lexer);
+        }
+        lexer->mark_end(lexer);
+        any = true;
+    }
+    lexer->result_symbol = ERRONEOUS_END_TAG_NAME;
+    return any;
+}
+
 // Extend a start or end tag's name through any `#…#` spans run onto it, as the
 // name token: each span that closes moves the token's end past it.
 static void scan_dynamic_tag_name_suffix(TSLexer *lexer, TagNameResult *result, bool is_cfquery_context) {
@@ -2187,6 +2219,9 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             }
 
             if (VS(valid_symbols, ERRONEOUS_END_TAG_NAME, count)) {
+                if (lexer->lookahead == '#' && !is_cfquery_context) {
+                    return scan_erroneous_dynamic_end_tag_name(lexer);
+                }
                 return scan_end_tag_name(scanner, lexer, false, is_cfquery_context);
             } else if (VS(valid_symbols, ERRONEOUS_CF_END_TAG_NAME, count)) {
                 return scan_end_tag_name(scanner, lexer, true, is_cfquery_context);

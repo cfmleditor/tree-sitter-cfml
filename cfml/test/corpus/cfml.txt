@@ -3272,3 +3272,29 @@ a dynamic tag name with a static prefix pairs with its end tag
               (hash_expression
                 (identifier))))))
       (implicit_end_tag))))
+
+================================================================================
+a dynamic end tag closed in a later block is an erroneous end tag
+================================================================================
+
+<cfoutput><#node#></cfoutput>
+<cfoutput>#body()#</cfoutput>
+<cfoutput></#node#></cfoutput>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_output_tag
+    (element
+      (self_closing_tag
+        (tag_name
+          (hash_expression
+            (identifier))))))
+  (cf_output_tag
+    (hash_expression
+      (call_expression
+        (identifier)
+        (arguments))))
+  (cf_output_tag
+    (erroneous_end_tag
+      (erroneous_end_tag_name))))
