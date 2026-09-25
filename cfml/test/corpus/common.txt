@@ -168,11 +168,11 @@ common: word operators in a cfif
           (identifier)
           (string
             (string_fragment)))
-        (binary_expression
-          (unary_expression
-            (unary_operator)
-            (identifier))
-          (identifier))))
+        (not_expression
+          (not_operator)
+          (binary_expression
+            (identifier)
+            (identifier)))))
     (html_text)))
 
 ================================================================================

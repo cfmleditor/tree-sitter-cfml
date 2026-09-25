@@ -110,24 +110,36 @@ module.exports = grammar({
       'member',
       'call',
       $.update_expression,
+      // unary signs (`- + ~`) bind tighter than `^` (`-2^2` is `(-2)^2`)
       'unary_void',
+      // `^` is CFML exponentiation (left-assoc); `**` is non-standard
+      // but commonly accepted (stays right-assoc at this level)
       'binary_exp',
       'binary_times',
+      'binary_intdiv',
+      'binary_mod',
       'binary_plus',
-      'binary_shift',
+      // `&` is CFML string concatenation, tighter than comparisons but
+      // looser than `+ -` (`'A' & 2 + 3` is `'A' & (2+3)`)
+      'binary_concat',
+      // one comparison level: EQ/NEQ/LT/LTE/GT/GTE/CONTAINS/DOES NOT
+      // CONTAIN/IS/IS NOT and the `==`-family all share a single rank
       'binary_compare',
-      'binary_relation',
-      'binary_equality',
-      'bitwise_and',
-      'bitwise_xor',
-      'bitwise_or',
+      // logical not binds looser than comparisons (`NOT 0 GT 3` is
+      // `NOT (0 GT 3)`) but tighter than `and`
+      'binary_not',
       'logical_and',
-      'logical_xor',
       'logical_or',
+      'logical_xor',
+      'logical_eqv',
+      'logical_imp',
       'ternary',
       'elvis',
       $.sequence_expression,
       $.arrow_function,
+      // JS leftovers accepted by the grammar but not CFML
+      'binary_shift',
+      'bitwise_or',
     ],
     ['assign', $.primary_expression],
     ['member', 'new', 'call', $.expression],
@@ -780,6 +792,7 @@ module.exports = grammar({
       $.assignment_expression,
       $.augmented_assignment_expression,
       $.unary_expression,
+      $.not_expression,
       $.binary_expression,
       $.ternary_expression,
       $.elvis_expression,
@@ -1195,6 +1208,8 @@ module.exports = grammar({
       /[aA][nN][dD]/,
       /[oO][rR]/,
       /[xX][oO][rR]/,
+      /[eE][qQ][vV]/,
+      /[iI][mM][pP]/,
       /[mM][oO][dD]/,
       /[lL][tT]/,
       /[lL][tT][eE]/,
@@ -1212,11 +1227,11 @@ module.exports = grammar({
       // `not` is deliberately absent, and is the one word here that cannot be
       // added. Every other entry is a *binary* operator, so it only competes
       // with a reading that needs a left operand the name slot has not got.
-      // `not` is `unary_operator`, so `function f( array not x )` is genuinely
+      // `not` is `not_operator`, so `function f( array not x )` is genuinely
       // ambiguous — a parameter named `not` followed by another, or `not x` as
       // a unary expression — and `generate` offers only a conflict between
-      // `_operator_shaped_name` and `unary_operator`, which would be live at
-      // every `!`, `-` and `+` in the language. A parameter named `not` is also
+      // `_operator_shaped_name` and `not_operator`, which would be live at
+      // every `!` in the language. A parameter named `not` is also
       // the least plausible of the set, and none appears in the corpus.
     ),
 
@@ -1469,51 +1484,54 @@ module.exports = grammar({
         [choice($.logical_or, '||'), 'logical_or'],
         [/[oO][rR]/, 'logical_or'],
         [/[xX][oO][rR]/, 'logical_xor'],
+        [/[eE][qQ][vV]/, 'logical_eqv'],
+        [/[iI][mM][pP]/, 'logical_imp'],
         ['>>', 'binary_shift'],
         ['>>>', 'binary_shift'],
         ['<<', 'binary_shift'],
-        ['&', 'bitwise_and'],
-        ['^', 'bitwise_xor'],
+        ['&', 'binary_concat'],
+        ['^', 'binary_exp'],
         ['|', 'bitwise_or'],
         ['+', 'binary_plus'],
         ['-', 'binary_plus'],
         ['*', 'binary_times'],
         ['/', 'binary_times'],
-        ['%', 'binary_times'],
-        ['\\', 'binary_times'],
-        [/[mM][oO][dD]/, 'binary_times'],
+        ['%', 'binary_mod'],
+        ['\\', 'binary_intdiv'],
+        [/[mM][oO][dD]/, 'binary_mod'],
         ['**', 'binary_exp', 'right'],
-        ['<', 'binary_relation'],
-        [/[lL][tT]/, 'binary_relation'],
-        ['<=', 'binary_relation'],
-        [/[lL][tT][eE]/, 'binary_relation'],
-        [/[lL][eE]/, 'binary_relation'],
-        ['==', 'binary_equality'],
-        ['===', 'binary_equality'],
-        [/[eE][qQ]/, 'binary_equality'],
-        [/[eE][qQ][uU][aA][lL]/, 'binary_equality'],
-        [/[iI][sS]/, 'binary_equality'],
-        ['<>', 'binary_equality'],
-        ['!=', 'binary_equality'],
-        ['!==', 'binary_equality'],
-        [/[nN][eE][qQ]/, 'binary_equality'],
-        [/[cC][oO][nN][tT][aA][iI][nN][sS]/, 'binary_equality'],
-        [/[cC][tT]/, 'binary_equality'],
-        [/[dD][oO][eE][sS]\s[nN][oO][tT]\s[cC][oO][nN][tT][aA][iI][nN]/, 'binary_equality'],
-        [/[nN][cC][tT]/, 'binary_equality'],
-        ['>=', 'binary_relation'],
-        [/[gG][tT][eE]/, 'binary_relation'],
-        [/[gG][eE]/, 'binary_relation'],
-        ['>', 'binary_relation'],
-        [/[gG][tT]/, 'binary_relation'],
-        [/[gG][rR][eE][aA][tT][eE][rR]\s+[tT][hH][aA][nN]/, 'binary_relation'],
-        [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]/, 'binary_relation'],
-        [/[gG][rR][eE][aA][tT][eE][rR]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_relation'],
-        [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_relation'],
-        [/[nN][oO][tT]\s+[eE][qQ][uU][aA][lL]/, 'binary_equality'],
+        ['<', 'binary_compare'],
+        [/[lL][tT]/, 'binary_compare'],
+        ['<=', 'binary_compare'],
+        [/[lL][tT][eE]/, 'binary_compare'],
+        [/[lL][eE]/, 'binary_compare'],
+        ['==', 'binary_compare'],
+        ['===', 'binary_compare'],
+        [/[eE][qQ]/, 'binary_compare'],
+        [/[eE][qQ][uU][aA][lL]/, 'binary_compare'],
+        [/[iI][sS]\s+[nN][oO][tT]/, 'binary_compare'],
+        [/[iI][sS]/, 'binary_compare'],
+        ['<>', 'binary_compare'],
+        ['!=', 'binary_compare'],
+        ['!==', 'binary_compare'],
+        [/[nN][eE][qQ]/, 'binary_compare'],
+        [/[cC][oO][nN][tT][aA][iI][nN][sS]/, 'binary_compare'],
+        [/[cC][tT]/, 'binary_compare'],
+        [/[dD][oO][eE][sS]\s+[nN][oO][tT]\s+[cC][oO][nN][tT][aA][iI][nN]/, 'binary_compare'],
+        [/[nN][cC][tT]/, 'binary_compare'],
+        ['>=', 'binary_compare'],
+        [/[gG][tT][eE]/, 'binary_compare'],
+        [/[gG][eE]/, 'binary_compare'],
+        ['>', 'binary_compare'],
+        [/[gG][tT]/, 'binary_compare'],
+        [/[gG][rR][eE][aA][tT][eE][rR]\s+[tT][hH][aA][nN]/, 'binary_compare'],
+        [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]/, 'binary_compare'],
+        [/[gG][rR][eE][aA][tT][eE][rR]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_compare'],
+        [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_compare'],
+        [/[nN][oO][tT]\s+[eE][qQ][uU][aA][lL]/, 'binary_compare'],
         ['??', 'ternary'],
-        [$._kw_instanceof, 'binary_relation'],
-        [$._kw_in, 'binary_relation'],
+        [$._kw_instanceof, 'binary_compare'],
+        [$._kw_in, 'binary_compare'],
       ].map(([operator, precedence, associativity]) =>
         // @ts-ignore
         (associativity === 'right' ? prec.right : prec.left)(precedence, seq(
@@ -1526,15 +1544,28 @@ module.exports = grammar({
 
     // @ts-ignore
     unary_operator: $ => choice(
-      '!',
       '~',
       '-',
       '+',
-      alias(/[nN][oO][tT]/, 'not'),
     ),
 
     unary_expression: ($) => prec.left('unary_void', seq(
       field('operator', $.unary_operator),
+      field('argument', $.expression),
+    )),
+
+    // CFML's `not` (and Lucee's `!`) is a logical operator, not a sign: it
+    // binds looser than comparisons (`NOT 0 GT 3` is `NOT (0 GT 3)`) but
+    // tighter than `and` (`not false and false` is `(not false) and false`),
+    // so it gets its own `binary_not` level.
+    // @ts-ignore
+    not_operator: $ => choice(
+      '!',
+      alias(/[nN][oO][tT]/, 'not'),
+    ),
+
+    not_expression: ($) => prec.left('binary_not', seq(
+      field('operator', $.not_operator),
       field('argument', $.expression),
     )),
 
