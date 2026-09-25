@@ -46,6 +46,10 @@
         "named": true
       },
       {
+        "type": "not_expression",
+        "named": true
+      },
+      {
         "type": "object_pattern",
         "named": true
       },
@@ -695,7 +699,7 @@
         ]
       },
       "operator": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
@@ -791,6 +795,58 @@
             "named": false
           },
           {
+            "type": "and",
+            "named": false
+          },
+          {
+            "type": "contains",
+            "named": false
+          },
+          {
+            "type": "ct",
+            "named": false
+          },
+          {
+            "type": "does not contain",
+            "named": false
+          },
+          {
+            "type": "eq",
+            "named": false
+          },
+          {
+            "type": "equal",
+            "named": false
+          },
+          {
+            "type": "eqv",
+            "named": false
+          },
+          {
+            "type": "ge",
+            "named": false
+          },
+          {
+            "type": "greater than",
+            "named": false
+          },
+          {
+            "type": "greater than or equal to",
+            "named": false
+          },
+          {
+            "type": "gt",
+            "named": false
+          },
+          {
+            "type": "gte",
+            "named": false
+          },
+          {
+            "type": "imp",
+            "named": false
+          },
+          {
             "type": "in",
             "named": false
           },
@@ -799,8 +855,60 @@
             "named": false
           },
           {
+            "type": "is",
+            "named": false
+          },
+          {
+            "type": "le",
+            "named": false
+          },
+          {
+            "type": "less than",
+            "named": false
+          },
+          {
+            "type": "less than or equal to",
+            "named": false
+          },
+          {
             "type": "logical_or",
             "named": true
+          },
+          {
+            "type": "lt",
+            "named": false
+          },
+          {
+            "type": "lte",
+            "named": false
+          },
+          {
+            "type": "mod",
+            "named": false
+          },
+          {
+            "type": "nct",
+            "named": false
+          },
+          {
+            "type": "neq",
+            "named": false
+          },
+          {
+            "type": "not",
+            "named": false
+          },
+          {
+            "type": "not equal",
+            "named": false
+          },
+          {
+            "type": "or",
+            "named": false
+          },
+          {
+            "type": "xor",
+            "named": false
           },
           {
             "type": "|",
@@ -3322,6 +3430,37 @@
     }
   },
   {
+    "type": "not_expression",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "not_operator",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "not_operator",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "null",
     "named": true,
     "fields": {}
@@ -5007,6 +5146,10 @@
     "named": false
   },
   {
+    "type": "and",
+    "named": false
+  },
+  {
     "type": "array_return_suffix",
     "named": true
   },
@@ -5072,7 +5215,15 @@
     "named": false
   },
   {
+    "type": "contains",
+    "named": false
+  },
+  {
     "type": "continue",
+    "named": false
+  },
+  {
+    "type": "ct",
     "named": false
   },
   {
@@ -5092,12 +5243,28 @@
     "named": false
   },
   {
+    "type": "does not contain",
+    "named": false
+  },
+  {
     "type": "else",
     "named": false
   },
   {
     "type": "entity",
     "named": true
+  },
+  {
+    "type": "eq",
+    "named": false
+  },
+  {
+    "type": "equal",
+    "named": false
+  },
+  {
+    "type": "eqv",
+    "named": false
   },
   {
     "type": "erroneous_cf_end_tag_name",
@@ -5136,7 +5303,27 @@
     "named": false
   },
   {
+    "type": "ge",
+    "named": false
+  },
+  {
     "type": "get",
+    "named": false
+  },
+  {
+    "type": "greater than",
+    "named": false
+  },
+  {
+    "type": "greater than or equal to",
+    "named": false
+  },
+  {
+    "type": "gt",
+    "named": false
+  },
+  {
+    "type": "gte",
     "named": false
   },
   {
@@ -5149,6 +5336,10 @@
   },
   {
     "type": "if",
+    "named": false
+  },
+  {
+    "type": "imp",
     "named": false
   },
   {
@@ -5172,6 +5363,22 @@
     "named": false
   },
   {
+    "type": "is",
+    "named": false
+  },
+  {
+    "type": "le",
+    "named": false
+  },
+  {
+    "type": "less than",
+    "named": false
+  },
+  {
+    "type": "less than or equal to",
+    "named": false
+  },
+  {
     "type": "let",
     "named": false
   },
@@ -5180,11 +5387,35 @@
     "named": true
   },
   {
+    "type": "lt",
+    "named": false
+  },
+  {
+    "type": "lte",
+    "named": false
+  },
+  {
+    "type": "mod",
+    "named": false
+  },
+  {
+    "type": "nct",
+    "named": false
+  },
+  {
+    "type": "neq",
+    "named": false
+  },
+  {
     "type": "new",
     "named": false
   },
   {
     "type": "not",
+    "named": false
+  },
+  {
+    "type": "not equal",
     "named": false
   },
   {
@@ -5202,6 +5433,10 @@
   {
     "type": "optional_chain",
     "named": true
+  },
+  {
+    "type": "or",
+    "named": false
   },
   {
     "type": "package",
@@ -5337,6 +5572,10 @@
   },
   {
     "type": "xml",
+    "named": false
+  },
+  {
+    "type": "xor",
     "named": false
   },
   {

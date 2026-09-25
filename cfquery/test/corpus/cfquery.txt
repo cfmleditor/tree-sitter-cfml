@@ -1336,9 +1336,7 @@ cfif elseif with incomplete operator fragments
         left: (member_expression
           object: (identifier)
           property: (property_identifier))
-        right: (unary_expression
-          operator: (unary_operator)
-          argument: (true))))
+        right: (true)))
     (query_keyword)
     (query_number
       (number))
@@ -1350,9 +1348,7 @@ cfif elseif with incomplete operator fragments
             left: (member_expression
               object: (identifier)
               property: (property_identifier))
-            right: (unary_expression
-              operator: (unary_operator)
-              argument: (true)))
+            right: (true))
           right: (binary_expression
             left: (member_expression
               object: (identifier)

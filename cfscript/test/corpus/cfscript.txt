@@ -192,14 +192,17 @@ public string function doThing(string firstName = "blah",required string firstNa
     (identifier)
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (assignment_pattern
         (identifier)
         (string
           (string_fragment)))
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block)))
 
@@ -217,14 +220,16 @@ public function function doThing(string firstName = "blah",required function fir
     (access_type)
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (assignment_pattern
         (identifier)
         (string
           (string_fragment)))
       (parameter_type)
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block)))
 
@@ -242,7 +247,8 @@ public function doThing(string name = "" taffy_minlength="1" taffy_maxlength="25
     (access_type)
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (assignment_pattern
         (identifier)
         (string))
@@ -254,7 +260,8 @@ public function doThing(string name = "" taffy_minlength="1" taffy_maxlength="25
         (identifier)
         (string
           (string_fragment)))
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (assignment_pattern
         (identifier)
         (string))
@@ -1068,14 +1075,14 @@ Lucee operators (NOT, XOR, MOD, CT, NCT, <>)
 (program
   (if_statement
     (parenthesized_expression
-      (unary_expression
-        (unary_operator)
+      (not_expression
+        (not_operator)
         (identifier)))
     (statement_block))
   (if_statement
     (parenthesized_expression
-      (unary_expression
-        (unary_operator)
+      (not_expression
+        (not_operator)
         (identifier)))
     (statement_block))
   (if_statement
@@ -2321,7 +2328,8 @@ function f( string[] v, User[][] w, required numeric[] x = [] ) {}
   (function_declaration
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (array_return_suffix)
       (identifier)
       (parameter_type
@@ -2329,7 +2337,8 @@ function f( string[] v, User[][] w, required numeric[] x = [] ) {}
       (array_return_suffix)
       (array_return_suffix)
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (array_return_suffix)
       (assignment_pattern
         (identifier)
@@ -2460,9 +2469,11 @@ function i() { return a eq b and c contains d; }
   (function_declaration
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block))
   (function_declaration
@@ -2471,7 +2482,8 @@ function i() { return a eq b and c contains d; }
       (parameter_type
         (identifier))
       (identifier)
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block))
   (function_declaration
@@ -2668,6 +2680,236 @@ w = () => mod.create( a = 1 );
               (number))))))))
 
 ===================================
+a built-in type name parenthesised as an expression
+===================================
+
+x = ( date );
+y = ( string ) & ( numeric );
+z = ( date[ 2 ] > 0 && date[ 2 ] <= ArrayLen( a ) );
+v = ( void );
+
+g = ( string s ) => s;
+h = ( s ) => s;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (parenthesized_expression
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (parenthesized_expression
+          (identifier))
+        (parenthesized_expression
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (parenthesized_expression
+        (binary_expression
+          (binary_expression
+            (subscript_expression
+              (identifier)
+              (number))
+            (number))
+          (binary_expression
+            (subscript_expression
+              (identifier)
+              (number))
+            (call_expression
+              (identifier)
+              (arguments
+                (identifier))))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (parenthesized_expression
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (arrow_function
+        (formal_parameters
+          (parameter_type
+            (identifier))
+          (identifier))
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (arrow_function
+        (formal_parameters
+          (parameter_type
+            (identifier)))
+        (identifier)))))
+
+===================================
+var declaration with a compound assignment
+===================================
+
+var jql = "project = x";
+var jql &= " ORDER BY key DESC";
+var total += getReviews()[ 1 ].getRating();
+var local.note &= "b";
+final y &= 1;
+
+var a = 1, b = 2;
+var mappings[ key ] = value;
+var new = 1;
+bare &= "no var";
+
+---
+
+(program
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (string
+        (string_fragment))))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (string
+        (string_fragment))))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (call_expression
+        (member_expression
+          (subscript_expression
+            (call_expression
+              (identifier)
+              (arguments))
+            (number))
+          (property_identifier))
+        (arguments))))
+  (variable_declaration
+    (variable_declarator
+      (member_expression
+        (identifier)
+        (property_identifier))
+      (string
+        (string_fragment))))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (number)))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (number))
+    (variable_declarator
+      (identifier)
+      (number)))
+  (variable_declaration
+    (variable_declarator
+      (subscript_expression
+        (identifier)
+        (identifier))
+      (identifier)))
+  (variable_declaration
+    (variable_declarator
+      (identifier)
+      (number)))
+  (expression_statement
+    (augmented_assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))))
+
+===================================
+elseif as one word
+===================================
+
+if ( a ) { x = 1; }
+elseif ( b ) { x = 2; }
+ELSEIF ( c ) { x = 3; }
+elseIf ( d ) { x = 4; }
+ElseIf ( e ) { x = 5; }
+else { x = 6; }
+
+elseif = 1;
+elseif();
+k = { elseif: 5 };
+m = obj.elseif;
+
+---
+
+(program
+  (if_statement
+    (parenthesized_expression
+      (identifier))
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (number))))
+    (else_if_clause
+      (parenthesized_expression
+        (identifier))
+      (statement_block
+        (expression_statement
+          (assignment_expression
+            (identifier)
+            (number))))
+      (else_if_clause
+        (parenthesized_expression
+          (identifier))
+        (statement_block
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (number))))
+        (else_if_clause
+          (parenthesized_expression
+            (identifier))
+          (statement_block
+            (expression_statement
+              (assignment_expression
+                (identifier)
+                (number))))
+          (else_if_clause
+            (parenthesized_expression
+              (identifier))
+            (statement_block
+              (expression_statement
+                (assignment_expression
+                  (identifier)
+                  (number))))
+            (else_clause
+              (statement_block
+                (expression_statement
+                  (assignment_expression
+                    (identifier)
+                    (number))))))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (object
+        (pair
+          (property_identifier)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (identifier)
+        (property_identifier)))))
+
+===================================
 return type between the access modifiers (#117)
 ===================================
 
@@ -2847,7 +3089,8 @@ interface {
         (identifier)
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (statement_block
           (return_statement
@@ -2857,7 +3100,8 @@ interface {
         (identifier)
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (statement_block
           (return_statement
@@ -3108,7 +3352,8 @@ component displayname:"X" foo:bar {
       (function_declaration
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (component_attribute
           (attribute_label)
@@ -3120,7 +3365,8 @@ component displayname:"X" foo:bar {
       (function_declaration
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (component_attribute
           (attribute_label)
@@ -4408,11 +4654,13 @@ component {
       (function_declaration
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (assignment_pattern
             (identifier)
             (false))
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (assignment_pattern
             (identifier)
             (true)))
@@ -4420,9 +4668,11 @@ component {
       (function_declaration
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier)
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (assignment_pattern
             (identifier)
             (number)))
@@ -4430,15 +4680,19 @@ component {
       (function_declaration
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier)
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier)
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (assignment_pattern
             (identifier)
             (false))
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (assignment_pattern
             (identifier)
             (true)))
@@ -4518,3 +4772,272 @@ component {
                 (binary_expression
                   (identifier)
                   (number))))))))))
+
+===================================
+CFML operator precedence
+===================================
+a = x & y EQ z;
+b = 2 ^ 3 * 2;
+c = NOT x EQ y;
+d = !x == y;
+e = !x && y;
+f = x XOR y OR z;
+g = x EQV y IMP z;
+h = x IS NOT y AND z;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (binary_expression
+          (identifier)
+          (identifier))
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (binary_expression
+          (number)
+          (number))
+        (number))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (not_expression
+        (not_operator)
+        (binary_expression
+          (identifier)
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (not_expression
+        (not_operator)
+        (binary_expression
+          (identifier)
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (not_expression
+          (not_operator)
+          (identifier))
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (binary_expression
+          (identifier)
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (binary_expression
+          (identifier)
+          (identifier))
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (binary_expression
+          (identifier)
+          (identifier))
+        (identifier)))))
+
+===================================
+IS NOT does not split the word after it
+===================================
+a = x IS NOT1;
+b = x IS NOT( y );
+c = x is nothing;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (parenthesized_expression
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier)))))
+
+===================================
+JavaScript bitwise operators keep their place below arrow and ternary bodies
+===================================
+f = (v) => v | 1;
+g = a ? b : c | d;
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (arrow_function
+        (formal_parameters
+          (parameter_type
+            (identifier)))
+        (binary_expression
+          (identifier)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (ternary_expression
+        (identifier)
+        (identifier)
+        (binary_expression
+          (identifier)
+          (identifier))))))
+
+===================================
+a word operator starting a line continues the expression
+===================================
+a = x
+  IS y
+b = x
+  CONTAINS y
+c = x
+  DOES NOT CONTAIN y
+d = x
+  GREATER THAN OR EQUAL TO y
+e = x
+  XOR y
+f = x
+  EQV y
+g = x
+  IN y
+h = x
+  is not y
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (identifier)
+        (identifier)))))
+
+===================================
+an identifier that begins with a word operator starts a new statement
+===================================
+a = 1
+in_stock = 1
+b = 2
+or_else = 2
+c = 3
+eq$ = 3
+d = 4
+does = 4
+e = 5
+lessons = 5
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number)))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number))))

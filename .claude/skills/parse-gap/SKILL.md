@@ -91,6 +91,7 @@ Every step, in order, on the *whole* project — not the dialect you edited:
 npm run build          # full build; DIALECT=… skips the native addon rebuild
 npm test               # corpus tests, all three grammars
 npm run probe          # drift in either direction is a signal
+npm run check:keywords # keyword() tokens still extracted; wordOperator() aliases still default
 npm run lint
 ```
 
@@ -154,14 +155,17 @@ found. Neither moved the error count at all.
 position**, not only on one that declares a conflict:
 
 ```bash
-grep -m1 -E '^#define STATE_COUNT' cfscript/src/parser.c
+npm run check:size    # all three grammars against origin/master; --base <ref> for another
 ```
 
 A statement as an arrow-function body declared no conflicts, passed every gate,
 and doubled the table — 4,984 to 10,005 states, `parser.c` 17.9 MB to 35.7 MB —
 for one corpus file. It was reverted. This check is deterministic and takes two
 seconds, which is what makes it usable when the machine is too busy to
-benchmark.
+benchmark. CI runs it on every pull request (`Grammar size`) and fails past 5%
+growth in any grammar; a deliberate, measured increase takes the
+`grammar-size-ok` label. Run it locally before that, after a full build: it
+reads the working tree, so it sees a regenerated parser before it is committed.
 
 If the change touches either scanner, also run `npm run fuzz` — it applies
 random edits to every corpus test and re-parses, which is the only thing that

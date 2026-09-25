@@ -150,22 +150,34 @@ module.exports = function defineGrammar(dialect) {
         'member',
         'call',
         $.update_expression,
+        // unary signs (`- + ~`) bind tighter than `^` (`-2^2` is `(-2)^2`)
         'unary_void',
-        'binary_is',
-        'binary_not',
+        // `^` is CFML exponentiation (left-assoc); `**` is non-standard
+        // but commonly accepted (stays right-assoc at this level)
         'binary_exp',
         'binary_times',
+        'binary_intdiv',
+        'binary_mod',
         'binary_plus',
+        // `<<` `>>` `|` are JavaScript leftovers, not CFML. They keep the places
+        // they had relative to the comparisons; below `arrow_function` they made
+        // `(x) => x | 1` parse as `((x) => x) | 1`.
         'binary_shift',
+        // `&` is CFML string concatenation, tighter than comparisons but
+        // looser than `+ -` (`'A' & 2 + 3` is `'A' & (2+3)`)
+        'binary_concat',
+        // one comparison level: EQ/NEQ/LT/LTE/GT/GTE/CONTAINS/DOES NOT
+        // CONTAIN/IS/IS NOT and the `==`-family all share a single rank
         'binary_compare',
-        'binary_relation',
-        'binary_equality',
-        'bitwise_and',
-        'bitwise_xor',
         'bitwise_or',
+        // logical not binds looser than comparisons (`NOT 0 GT 3` is
+        // `NOT (0 GT 3)`) but tighter than `and`
+        'binary_not',
         'logical_and',
-        'logical_xor',
         'logical_or',
+        'logical_xor',
+        'logical_eqv',
+        'logical_imp',
         'ternary',
         'elvis',
         $.sequence_expression,
@@ -484,7 +496,18 @@ module.exports = function defineGrammar(dialect) {
           alias($._single_hash, $.hash_single),
         ),
 
-        hash_expression: ($) => seq($._start_hash_expression, $.expression, $._hash),
+        // Output hash: `#expr#`. The closing `#` is required, as in Lucee: `#"x"`
+        // with no close is "missing terminating [#] for expression"
+        // (`CFMLTransformer`). #141 briefly accepted that form as a
+        // `hash_string_expression`; it came out again because Lucee rejects it,
+        // and because the state it added — a binary operator and an HTML
+        // attribute name both valid after the string — knocked `in` and
+        // `instanceof` out of keyword extraction (`npm run check:keywords`).
+        hash_expression: ($) => seq(
+          $._start_hash_expression,
+          $.expression,
+          $._hash,
+        ),
 
       } : {
 
@@ -1255,7 +1278,8 @@ module.exports = function defineGrammar(dialect) {
             optional($._initializer),
           ),
           seq(
-            field('kind', choice('let', 'const')),
+            // `_kw_let`, not `'let'`, for the reason `method_definition` gives.
+            field('kind', choice($._kw_let, 'const')),
             field('left', choice(
               $.identifier,
               $._destructuring_pattern,
@@ -1404,6 +1428,7 @@ module.exports = function defineGrammar(dialect) {
         $.assignment_expression,
         $.augmented_assignment_expression,
         $.unary_expression,
+        $.not_expression,
         $.binary_expression,
         $.ternary_expression,
         $.elvis_expression,
@@ -1639,30 +1664,32 @@ module.exports = function defineGrammar(dialect) {
       _operator_shaped_name: ($) => choice(
         $._kw_in,
         $._kw_instanceof,
-        /[aA][nN][dD]/,
-        /[oO][rR]/,
-        /[xX][oO][rR]/,
-        /[mM][oO][dD]/,
-        /[lL][tT]/,
-        /[lL][tT][eE]/,
-        /[lL][eE]/,
-        /[eE][qQ]/,
-        /[eE][qQ][uU][aA][lL]/,
-        /[iI][sS]/,
-        /[nN][eE][qQ]/,
-        /[cC][oO][nN][tT][aA][iI][nN][sS]/,
-        /[cC][tT]/,
-        /[nN][cC][tT]/,
-        /[gG][tT][eE]/,
-        /[gG][eE]/,
-        /[gG][tT]/,
+        wordOperator('and'),
+        wordOperator('or'),
+        wordOperator('xor'),
+        wordOperator('eqv'),
+        wordOperator('imp'),
+        wordOperator('mod'),
+        wordOperator('lt'),
+        wordOperator('lte'),
+        wordOperator('le'),
+        wordOperator('eq'),
+        wordOperator('equal'),
+        wordOperator('is'),
+        wordOperator('neq'),
+        wordOperator('contains'),
+        wordOperator('ct'),
+        wordOperator('nct'),
+        wordOperator('gte'),
+        wordOperator('ge'),
+        wordOperator('gt'),
         // `not` is deliberately absent, and is the one word here that cannot be
         // added. Every other entry is a *binary* operator, so it only competes
         // with a reading that needs a left operand the name slot has not got.
-        // `not` is `unary_operator`, so `function f( array not x )` is genuinely
+        // `not` is `not_operator`, so `function f( array not x )` is genuinely
         // ambiguous, and `generate` offers only a conflict between
-        // `_operator_shaped_name` and `unary_operator`, which would be live at
-        // every `!`, `-` and `+` in the language.
+        // `_operator_shaped_name` and `not_operator`, which would be live at
+        // every `!` in the language.
       ),
 
       parameter_attribute: ($) => prec.dynamic(-2, seq(
@@ -1701,7 +1728,13 @@ module.exports = function defineGrammar(dialect) {
         field('arguments', optional(prec.dynamic(1, $.arguments))),
       )),
 
-      _new_type_prefix: (_) => token(seq(choice('java', 'cfml'), ':')),
+      // Lucee's four spellings, in any casing: `java:` and its synonym
+      // `class:`, `cfml:` and its synonym `cfc:` (`AbstrCFMLExprTransformer.newOp`,
+      // which matches against a lowercased copy of the source).
+      _new_type_prefix: (_) => token(seq(
+        choice(/[jJ][aA][vV][aA]/, /[cC][lL][aA][sS][sS]/, /[cC][fF][mM][lL]/, /[cC][fF][cC]/),
+        ':',
+      )),
 
       member_expression: $ => prec('member', seq(
         field('object', choice($.expression, $.primary_expression)),
@@ -1800,55 +1833,62 @@ module.exports = function defineGrammar(dialect) {
       binary_expression: ($) => choice(
         ...[
           ['&&', 'logical_and'],
-          [/[aA][nN][dD]/, 'logical_and'],
+          [wordOperator('and'), 'logical_and'],
           [choice($.logical_or, '||'), 'logical_or'],
-          [/[oO][rR]/, 'logical_or'],
-          [/[xX][oO][rR]/, 'logical_xor'],
+          [wordOperator('or'), 'logical_or'],
+          [wordOperator('xor'), 'logical_xor'],
+          [wordOperator('eqv'), 'logical_eqv'],
+          [wordOperator('imp'), 'logical_imp'],
           ['>>', 'binary_shift'],
           ['>>>', 'binary_shift'],
           ['<<', 'binary_shift'],
-          ['&', 'bitwise_and'],
-          ['^', 'bitwise_xor'],
+          ['&', 'binary_concat'],
+          ['^', 'binary_exp'],
           ['|', 'bitwise_or'],
           ['+', 'binary_plus'],
           ['-', 'binary_plus'],
           ['*', 'binary_times'],
           ['/', 'binary_times'],
-          ['%', 'binary_times'],
-          ['\\', 'binary_times'],
-          [/[mM][oO][dD]/, 'binary_times'],
+          ['%', 'binary_mod'],
+          ['\\', 'binary_intdiv'],
+          [wordOperator('mod'), 'binary_mod'],
           ['**', 'binary_exp', 'right'],
-          ['<', 'binary_relation'],
-          [/[lL][tT]/, 'binary_relation'],
-          ['<=', 'binary_relation'],
-          [/[lL][tT][eE]/, 'binary_relation'],
-          [/[lL][eE]/, 'binary_relation'],
-          ['==', 'binary_equality'],
-          ['===', 'binary_equality'],
-          [/[eE][qQ]/, 'binary_equality'],
-          [/[eE][qQ][uU][aA][lL]/, 'binary_equality'],
-          [/[iI][sS]/, 'binary_equality'],
-          ['<>', 'binary_equality'],
-          ['!=', 'binary_equality'],
-          ['!==', 'binary_equality'],
-          [/[nN][eE][qQ]/, 'binary_equality'],
-          [/[cC][oO][nN][tT][aA][iI][nN][sS]/, 'binary_equality'],
-          [/[cC][tT]/, 'binary_equality'],
-          [/[dD][oO][eE][sS]\s+[nN][oO][tT]\s+[cC][oO][nN][tT][aA][iI][nN]/, 'binary_equality'],
-          [/[nN][cC][tT]/, 'binary_equality'],
-          ['>=', 'binary_relation'],
-          [/[gG][tT][eE]/, 'binary_relation'],
-          [/[gG][eE]/, 'binary_relation'],
-          ['>', 'binary_relation'],
-          [/[gG][tT]/, 'binary_relation'],
-          [/[gG][rR][eE][aA][tT][eE][rR]\s+[tT][hH][aA][nN]/, 'binary_relation'],
-          [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]/, 'binary_relation'],
-          [/[gG][rR][eE][aA][tT][eE][rR]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_relation'],
-          [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_relation'],
-          [/[nN][oO][tT]\s+[eE][qQ][uU][aA][lL]/, 'binary_equality'],
+          ['<', 'binary_compare'],
+          [wordOperator('lt'), 'binary_compare'],
+          ['<=', 'binary_compare'],
+          [wordOperator('lte'), 'binary_compare'],
+          [wordOperator('le'), 'binary_compare'],
+          ['==', 'binary_compare'],
+          ['===', 'binary_compare'],
+          [wordOperator('eq'), 'binary_compare'],
+          [wordOperator('equal'), 'binary_compare'],
+          // `IS NOT` is two tokens, not one `/is\s+not/` regex: a single token
+          // out-lexed `is` followed by any word starting with `not`, so
+          // `a is nothing` read as `a IS NOT hing`. As two tokens the lexer keeps
+          // `nothing` whole, and `IS NOT(x)` still reads as `NEQ`, as in Lucee.
+          [seq(wordOperator('is'), wordOperator('not')), 'binary_compare'],
+          [wordOperator('is'), 'binary_compare'],
+          ['<>', 'binary_compare'],
+          ['!=', 'binary_compare'],
+          ['!==', 'binary_compare'],
+          [wordOperator('neq'), 'binary_compare'],
+          [wordOperator('contains'), 'binary_compare'],
+          [wordOperator('ct'), 'binary_compare'],
+          [wordOperator('does not contain'), 'binary_compare'],
+          [wordOperator('nct'), 'binary_compare'],
+          ['>=', 'binary_compare'],
+          [wordOperator('gte'), 'binary_compare'],
+          [wordOperator('ge'), 'binary_compare'],
+          ['>', 'binary_compare'],
+          [wordOperator('gt'), 'binary_compare'],
+          [wordOperator('greater than'), 'binary_compare'],
+          [wordOperator('less than'), 'binary_compare'],
+          [wordOperator('greater than or equal to'), 'binary_compare'],
+          [wordOperator('less than or equal to'), 'binary_compare'],
+          [wordOperator('not equal'), 'binary_compare'],
           ['??', 'ternary'],
-          [$._kw_instanceof, 'binary_relation'],
-          [$._kw_in, 'binary_relation'],
+          [$._kw_instanceof, 'binary_compare'],
+          [$._kw_in, 'binary_compare'],
         ].map(([operator, precedence, associativity]) =>
         // @ts-ignore
           (associativity === 'right' ? prec.right : prec.left)(precedence, seq(
@@ -1861,15 +1901,31 @@ module.exports = function defineGrammar(dialect) {
 
       // @ts-ignore
       unary_operator: $ => choice(
-        '!',
         '~',
         '-',
         '+',
-        alias(/[nN][oO][tT]/, 'not'),
       ),
 
       unary_expression: ($) => prec.left('unary_void', seq(
         field('operator', $.unary_operator),
+        field('argument', $.expression),
+      )),
+
+      // CFML's `not` (and Lucee's `!`) is a logical operator, not a sign: it
+      // binds looser than comparisons (`NOT 0 GT 3` is `NOT (0 GT 3)`) but
+      // tighter than `and` (`not false and false` is `(not false) and false`),
+      // so it gets its own `binary_not` level.
+      // @ts-ignore
+      // `binary_not` so that `a IS NOT b` reads as the two-word `IS NOT` rather
+      // than `a IS (NOT b)`: after `a IS NOT` the parser could either finish this
+      // operator or shift into the `IS NOT` arm, and `binary_compare` outranks it.
+      not_operator: $ => prec('binary_not', choice(
+        '!',
+        wordOperator('not'),
+      )),
+
+      not_expression: ($) => prec.left('binary_not', seq(
+        field('operator', $.not_operator),
         field('argument', $.expression),
       )),
 
@@ -2013,8 +2069,12 @@ module.exports = function defineGrammar(dialect) {
       ),
 
       identifier: (_) => {
+        // No `\uXXXX` / `\u{\u2026}` escape alternative, unlike the JavaScript grammar
+        // this descends from: CFML has no such escape, and allowing one lets an
+        // identifier start with `\`, which kept six keywords out of keyword
+        // extraction. See `keyword()` at the bottom of this file.
         // @ts-ignore
-        const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+#\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]|\\u[0-9a-fA-F]{4}|\\u\{[0-9a-fA-F]+\}/;
+        const alphanumeric = /[^\x00-\x1F\s\p{Zs}:;`"'@#.,|^&<=>+#\-*/\\%?!~()\[\]{}\uFEFF\u2060\u200B\u2028\u2029]/;
         return token(seq(alphanumeric, repeat(alphanumeric)));
       },
 
@@ -2110,7 +2170,10 @@ module.exports = function defineGrammar(dialect) {
           alias(token(seq(/[sS][tT][aA][tT][iI][cC]/, /\s+/, /[gG][eE][tT]/, /\s*\n/)), 'static get'),
         )),
         // optional('async'),
-        optional(choice('get', 'set', '*')),
+        // The `_kw_` rules, not `'get'` / `'set'`: `_reserved_identifier` already
+        // spells these words with `keyword()`, and a second spelling is a second
+        // token (see `keyword()`).
+        optional(choice($._kw_get, $._kw_set, '*')),
         field('name', $._property_name),
         field('parameters', $.formal_parameters),
         field('body', $.statement_block),
@@ -2249,41 +2312,48 @@ module.exports = function defineGrammar(dialect) {
   });
 
   /**
-   * CFML keywords are case-insensitive. Enumerate the accepted casings as plain
-   * string literals and alias back to the canonical spelling, so node names and
-   * `.scm` queries stay stable regardless of the casing in the source.
+   * CFML keywords are case-insensitive. A keyword is ONE token — a regex with a
+   * character class per letter, `Break` → `/[bB][rR][eE][aA][kK]/` — aliased to
+   * a canonical node name, so `.scm` queries match whatever casing the source
+   * uses. `cfscript/grammar.js` carries the same helper; keep the two in step.
    *
-   * String literals (not regexes) matter here: they stay eligible for
-   * tree-sitter's keyword extraction, so `while_value` still lexes as one
-   * identifier. A `token(prec(1, /[wW].../))` regex would out-lex the longer
-   * identifier and split it.
+   * It used to be a `choice` of four string casings. That put three or four
+   * terminal symbols per keyword into every state the keyword is valid in —
+   * between a quarter and a third of each grammar's `parser.c` — and still
+   * missed interior casings such as `reTURN`.
+   *
+   * The token must stay eligible for keyword extraction (`word: $.identifier`),
+   * because extraction is what makes it safe: the keyword lexer only runs after
+   * `identifier` has matched a whole word, so `while_value` stays one
+   * identifier. A keyword that is NOT extracted is lexed by the main lexer,
+   * where the `prec(1)` below lets it out-lex a longer identifier —
+   * `while_value` becomes `while` + `_value`. `npm run check:keywords` fails if
+   * any keyword is excluded.
+   *
+   * Two things keep every keyword extracted, and both are load-bearing:
+   *
+   * - `prec(1)`. A candidate for extraction has to win a same-length tie against
+   *   `identifier`, and against `regex_flags` (`/[a-z]+/`). A string won those
+   *   on specificity; a regex ties on rule order, which it loses. The
+   *   precedence decides the tie instead.
+   * - `identifier` accepts no `\uXXXX` escape. With one, `identifier` could
+   *   start with `\`, the integer-division operator, and tree-sitter excluded
+   *   the keywords valid straight after an expression — here `else`, `in`,
+   *   `instanceof`, `of`, `while` and `function`, sixteen in `cfscript` —
+   *   leaving them in the main lexer even as strings.
+   *
+   * And a keyword must never also be spelled as a plain string elsewhere
+   * (`'get'` beside `keyword('Get')`): the two are then different tokens
+   * matching the same word, and `<cfset x = { get=false }>` stops parsing.
+   * Reference the `$._kw_<word>` rule instead.
    *
    * @param {string} word PascalCase spelling of the keyword, e.g. `Break`.
    * @param {string} [nodeName] Canonical node name. Defaults to `lowerFirst(word)`;
    *   pass it explicitly for tokens starting with punctuation, e.g. `('<Cf', '<cf')`.
    */
   function keyword(word, nodeName = lowerFirst(word)) {
-    return alias(choice(...casings(word)), nodeName);
-  }
-
-  /**
-   * Casings accepted for a keyword. Keywords are written in PascalCase
-   * (`Break`, `QueryExecute`, `<Cf`) so all four real-world forms fall out of the
-   * one spelling: PascalCase, lowercase, UPPERCASE and camelCase.
-   *
-   * Interior mixed casing such as `reTURN` is deliberately not matched — it does
-   * not occur in real code, and enumerating 2^n variants inflates the lexer.
-   *
-   * @param {string} word
-   * @returns {string[]}
-   */
-  function casings(word) {
-    return [...new Set([
-      word,
-      word.toLowerCase(),
-      word.toUpperCase(),
-      lowerFirst(word),
-    ])];
+    const pattern = word.split('').map((c) => /[a-z]/i.test(c) ? `[${c.toLowerCase()}${c.toUpperCase()}]` : c).join('');
+    return alias(token(prec(1, new RegExp(pattern))), nodeName);
   }
 
   /**
@@ -2297,6 +2367,33 @@ module.exports = function defineGrammar(dialect) {
    */
   function lowerFirst(word) {
     return word.charAt(0).toLowerCase() + word.slice(1);
+  }
+
+  /**
+   * A CFML word operator — `and`, `xor`, `contains`, `does not contain` — as
+   * one case-insensitive regex, the words of a phrase separated by any
+   * whitespace, aliased to its lowercase spelling. Unaliased, the regex is a
+   * hidden token: it has no node in the tree, so `binary_expression`'s
+   * `operator` field is empty and no query can capture it. The alias changes
+   * nothing about how the word lexes, and unlike `keyword()` there is no
+   * `prec`: these operators are not extracted keywords, and were not before.
+   *
+   * The alias is free only while EVERY use of the regex carries it — here and
+   * in `_operator_shaped_name`. tree-sitter then names the token itself and no
+   * production changes. One bare `/[eE][qQ]/` anywhere puts the alias on each
+   * `binary_expression` arm instead, which gives every arm its own production
+   * and stops the states for their right operands merging: +651 states and
+   * +2.2 MB of `parser.c` in `cfml`, with every test green.
+   * `npm run check:keywords` fails on it. `cfscript/grammar.js` carries the
+   * same helper; keep the two in step.
+   *
+   * @param {string} phrase Lowercase words separated by single spaces.
+   */
+  function wordOperator(phrase) {
+    const pattern = phrase.split(' ')
+      .map((word) => word.split('').map((c) => `[${c}${c.toUpperCase()}]`).join(''))
+      .join('\\s+');
+    return alias(new RegExp(pattern), phrase);
   }
 
 

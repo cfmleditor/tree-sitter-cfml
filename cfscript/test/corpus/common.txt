@@ -202,6 +202,46 @@ q = queryExecute(
               (string_fragment))))))))
 
 ================================================================================
+common: queryExecute with single quotes, escaped quotes and quotes inside a hash
+================================================================================
+
+a = queryExecute('SELECT * FROM t');
+b = queryExecute('SELECT * FROM t WHERE n = ''x''');
+c = queryExecute("SELECT * FROM t WHERE n = ""x""");
+d = queryExecute("INSERT INTO #tbl()# ( #cols[ "id" ]# ) VALUES (1)");
+e = queryExecute('SELECT ' & "1");
+
+--------------------------------------------------------------------------------
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text)
+        (query_text)))))
+
+================================================================================
 common: try catch finally
 ================================================================================
 
@@ -295,7 +335,8 @@ component {
       (function_declaration
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (statement_block
           (return_statement
@@ -780,7 +821,8 @@ function doThing( required string arg ) {
   (function_declaration
     (identifier)
     (formal_parameters
-      (parameter_type)
+      (parameter_type
+        (identifier))
       (identifier))
     (statement_block
       (return_statement
@@ -948,7 +990,8 @@ component {
         (identifier)
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (assignment_expression
           (identifier)
@@ -1173,7 +1216,8 @@ component {
         (array_return_suffix)
         (identifier)
         (formal_parameters
-          (parameter_type)
+          (parameter_type
+            (identifier))
           (identifier))
         (statement_block
           (return_statement
@@ -1379,6 +1423,70 @@ c = new java:java.io.File( path );
           (property_identifier))
         (arguments
           (identifier))))))
+
+================================================================================
+common: the new type prefix in any casing, with class: and cfc:
+================================================================================
+
+a = new Java:java.io.File( p );
+b = new CLASS:java.io.File( p );
+c = new CFML:foo.Bar();
+d = new cfc:foo.Bar();
+e = new class.Foo();
+
+--------------------------------------------------------------------------------
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments)))))
 
 ================================================================================
 common: debugger as an ordinary identifier

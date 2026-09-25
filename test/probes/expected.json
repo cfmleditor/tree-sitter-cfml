@@ -20,9 +20,10 @@
     "cfml/new_java_prefix.cfm": "pass",
     "cfml/param_named.cfm": "pass",
     "cfml/param_typed.cfm": "pass",
-    "cfml/prefixed_dynamic_tag.cfm": "fail",
+    "cfml/prefixed_dynamic_tag.cfm": "pass",
     "cfml/script_block_js.cfm": "pass",
     "cfml/single_quoted_attribute_escape.cfm": "pass",
+    "cfml/split_dynamic_tag.cfm": "pass",
     "cfml/var_new_in_cfset.cfc": "pass",
     "cfquery/bitwise_and.cfm": "pass",
     "cfscript/array_param_type.cfc": "pass",
@@ -30,6 +31,7 @@
     "cfscript/cfml_template_after_bare_statement.cfc": "pass",
     "cfscript/commaless_params.cfc": "pass",
     "cfscript/debugger_identifier.cfc": "pass",
+    "cfscript/elseif_clause.cfc": "pass",
     "cfscript/empty_arrow_body.cfc": "pass",
     "cfscript/empty_struct_literal.cfc": "pass",
     "cfscript/final_member_declaration.cfc": "pass",
@@ -47,6 +49,7 @@
     "cfscript/numeric_struct_key_write.cfc": "pass",
     "cfscript/ordered_struct_brace.cfc": "pass",
     "cfscript/param_typed_assignment.cfc": "pass",
+    "cfscript/parenthesized_type_keyword.cfc": "pass",
     "cfscript/script_tag_call.cfc": "pass",
     "cfscript/spaced_param_defaults.cfc": "pass",
     "cfscript/static_block.cfc": "pass",
@@ -59,6 +62,7 @@
     "cfscript/thin_arrow_lambda.cfc": "pass",
     "cfscript/typed_catch_with_var.cfc": "pass",
     "cfscript/typed_reserved_param.cfc": "pass",
+    "cfscript/var_compound_assign.cfc": "pass",
     "cfscript/var_scoped_dotted_name.cfc": "pass"
   }
 }
