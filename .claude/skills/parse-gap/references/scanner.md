@@ -83,6 +83,30 @@ state they used to. Anything that scans to a delimiter — raw text, query and
 script bodies, `#hash#` spans — wants the same guard, and `npm run bench` is the
 only gate that can see it missing.
 
+### The cfml scanner's recovery policy
+
+`common/scanner.h` detects recovery as `AUTOMATIC_SEMICOLON` and `HTML_TEXT`
+both valid — a pair no real parse state has, in cfml or cfquery — and then
+offers only tokens anchored at a real `<` or at end of input: a comment,
+`<`-led text, an implicit end tag. Before #145 it offered nothing, because a
+content branch returned its scan's `false` as the scanner's answer. Every other
+branch was measured doing harm in recovery, and three of the ways are worth
+knowing before adding a branch:
+
+- a scan that reads a *name* at the current position reads one from arbitrary
+  text, and an end-tag name that matches the stack pops it;
+- at `/>` every delimiter is valid, so whichever branch comes first wins — a CF
+  self-closing delimiter popped the enclosing `<cffunction>` at a
+  `<cfreturn … />`;
+- free-running text mutates nothing and still made things worse: offering it
+  cut ERROR bytes by half overall but let recovery swallow whole files that had
+  cost 107 bytes before.
+
+**Measure recovery by bytes inside outermost ERROR nodes per failing file, not
+by the scan's error count.** A better recovery often *adds* an error line — one
+large ERROR becomes two small ones — and the scan reads that as a regression.
+Compare per file, and gate on "no file worse" as well as the total.
+
 ## Infinite loops
 
 `advance()` is a **no-op once `lexer->lookahead` is 0**. So any loop of the form

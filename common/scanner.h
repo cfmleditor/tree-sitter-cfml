@@ -2091,34 +2091,62 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
         }
     }
 
-    if (VS(valid_symbols, CF_XML_CONTENT, count)) {
-        return scan_cfxml_content(scanner, lexer, is_cfquery_context);
-    }
+    // Error recovery (#145). While recovering, tree-sitter marks every external
+    // token valid, and this pair is valid together nowhere else — checked against
+    // `ts_external_scanner_states` in both cfml and cfquery.
+    //
+    // Recovery used to get nothing from this scanner: the CF_XML_CONTENT branch
+    // below returned its scan's `false` as the scanner's answer before any other
+    // branch ran, so recovery had only internal tokens to resynchronise on, and a
+    // single bad construct could cost everything to the end of the file.
+    //
+    // It now gets exactly the tokens anchored at a real `<` or at end of input —
+    // a comment, `<`-led text, an implicit end tag — and nothing else. Each of
+    // the other branches was measured doing harm there (the corpus audit in
+    // #145): the content scans run to a delimiter from wherever recovery happens
+    // to be; the default branch reads a "tag name" from arbitrary text, and an
+    // end-tag name that matches the stack pops it; at `/>` every delimiter is
+    // valid, so the first — a CF self-closing delimiter — wins and pops the
+    // enclosing `<cffunction>` at a `<cfreturn … />`. Free-running text is the
+    // subtle one: it pops nothing, yet offering it made recovery take paths that
+    // swallowed a whole file where the local error had cost 107 bytes, and it is
+    // left out for that reason alone.
+    const bool recovering = VS(valid_symbols, AUTOMATIC_SEMICOLON, count) && VS(valid_symbols, HTML_TEXT, count);
 
-    if (VS(valid_symbols, CF_QUERY_CONTENT, count)) {
-        return scan_cfquery_content(scanner, lexer, is_cfquery_context);
-    }
+    if (recovering) {
+        if (lexer->lookahead != '<' && lexer->lookahead != 0) {
+            return false;
+        }
+    } else {
+        if (VS(valid_symbols, CF_XML_CONTENT, count)) {
+            return scan_cfxml_content(scanner, lexer, is_cfquery_context);
+        }
 
-    if (VS(valid_symbols, CF_SCRIPT_CONTENT, count)) {
-        return scan_cfscript_content(scanner, lexer, is_cfquery_context);
-    }
+        if (VS(valid_symbols, CF_QUERY_CONTENT, count)) {
+            return scan_cfquery_content(scanner, lexer, is_cfquery_context);
+        }
 
-    if (VS(valid_symbols, CF_SAVECONTENT_BODY_CFML, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_HTML, count) ||
-        VS(valid_symbols, CF_SAVECONTENT_BODY_SCRIPT, count) ||
-        VS(valid_symbols, CF_SAVECONTENT_BODY_CSS, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_XML, count) ||
-        VS(valid_symbols, CF_SAVECONTENT_BODY_SQL, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_RAW, count)) {
-        if (scan_cfsavecontent_body_type(scanner, lexer, valid_symbols, count, is_cfquery_context)) {
+        if (VS(valid_symbols, CF_SCRIPT_CONTENT, count)) {
+            return scan_cfscript_content(scanner, lexer, is_cfquery_context);
+        }
+
+        if (VS(valid_symbols, CF_SAVECONTENT_BODY_CFML, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_HTML, count) ||
+            VS(valid_symbols, CF_SAVECONTENT_BODY_SCRIPT, count) ||
+            VS(valid_symbols, CF_SAVECONTENT_BODY_CSS, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_XML, count) ||
+            VS(valid_symbols, CF_SAVECONTENT_BODY_SQL, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_RAW, count)) {
+            if (scan_cfsavecontent_body_type(scanner, lexer, valid_symbols, count, is_cfquery_context)) {
+                return true;
+            }
+        }
+
+        if (VS(valid_symbols, CF_SAVECONTENT_CONTENT, count)) {
+            return scan_cfsavecontent_content(scanner, lexer, is_cfquery_context);
+        }
+
+
+        if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(scanner, lexer, is_cfquery_context, valid_symbols, count, false)) {
             return true;
         }
-    }
-
-    if (VS(valid_symbols, CF_SAVECONTENT_CONTENT, count)) {
-        return scan_cfsavecontent_content(scanner, lexer, is_cfquery_context);
-    }
-
-
-    if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(scanner, lexer, is_cfquery_context, valid_symbols, count, false)) {
-        return true;
     }
 
     switch (lexer->lookahead) {
@@ -2242,6 +2270,10 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                     return true;
                 }
             }
+    }
+
+    if (recovering) {
+        return false;
     }
 
     if (VS(valid_symbols, AUTOMATIC_SEMICOLON, count)) {
