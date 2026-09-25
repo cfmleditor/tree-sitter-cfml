@@ -79,6 +79,12 @@ jobs:
           cache: 'npm'
       - run: npm install
       - run: npm test
+      # Every keyword() token is a prec(1) regex, which is safe only while it is
+      # keyword-extracted; an excluded one out-lexes longer identifiers in the
+      # states where it is valid. `tree-sitter generate` excludes silently, so
+      # read the committed tables and fail on any keyword the keyword lexer does
+      # not own.
+      - run: npm run check:keywords
       # The probes are minimal reductions of constructs found in real CFML, with
       # their current pass/fail status committed in test/probes/expected.json.
       # This fails on drift in either direction, so a gap closing is as loud as a

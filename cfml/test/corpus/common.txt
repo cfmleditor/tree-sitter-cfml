@@ -168,11 +168,11 @@ common: word operators in a cfif
           (identifier)
           (string
             (string_fragment)))
-        (binary_expression
-          (unary_expression
-            (unary_operator)
-            (identifier))
-          (identifier))))
+        (not_expression
+          (not_operator)
+          (binary_expression
+            (identifier)
+            (identifier)))))
     (html_text)))
 
 ================================================================================
@@ -1480,6 +1480,75 @@ common: new with a java: type prefix and a dotted java path
     (cf_selfclose_void_tag_end)))
 
 ================================================================================
+common: the new type prefix in any casing, with class: and cfc:
+================================================================================
+
+<cfset a = new Java:java.io.File( p )>
+<cfset b = new CLASS:java.io.File( p )>
+<cfset c = new CFML:foo.Bar()>
+<cfset d = new cfc:foo.Bar()>
+<cfset e = new class.Foo()>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments
+          (identifier))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments
+          (identifier))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments)))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments)))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments)))
+    (cf_selfclose_void_tag_end)))
+
+================================================================================
 common: debugger as an ordinary identifier
 ================================================================================
 
@@ -1606,3 +1675,75 @@ common: thin-arrow lambda
             (property_identifier))
           (arguments))))
     (cf_selfclose_void_tag_end)))
+
+================================================================================
+common: CFML operator precedence in a cfif
+================================================================================
+
+<cfif a & b EQ c AND NOT d IS NOT e>x</cfif>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_if_tag
+    (binary_expression
+      (binary_expression
+        (binary_expression
+          (identifier)
+          (identifier))
+        (identifier))
+      (not_expression
+        (not_operator)
+        (binary_expression
+          (identifier)
+          (identifier))))
+    (html_text)))
+
+================================================================================
+common: hash expression openers Lucee accepts
+================================================================================
+
+<cfoutput># x #, #<!--- note --->y#, #.5#, #ñame#</cfoutput>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_output_tag
+    (hash_expression
+      (identifier))
+    (html_text)
+    (hash_expression
+      (cf_comment)
+      (identifier))
+    (html_text)
+    (hash_expression
+      (number))
+    (html_text)
+    (hash_expression
+      (identifier))))
+
+================================================================================
+common: a hash closing inside a string is not a new opener
+================================================================================
+
+<cfoutput><cfif listFind(a, 'Admin;#b.c()#;0')>x</cfif></cfoutput>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_output_tag
+    (cf_if_tag
+      (call_expression
+        (identifier)
+        (arguments
+          (identifier)
+          (string
+            (string_fragment)
+            (hash_expression
+              (call_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (arguments)))
+            (string_fragment))))
+      (html_text))))

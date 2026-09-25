@@ -118,13 +118,6 @@ after a statement, PR #120) and
 [#114](https://github.com/cfmleditor/tree-sitter-cfml/issues/114) (a `<` opening
 a run of template text, PR #121).
 
-### [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82) — fixed, PR pending
-
-`savecontent` as an expression, through an external token gated on a following
-`{`. **+28 parse states**, corpus 642 → 641 across 119 → 118 files, zero changed
-trees. The plan entry in [`FAILING-PATTERNS.md`](FAILING-PATTERNS.md) is
-rewritten as a record, including that the issue's "3 Lucee files" is really one
-site: the other two use the statement form, which already parsed.
 
 ### [#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98) — fixed, PR pending
 

@@ -144,6 +144,42 @@
   "#" @punctuation.special)
 
 (unary_operator) @operator
+(not_operator "!" @operator)
+
+; CFML's word operators. `@keyword.operator` falls back to `@keyword` where a
+; theme lacks it. Scoped to their parents: the same tokens also spell a
+; parameter name (`function f( array eq )`), inside an `identifier`.
+(not_operator "not" @keyword.operator)
+
+(binary_expression
+  operator: [
+    "and"
+    "or"
+    "xor"
+    "eqv"
+    "imp"
+    "mod"
+    "eq"
+    "equal"
+    "is"
+    "not"
+    "neq"
+    "not equal"
+    "lt"
+    "lte"
+    "le"
+    "less than"
+    "less than or equal to"
+    "gt"
+    "gte"
+    "ge"
+    "greater than"
+    "greater than or equal to"
+    "contains"
+    "ct"
+    "does not contain"
+    "nct"
+  ] @keyword.operator)
 
 (spread_element
   "..." @operator)
@@ -186,6 +222,7 @@
   "**="
   "/"
   "/="
+  "\\"
   "%"
   "%="
   "<"
@@ -330,6 +367,15 @@
 ; Reachable inside `#...#` through a `function(...)` expression or a typed
 ; arrow-function parameter, even though a `<cfscript>` block is not.
 (parameter_type) @type
+
+; The parent capture above covers a built-in type name, which is a leaf. A
+; custom type and a dotted path are not: they carry `identifier` children, and
+; `(identifier) @variable` earlier in this file matches those over the very same
+; range. Which of the two a given highlighter renders is not something this file
+; should leave to chance, so the children are captured as `@type` explicitly,
+; after the generic rule they need to beat.
+(parameter_type (identifier) @type)
+(parameter_type (path (identifier) @type))
 ; `User[] v` - one token, so the anonymous "[" / "]" rule cannot reach it.
 (array_return_suffix) @punctuation.bracket
 

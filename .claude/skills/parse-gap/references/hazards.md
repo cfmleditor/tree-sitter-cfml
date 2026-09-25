@@ -38,6 +38,29 @@ ERROR. Fixed by using a plain `$.identifier` for the type and letting what
 follows disambiguate — a name means the typed form, an `=` means the attribute
 form.
 
+**Extraction itself can silently fail, and then the keyword splits words.**
+Every `keyword()` token is a `prec(1)` regex. Extracted, it is harmless: the
+keyword lexer only runs after `identifier` has matched the whole word. Not
+extracted, it sits in the main lexer, where the precedence beats longest-match
+and `while_value` lexes as `while` + `_value` — in the states where `while` is
+valid, so a test may or may not happen to cover it. `generate` excludes a
+candidate without a warning; only `generate --log` (grep `Keywords - exclude`)
+says so. Three things have excluded keywords here, each far from the keyword:
+a JavaScript `\uXXXX` escape in `identifier` (it could then start with `\`,
+colliding with integer division), the regex tying with `regex_flags` on rule
+order before `prec(1)` was added, and a plain `'get'` string elsewhere beside
+`keyword('Get')`. `npm run check:keywords` catches all three from the committed
+tables, and is part of the gate.
+
+**The word operators have a sibling hazard that costs size instead.** They are
+not keywords; `wordOperator()` aliases each regex so a query can capture it.
+The alias is free only while every use of the regex carries it, which lets
+tree-sitter name the token itself. A single bare `/[eE][qQ]/` anywhere puts
+the alias back on every `binary_expression` arm, and the arms' right-operand
+states stop merging: about 13% more states and 2–3 MB of `parser.c`, with
+every test green. `_operator_shaped_name` is the easy place to do it, since it
+lists the same words. `check:keywords` catches this too.
+
 The general move: **when a rule needs a word in a slot, reach for
 `$.identifier` before reaching for `keyword()`**. A closed set of keyword tokens
 feels more precise and is usually more dangerous. If you genuinely need keyword

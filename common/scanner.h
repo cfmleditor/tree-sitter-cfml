@@ -446,6 +446,103 @@ static TagNameResult scan_tag_name(TSLexer *lexer, bool is_cfquery_context) {
     return result;
 }
 
+// Longest tag name, prefix and `#…#` spans together, that a dynamic suffix may
+// build. Past it the suffix is not read at all and the tag behaves as it did
+// before #132. The tag stack is serialized into a fixed buffer with each name
+// capped at UINT8_MAX bytes: a name cut short there would stop matching its end
+// tag after a reparse, and long names crowd out the tags that legitimately nest.
+#define DYNAMIC_TAG_NAME_MAX 64
+
+// `<h#field.getLevel()#>`, `<dc:#container#>` — an HTML tag name with a static
+// prefix and a `#…#` expression run straight onto it (#132). `scan_tag_name`
+// stops at the `#`, so the start tag used to read as `<h` with an attribute
+// named `#…#`, and its end tag `</h#…#>` could not parse at all, taking the rest
+// of the file with it. Only a span with no whitespace before it counts:
+// `<input #attrs#>` is an attribute and stays one.
+//
+// Entered on the `#`. Appends the span and any name characters after it to
+// `name`, uppercased like the rest of the name, so an end tag spelled the same
+// way matches through the ordinary tag stack — the expression's text is
+// compared, not its value. On false `name` is restored, but what was read stays
+// consumed: a caller producing the name token must have called `mark_end`
+// first, and one scanning lookahead only need not.
+static bool scan_tag_name_hash_span(TSLexer *lexer, String *name) {
+    uint32_t keep = name->size;
+    bool ok = true;
+
+    array_push(name, '#');
+    advance(lexer);
+    // `##` is a literal hash, not an expression.
+    if (lexer->lookahead == '#') ok = false;
+    while (ok && lexer->lookahead != '#') {
+        int32_t c = lexer->lookahead;
+        if (c == 0 || c == '\n' || c == '\r' || c == '<' || c == '>' ||
+            name->size >= DYNAMIC_TAG_NAME_MAX) {
+            ok = false;
+            break;
+        }
+        array_push(name, cf_toupper(c));
+        advance(lexer);
+    }
+    if (ok) {
+        array_push(name, '#');
+        advance(lexer);
+        while (cf_isalnum(lexer->lookahead) || lexer->lookahead == '-' ||
+               lexer->lookahead == '_' || lexer->lookahead == ':') {
+            if (name->size >= DYNAMIC_TAG_NAME_MAX) {
+                ok = false;
+                break;
+            }
+            array_push(name, cf_toupper(lexer->lookahead));
+            advance(lexer);
+        }
+    }
+    if (!ok) name->size = keep;
+    return ok;
+}
+
+// `</#expr#>` with no element open for it to close (#132, second shape).
+// Taffy's anythingtoxml opens `<#name#>` in one `<cfoutput>` and closes it in a
+// later one, so by the time the end tag arrives its element is gone — the first
+// block's end closed it. A stray static end tag is an `erroneous_end_tag`
+// already; a stray dynamic one fell into `scan_end_tag_name`'s `</#` branch,
+// which answers END_TAG_NAME whether or not that is valid, and here it is not:
+// the parse failed and took the rest of the file. It is an `erroneous_end_tag`
+// now too, named by the whole `#…#` span. Nothing is pushed or popped, so no
+// length cap applies; a span must still close on its line without `<` or `>`.
+static bool scan_erroneous_dynamic_end_tag_name(TSLexer *lexer) {
+    bool any = false;
+    while (lexer->lookahead == '#') {
+        advance(lexer);
+        // `##` is a literal hash, not an expression.
+        if (lexer->lookahead == '#') break;
+        while (lexer->lookahead != '#' && lexer->lookahead != 0 && lexer->lookahead != '\n' &&
+               lexer->lookahead != '\r' && lexer->lookahead != '<' && lexer->lookahead != '>') {
+            advance(lexer);
+        }
+        if (lexer->lookahead != '#') break;
+        advance(lexer);
+        while (cf_isalnum(lexer->lookahead) || lexer->lookahead == '-' ||
+               lexer->lookahead == '_' || lexer->lookahead == ':') {
+            advance(lexer);
+        }
+        lexer->mark_end(lexer);
+        any = true;
+    }
+    lexer->result_symbol = ERRONEOUS_END_TAG_NAME;
+    return any;
+}
+
+// Extend a start or end tag's name through any `#…#` spans run onto it, as the
+// name token: each span that closes moves the token's end past it.
+static void scan_dynamic_tag_name_suffix(TSLexer *lexer, TagNameResult *result, bool is_cfquery_context) {
+    if (result->is_cf_tag || is_cfquery_context || lexer->lookahead != '#') return;
+    lexer->mark_end(lexer);
+    while (lexer->lookahead == '#' && scan_tag_name_hash_span(lexer, &result->tag_name)) {
+        lexer->mark_end(lexer);
+    }
+}
+
 static bool scan_comment(TSLexer *lexer, bool is_cfquery_context) {
     if (lexer->lookahead != '-') {
         return false;
@@ -887,8 +984,16 @@ static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer, bool is_cfque
                 break;
             }
             advance(lexer);
-        } else {
+        } else if (delimiter_index > 0) {
+            // A partial match failed. What it consumed is content, and the
+            // character that broke it may begin the delimiter itself: in
+            // `x <</cfscript>` it is the `<` of the close tag. Advancing past
+            // it here hid the close tag, and the rest of the document with it.
+            // Only `<` can restart a match, and it only opens the delimiter,
+            // so re-testing this one character is enough.
             delimiter_index = 0;
+            lexer->mark_end(lexer);
+        } else {
             advance(lexer);
             lexer->mark_end(lexer);
         }
@@ -929,8 +1034,16 @@ static bool scan_cfxml_content(Scanner *scanner, TSLexer *lexer, bool is_cfquery
                 break;
             }
             advance(lexer);
-        } else {
+        } else if (delimiter_index > 0) {
+            // A partial match failed. What it consumed is content, and the
+            // character that broke it may begin the delimiter itself: in
+            // `x <</cfscript>` it is the `<` of the close tag. Advancing past
+            // it here hid the close tag, and the rest of the document with it.
+            // Only `<` can restart a match, and it only opens the delimiter,
+            // so re-testing this one character is enough.
             delimiter_index = 0;
+            lexer->mark_end(lexer);
+        } else {
             advance(lexer);
             lexer->mark_end(lexer);
         }
@@ -940,6 +1053,12 @@ static bool scan_cfxml_content(Scanner *scanner, TSLexer *lexer, bool is_cfquery
     return true;
 }
 
+
+// How deep the string / `#…#` nesting inside a script body is tracked before
+// the scanner stops counting. Real CFML nests two or three levels; past this
+// the extra openers are simply not pushed, which degrades to the old
+// string-blind behaviour for that stretch rather than misreading it.
+#define CF_SCRIPT_CONTEXT_DEPTH 16
 
 static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context) {
 
@@ -965,15 +1084,166 @@ static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer, bool is_cfqu
     size_t delimiter_index = 0;
     size_t end_delim_len = 4 + tag_len;
 
+    // A `</cfscript>` written inside a string or a comment does not end the
+    // block. Lucee agrees: `cfscript` has a `tagdependent` body handled by
+    // `CFMLScriptTransformer`, which ends it through `isFinish()` between
+    // complete statements, so a string is consumed by the expression parser
+    // long before the tag inside it could be noticed, and no raw search for
+    // `</cfscript>` happens there at all. Without this the block ended at the
+    // literal, the rest of it became template text and the real closing tag an
+    // erroneous end tag (#56).
+    //
+    // Comments are skipped for a reason the strings make necessary rather than
+    // as a bonus: CFML escapes a quote by doubling it and has no backslash
+    // escape, so a lone apostrophe in `// don't do this` would otherwise open a
+    // string that runs to the end of the file and swallow the closing tag. The
+    // three comment forms a script body accepts are all handled — `//`, `/* */`
+    // and the tag comment `<!--- --->`, which `tag_comment_in_script_body.cfc`
+    // pins as legal here.
+    // The context stack: a quote character means "inside a string of that
+    // kind", 0 means "inside a `#…#` interpolation". CFML nests the two
+    // arbitrarily — `'"#replaceNoCase( v, '"', '""', 'all' )#"'` is one
+    // string containing an interpolation containing three more strings
+    // (RustCFML's test_tag_return_nested_quote_interpolation.cfm) — so a single
+    // "are we in a string" flag desynchronises on the first one and every
+    // later `</cfscript>` lands in the wrong place.
+    int32_t context[CF_SCRIPT_CONTEXT_DEPTH];
+    unsigned depth = 0;
+
     while (lexer->lookahead) {
+        if (depth > 0 && context[depth - 1] != 0) {
+            int32_t quote = context[depth - 1];
+            if (lexer->lookahead == quote) {
+                advance(lexer);
+                lexer->mark_end(lexer);
+                // `""` and `''` are CFML's escape for a quote inside a string
+                // of the same kind, so the string continues.
+                if (lexer->lookahead == quote) {
+                    advance(lexer);
+                    lexer->mark_end(lexer);
+                    continue;
+                }
+                depth--;
+                continue;
+            }
+            if (lexer->lookahead == '#') {
+                advance(lexer);
+                lexer->mark_end(lexer);
+                // `##` is an escaped hash, not an interpolation.
+                if (lexer->lookahead == '#') {
+                    advance(lexer);
+                    lexer->mark_end(lexer);
+                    continue;
+                }
+                if (depth < CF_SCRIPT_CONTEXT_DEPTH) context[depth++] = 0;
+                continue;
+            }
+            advance(lexer);
+            lexer->mark_end(lexer);
+            continue;
+        }
+
+        if (depth > 0 && lexer->lookahead == '#') {
+            // The interpolation ends here.
+            advance(lexer);
+            lexer->mark_end(lexer);
+            depth--;
+            continue;
+        }
+
+        if (lexer->lookahead == '"' || lexer->lookahead == '\'') {
+            if (depth < CF_SCRIPT_CONTEXT_DEPTH) context[depth++] = lexer->lookahead;
+            delimiter_index = 0;
+            advance(lexer);
+            lexer->mark_end(lexer);
+            continue;
+        }
+
+        if (lexer->lookahead == '/') {
+            delimiter_index = 0;
+            advance(lexer);
+            lexer->mark_end(lexer);
+            if (lexer->lookahead == '/') {
+                // Every line terminator ends it, `\r` included: ColdBox ships
+                // CR-only files (cbi18n's `i18n.cfc`, and RustCFML has a test
+                // fixture named after the problem), and stopping only at `\n`
+                // made a single `//` comment swallow the whole file.
+                while (lexer->lookahead && lexer->lookahead != '\n' && lexer->lookahead != '\r' &&
+                       lexer->lookahead != 0x2028 && lexer->lookahead != 0x2029) {
+                    advance(lexer);
+                    lexer->mark_end(lexer);
+                }
+            } else if (lexer->lookahead == '*') {
+                advance(lexer);
+                lexer->mark_end(lexer);
+                while (lexer->lookahead) {
+                    if (lexer->lookahead == '*') {
+                        advance(lexer);
+                        lexer->mark_end(lexer);
+                        if (lexer->lookahead == '/') {
+                            advance(lexer);
+                            lexer->mark_end(lexer);
+                            break;
+                        }
+                        continue;
+                    }
+                    advance(lexer);
+                    lexer->mark_end(lexer);
+                }
+            }
+            continue;
+        }
+
+        if (lexer->lookahead == '<') {
+            // `<` is the first character of the close delimiter, so it is
+            // consumed WITHOUT `mark_end`: the token has to be able to end in
+            // front of it. What follows decides whether it did open the close
+            // tag, a CFML comment, or nothing.
+            advance(lexer);
+
+            if (lexer->lookahead == '!') {
+                advance(lexer);
+                unsigned dashes = 0;
+                while (lexer->lookahead == '-') {
+                    dashes++;
+                    advance(lexer);
+                }
+                if (dashes >= 3) skip_cfml_comment_body(lexer);
+                // The comment, and the `<` that opened it, are content.
+                lexer->mark_end(lexer);
+                delimiter_index = 0;
+                continue;
+            }
+
+            if (cf_toupper(lexer->lookahead) == end_delimiter[1]) {
+                delimiter_index = 2;
+                advance(lexer);
+                continue;
+            }
+
+            // An ordinary `<` — a comparison, or `<=`. It is content, so the
+            // token may now cover it.
+            delimiter_index = 0;
+            lexer->mark_end(lexer);
+            continue;
+        }
+
         if (cf_toupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
             delimiter_index++;
             if (delimiter_index == end_delim_len) {
                 break;
             }
             advance(lexer);
-        } else {
+        } else if (delimiter_index > 0) {
+            // A partial match failed. What it consumed is content, and the
+            // character that broke it may begin the delimiter itself: in
+            // `x <</cfscript>` it is the `<` of the close tag. Advancing past
+            // it here hid the close tag, and the rest of the document with it.
+            // Only `<` can restart a match, and it only opens the delimiter,
+            // so re-testing this one character is enough.
             delimiter_index = 0;
+            lexer->mark_end(lexer);
+        } else {
             advance(lexer);
             lexer->mark_end(lexer);
         }
@@ -1188,8 +1458,14 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_cont
                 break;
             }
             advance(lexer);
-        } else {
+        } else if (delimiter_index > 0) {
+            // A failed partial match: keep what it consumed as content and
+            // re-test this character, which may open the delimiter (`</s</script>`).
+            // See scan_cfquery_content.
             delimiter_index = 0;
+            lexer->mark_end(lexer);
+            has_content = true;
+        } else {
             advance(lexer);
             lexer->mark_end(lexer);
             has_content = true;
@@ -1243,6 +1519,12 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
     if (result.tag_name.size == 0 && !lexer->eof(lexer)) {
         array_delete(&result.tag_name);
         return false;
+    }
+    // The same name the start or end tag will build, so a `</h#x#>` can close
+    // what is open inside its `<h#x#>`. Lookahead only: this token is zero-width,
+    // so what the span reads is never part of it.
+    if (!result.is_cf_tag && !is_cfquery_context) {
+        while (lexer->lookahead == '#' && scan_tag_name_hash_span(lexer, &result.tag_name)) {}
     }
 
     if (result.is_cf_tag && !is_closing_tag &&
@@ -1405,6 +1687,8 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         return false;
     }
 
+    if (!is_cf_context) scan_dynamic_tag_name_suffix(lexer, &result, is_cfquery_context);
+
     // bool is_cf = result.is_cf_tag || is_cf_context;
     Tag tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
 
@@ -1547,6 +1831,8 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
         return false;
     }
 
+    if (!is_cf_context) scan_dynamic_tag_name_suffix(lexer, &result, is_cfquery_context);
+
     // printf("scan_end_tag_name: tag=%.*s, is_cf_context=%d, tags.size=%d, cf_tags.size=%d\n",
     // (int)result.tag_name.size, result.tag_name.contents, is_cf_context,
     // scanner->tags.size, scanner->cf_tags.size);
@@ -1637,37 +1923,58 @@ static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer, bo
     return false;
 }
 
-// Check if the current position matches a CFML word operator (case-insensitive).
-static bool scan_cfml_word_operator(TSLexer *lexer) {
-    char buf[11] = {0};
-    int len = 0;
-    for (; len < 10 && cf_isalpha(lexer->lookahead); len++) {
-        buf[len] = cf_tolower(lexer->lookahead);
+// CFML's word operators. A line that starts with one continues the expression
+// on the line before it, so no automatic semicolon may go in front of it —
+// `x = a ⏎ CONTAINS b` is one statement, not `x = a;` and a stray
+// `CONTAINS b`. Keep in step with `binary_expression`'s operator table.
+// Multi-word operators are matched as whole phrases below, not listed here, so
+// that `does`, `greater` and `less` stay ordinary identifiers on their own.
+static const char *const CFML_WORD_OPERATORS[] = {
+    "and", "or", "xor", "eqv", "imp", "not",
+    "eq", "neq", "equal", "is", "gt", "gte", "ge", "lt", "lte", "le",
+    "ct", "nct", "contains", "mod", "in", "instanceof",
+};
+
+// Reads the word at the lexer into `buf`, lower-cased, and reports whether it
+// is a WHOLE ASCII word — the only shape an operator has. A digit, `_`, `$` or
+// non-ASCII letter straight after the letters means an identifier such as
+// `in_stock`, `or_else`, `eq$` or `contains2`, which must NOT suppress the
+// semicolon; neither must a word longer than the buffer. Consumes with `skip`,
+// so it is lookahead only: the caller has already fixed the token with
+// `mark_end`.
+static bool scan_whole_word(TSLexer *lexer, char *buf, unsigned size) {
+    unsigned len = 0;
+    while ((lexer->lookahead >= 'a' && lexer->lookahead <= 'z') ||
+           (lexer->lookahead >= 'A' && lexer->lookahead <= 'Z')) {
+        if (len + 1 >= size) return false;
+        buf[len++] = (char)cf_tolower(lexer->lookahead);
         skip(lexer);
     }
-    bool at_end = !cf_isalnum(lexer->lookahead);
-    if (!at_end) return false;
+    buf[len] = '\0';
+    return len > 0 && !cf_isalnum(lexer->lookahead) && lexer->lookahead != '_' &&
+           lexer->lookahead != '$';
+}
 
-    return (len == 2 && (
-        (buf[0] == 'o' && buf[1] == 'r') ||
-        (buf[0] == 'e' && buf[1] == 'q') ||
-        (buf[0] == 'g' && buf[1] == 't') ||
-        (buf[0] == 'g' && buf[1] == 'e') ||
-        (buf[0] == 'l' && buf[1] == 't') ||
-        (buf[0] == 'l' && buf[1] == 'e') ||
-        (buf[0] == 'i' && buf[1] == 'n')
-    )) || (len == 3 && (
-        (buf[0] == 'a' && buf[1] == 'n' && buf[2] == 'd') ||
-        (buf[0] == 'n' && buf[1] == 'e' && buf[2] == 'q') ||
-        (buf[0] == 'n' && buf[1] == 'o' && buf[2] == 't') ||
-        (buf[0] == 'g' && buf[1] == 't' && buf[2] == 'e') ||
-        (buf[0] == 'l' && buf[1] == 't' && buf[2] == 'e') ||
-        (buf[0] == 'm' && buf[1] == 'o' && buf[2] == 'd')
-    )) || (len == 10 &&
-        buf[0] == 'i' && buf[1] == 'n' && buf[2] == 's' && buf[3] == 't' &&
-        buf[4] == 'a' && buf[5] == 'n' && buf[6] == 'c' && buf[7] == 'e' &&
-        buf[8] == 'o' && buf[9] == 'f'
-    );
+static bool scan_next_word_is(TSLexer *lexer, const char *expected) {
+    while (cf_isspace(lexer->lookahead)) skip(lexer);
+    char buf[12];
+    return scan_whole_word(lexer, buf, sizeof buf) && strcmp(buf, expected) == 0;
+}
+
+// Whether the word at the lexer is a CFML word operator, case-insensitively.
+static bool scan_cfml_word_operator(TSLexer *lexer) {
+    char word[12];
+    if (!scan_whole_word(lexer, word, sizeof word)) return false;
+    for (unsigned i = 0; i < sizeof(CFML_WORD_OPERATORS) / sizeof(CFML_WORD_OPERATORS[0]); i++) {
+        if (strcmp(word, CFML_WORD_OPERATORS[i]) == 0) return true;
+    }
+    if (strcmp(word, "does") == 0) {       // DOES NOT CONTAIN
+        return scan_next_word_is(lexer, "not") && scan_next_word_is(lexer, "contain");
+    }
+    if (strcmp(word, "greater") == 0 || strcmp(word, "less") == 0) {   // … THAN [OR EQUAL TO]
+        return scan_next_word_is(lexer, "than");
+    }
+    return false;
 }
 
 static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, bool *scanned_comment, bool is_cfquery_context) {
@@ -1681,10 +1988,14 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
 
         if (lexer->lookahead == '/') {
             WhitespaceResult result = scan_whitespace_and_comments(lexer, scanned_comment, false, is_cfquery_context);
-            if (result == false) {
+            // Compared with the enum, as cfscript/src/scanner.c does. This was
+            // `result == false` / `result == true`: the first is REJECT by
+            // luck, the second is NO_NEWLINE — a comment WITHOUT a newline —
+            // which is the opposite of the ACCEPT the other scanner tests.
+            if (result == REJECT) {
                 return false;
             }
-            if (result == true && comment_condition && lexer->lookahead != ',' && lexer->lookahead != '=') {
+            if (result == ACCEPT && comment_condition && lexer->lookahead != ',' && lexer->lookahead != '=') {
                 return true;
             }
         }
@@ -1751,19 +2062,15 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
             skip(lexer);
             return lexer->lookahead != '=';
 
-        // Don't insert a semicolon before CFML word operators
-        // (and, or, eq, neq, not, gt, gte, ge, lt, lte, le, mod, in, instanceof)
-        case 'i':
-        case 'a': case 'A':
-        case 'o': case 'O':
-        case 'e': case 'E':
-        case 'n': case 'N':
-        case 'g': case 'G':
-        case 'l': case 'L':
-        case 'm': case 'M':
-            return !scan_cfml_word_operator(lexer);
-
         default:
+            // A letter may start a CFML word operator, in any casing. Every
+            // letter goes through the check rather than a list of first
+            // letters: the list had drifted from the operator table and missed
+            // `IS`, `XOR`, `CONTAINS`, `DOES NOT CONTAIN`, uppercase `IN` and
+            // more, each of which then split into a second statement.
+            if (cf_isalpha(lexer->lookahead)) {
+                return !scan_cfml_word_operator(lexer);
+            }
             break;
     }
 
@@ -1933,34 +2240,62 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
         }
     }
 
-    if (VS(valid_symbols, CF_XML_CONTENT, count)) {
-        return scan_cfxml_content(scanner, lexer, is_cfquery_context);
-    }
+    // Error recovery (#145). While recovering, tree-sitter marks every external
+    // token valid, and this pair is valid together nowhere else — checked against
+    // `ts_external_scanner_states` in both cfml and cfquery.
+    //
+    // Recovery used to get nothing from this scanner: the CF_XML_CONTENT branch
+    // below returned its scan's `false` as the scanner's answer before any other
+    // branch ran, so recovery had only internal tokens to resynchronise on, and a
+    // single bad construct could cost everything to the end of the file.
+    //
+    // It now gets exactly the tokens anchored at a real `<` or at end of input —
+    // a comment, `<`-led text, an implicit end tag — and nothing else. Each of
+    // the other branches was measured doing harm there (the corpus audit in
+    // #145): the content scans run to a delimiter from wherever recovery happens
+    // to be; the default branch reads a "tag name" from arbitrary text, and an
+    // end-tag name that matches the stack pops it; at `/>` every delimiter is
+    // valid, so the first — a CF self-closing delimiter — wins and pops the
+    // enclosing `<cffunction>` at a `<cfreturn … />`. Free-running text is the
+    // subtle one: it pops nothing, yet offering it made recovery take paths that
+    // swallowed a whole file where the local error had cost 107 bytes, and it is
+    // left out for that reason alone.
+    const bool recovering = VS(valid_symbols, AUTOMATIC_SEMICOLON, count) && VS(valid_symbols, HTML_TEXT, count);
 
-    if (VS(valid_symbols, CF_QUERY_CONTENT, count)) {
-        return scan_cfquery_content(scanner, lexer, is_cfquery_context);
-    }
+    if (recovering) {
+        if (lexer->lookahead != '<' && lexer->lookahead != 0) {
+            return false;
+        }
+    } else {
+        if (VS(valid_symbols, CF_XML_CONTENT, count)) {
+            return scan_cfxml_content(scanner, lexer, is_cfquery_context);
+        }
 
-    if (VS(valid_symbols, CF_SCRIPT_CONTENT, count)) {
-        return scan_cfscript_content(scanner, lexer, is_cfquery_context);
-    }
+        if (VS(valid_symbols, CF_QUERY_CONTENT, count)) {
+            return scan_cfquery_content(scanner, lexer, is_cfquery_context);
+        }
 
-    if (VS(valid_symbols, CF_SAVECONTENT_BODY_CFML, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_HTML, count) ||
-        VS(valid_symbols, CF_SAVECONTENT_BODY_SCRIPT, count) ||
-        VS(valid_symbols, CF_SAVECONTENT_BODY_CSS, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_XML, count) ||
-        VS(valid_symbols, CF_SAVECONTENT_BODY_SQL, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_RAW, count)) {
-        if (scan_cfsavecontent_body_type(scanner, lexer, valid_symbols, count, is_cfquery_context)) {
+        if (VS(valid_symbols, CF_SCRIPT_CONTENT, count)) {
+            return scan_cfscript_content(scanner, lexer, is_cfquery_context);
+        }
+
+        if (VS(valid_symbols, CF_SAVECONTENT_BODY_CFML, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_HTML, count) ||
+            VS(valid_symbols, CF_SAVECONTENT_BODY_SCRIPT, count) ||
+            VS(valid_symbols, CF_SAVECONTENT_BODY_CSS, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_XML, count) ||
+            VS(valid_symbols, CF_SAVECONTENT_BODY_SQL, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_RAW, count)) {
+            if (scan_cfsavecontent_body_type(scanner, lexer, valid_symbols, count, is_cfquery_context)) {
+                return true;
+            }
+        }
+
+        if (VS(valid_symbols, CF_SAVECONTENT_CONTENT, count)) {
+            return scan_cfsavecontent_content(scanner, lexer, is_cfquery_context);
+        }
+
+
+        if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(scanner, lexer, is_cfquery_context, valid_symbols, count, false)) {
             return true;
         }
-    }
-
-    if (VS(valid_symbols, CF_SAVECONTENT_CONTENT, count)) {
-        return scan_cfsavecontent_content(scanner, lexer, is_cfquery_context);
-    }
-
-
-    if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(scanner, lexer, is_cfquery_context, valid_symbols, count, false)) {
-        return true;
     }
 
     switch (lexer->lookahead) {
@@ -2061,6 +2396,9 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             }
 
             if (VS(valid_symbols, ERRONEOUS_END_TAG_NAME, count)) {
+                if (lexer->lookahead == '#' && !is_cfquery_context) {
+                    return scan_erroneous_dynamic_end_tag_name(lexer);
+                }
                 return scan_end_tag_name(scanner, lexer, false, is_cfquery_context);
             } else if (VS(valid_symbols, ERRONEOUS_CF_END_TAG_NAME, count)) {
                 return scan_end_tag_name(scanner, lexer, true, is_cfquery_context);
@@ -2081,6 +2419,10 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                     return true;
                 }
             }
+    }
+
+    if (recovering) {
+        return false;
     }
 
     if (VS(valid_symbols, AUTOMATIC_SEMICOLON, count)) {

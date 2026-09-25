@@ -1,6 +1,6 @@
 {
   "name": "@cfmleditor/tree-sitter-cfml",
-  "version": "0.26.35",
+  "version": "0.26.37",
   "description": "CFML grammar for tree-sitter",
   "repository": "github:cfmleditor/tree-sitter-cfml",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "node-gyp-build": "^4.8.4"
   },
   "devDependencies": {
-    "eslint": "^10.9.1",
+    "eslint": "^10.11.0",
     "eslint-config-treesitter": "^1.0.2",
     "globals": "^17.12.0",
     "prebuildify": "^6.0.1",
@@ -65,6 +65,8 @@
     "scan": "node scripts/scan.js",
     "scan:examples": "node scripts/scan.js examples --isolate --retries 3 --expect examples/expected.json",
     "probe": "node scripts/probe.js",
+    "check:keywords": "node scripts/check-keywords.js",
+    "check:size": "node scripts/check-size.js",
     "bench": "node scripts/bench.js",
     "fuzz": "node scripts/fuzz.js",
     "corpus:fetch": "node scripts/fetch-corpus.js",

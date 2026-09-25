@@ -126,9 +126,9 @@ is naming a witness and not a construct.
 | Nodes | Files | Pattern | Example | Probe |
 |---|---|---|---|---|
 | 71 | 1 | CSS in `<style>` with many `#` tokens | Lucee's `debug/Simple.cfc`: 42 `#` across ID selectors and hex colours | — |
-| 48 | 10 | Dynamic tag name with a static prefix or namespace | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
+| ~~48~~ | ~~10~~ | Dynamic tag name with a static prefix or namespace — **fixed in #154** | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
 | 30 | 1 | Dotted key in a struct literal — **tractable, rejected on cost** | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
-| 19 | 13 | Dynamic tag opened and closed in different blocks | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | — |
+| ~~19~~ 2 | ~~13~~ 1 | Dynamic tag opened and closed in different blocks — **stray close fixed in #154**; a fully dynamic element left open at the end of its block still fails (Mura) | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | `split_dynamic_tag.cfm` |
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
 | 4 | 2 | A start tag whose `>` sits inside a `<cfif>` branch — **tractable one way, rejected: the fix breaks the spelling that works** | `<a title="Back" <cfif x>⏎ href="a">⏎<cfelse>⏎ href="b">⏎</cfif>` | — |
 
@@ -168,15 +168,22 @@ expensive half is [#98](https://github.com/cfmleditor/tree-sitter-cfml/issues/98
 which carries all four narrowings measured against it.
 
 The plain `<#expr#>` dynamic tag form parses when open and close sit in the same
-block; the prefixed, namespaced and split-across-blocks variants do not.
-`_start_tag_name` is an external token and open/close matching happens in the
-scanner's tag stack, so all three are scanner work rather than grammar rules.
+block. The prefixed and namespaced variants, and a stray close in a later block,
+were scanner work and parse as of #154 — see the cost table for what they
+actually took. What is left is a fully dynamic element: `<#expr#>` is never
+pushed onto the scanner's tag stack, so the grammar pairs it with whatever end
+tag comes next and nothing can close it implicitly (`<cfoutput><#t#>x</cfoutput>`).
 
 `Simple.cfc` resists reduction. Hex colours, ID selectors and `<cfif>` inside
 `<style>` all parse individually, and the shortest failing extract is 20 lines
 of its stylesheet — whatever the trigger is, it emerges from accumulation.
 
 ## What is left over — ~212 nodes, ~90 files
+
+> **Superseded by [`CORPUS-FAILURES.md`](CORPUS-FAILURES.md)**, which lists all
+> 119 failing files individually with a reduced cause for each, and leaves no
+> residue. This section is kept because its worked example is still worth
+> reading; read its *numbers* as history.
 
 **Computed as a residual, not measured directly:** 653 total − 265 not-grammar
 defects − 176 genuine gaps = 212 nodes, and 126 files − 9 − 27 = 90 files. It
@@ -283,9 +290,9 @@ Three properties of this grammar drive most of the risk:
 |---|---|---|---|
 | Dotted key in a struct literal | **Low** | **Low** to write, **rejected on runtime cost** | Cheap to implement — one conflict, not the five the estimate assumed, by putting the dotted form in `pair` and `cf_pair` instead of widening `_property_name`. Rejected anyway: that one conflict is live at **every member access in the language**, and measured a 1.8× slowdown on cfscript for 30 nodes in one file. Lexing the key as a single token, the trick that made array return types free, is five times worse again and breaks `f( a.b )`. See [#42](https://github.com/cfmleditor/tree-sitter-cfml/pull/42) |
 | CSS in `<style>` with many `#` | **Med-High** | **Med** | Does not reduce below 20 lines, so the mechanism is not yet understood — understand it before estimating again. One file, but a whole stylesheet is a plausible shape for any CFML admin template |
-| Dynamic tag opened and closed in different blocks | **High** | **High** | Scanner tag-stack work on the shared header. 13 files but only 19 nodes: the surrounding markup still recovers, so the errors stay small |
+| Dynamic tag opened and closed in different blocks | ~~**High**~~ **Low** for the close side | ~~**High**~~ **Low** for the close side | **The close side is done, and the rating was wrong for it:** the open tag's element already ended with its block, so the close needed no tag-stack work at all — the scanner answered END_TAG_NAME where only ERRONEOUS_END_TAG_NAME was valid, and reading the `#…#` span as an erroneous name was the whole fix (8 Taffy files, no new states). The High rating does fit what remains: a fully dynamic element is never on the tag stack, and putting it there touches every end-tag decision. One file |
 | A start tag whose `>` sits inside a `<cfif>` branch | **Low** to write | **rejected: no fix keeps both spellings** | Making `start_tag` terminable by the conditional costs **+18 states** narrowed to `cf_if_tag` (+128 for any `_cf_tags`) and makes the construct parse — while breaking `<a <cfif x>href="a"<cfelse>href="b"</cfif>>`, which parses today and is pinned by two corpus tests. Precedence does not choose between them and a declared conflict reads as **unnecessary**, because the divergence is lexical, not structural: `>` is an external token that is `_close_tag_delim` in one reading and `html_text` in the other, and the choice is already made when `</cfif>` reduces. The issue's second shape — the tag *opening* inside the branches — would need the tag and the conditional to overlap and is not representable at all. 2 files. See [#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119) and `LIMITATIONS.md` |
-| Prefixed / namespaced dynamic tag | **High** | **High** | Same tag stack, same shared header. Called the largest cluster at the last baseline; now 48 nodes |
+| ~~Prefixed / namespaced dynamic tag~~ | ~~**High**~~ **Low** | ~~**High**~~ **Low** | **Done in #154, two steps below the rating in both columns.** No grammar change and no new states: the scanner reads a `#…#` span run onto a name as part of the name, and the existing tag stack matches the whole spelling. The one real risk was the stack's serialized size, handled by a 64-byte cap on dynamic names. 11 files to zero |
 | Function-listener `f():callback` | ~~**Med-High**~~ **Low** | ~~**High**~~ **Low** | **Done, and the rating was wrong by two steps in both columns.** Shipped as one rule, one declared conflict and **+176 parse states**; see [#87](https://github.com/cfmleditor/tree-sitter-cfml/issues/87). The reasoning that produced Med-High/High — "another `:` reading in the most contested character in the grammar" — is the part to correct. Contention is not a property of the *character*; it is a property of the *state and lookahead* where two readings meet. `:` serves five rules, but the only one reachable after a `call_expression` is the ternary, so the conflict is live at `call` `:` and nowhere else — about 1,160 sites against 26k ternaries in the 15k-file corpus, and unmeasurable even on a workload saturated with it. A **second** wrong conclusion sat on top of it: an earlier attempt reported the rule "fails to generate", having tried only the resolutions the error message lists in order rather than the conflict declaration it also offers. Two readings that diverge in the *parser* are what conflicts are for; only two that diverge in the *lexer* are the hard case. The genuinely expensive half was the one nobody rated: `new_expression` as the target, +578 states, now the residual gap |
 | Subscript with more than one pair | **High** | **High** | Re-admits `pair` inside subscripts — the ambiguity the casing branch removed. One file, non-idiomatic syntax |
 | ~~Comma-less function parameters~~ ([#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49)) | ~~**High**~~ **Med** | ~~**High**~~ **Med** | **Fixed, and the previous re-rating was right to raise it but wrong about why.** The earlier note said "the newline is not a soft separator the grammar can express" — it is, as an external token: +34 states, no conflicts, `cfscript` only, corpus 682 → 667 nodes across 140 → 130 files with 11 files improved and none regressed. What it could NOT be is a grammar rule: `optional(',')` fails to generate, since `a b` is ambiguous between "type `a` named `b`" and two parameters, and that conflict is live at every parameter list. Two things cost a cycle each and are recorded in the scanner. The dispatcher branch has to run FIRST and TERMINAL (it consumes whitespace before it can decide, and tree-sitter does not rewind between functions inside one `scan()` call) — but a `(` is ambiguous with an arrow function's parameter list, so the token is valid inside every parenthesised expression, and the first version ate the space before a `?` and broke `x = a ? ( b ? 1 : 2 ) : 3`. Excluding the competing symbols outright does not work either: at the position it must fire, TERNARY, ELVIS, ASI and LOGICAL_OR are all live, so the ternary gets its turn inside the branch instead. Then the separator's "next token" test has to be tight: accepting anything that was not `)` or `,` took `wheels/Controller.cfc` from **0 to 96** error nodes on multi-line booleans, so it now requires a letter or `_` AND excludes CFML's word operators (`AND`, `EQ`, `CONTAINS`, …), which begin with letters. |
@@ -481,12 +488,88 @@ Corpus 645 → 644 across 121 → 120 files — Lucee's `All.cfc`, the file that
 enumerates modifier spellings, goes to zero. Zero changed trees. Probe
 `cfscript/interleaved_return_type.cfc` records `pass`.
 
+### A built-in type name in parentheses — **done**
+
+`x = (date)` was an ERROR while `x = date` parsed. Shipped at **+0 parse states
+in all three grammars**, corpus 642 → 625 across 119 → 118 files.
+
+**The cause is the arrow-function lookahead.** Inside `(` the parser keeps
+`formal_parameters` alive, so the word lexes at parameter-start, where
+`parameter_type` spelled it as a `keyword()` token and no identifier reading was
+reachable. The failing set was exactly that keyword list minus the entries with
+an identifier alternative: `any`, `string`, `numeric`, `xml`, `binary`,
+`boolean`, `date`, `guid`, `void`, `function` failed; `query` and `component`
+did not, because they are also in `_reserved_identifier`, and `struct`, `array`
+and `time` did not, because they are not keyword tokens at all. **That the
+failing set is predicted exactly by one list is what identified the cause** —
+worth trying before reducing, when a construct fails for some words and not
+others.
+
+**Two fixes, both +0 states, and the obvious one is wrong.**
+
+| attempt | result |
+|---|---|
+| add the type words to `_reserved_identifier` | fixes it, **breaks 5 corpus tests** |
+| drop the `keyword()` spellings from `parameter_type` | fixes it, 9 tests to update, shape change |
+
+The first is the natural reading of "restore the identifier reading" and it
+poisons `tag_statement`: `param boolean x` loses its type to an ERROR, because
+that rule's type slot is a plain `$.identifier` — deliberately, with a comment
+saying so — and the new keyword tokens out-lex it. This is the `loop array=data`
+hazard in mirror image: there, adding keywords broke identifiers; here, adding
+identifier-aliased keywords broke a slot that needed the bare identifier.
+
+The second is what `hazards.md` recommends and what `tag_statement` already
+does. It costs a **published tree-shape change**: `parameter_type` had a leaf
+for built-in names and `(parameter_type (identifier))` for custom ones, and this
+unifies them on the second. `treediff` reports **2,844 files** and a
+single-node-type delta of **+27,361 `identifier`** — one node type moving one
+direction, which is how you tell a shape change from a behaviour change. The
+nine corpus-test updates were checked mechanically, not by eye: every deleted
+line is `(parameter_type)` and every added line is `(parameter_type` or
+`(identifier))`.
+
+**Estimating note.** This was booked at 17 nodes in 1 file, and that is what it
+delivered — but the construct is generic CFML and the corpus only shows what
+people wrote. It was shipped on that reasoning, not on the node count.
+
+### `elseif` as one word — **done**
+
+`if ( a ) { … } elseif ( b ) { … }`. Shipped at **+12 states** in `cfscript`
+only, corpus 642 → 640 across 119 → 117 files.
+
+**This is the case the corpus scan is worst at, and it is worth knowing the
+shape.** The construct did not fail loudly. `elseif ( c ) { … }` lexed `elseif`
+as an ordinary identifier and parsed as a `tag_statement` — a clean parse of a
+tree where the branch is a *sibling* of the `if` instead of its `alternative`.
+Only a second `elseif`, or an `elseif` before `else`, left the `else` with
+nothing to attach to and produced an ERROR. So the scan reported **2 files** and
+the truth was **5**; `npm run treediff` found the other three, one of them
+Lucee's own `org/lucee/cfml/Query.cfc`.
+
+The rule of thumb this supports: when a construct has a keyword head and the
+grammar has no rule for it, check what it parses *as* before concluding it is
+unsupported. `tag_statement` and `call_expression` will absorb almost any
+`word ( … ) { … }` without complaint.
+
+**The `common/define-grammar.js` copy was written, measured, and reverted.**
+It costs +15 cfml and +12 cfquery states and is unreachable: `<cfscript>` bodies
+are `cf_script_content` and script components are `cf_component_content`, both
+opaque to that grammar and injected into `cfscript`. No `cfml` or `cfquery`
+corpus test has ever produced an `else_clause`. The same reasoning that kept
+[#116](https://github.com/cfmleditor/tree-sitter-cfml/issues/116) and
+[#117](https://github.com/cfmleditor/tree-sitter-cfml/issues/117) out of that
+file applies here — but this time the rule was added first and the state count
+is what said no. Writing it and reverting it took one build.
+
 ### [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82) — `savecontent` as an expression — **done**
 
 Shipped by the route the plan named: an external token in
 `cfscript/src/scanner.c` that matches the word only when the next non-whitespace
 character is `{`. **+28 states** (5489 → 5517), no new conflicts, zero changed
 trees, fuzz clean. Corpus 642 → 641 across 119 → 118 files.
+
+**Adobe ColdFusion 2021+ syntax, which Lucee does not accept yet.** Adobe added `myContent = savecontent { … }` in the 2021 release. Lucee's script parser (6.2, 7.0 and master) reaches `savecontent` only as a statement, so there it is a compile error; `_LDEV3623.cfc` is Lucee's disabled test for LDEV-3623, the request to match Adobe. Merged for the Adobe code this grammar is used to edit, knowing it is not portable CFML.
 
 **One defect survived every check in the gate and was found by reading a tree.**
 The first working version advanced over the word, called `mark_end`, then
@@ -513,23 +596,33 @@ protects is pinned by tests rather than left to the reader: `savecontent = 1`,
 `x = savecontent.foo`, `savecontent()`, `savecontent = { a: 1 }` and the
 statement form all keep their existing trees.
 
-### [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56) — `</cfscript>` inside a string literal
+### [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56) — `</cfscript>` inside a string — **done**
 
-**The issue's open question is answered and its text is stale.** It says the
-behaviour was never checked against an engine; `LIMITATIONS.md` now records it as
-a confirmed divergence from Lucee, read from `CFMLScriptTransformer`: the
-`tagdependent` body ends through `isFinish()` between complete statements, so the
-string is consumed by the expression parser and no raw-text search for
-`</cfscript>` happens at all. Say so on the issue before starting.
+Shipped. Corpus 642 → **638** error nodes across 119 → 117 files, zero changed
+trees, fuzz clean, no `STATE_COUNT` movement (scanner only).
 
-**Work:** track string state in the raw-text scan in `common/scanner.h`. It lands
-in `cfml` and `cfquery` together, and a bug there breaks every `<cfscript>` block
-rather than an edge case, so the corpus scan and `treediff` are the gate, not the
-test suite. Probe `cfml/close_tag_in_script_string.cfm` flips when it works.
+**The plan called this the riskiest item left and was right, but not about
+which part.** It warned about the recovery-cost trap; that never materialised,
+because the scan was already character-by-character and bounded by the close
+tag. What actually bit was three separate assumptions about CFML's own lexical
+rules, each of which passed `npm test` and was caught only by the corpus scan:
 
-**Watch for** the recovery-cost trap in `.claude/skills/parse-gap/references/scanner.md`:
-a string-aware scan that also runs during error recovery turns a bounded scan
-into an EOF scan. Check `valid_symbols` for the recovery signature first.
+The four rows below were measured during the experiment, against the baseline
+of 640 that `master` carried at the time; the shipped figures above are the
+re-measurement after rebasing.
+
+| attempt | corpus | what it missed |
+|---|---|---|
+| track strings | 640 → **7,932** | the apostrophe in `// don't` opens a string that runs to EOF — comments have to be skipped too |
+| + skip comments | 640 → **705** | a line comment ends at `\r` as well: ColdBox ships CR-only files, one of them worth 667 nodes on its own |
+| + `\r` as a line end | 640 → **705** | a string and a `#…#` interpolation nest arbitrarily, so one boolean desynchronises on `'"#f( v, '"', '""' )#"'` |
+| + a context stack | 640 → **636** | — |
+
+The lesson generalises past this issue: **a raw-text scan that starts caring
+about one lexical construct has signed up for all of them.** Strings imply
+comments, comments imply line terminators, and interpolation implies nesting.
+The corpus scan is what makes that discoverable — three of those four rows are
+green on `npm test`.
 
 ### [#116](https://github.com/cfmleditor/tree-sitter-cfml/issues/116) — an arrow function with an empty body — **done**
 
