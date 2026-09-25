@@ -446,6 +446,71 @@ static TagNameResult scan_tag_name(TSLexer *lexer, bool is_cfquery_context) {
     return result;
 }
 
+// Longest tag name, prefix and `#…#` spans together, that a dynamic suffix may
+// build. Past it the suffix is not read at all and the tag behaves as it did
+// before #132. The tag stack is serialized into a fixed buffer with each name
+// capped at UINT8_MAX bytes: a name cut short there would stop matching its end
+// tag after a reparse, and long names crowd out the tags that legitimately nest.
+#define DYNAMIC_TAG_NAME_MAX 64
+
+// `<h#field.getLevel()#>`, `<dc:#container#>` — an HTML tag name with a static
+// prefix and a `#…#` expression run straight onto it (#132). `scan_tag_name`
+// stops at the `#`, so the start tag used to read as `<h` with an attribute
+// named `#…#`, and its end tag `</h#…#>` could not parse at all, taking the rest
+// of the file with it. Only a span with no whitespace before it counts:
+// `<input #attrs#>` is an attribute and stays one.
+//
+// Entered on the `#`. Appends the span and any name characters after it to
+// `name`, uppercased like the rest of the name, so an end tag spelled the same
+// way matches through the ordinary tag stack — the expression's text is
+// compared, not its value. On false `name` is restored, but what was read stays
+// consumed: a caller producing the name token must have called `mark_end`
+// first, and one scanning lookahead only need not.
+static bool scan_tag_name_hash_span(TSLexer *lexer, String *name) {
+    uint32_t keep = name->size;
+    bool ok = true;
+
+    array_push(name, '#');
+    advance(lexer);
+    // `##` is a literal hash, not an expression.
+    if (lexer->lookahead == '#') ok = false;
+    while (ok && lexer->lookahead != '#') {
+        int32_t c = lexer->lookahead;
+        if (c == 0 || c == '\n' || c == '\r' || c == '<' || c == '>' ||
+            name->size >= DYNAMIC_TAG_NAME_MAX) {
+            ok = false;
+            break;
+        }
+        array_push(name, cf_toupper(c));
+        advance(lexer);
+    }
+    if (ok) {
+        array_push(name, '#');
+        advance(lexer);
+        while (cf_isalnum(lexer->lookahead) || lexer->lookahead == '-' ||
+               lexer->lookahead == '_' || lexer->lookahead == ':') {
+            if (name->size >= DYNAMIC_TAG_NAME_MAX) {
+                ok = false;
+                break;
+            }
+            array_push(name, cf_toupper(lexer->lookahead));
+            advance(lexer);
+        }
+    }
+    if (!ok) name->size = keep;
+    return ok;
+}
+
+// Extend a start or end tag's name through any `#…#` spans run onto it, as the
+// name token: each span that closes moves the token's end past it.
+static void scan_dynamic_tag_name_suffix(TSLexer *lexer, TagNameResult *result, bool is_cfquery_context) {
+    if (result->is_cf_tag || is_cfquery_context || lexer->lookahead != '#') return;
+    lexer->mark_end(lexer);
+    while (lexer->lookahead == '#' && scan_tag_name_hash_span(lexer, &result->tag_name)) {
+        lexer->mark_end(lexer);
+    }
+}
+
 static bool scan_comment(TSLexer *lexer, bool is_cfquery_context) {
     if (lexer->lookahead != '-') {
         return false;
@@ -1274,6 +1339,12 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         array_delete(&result.tag_name);
         return false;
     }
+    // The same name the start or end tag will build, so a `</h#x#>` can close
+    // what is open inside its `<h#x#>`. Lookahead only: this token is zero-width,
+    // so what the span reads is never part of it.
+    if (!result.is_cf_tag && !is_cfquery_context) {
+        while (lexer->lookahead == '#' && scan_tag_name_hash_span(lexer, &result.tag_name)) {}
+    }
 
     if (result.is_cf_tag && !is_closing_tag &&
         ((result.tag_name.size == 4 && memcmp(result.tag_name.contents, "ELSE", 4) == 0) ||
@@ -1435,6 +1506,8 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         return false;
     }
 
+    if (!is_cf_context) scan_dynamic_tag_name_suffix(lexer, &result, is_cfquery_context);
+
     // bool is_cf = result.is_cf_tag || is_cf_context;
     Tag tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
 
@@ -1576,6 +1649,8 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
         array_delete(&result.tag_name);
         return false;
     }
+
+    if (!is_cf_context) scan_dynamic_tag_name_suffix(lexer, &result, is_cfquery_context);
 
     // printf("scan_end_tag_name: tag=%.*s, is_cf_context=%d, tags.size=%d, cf_tags.size=%d\n",
     // (int)result.tag_name.size, result.tag_name.contents, is_cf_context,
