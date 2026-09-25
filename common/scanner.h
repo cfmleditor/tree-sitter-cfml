@@ -1068,6 +1068,12 @@ static bool scan_cfxml_content(Scanner *scanner, TSLexer *lexer, bool is_cfquery
 }
 
 
+// How deep the string / `#…#` nesting inside a script body is tracked before
+// the scanner stops counting. Real CFML nests two or three levels; past this
+// the extra openers are simply not pushed, which degrades to the old
+// string-blind behaviour for that stretch rather than misreading it.
+#define CF_SCRIPT_CONTEXT_DEPTH 16
+
 static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context) {
 
     if (scanner->cf_tags.size == 0) {
@@ -1092,7 +1098,150 @@ static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer, bool is_cfqu
     size_t delimiter_index = 0;
     size_t end_delim_len = 4 + tag_len;
 
+    // A `</cfscript>` written inside a string or a comment does not end the
+    // block. Lucee agrees: `cfscript` has a `tagdependent` body handled by
+    // `CFMLScriptTransformer`, which ends it through `isFinish()` between
+    // complete statements, so a string is consumed by the expression parser
+    // long before the tag inside it could be noticed, and no raw search for
+    // `</cfscript>` happens there at all. Without this the block ended at the
+    // literal, the rest of it became template text and the real closing tag an
+    // erroneous end tag (#56).
+    //
+    // Comments are skipped for a reason the strings make necessary rather than
+    // as a bonus: CFML escapes a quote by doubling it and has no backslash
+    // escape, so a lone apostrophe in `// don't do this` would otherwise open a
+    // string that runs to the end of the file and swallow the closing tag. The
+    // three comment forms a script body accepts are all handled — `//`, `/* */`
+    // and the tag comment `<!--- --->`, which `tag_comment_in_script_body.cfc`
+    // pins as legal here.
+    // The context stack: a quote character means "inside a string of that
+    // kind", 0 means "inside a `#…#` interpolation". CFML nests the two
+    // arbitrarily — `'"#replaceNoCase( v, '"', '""', 'all' )#"'` is one
+    // string containing an interpolation containing three more strings
+    // (RustCFML's test_tag_return_nested_quote_interpolation.cfm) — so a single
+    // "are we in a string" flag desynchronises on the first one and every
+    // later `</cfscript>` lands in the wrong place.
+    int32_t context[CF_SCRIPT_CONTEXT_DEPTH];
+    unsigned depth = 0;
+
     while (lexer->lookahead) {
+        if (depth > 0 && context[depth - 1] != 0) {
+            int32_t quote = context[depth - 1];
+            if (lexer->lookahead == quote) {
+                advance(lexer);
+                lexer->mark_end(lexer);
+                // `""` and `''` are CFML's escape for a quote inside a string
+                // of the same kind, so the string continues.
+                if (lexer->lookahead == quote) {
+                    advance(lexer);
+                    lexer->mark_end(lexer);
+                    continue;
+                }
+                depth--;
+                continue;
+            }
+            if (lexer->lookahead == '#') {
+                advance(lexer);
+                lexer->mark_end(lexer);
+                // `##` is an escaped hash, not an interpolation.
+                if (lexer->lookahead == '#') {
+                    advance(lexer);
+                    lexer->mark_end(lexer);
+                    continue;
+                }
+                if (depth < CF_SCRIPT_CONTEXT_DEPTH) context[depth++] = 0;
+                continue;
+            }
+            advance(lexer);
+            lexer->mark_end(lexer);
+            continue;
+        }
+
+        if (depth > 0 && lexer->lookahead == '#') {
+            // The interpolation ends here.
+            advance(lexer);
+            lexer->mark_end(lexer);
+            depth--;
+            continue;
+        }
+
+        if (lexer->lookahead == '"' || lexer->lookahead == '\'') {
+            if (depth < CF_SCRIPT_CONTEXT_DEPTH) context[depth++] = lexer->lookahead;
+            delimiter_index = 0;
+            advance(lexer);
+            lexer->mark_end(lexer);
+            continue;
+        }
+
+        if (lexer->lookahead == '/') {
+            delimiter_index = 0;
+            advance(lexer);
+            lexer->mark_end(lexer);
+            if (lexer->lookahead == '/') {
+                // Every line terminator ends it, `\r` included: ColdBox ships
+                // CR-only files (cbi18n's `i18n.cfc`, and RustCFML has a test
+                // fixture named after the problem), and stopping only at `\n`
+                // made a single `//` comment swallow the whole file.
+                while (lexer->lookahead && lexer->lookahead != '\n' && lexer->lookahead != '\r' &&
+                       lexer->lookahead != 0x2028 && lexer->lookahead != 0x2029) {
+                    advance(lexer);
+                    lexer->mark_end(lexer);
+                }
+            } else if (lexer->lookahead == '*') {
+                advance(lexer);
+                lexer->mark_end(lexer);
+                while (lexer->lookahead) {
+                    if (lexer->lookahead == '*') {
+                        advance(lexer);
+                        lexer->mark_end(lexer);
+                        if (lexer->lookahead == '/') {
+                            advance(lexer);
+                            lexer->mark_end(lexer);
+                            break;
+                        }
+                        continue;
+                    }
+                    advance(lexer);
+                    lexer->mark_end(lexer);
+                }
+            }
+            continue;
+        }
+
+        if (lexer->lookahead == '<') {
+            // `<` is the first character of the close delimiter, so it is
+            // consumed WITHOUT `mark_end`: the token has to be able to end in
+            // front of it. What follows decides whether it did open the close
+            // tag, a CFML comment, or nothing.
+            advance(lexer);
+
+            if (lexer->lookahead == '!') {
+                advance(lexer);
+                unsigned dashes = 0;
+                while (lexer->lookahead == '-') {
+                    dashes++;
+                    advance(lexer);
+                }
+                if (dashes >= 3) skip_cfml_comment_body(lexer);
+                // The comment, and the `<` that opened it, are content.
+                lexer->mark_end(lexer);
+                delimiter_index = 0;
+                continue;
+            }
+
+            if (cf_toupper(lexer->lookahead) == end_delimiter[1]) {
+                delimiter_index = 2;
+                advance(lexer);
+                continue;
+            }
+
+            // An ordinary `<` — a comparison, or `<=`. It is content, so the
+            // token may now cover it.
+            delimiter_index = 0;
+            lexer->mark_end(lexer);
+            continue;
+        }
+
         if (cf_toupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
             delimiter_index++;
             if (delimiter_index == end_delim_len) {
