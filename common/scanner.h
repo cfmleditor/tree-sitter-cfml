@@ -887,8 +887,16 @@ static bool scan_cfquery_content(Scanner *scanner, TSLexer *lexer, bool is_cfque
                 break;
             }
             advance(lexer);
-        } else {
+        } else if (delimiter_index > 0) {
+            // A partial match failed. What it consumed is content, and the
+            // character that broke it may begin the delimiter itself: in
+            // `x <</cfscript>` it is the `<` of the close tag. Advancing past
+            // it here hid the close tag, and the rest of the document with it.
+            // Only `<` can restart a match, and it only opens the delimiter,
+            // so re-testing this one character is enough.
             delimiter_index = 0;
+            lexer->mark_end(lexer);
+        } else {
             advance(lexer);
             lexer->mark_end(lexer);
         }
@@ -929,8 +937,16 @@ static bool scan_cfxml_content(Scanner *scanner, TSLexer *lexer, bool is_cfquery
                 break;
             }
             advance(lexer);
-        } else {
+        } else if (delimiter_index > 0) {
+            // A partial match failed. What it consumed is content, and the
+            // character that broke it may begin the delimiter itself: in
+            // `x <</cfscript>` it is the `<` of the close tag. Advancing past
+            // it here hid the close tag, and the rest of the document with it.
+            // Only `<` can restart a match, and it only opens the delimiter,
+            // so re-testing this one character is enough.
             delimiter_index = 0;
+            lexer->mark_end(lexer);
+        } else {
             advance(lexer);
             lexer->mark_end(lexer);
         }
@@ -972,8 +988,16 @@ static bool scan_cfscript_content(Scanner *scanner, TSLexer *lexer, bool is_cfqu
                 break;
             }
             advance(lexer);
-        } else {
+        } else if (delimiter_index > 0) {
+            // A partial match failed. What it consumed is content, and the
+            // character that broke it may begin the delimiter itself: in
+            // `x <</cfscript>` it is the `<` of the close tag. Advancing past
+            // it here hid the close tag, and the rest of the document with it.
+            // Only `<` can restart a match, and it only opens the delimiter,
+            // so re-testing this one character is enough.
             delimiter_index = 0;
+            lexer->mark_end(lexer);
+        } else {
             advance(lexer);
             lexer->mark_end(lexer);
         }
@@ -1188,8 +1212,14 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_cont
                 break;
             }
             advance(lexer);
-        } else {
+        } else if (delimiter_index > 0) {
+            // A failed partial match: keep what it consumed as content and
+            // re-test this character, which may open the delimiter (`</s</script>`).
+            // See scan_cfquery_content.
             delimiter_index = 0;
+            lexer->mark_end(lexer);
+            has_content = true;
+        } else {
             advance(lexer);
             lexer->mark_end(lexer);
             has_content = true;
@@ -1702,10 +1732,14 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
 
         if (lexer->lookahead == '/') {
             WhitespaceResult result = scan_whitespace_and_comments(lexer, scanned_comment, false, is_cfquery_context);
-            if (result == false) {
+            // Compared with the enum, as cfscript/src/scanner.c does. This was
+            // `result == false` / `result == true`: the first is REJECT by
+            // luck, the second is NO_NEWLINE — a comment WITHOUT a newline —
+            // which is the opposite of the ACCEPT the other scanner tests.
+            if (result == REJECT) {
                 return false;
             }
-            if (result == true && comment_condition && lexer->lookahead != ',' && lexer->lookahead != '=') {
+            if (result == ACCEPT && comment_condition && lexer->lookahead != ',' && lexer->lookahead != '=') {
                 return true;
             }
         }

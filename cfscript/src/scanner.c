@@ -941,7 +941,13 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
     //     return true;
     // }
 
-    if (valid_symbols[QUERY_TEXT] && scan_query_text(lexer)) {
+    // Stands down in error recovery like the three branches above: QUERY_TEXT
+    // is valid alongside AUTOMATIC_SEMICOLON only in the recovery state, where
+    // every external token is, and unguarded it scanned to the next `"` —
+    // or to EOF — at every recovery step, and could return a query_text token
+    // from anywhere.
+    if (valid_symbols[QUERY_TEXT] && !valid_symbols[AUTOMATIC_SEMICOLON] &&
+        scan_query_text(lexer)) {
         return true;
     }
 

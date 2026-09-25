@@ -3179,3 +3179,43 @@ an unquoted struct as a tag attribute value is rejected (#115)
         (cf_attribute_name)))
     (cf_selfclose_void_tag_end))
   (cf_component_close_tag))
+
+================================================================================
+a < just before a close delimiter does not hide it
+================================================================================
+
+<cfscript>x = 1 <</cfscript>
+<cfquery name="q">SELECT 1 <</cfquery>
+<cfxml variable="x"><a/><</cfxml>
+<script>a </s</script>
+<p>after</p>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_script_tag
+    (cf_script_content))
+  (cf_query_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_query_content))
+  (cf_xml_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_xml_content))
+  (script_element
+    (start_tag
+      (tag_name))
+    (script_text)
+    (end_tag
+      (tag_name)))
+  (element
+    (start_tag
+      (tag_name))
+    (html_text)
+    (end_tag
+      (tag_name))))

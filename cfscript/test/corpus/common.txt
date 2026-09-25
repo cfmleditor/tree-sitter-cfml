@@ -1385,6 +1385,70 @@ c = new java:java.io.File( path );
           (identifier))))))
 
 ================================================================================
+common: the new type prefix in any casing, with class: and cfc:
+================================================================================
+
+a = new Java:java.io.File( p );
+b = new CLASS:java.io.File( p );
+c = new CFML:foo.Bar();
+d = new cfc:foo.Bar();
+e = new class.Foo();
+
+--------------------------------------------------------------------------------
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (property_identifier))
+        (arguments
+          (identifier)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (type_prefix)
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (new_expression
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (arguments)))))
+
+================================================================================
 common: debugger as an ordinary identifier
 ================================================================================
 

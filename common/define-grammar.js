@@ -1664,25 +1664,25 @@ module.exports = function defineGrammar(dialect) {
       _operator_shaped_name: ($) => choice(
         $._kw_in,
         $._kw_instanceof,
-        /[aA][nN][dD]/,
-        /[oO][rR]/,
-        /[xX][oO][rR]/,
-        /[eE][qQ][vV]/,
-        /[iI][mM][pP]/,
-        /[mM][oO][dD]/,
-        /[lL][tT]/,
-        /[lL][tT][eE]/,
-        /[lL][eE]/,
-        /[eE][qQ]/,
-        /[eE][qQ][uU][aA][lL]/,
-        /[iI][sS]/,
-        /[nN][eE][qQ]/,
-        /[cC][oO][nN][tT][aA][iI][nN][sS]/,
-        /[cC][tT]/,
-        /[nN][cC][tT]/,
-        /[gG][tT][eE]/,
-        /[gG][eE]/,
-        /[gG][tT]/,
+        wordOperator('and'),
+        wordOperator('or'),
+        wordOperator('xor'),
+        wordOperator('eqv'),
+        wordOperator('imp'),
+        wordOperator('mod'),
+        wordOperator('lt'),
+        wordOperator('lte'),
+        wordOperator('le'),
+        wordOperator('eq'),
+        wordOperator('equal'),
+        wordOperator('is'),
+        wordOperator('neq'),
+        wordOperator('contains'),
+        wordOperator('ct'),
+        wordOperator('nct'),
+        wordOperator('gte'),
+        wordOperator('ge'),
+        wordOperator('gt'),
         // `not` is deliberately absent, and is the one word here that cannot be
         // added. Every other entry is a *binary* operator, so it only competes
         // with a reading that needs a left operand the name slot has not got.
@@ -1728,7 +1728,13 @@ module.exports = function defineGrammar(dialect) {
         field('arguments', optional(prec.dynamic(1, $.arguments))),
       )),
 
-      _new_type_prefix: (_) => token(seq(choice('java', 'cfml'), ':')),
+      // Lucee's four spellings, in any casing: `java:` and its synonym
+      // `class:`, `cfml:` and its synonym `cfc:` (`AbstrCFMLExprTransformer.newOp`,
+      // which matches against a lowercased copy of the source).
+      _new_type_prefix: (_) => token(seq(
+        choice(/[jJ][aA][vV][aA]/, /[cC][lL][aA][sS][sS]/, /[cC][fF][mM][lL]/, /[cC][fF][cC]/),
+        ':',
+      )),
 
       member_expression: $ => prec('member', seq(
         field('object', choice($.expression, $.primary_expression)),
@@ -1827,12 +1833,12 @@ module.exports = function defineGrammar(dialect) {
       binary_expression: ($) => choice(
         ...[
           ['&&', 'logical_and'],
-          [/[aA][nN][dD]/, 'logical_and'],
+          [wordOperator('and'), 'logical_and'],
           [choice($.logical_or, '||'), 'logical_or'],
-          [/[oO][rR]/, 'logical_or'],
-          [/[xX][oO][rR]/, 'logical_xor'],
-          [/[eE][qQ][vV]/, 'logical_eqv'],
-          [/[iI][mM][pP]/, 'logical_imp'],
+          [wordOperator('or'), 'logical_or'],
+          [wordOperator('xor'), 'logical_xor'],
+          [wordOperator('eqv'), 'logical_eqv'],
+          [wordOperator('imp'), 'logical_imp'],
           ['>>', 'binary_shift'],
           ['>>>', 'binary_shift'],
           ['<<', 'binary_shift'],
@@ -1845,41 +1851,41 @@ module.exports = function defineGrammar(dialect) {
           ['/', 'binary_times'],
           ['%', 'binary_mod'],
           ['\\', 'binary_intdiv'],
-          [/[mM][oO][dD]/, 'binary_mod'],
+          [wordOperator('mod'), 'binary_mod'],
           ['**', 'binary_exp', 'right'],
           ['<', 'binary_compare'],
-          [/[lL][tT]/, 'binary_compare'],
+          [wordOperator('lt'), 'binary_compare'],
           ['<=', 'binary_compare'],
-          [/[lL][tT][eE]/, 'binary_compare'],
-          [/[lL][eE]/, 'binary_compare'],
+          [wordOperator('lte'), 'binary_compare'],
+          [wordOperator('le'), 'binary_compare'],
           ['==', 'binary_compare'],
           ['===', 'binary_compare'],
-          [/[eE][qQ]/, 'binary_compare'],
-          [/[eE][qQ][uU][aA][lL]/, 'binary_compare'],
+          [wordOperator('eq'), 'binary_compare'],
+          [wordOperator('equal'), 'binary_compare'],
           // `IS NOT` is two tokens, not one `/is\s+not/` regex: a single token
           // out-lexed `is` followed by any word starting with `not`, so
           // `a is nothing` read as `a IS NOT hing`. As two tokens the lexer keeps
           // `nothing` whole, and `IS NOT(x)` still reads as `NEQ`, as in Lucee.
-          [seq(/[iI][sS]/, alias(/[nN][oO][tT]/, 'not')), 'binary_compare'],
-          [/[iI][sS]/, 'binary_compare'],
+          [seq(wordOperator('is'), wordOperator('not')), 'binary_compare'],
+          [wordOperator('is'), 'binary_compare'],
           ['<>', 'binary_compare'],
           ['!=', 'binary_compare'],
           ['!==', 'binary_compare'],
-          [/[nN][eE][qQ]/, 'binary_compare'],
-          [/[cC][oO][nN][tT][aA][iI][nN][sS]/, 'binary_compare'],
-          [/[cC][tT]/, 'binary_compare'],
-          [/[dD][oO][eE][sS]\s+[nN][oO][tT]\s+[cC][oO][nN][tT][aA][iI][nN]/, 'binary_compare'],
-          [/[nN][cC][tT]/, 'binary_compare'],
+          [wordOperator('neq'), 'binary_compare'],
+          [wordOperator('contains'), 'binary_compare'],
+          [wordOperator('ct'), 'binary_compare'],
+          [wordOperator('does not contain'), 'binary_compare'],
+          [wordOperator('nct'), 'binary_compare'],
           ['>=', 'binary_compare'],
-          [/[gG][tT][eE]/, 'binary_compare'],
-          [/[gG][eE]/, 'binary_compare'],
+          [wordOperator('gte'), 'binary_compare'],
+          [wordOperator('ge'), 'binary_compare'],
           ['>', 'binary_compare'],
-          [/[gG][tT]/, 'binary_compare'],
-          [/[gG][rR][eE][aA][tT][eE][rR]\s+[tT][hH][aA][nN]/, 'binary_compare'],
-          [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]/, 'binary_compare'],
-          [/[gG][rR][eE][aA][tT][eE][rR]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_compare'],
-          [/[lL][eE][sS][sS]\s+[tT][hH][aA][nN]\s+[oO][rR]\s+[eE][qQ][uU][aA][lL]\s+[tT][oO]/, 'binary_compare'],
-          [/[nN][oO][tT]\s+[eE][qQ][uU][aA][lL]/, 'binary_compare'],
+          [wordOperator('gt'), 'binary_compare'],
+          [wordOperator('greater than'), 'binary_compare'],
+          [wordOperator('less than'), 'binary_compare'],
+          [wordOperator('greater than or equal to'), 'binary_compare'],
+          [wordOperator('less than or equal to'), 'binary_compare'],
+          [wordOperator('not equal'), 'binary_compare'],
           ['??', 'ternary'],
           [$._kw_instanceof, 'binary_compare'],
           [$._kw_in, 'binary_compare'],
@@ -1915,7 +1921,7 @@ module.exports = function defineGrammar(dialect) {
       // operator or shift into the `IS NOT` arm, and `binary_compare` outranks it.
       not_operator: $ => prec('binary_not', choice(
         '!',
-        alias(/[nN][oO][tT]/, 'not'),
+        wordOperator('not'),
       )),
 
       not_expression: ($) => prec.left('binary_not', seq(
@@ -2361,6 +2367,33 @@ module.exports = function defineGrammar(dialect) {
    */
   function lowerFirst(word) {
     return word.charAt(0).toLowerCase() + word.slice(1);
+  }
+
+  /**
+   * A CFML word operator — `and`, `xor`, `contains`, `does not contain` — as
+   * one case-insensitive regex, the words of a phrase separated by any
+   * whitespace, aliased to its lowercase spelling. Unaliased, the regex is a
+   * hidden token: it has no node in the tree, so `binary_expression`'s
+   * `operator` field is empty and no query can capture it. The alias changes
+   * nothing about how the word lexes, and unlike `keyword()` there is no
+   * `prec`: these operators are not extracted keywords, and were not before.
+   *
+   * The alias is free only while EVERY use of the regex carries it — here and
+   * in `_operator_shaped_name`. tree-sitter then names the token itself and no
+   * production changes. One bare `/[eE][qQ]/` anywhere puts the alias on each
+   * `binary_expression` arm instead, which gives every arm its own production
+   * and stops the states for their right operands merging: +651 states and
+   * +2.2 MB of `parser.c` in `cfml`, with every test green.
+   * `npm run check:keywords` fails on it. `cfscript/grammar.js` carries the
+   * same helper; keep the two in step.
+   *
+   * @param {string} phrase Lowercase words separated by single spaces.
+   */
+  function wordOperator(phrase) {
+    const pattern = phrase.split(' ')
+      .map((word) => word.split('').map((c) => `[${c}${c.toUpperCase()}]`).join(''))
+      .join('\\s+');
+    return alias(new RegExp(pattern), phrase);
   }
 
 
