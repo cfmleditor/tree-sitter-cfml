@@ -47,6 +47,7 @@ module.exports = grammar({
     $._static_type_prefix,
     $._parameter_separator,
     $._empty_arrow_body,
+    $._savecontent_kw,
   ],
 
   extras: ($) => [
@@ -833,6 +834,28 @@ module.exports = grammar({
       $.function_expression,
       $.arrow_function,
       $.call_expression,
+      $.savecontent_expression,
+    ),
+
+    // `greeting = savecontent { writeOutput( … ) };` — Lucee's savecontent in
+    // expression position, where the block's output is the value (Lucee's
+    // CodeIsland.cfc, Jira2659.cfc, _LDEV3623.cfc). The statement form is not
+    // this rule: `savecontent variable="g" { … }` goes through the generic
+    // `tag_statement` with `savecontent` as an ordinary identifier, and must
+    // keep doing so.
+    //
+    // The head is an EXTERNAL token, and that is the whole design. Spelling it
+    // `keyword('Savecontent')` generates cleanly and costs only 31 states, then
+    // breaks every ordinary use of the word — `savecontent = 1`,
+    // `x = savecontent`, `x = savecontent.foo`, `savecontent()` — because an
+    // extracted keyword out-lexes `identifier` wherever it is valid, before a
+    // `_reserved_identifier` fallback can be reached. The scanner can do what
+    // the lexer cannot: look past the word for the `{` that makes this the
+    // savecontent block, and decline otherwise, so the word keeps its
+    // identifier reading everywhere else.
+    savecontent_expression: ($) => seq(
+      field('tag', alias($._savecontent_kw, $.identifier)),
+      field('body', $.statement_block),
     ),
 
     object: ($) => prec('object', seq(

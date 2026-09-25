@@ -564,23 +564,39 @@ corpus test has ever produced an `else_clause`. The same reasoning that kept
 file applies here — but this time the rule was added first and the state count
 is what said no. Writing it and reverting it took one build.
 
-### [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82) — `savecontent` as an expression
+### [#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82) — `savecontent` as an expression — **done**
 
-The keyword route is closed and measured: `keyword('Savecontent')` generates
-cleanly at +31 states, then breaks `savecontent = 1`, `x = savecontent.foo` and
-`savecontent()`, because the keyword out-lexes `identifier` before
-`_reserved_identifier` can catch it.
-
-**The untried angle is the scanner.** An external token in
+Shipped by the route the plan named: an external token in
 `cfscript/src/scanner.c` that matches the word only when the next non-whitespace
-character is `{` keeps the identifier reading everywhere else, because the
-scanner can look ahead where the lexer cannot. `_parameter_separator`
-([#49](https://github.com/cfmleditor/tree-sitter-cfml/issues/49)) is the
-precedent for a context-gated external token in that file.
+character is `{`. **+28 states** (5489 → 5517), no new conflicts, zero changed
+trees, fuzz clean. Corpus 642 → 641 across 119 → 118 files.
 
-**Stop rule:** if the token has to fire anywhere a `{` can legitimately follow an
-identifier, drop it — that is the over-broad shape the rejected
-`identifier statement_block` arm already had.
+**Adobe ColdFusion 2021+ syntax, which Lucee does not accept yet.** Adobe added `myContent = savecontent { … }` in the 2021 release. Lucee's script parser (6.2, 7.0 and master) reaches `savecontent` only as a statement, so there it is a compile error; `_LDEV3623.cfc` is Lucee's disabled test for LDEV-3623, the request to match Adobe. Merged for the Adobe code this grammar is used to edit, knowing it is not portable CFML.
+
+**One defect survived every check in the gate and was found by reading a tree.**
+The first working version advanced over the word, called `mark_end`, then
+`skip`ped the whitespace to peek for the `{`. `skip` means *what came before was
+whitespace*, so it reset the token's start: the token came out **zero-width**,
+sitting on the `{`, with `savecontent` covered by no node at all. `npm test`,
+the probe, the corpus scan, `treediff` and `fuzz` were all green, because a
+corpus test compares S-expressions and an S-expression carries no ranges. The
+fix is one word — `advance`, not `skip`, for the lookahead past `mark_end`. The
+rule is now in the parse-gap skill's `references/scanner.md`, and the habit
+worth keeping is: print a new token's start and end, not just its shape.
+
+The plan was right that the keyword route is closed and that the scanner can do
+what the lexer cannot. It was wrong about one thing, and it is the kind of thing
+this table exists to correct: **the reach is one site, not three files.** The
+issue names three Lucee files; two of them write the *statement* form, which
+already parsed, and fail on unrelated constructs. `greeting = savecontent {`
+occurs exactly once in 15,392 files.
+
+The stop rule — drop it if the token has to fire wherever a `{` can follow an
+identifier — never had to be invoked: the token is only ever asked for where the
+grammar expects an expression, and it declines on anything but `{`. What that
+protects is pinned by tests rather than left to the reader: `savecontent = 1`,
+`x = savecontent.foo`, `savecontent()`, `savecontent = { a: 1 }` and the
+statement form all keep their existing trees.
 
 ### [#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56) — `</cfscript>` inside a string — **done**
 
