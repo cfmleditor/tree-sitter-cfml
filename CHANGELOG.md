@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.37]
 
 ### cfml, cfquery & cfscript
 - **Each keyword is one token, and keywords are fully case-insensitive** — recommendation 1 of [`docs/GRAMMAR-SCANNER-REVIEW.md`](docs/GRAMMAR-SCANNER-REVIEW.md). `keyword('Break')` was a `choice` of the string casings `Break` / `break` / `BREAK`, three or four terminal symbols per keyword in every state it is valid in. It is now one character-class regex, `/[bB][rR][eE][aA][kK]/` at `prec(1)`, aliased to the same node name as before.
