@@ -510,12 +510,18 @@ module.exports = grammar({
       field('value', $.expression),
     ),
 
-    statement_block: ($) => prec.right(seq(
+    // A `{` that starts a statement is always a block: Lucee's `statement()`
+    // tries `block()` before `expressionStatement()`, so a struct literal can
+    // never begin one. `if (x) { a = 1 }` is also a struct with one key, and
+    // without a preference that reading used to win. The +1 only decides ties,
+    // so a struct after `=`, in `return` or as an argument, where no block can
+    // go, is unaffected.
+    statement_block: ($) => prec.right(prec.dynamic(1, seq(
       '{',
       repeat($.statement),
       '}',
       optional($._automatic_semicolon),
-    )),
+    ))),
 
     else_clause: ($) => seq($._kw_else, $.statement),
 
@@ -728,7 +734,10 @@ module.exports = grammar({
       $._semicolon,
     ),
 
-    labeled_statement: ($) => prec.dynamic(-1, seq(
+    // -2, not -1: `statement_block` carries +1, and a block holding only a
+    // label must still lose to a struct, as it did before that: `{ a: 1 }`
+    // and `(x) => { a: 1 }` stay struct literals, 0 against 1 - 2.
+    labeled_statement: ($) => prec.dynamic(-2, seq(
       field('label', alias(choice($.identifier, $._reserved_identifier), $.statement_identifier)),
       ':',
       field('body', $.statement),
@@ -2023,16 +2032,14 @@ module.exports = grammar({
       field('body', $.statement_block),
     ),
 
-    pair: ($) => seq(
-      field('key', $._property_name),
-      ':',
-      field('value', $.expression),
+    pair: ($) => choice(
+      seq(field('key', $._property_name), ':', field('value', $.expression)),
+      prec.dynamic(-1, seq(field('key', $.path), ':', field('value', $.expression))),
     ),
 
-    cf_pair: ($) => seq(
-      field('key', $._property_name),
-      '=',
-      field('value', $.expression),
+    cf_pair: ($) => choice(
+      seq(field('key', $._property_name), '=', field('value', $.expression)),
+      prec.dynamic(-1, seq(field('key', $.path), '=', field('value', $.expression))),
     ),
 
     pair_pattern: ($) => seq(
@@ -2206,7 +2213,11 @@ module.exports = grammar({
       // the typed branch above (type `foo`, `bar="1"` as the `default`). The
       // typed branch already accepts every attribute-carrying spelling —
       // `param x default="0";` reads `x` as the type — so nothing is lost.
-      seq(
+      // Only a call can compete with this reading: `expect( a.b() ).toBeTrue;` is
+      // also tag `expect` with the name `( a.b() ).toBeTrue`. The two used to tie
+      // on dynamic precedence, which left the choice to symbol order, and any
+      // new rule could flip it.
+      prec.dynamic(-1, seq(
         field('tag', $.identifier),
         // A bare string argument covers `exit "exitTemplate";` (#81) and
         // `pageencoding "utf-8";` (#89) — the same `tag <word-or-string>;`
@@ -2215,7 +2226,7 @@ module.exports = grammar({
         // but the positional string had no reading.
         field('name', choice($.identifier, $.member_expression, $.string)),
         $._semicolon,
-      ),
+      )),
       seq(
         field('tag', $.identifier),
         optional($.tag_linefeed),

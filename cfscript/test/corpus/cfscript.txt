@@ -5164,3 +5164,173 @@ x = y = #a#.b;
           (hash_expression
             (identifier))
           (property_identifier))))))
+
+===================================
+a dotted key in a struct literal (#136)
+===================================
+
+x = { a.b = 1, a.c = 2, d = 3 };
+a = { C.d: "test" };
+q = { "a.b" = 1, c.d = 2 };
+f({ x.y.z: 1 });
+
+---
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (object_pattern
+        (cf_pair
+          (path
+            (identifier)
+            (identifier))
+          (number))
+        (cf_pair
+          (path
+            (identifier)
+            (identifier))
+          (number))
+        (object_assignment_pattern
+          (shorthand_property_identifier_pattern)
+          (number)))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (object
+        (pair
+          (path
+            (identifier)
+            (identifier))
+          (string
+            (string_fragment))))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (object_pattern
+        (cf_pair
+          (string
+            (string_fragment))
+          (number))
+        (cf_pair
+          (path
+            (identifier)
+            (identifier))
+          (number)))))
+  (expression_statement
+    (call_expression
+      (identifier)
+      (arguments
+        (object
+          (pair
+            (path
+              (identifier)
+              (identifier)
+              (identifier))
+            (number)))))))
+
+===================================
+a block holding one dotted assignment stays a block (#136)
+===================================
+
+if (x) { a.b = 1 }
+if (x) { a.b: 1 }
+
+---
+
+(program
+  (if_statement
+    (parenthesized_expression
+      (identifier))
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (member_expression
+            (identifier)
+            (property_identifier))
+          (number)))))
+  (if_statement
+    (parenthesized_expression
+      (identifier))
+    (statement_block
+      (colon_assignment_statement
+        (member_expression
+          (identifier)
+          (property_identifier))
+        (number)))))
+
+===================================
+a call followed by a member stays a call, not a tag statement
+===================================
+
+expect( provider.objectExists( path = p ) ).toBeTrue;
+
+---
+
+(program
+  (expression_statement
+    (member_expression
+      (call_expression
+        (identifier)
+        (arguments
+          (call_expression
+            (member_expression
+              (identifier)
+              (property_identifier))
+            (arguments
+              (assignment_expression
+                (identifier)
+                (identifier))))))
+      (property_identifier))))
+
+===================================
+a brace that starts a statement is a block
+===================================
+
+if (x) { a = 1 } else { b = 2 }
+for (p in q) { r = p };
+{ a: 1 }
+g = (x) => { a: 1 };
+
+---
+
+(program
+  (if_statement
+    (parenthesized_expression
+      (identifier))
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (number))))
+    (else_clause
+      (statement_block
+        (expression_statement
+          (assignment_expression
+            (identifier)
+            (number))))))
+  (for_in_statement
+    (identifier)
+    (identifier)
+    (statement_block
+      (expression_statement
+        (assignment_expression
+          (identifier)
+          (identifier)))))
+  (empty_statement)
+  (expression_statement
+    (object
+      (pair
+        (property_identifier)
+        (number))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (arrow_function
+        (formal_parameters
+          (parameter_type
+            (identifier)))
+        (object
+          (pair
+            (property_identifier)
+            (number)))))))

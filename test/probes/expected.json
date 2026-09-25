@@ -33,6 +33,7 @@
     "cfscript/debugger_identifier.cfc": "pass",
     "cfscript/elseif_clause.cfc": "pass",
     "cfscript/empty_arrow_body.cfc": "pass",
+    "cfscript/dotted_struct_key.cfc": "pass",
     "cfscript/empty_struct_literal.cfc": "pass",
     "cfscript/final_member_declaration.cfc": "pass",
     "cfscript/for_in_reserved_name.cfc": "pass",

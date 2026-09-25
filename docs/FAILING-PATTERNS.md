@@ -77,7 +77,7 @@ real gaps were fixed out from under it.
 
 | Nodes | Files | Cause | Example |
 |---|---|---|---|
-| 185 | 1 | Bare `#` inside a cfscript string | `md.append( "# ColdBox Performance Analysis Report" )` — CFML needs `##`. `PerformanceSuite.cfc`, which cascades from line 1 |
+| ~~185~~ | ~~1~~ | Bare `#` inside a cfscript string — **fixed upstream**: ColdBox now writes `##`. A lone `#` is an error in Lucee too, and the error now stays inside its statement (#134) | `md.append( "# ColdBox Performance Analysis Report" )` — CFML needs `##`. `PerformanceSuite.cfc`, which cascaded from line 1 |
 | 44 | 4 | Generator template with placeholders | cfwheels' `basic-model.cfc` (`{{ModelName}}`), its vscode-ext `controller.cfc` and `view-index.cfm` (`${modelName}`), Mura's `web.config.template.cfm` |
 | 36 | 4 | JavaScript served from a `.cfm` template | Lucee's `context/form.cfm`, Mura's `*.js.cfm` — no `<script>` element anywhere |
 
@@ -127,7 +127,7 @@ is naming a witness and not a construct.
 |---|---|---|---|---|
 | ~~71~~ | ~~1~~ | CSS in `<style>` with many `#` tokens — **fixed by #146; the trigger was not the CSS** | Lucee's `debug/Simple.cfc`: 42 `#` across ID selectors and hex colours | — |
 | ~~48~~ | ~~10~~ | Dynamic tag name with a static prefix or namespace — **fixed in #154** | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
-| 30 | 1 | Dotted key in a struct literal — **tractable, rejected on cost** | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
+| ~~30~~ | ~~1~~ | Dotted key in a struct literal — **fixed in #136**, after the reverted cost re-measured at +1–3% | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | `dotted_struct_key.cfc` |
 | ~~19~~ 2 | ~~13~~ 1 | Dynamic tag opened and closed in different blocks — **stray close fixed in #154**; a fully dynamic element left open at the end of its block still fails (Mura) | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | `split_dynamic_tag.cfm` |
 | 4 | 1 | Subscript index holding more than one pair | `animals = $[ Aardwolf: "…", aardvark: "…" ];` | `subscript_multiple_pairs.cfc` |
 | 4 | 2 | A start tag whose `>` sits inside a `<cfif>` branch — **tractable one way, rejected: the fix breaks the spelling that works** | `<a title="Back" <cfif x>⏎ href="a">⏎<cfelse>⏎ href="b">⏎</cfif>` | — |
@@ -290,7 +290,7 @@ Three properties of this grammar drive most of the risk:
 
 | Pattern | Complexity | Risk | Basis |
 |---|---|---|---|
-| Dotted key in a struct literal | **Low** | **Low** to write, **rejected on runtime cost** | Cheap to implement — one conflict, not the five the estimate assumed, by putting the dotted form in `pair` and `cf_pair` instead of widening `_property_name`. Rejected anyway: that one conflict is live at **every member access in the language**, and measured a 1.8× slowdown on cfscript for 30 nodes in one file. Lexing the key as a single token, the trick that made array return types free, is five times worse again and breaks `f( a.b )`. See [#42](https://github.com/cfmleditor/tree-sitter-cfml/pull/42) |
+| ~~Dotted key in a struct literal~~ | **Low** | **Low** — **done in #136** | **The rejection had expired.** The same change, `path` as a key in `pair` and `cf_pair`, measured +1–3% on cfscript against the 1.8× that reverted #42. The conflict it needs was already declared by then, and the grammar had been reworked around it: keyword tables about 10% smaller, and other conflicts narrowed to statement position. It still needed two things #42 did not have. `prec.dynamic(-1)` on the dotted pairs keeps `if (x) { a.b = 1 }` a block; without it, 52 corpus files had blocks read as structs. `prec.dynamic(-1)` on the `tag name;` branch of `tag_statement` settles a tie with calls (`expect( a.b() ).toBeTrue;`) that symbol order had been deciding. **Lesson: a parked cost figure is a measurement of one grammar, not of the construct.** Re-take it before quoting it (see also #98). 3 files to zero |
 | ~~CSS in `<style>` with many `#`~~ | ~~**Med-High**~~ **Med** | **Med** | **Done in #146. The Risk rating was right; Complexity was one step high.** The work was not a reduction. It was one semantic rule, which `docs/GRAMMAR-SCANNER-REVIEW.md` found by reading the scanner. The risk was real: the fix the issue proposed was a three-line deletion, and it was wrong. Lucee evaluates `#` in a function or component body when `output` is a literal true, and the corpus showed that by breaking Lucee's own admin. The shipped version reads `output` ahead of the tag name, about 100 lines in `common/scanner.h`, with no grammar change and no new states. It changes three trees, all toward Lucee's behaviour. 1 file, 71 → 0 |
 | Dynamic tag opened and closed in different blocks | ~~**High**~~ **Low** for the close side | ~~**High**~~ **Low** for the close side | **The close side is done, and the rating was wrong for it:** the open tag's element already ended with its block, so the close needed no tag-stack work at all — the scanner answered END_TAG_NAME where only ERRONEOUS_END_TAG_NAME was valid, and reading the `#…#` span as an erroneous name was the whole fix (8 Taffy files, no new states). The High rating does fit what remains: a fully dynamic element is never on the tag stack, and putting it there touches every end-tag decision. One file |
 | A start tag whose `>` sits inside a `<cfif>` branch | **Low** to write | **rejected: no fix keeps both spellings** | Making `start_tag` terminable by the conditional costs **+18 states** narrowed to `cf_if_tag` (+128 for any `_cf_tags`) and makes the construct parse — while breaking `<a <cfif x>href="a"<cfelse>href="b"</cfif>>`, which parses today and is pinned by two corpus tests. Precedence does not choose between them and a declared conflict reads as **unnecessary**, because the divergence is lexical, not structural: `>` is an external token that is `_close_tag_delim` in one reading and `html_text` in the other, and the choice is already made when `</cfif>` reduces. The issue's second shape — the tag *opening* inside the branches — would need the tag and the conditional to overlap and is not representable at all. 2 files. See [#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119) and `LIMITATIONS.md` |
@@ -447,10 +447,10 @@ one-line `choice` arms with no measurable effect.
    not-grammar-defect share has risen from 35% to **41%** as real gaps were
    fixed out from under it. Two files, `PerformanceSuite.cfc` (185) and
    `debug/Simple.cfc` (71), now hold 39% of every remaining node.
-2. **Dotted keys in struct literals is no longer the recommendation** it was at
-   the start of this baseline. It is cheap to write and was written, but the one
-   conflict it needs is live at every member access and costs 1.8× on cfscript
-   parse time for 30 nodes in one file. Implemented, measured, reverted.
+2. **Dotted keys in struct literals — done in #136.** At the start of this
+   baseline the one conflict it needs cost 1.8× on cfscript. Re-measured on
+   today's grammar, it was +1–3%, and it shipped with the two dynamic-precedence
+   guards the cost table describes.
 3. **The two dynamic-tag clusters share a mechanism** — the scanner's tag stack —
    and would sensibly be done together or not at all. 67 nodes across 23 files
    for the riskiest change available is a poor trade on its own.

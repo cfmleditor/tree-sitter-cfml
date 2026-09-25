@@ -27,6 +27,33 @@
   - **Consumers:** cfmleditor-lsp's formatter audit shows no verdict change.
   - **What Lucee accepts:** `x = #a#++` is valid; postfix `++` applies to the variable inside the hashes. `#a#.b` and `#a#[1]` are compile errors, because `sharp()` returns before any member or subscript is read. The grammar stays lenient and attaches them to the hash, as it already did in every other position (`f(#a#.b)`, `1 + #a#.b`).
 
+
+- **A dotted key in a struct literal parses** ([#136](https://github.com/cfmleditor/tree-sitter-cfml/issues/136)). `{ a.b = 1 }` and `{ a.b: 1 }` now parse in cfscript and in tag expressions. They used to be an ERROR at the dot, in both spellings. The key is a `path`, so the tree records what was written. Applying the nesting is left to the engine, which reads `{ a.b = 1 }` as `{ a = { b = 1 } }` and merges keys that share a prefix. A quoted key (`{ "a.b" = 1 }`) is still a single `string` key, since it means something different. This is PR #42's approach: the dotted form goes in `pair` and `cf_pair` only, not in `_property_name`, which is reachable from about twenty places.
+
+  #42 was reverted because the conflict it needs made cfscript **1.8× slower**. Re-measured on today's grammar, the cost is gone:
+  - cfscript parse time is +1% to +3% over four runs of a 1-in-10 corpus sample, against a control of −0.1%.
+  - cfml timings did not separate from noise (+5.6%, −3.7%, −4.5%).
+  - `STATE_COUNT` grows +30 in cfml and cfquery and +33 in cfscript (about +0.7%).
+  - The grammar already declared `[primary_expression, path]`, so the change adds no new conflict.
+
+  Two further changes were needed, and without them this would have been a regression:
+  - **A `{` in statement position stays a block.** `if (x) { arguments.message = [ … ] }` is a block holding one assignment. It is also, character for character, a struct literal with a dotted key, and with nothing to prefer one reading, 52 files that already parsed would have had their blocks read as structs. The dotted-key alternatives carry `prec.dynamic(-1)`. They lose wherever a block is also possible, and win after `=`, in `return`, and as an argument, where only a value can go.
+  - **`expect( a.b() ).toBeTrue;` is a call, by rule.** It is also a script-style tag statement: tag `expect`, name `( a.b() ).toBeTrue`. The two readings tied on dynamic precedence, so the choice depended on symbol order. Master's correct answer was luck, and this change flipped it in three TestBox lines. The `tag name;` branch of `tag_statement` now carries `prec.dynamic(-1)`.
+
+  Corpus scan **276 → 231 error lines, 88 → 85 files**, with none worse:
+  - Preside's `RelationshipGuidanceTest.cfc` goes 30 → 0.
+  - RustCFML's `test_dotted_key_struct_literals.cfm` goes 14 → 0.
+  - Lucee's `LDEV3113.cfc` goes 1 → 0.
+
+  `treediff` changes two other files, the two copies of cfwheels' `Test.cfc`. There a struct literal after `=` is now an `object` rather than an `object_pattern`, which is the right node. In cfmleditor-lsp's formatter audit, the three fixed files move from refused to formatted, with no other change. **For consumers:** `node-types.json` gains `path` as a possible key of `pair` and `cf_pair`.
+
+
+- **A `{` that starts a statement is a block.** `if (x) { a = 1 }` parsed as an `if` whose body was a struct literal: an `expression_statement` holding an `object_pattern`. The same happened after `else`, `for` and `while`, and for a bare `{ a = 1 }`. A block holding one assignment without a semicolon is, character for character, also a struct with one key, and the struct reading won. Lucee never reads it that way: `statement()` in `AbstrCFMLScriptTransformer` tries `block()` on any `{` before `expressionStatement()`.
+  - `statement_block` now carries `prec.dynamic(1)`, in both grammars, so a block wins any tie it is in. After `=`, in `return` and as an argument, no block is possible, so nothing changes there.
+  - `labeled_statement` moves from −1 to −2. A block whose only content is a label (`{ a: 1 }`, `(x) => { a: 1 }`) therefore still loses to the struct, as it did before. Without this the change would have created a new tie there, and cfml and cfscript broke it differently.
+
+  No `STATE_COUNT` change, and every existing corpus test passes unchanged. `treediff` changes one corpus file: Preside's `SiteTreeService.cfc`, whose `for( var p in existingPage ) { existingPage = p };` loop body is now a block. The corpus scan is unchanged.
+
 ### cfscript
 - **Support `savecontent` as an expression** — `greeting = savecontent { writeOutput("G'day World") };` ([#82](https://github.com/cfmleditor/tree-sitter-cfml/issues/82), Lucee `test/tickets/_LDEV3623.cfc`). **+28 parse states** (5489 → 5517), no new conflicts, corpus **642 → 641 error nodes across 119 → 118 files**, zero changed trees in both grammars, `npm run fuzz` clean.
 
