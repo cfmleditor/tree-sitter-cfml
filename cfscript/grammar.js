@@ -34,7 +34,11 @@ module.exports = grammar({
     $.logical_or,
     // Scanner tracks string/template context so HTML comments are not parsed inside them.
     $.regex_pattern,
-    $.query_text,
+    // The SQL of `queryExecute( "…" )` and `queryExecute( '…' )`. One token per
+    // quote, so each scan knows which quote closes it; both are `query_text`
+    // in the tree. The scanner's enum must list them in this same position.
+    $._query_text_double,
+    $._query_text_single,
     $.tag_linefeed,
     $.cfml_template_content,
     $.cf_comment,
@@ -2095,27 +2099,20 @@ module.exports = grammar({
 
     cfml_template: ($) => seq('```', $.cfml_template_content, '```'),
 
-    query_expression: ($) => seq(
-      keyword('QueryExecute'),
-      '(',
-      choice(
-        seq('"', $.query_text, '"'),
-        seq('\'', $.query_text, '\''),
-      ),
-      repeat(
-        seq(
-          '&',
-          choice(
-            seq('"', $.query_text, '"'),
-            seq('\'', $.query_text, '\''),
-            $.identifier,
-            $.parenthesized_expression,
-          ),
-        ),
-      ),
-      repeat(seq(',', $.expression)),
-      ')',
-    ),
+    query_expression: ($) => {
+      const sql = choice(
+        seq('"', alias($._query_text_double, $.query_text), '"'),
+        seq('\'', alias($._query_text_single, $.query_text), '\''),
+      );
+      return seq(
+        keyword('QueryExecute'),
+        '(',
+        sql,
+        repeat(seq('&', choice(sql, $.identifier, $.parenthesized_expression))),
+        repeat(seq(',', $.expression)),
+        ')',
+      );
+    },
 
     query_tag: ($) => choice(
       seq(

@@ -1,0 +1,36 @@
+name: Grammar size
+on:
+  pull_request:
+    # `labeled` / `unlabeled` so that adding `grammar-size-ok` re-runs this job
+    # alone, rather than asking for a push or a re-run of the whole CI.
+    types: [opened, synchronize, reopened, labeled, unlabeled]
+
+jobs:
+  # A grammar change can grow the parse tables with every test, probe and corpus
+  # scan still green: a statement as an arrow-function body doubled cfscript's
+  # table (#75), and the first spelling of the visible word operators added
+  # 13–15% to all three grammars. Nothing else in CI reads the table size, and a
+  # manual check is forgotten on exactly the changes that look harmless (#152).
+  #
+  # The script reads the committed parser.c files through git, so there is no
+  # build here and the job takes seconds. It writes a before/after table to the
+  # job summary on every pull request, and fails when any grammar's STATE_COUNT
+  # grows by more than 5%. Growth that is deliberate and measured goes through
+  # with the `grammar-size-ok` label.
+  size:
+    name: Parse-table size against the base branch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # The pull request's merge commit and its parents. HEAD^1 is the base
+          # branch as GitHub merged it, so the delta is exactly what the pull
+          # request adds, even when the base has moved since the branch was cut.
+          fetch-depth: 2
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+      - name: Compare STATE_COUNT against the base branch
+        run: >-
+          node scripts/check-size.js --base HEAD^1
+          ${{ contains(github.event.pull_request.labels.*.name, 'grammar-size-ok') && '--allow-growth' || '' }}

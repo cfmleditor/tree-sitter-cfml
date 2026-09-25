@@ -79,9 +79,9 @@ rows are already fixed in open pull requests and will disappear when those land.
 | Nodes | Files | Cause |
 |---|---|---|
 | 71 | 1 | CSS in `<style>` with many `#` tokens |
-| 53 | 11 | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
+| 53 | 11 | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
 | 45 | 3 | dotted key in a struct literal — `{ a.b = 1 }` |
-| 13 | 9 | dynamic close tag opened in a different block — `</#expr#>` |
+| 13 | 9 | dynamic close tag opened in a different block — `</#expr#>` — **fixed in #154** except Mura `dsp_content_list.cfm` (2 nodes) |
 | 12 | 5 | start tag whose `>` sits inside a `<cfif>` branch |
 | 9 | 1 | backtick tag-island fences nested in one line |
 | 4 | 2 | `</cfscript>` inside a string — fixed by PR #126 |
@@ -170,32 +170,32 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 
 | File (under `corpus/`) | Nodes | Cat | Why |
 |---|---|---|---|
-| `atuttle_Taffy/examples/api_anythingtoxml/anythingtoxml/ArrayToXML.cfc` | 1 | B | dynamic close tag opened in a different block — `</#expr#>` |
-| `atuttle_Taffy/examples/api_anythingtoxml/anythingtoxml/ObjectToXML.cfc` | 1 | B | dynamic close tag opened in a different block — `</#expr#>` |
-| `atuttle_Taffy/examples/api_anythingtoxml/anythingtoxml/QueryToXML.cfc` | 2 | B | dynamic close tag opened in a different block — `</#expr#>` |
-| `atuttle_Taffy/examples/api_anythingtoxml/anythingtoxml/StructToXML.cfc` | 1 | B | dynamic close tag opened in a different block — `</#expr#>` |
-| `atuttle_Taffy/examples/api_twoFormats/resources/AnythingToXML/ArrayToXML.cfc` | 1 | B | dynamic close tag opened in a different block — `</#expr#>` |
-| `atuttle_Taffy/examples/api_twoFormats/resources/AnythingToXML/ObjectToXML.cfc` | 1 | B | dynamic close tag opened in a different block — `</#expr#>` |
-| `atuttle_Taffy/examples/api_twoFormats/resources/AnythingToXML/QueryToXML.cfc` | 2 | B | dynamic close tag opened in a different block — `</#expr#>` |
-| `atuttle_Taffy/examples/api_twoFormats/resources/AnythingToXML/StructToXML.cfc` | 1 | B | dynamic close tag opened in a different block — `</#expr#>` |
+| `atuttle_Taffy/examples/api_anythingtoxml/anythingtoxml/ArrayToXML.cfc` | 1 | B | dynamic close tag opened in a different block — `</#expr#>` — **fixed in #154** |
+| `atuttle_Taffy/examples/api_anythingtoxml/anythingtoxml/ObjectToXML.cfc` | 1 | B | dynamic close tag opened in a different block — `</#expr#>` — **fixed in #154** |
+| `atuttle_Taffy/examples/api_anythingtoxml/anythingtoxml/QueryToXML.cfc` | 2 | B | dynamic close tag opened in a different block — `</#expr#>` — **fixed in #154** |
+| `atuttle_Taffy/examples/api_anythingtoxml/anythingtoxml/StructToXML.cfc` | 1 | B | dynamic close tag opened in a different block — `</#expr#>` — **fixed in #154** |
+| `atuttle_Taffy/examples/api_twoFormats/resources/AnythingToXML/ArrayToXML.cfc` | 1 | B | dynamic close tag opened in a different block — `</#expr#>` — **fixed in #154** |
+| `atuttle_Taffy/examples/api_twoFormats/resources/AnythingToXML/ObjectToXML.cfc` | 1 | B | dynamic close tag opened in a different block — `</#expr#>` — **fixed in #154** |
+| `atuttle_Taffy/examples/api_twoFormats/resources/AnythingToXML/QueryToXML.cfc` | 2 | B | dynamic close tag opened in a different block — `</#expr#>` — **fixed in #154** |
+| `atuttle_Taffy/examples/api_twoFormats/resources/AnythingToXML/StructToXML.cfc` | 1 | B | dynamic close tag opened in a different block — `</#expr#>` — **fixed in #154** |
 | `cfwheels_cfwheels/examples/tweet/.claude/skills/wheels-model-generator/templates/basic-model.cfc` | 29 | A | generator template, not CFML (`{{…}}` / `${…}` placeholders) |
 | `cfwheels_cfwheels/tools/vscode-ext/assets/templates/controller.cfc` | 18 | A | generator template, not CFML (`{{…}}` / `${…}` placeholders) |
 | `cfwheels_cfwheels/tools/vscode-ext/assets/templates/view-index.cfm` | 1 | A | generator template, not CFML (`{{…}}` / `${…}` placeholders) |
 | `ColdBox_coldbox-platform/tests/perf-harness/PerformanceSuite.cfc` | 185 | A | bare `#` in a cfscript string (needs `##`) — cascades from line 1 |
-| `ColdBox_coldbox-samples/applications/feedGenerator/modules/cbfeeds/models/util/SharedGenerator.cfc` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
-| `ColdBox_coldbox-samples/applications/feedReader/modules/cbfeeds/models/util/SharedGenerator.cfc` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
+| `ColdBox_coldbox-samples/applications/feedGenerator/modules/cbfeeds/models/util/SharedGenerator.cfc` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
+| `ColdBox_coldbox-samples/applications/feedReader/modules/cbfeeds/models/util/SharedGenerator.cfc` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
 | `ColdBox_coldbox-samples/applications/sampleloginapp/models/securityInterceptor.cfc` | 1 | A | source typo: misspelled `required` → 3-word parameter |
-| `ColdBox_coldbox-samples/applications/SimpleBlog/modules/cbfeeds/models/util/SharedGenerator.cfc` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
+| `ColdBox_coldbox-samples/applications/SimpleBlog/modules/cbfeeds/models/util/SharedGenerator.cfc` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
 | `ColdBox_coldbox-samples/applications/SimpleCrudWithREST/config/Routes.cfm` | 1 | C | `with( … )` followed by a `.method()` chain |
-| `ColdBox_coldbox-samples/applications/TaskManager/modules/cbfeeds/models/util/SharedGenerator.cfc` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
-| `coldbox-modules_cbfeeds/models/util/SharedGenerator.cfc` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
+| `ColdBox_coldbox-samples/applications/TaskManager/modules/cbfeeds/models/util/SharedGenerator.cfc` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
+| `coldbox-modules_cbfeeds/models/util/SharedGenerator.cfc` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
 | `coldbox-modules_cbi18n/models/i18n.cfc` | 1 | A | source typo: misspelled `required` → 3-word parameter |
-| `lucee_Lucee/core/src/main/cfml/context/admin/debugging.templates.create.cfm` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
+| `lucee_Lucee/core/src/main/cfml/context/admin/debugging.templates.create.cfm` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
 | `lucee_Lucee/core/src/main/cfml/context/admin/Jira.cfc` | 13 | C | space-separated attrs + `var x &= …` compound assignment |
-| `lucee_Lucee/core/src/main/cfml/context/admin/server.logging.create.cfm` | 7 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
-| `lucee_Lucee/core/src/main/cfml/context/admin/services.ai.create.cfm` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
-| `lucee_Lucee/core/src/main/cfml/context/admin/services.cache.create.cfm` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
-| `lucee_Lucee/core/src/main/cfml/context/admin/services.gateway.create.cfm` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
+| `lucee_Lucee/core/src/main/cfml/context/admin/server.logging.create.cfm` | 7 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
+| `lucee_Lucee/core/src/main/cfml/context/admin/services.ai.create.cfm` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
+| `lucee_Lucee/core/src/main/cfml/context/admin/services.cache.create.cfm` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
+| `lucee_Lucee/core/src/main/cfml/context/admin/services.gateway.create.cfm` | 5 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
 | `lucee_Lucee/core/src/main/cfml/context/form.cfm` | 6 | A | bare JavaScript served from a `.cfm`, no `<script>` element |
 | `lucee_Lucee/core/src/main/cfml/context/formtag-form.cfm` | 6 | A | bare JavaScript served from a `.cfm`, no `<script>` element |
 | `lucee_Lucee/core/src/main/cfml/context/gateway/MailWatcher.cfc` | 1 | C | space-separated attributes in a script-syntax tag call |
@@ -245,7 +245,7 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `MSU-NatSci_MuraCMS/admin/core/views/carch/statusmodal.cfm` | 1 | C | `</div` / `</p` — close tag split across lines |
 | `MSU-NatSci_MuraCMS/admin/core/views/ccategory/dsp_tab_usage.cfm` | 2 | C | stray `<` inside tag text — `cl<ass=`, `<#context#/…?` |
 | `MSU-NatSci_MuraCMS/admin/core/views/csettings/deploybundle.cfm` | 2 | C | `#…#` interpolation inside a JS string in `<script>` |
-| `MSU-NatSci_MuraCMS/core/modules/v1/collection/includes/dsp_content_list.cfm` | 3 | B | dynamic close tag opened in a different block — `</#expr#>` |
+| `MSU-NatSci_MuraCMS/core/modules/v1/collection/includes/dsp_content_list.cfm` | 3 | B | dynamic close tag opened in a different block — `</#expr#>` — the stray close is **fixed in #154**; the two left are the dynamic element left open at the end of its block |
 | `MSU-NatSci_MuraCMS/core/modules/v1/comments/index.cfm` | 2 | B | start tag whose `>` sits inside a `<cfif>` branch |
 | `MSU-NatSci_MuraCMS/core/modules/v1/nav/dsp_archive.cfm` | 1 | C | `<nav id="#…#">` dynamic attribute in a `<cfif>` body |
 | `MSU-NatSci_MuraCMS/core/mura/client/api/resource/variation.js.cfm` | 2 | A | bare JavaScript served from a `.cfm`, no `<script>` element |
@@ -261,14 +261,14 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `Ortus-Solutions_commandbox/src/cfml/system/util/MultiSelect.cfc` | 1 | C | `var` declaration inside a `while` condition |
 | `Ortus-Solutions_commandbox/src/cfml/system/util/Print.cfc` | 1 | C | compound assignment in a `var` declaration — `var x &= …` |
 | `Ortus-Solutions_commandbox/src/cfml/system/util/ProgressableDownloader.cfc` | 1 | C | `var` declaration inside a `while` condition |
-| `Ortus-Solutions_commandbox/src/cfml/system/util/TablePrinter.cfc` | 7 | C | not reducible — only fails in whole-file context |
+| `Ortus-Solutions_commandbox/src/cfml/system/util/TablePrinter.cfc` | 7 | C | single-quoted `queryExecute` SQL with a `#…#` span (#149) — **fixed in #154**; the label here was wrong |
 | `Ortus-Solutions_ContentBox/modules/contentbox/models/system/CBHelper.cfc` | 2 | C | missing comma between parameters |
 | `Ortus-Solutions_ContentBox/modules/contentbox/modules/contentbox-admin/views/authors/editor.cfm` | 1 | B | start tag whose `>` sits inside a `<cfif>` branch |
 | `Ortus-Solutions_ContentBox/modules/contentbox/modules/contentbox-admin/views/settings/rawSettingsTable.cfm` | 3 | B | start tag whose `>` sits inside a `<cfif>` branch |
 | `Ortus-Solutions_DocBox/strategy/json/JSONAPIStrategy.cfc` | 3 | C | `component` as a function return type |
 | `pixl8_preside-cms/system/services/devtools/ScaffoldingService.cfc` | 2 | C | missing comma between parameters |
 | `pixl8_preside-cms/system/views/admin/assetmanager/editFolder.cfm` | 1 | C | spaced elvis `? :` inside a `#…#` tag interpolation |
-| `pixl8_preside-cms/system/views/webflow/default/stepTitle.cfm` | 1 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` |
+| `pixl8_preside-cms/system/views/webflow/default/stepTitle.cfm` | 1 | B | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
 | `pixl8_preside-cms/tests/unit/api/presideObjects/RelationshipGuidanceTest.cfc` | 30 | B | dotted key in a struct literal — `{ a.b = 1 }` |
 | `pixl8_preside-ext-saml2-sso/views/page-types/saml_slo_page/index.cfm` | 1 | A | deliberately-invalid vendor fixture |
 | `RustCFML_RustCFML/tests/core/test_parser_lucee_shapes.cfm` | 1 | C | elvis `?:` split across a newline |

@@ -446,6 +446,103 @@ static TagNameResult scan_tag_name(TSLexer *lexer, bool is_cfquery_context) {
     return result;
 }
 
+// Longest tag name, prefix and `#…#` spans together, that a dynamic suffix may
+// build. Past it the suffix is not read at all and the tag behaves as it did
+// before #132. The tag stack is serialized into a fixed buffer with each name
+// capped at UINT8_MAX bytes: a name cut short there would stop matching its end
+// tag after a reparse, and long names crowd out the tags that legitimately nest.
+#define DYNAMIC_TAG_NAME_MAX 64
+
+// `<h#field.getLevel()#>`, `<dc:#container#>` — an HTML tag name with a static
+// prefix and a `#…#` expression run straight onto it (#132). `scan_tag_name`
+// stops at the `#`, so the start tag used to read as `<h` with an attribute
+// named `#…#`, and its end tag `</h#…#>` could not parse at all, taking the rest
+// of the file with it. Only a span with no whitespace before it counts:
+// `<input #attrs#>` is an attribute and stays one.
+//
+// Entered on the `#`. Appends the span and any name characters after it to
+// `name`, uppercased like the rest of the name, so an end tag spelled the same
+// way matches through the ordinary tag stack — the expression's text is
+// compared, not its value. On false `name` is restored, but what was read stays
+// consumed: a caller producing the name token must have called `mark_end`
+// first, and one scanning lookahead only need not.
+static bool scan_tag_name_hash_span(TSLexer *lexer, String *name) {
+    uint32_t keep = name->size;
+    bool ok = true;
+
+    array_push(name, '#');
+    advance(lexer);
+    // `##` is a literal hash, not an expression.
+    if (lexer->lookahead == '#') ok = false;
+    while (ok && lexer->lookahead != '#') {
+        int32_t c = lexer->lookahead;
+        if (c == 0 || c == '\n' || c == '\r' || c == '<' || c == '>' ||
+            name->size >= DYNAMIC_TAG_NAME_MAX) {
+            ok = false;
+            break;
+        }
+        array_push(name, cf_toupper(c));
+        advance(lexer);
+    }
+    if (ok) {
+        array_push(name, '#');
+        advance(lexer);
+        while (cf_isalnum(lexer->lookahead) || lexer->lookahead == '-' ||
+               lexer->lookahead == '_' || lexer->lookahead == ':') {
+            if (name->size >= DYNAMIC_TAG_NAME_MAX) {
+                ok = false;
+                break;
+            }
+            array_push(name, cf_toupper(lexer->lookahead));
+            advance(lexer);
+        }
+    }
+    if (!ok) name->size = keep;
+    return ok;
+}
+
+// `</#expr#>` with no element open for it to close (#132, second shape).
+// Taffy's anythingtoxml opens `<#name#>` in one `<cfoutput>` and closes it in a
+// later one, so by the time the end tag arrives its element is gone — the first
+// block's end closed it. A stray static end tag is an `erroneous_end_tag`
+// already; a stray dynamic one fell into `scan_end_tag_name`'s `</#` branch,
+// which answers END_TAG_NAME whether or not that is valid, and here it is not:
+// the parse failed and took the rest of the file. It is an `erroneous_end_tag`
+// now too, named by the whole `#…#` span. Nothing is pushed or popped, so no
+// length cap applies; a span must still close on its line without `<` or `>`.
+static bool scan_erroneous_dynamic_end_tag_name(TSLexer *lexer) {
+    bool any = false;
+    while (lexer->lookahead == '#') {
+        advance(lexer);
+        // `##` is a literal hash, not an expression.
+        if (lexer->lookahead == '#') break;
+        while (lexer->lookahead != '#' && lexer->lookahead != 0 && lexer->lookahead != '\n' &&
+               lexer->lookahead != '\r' && lexer->lookahead != '<' && lexer->lookahead != '>') {
+            advance(lexer);
+        }
+        if (lexer->lookahead != '#') break;
+        advance(lexer);
+        while (cf_isalnum(lexer->lookahead) || lexer->lookahead == '-' ||
+               lexer->lookahead == '_' || lexer->lookahead == ':') {
+            advance(lexer);
+        }
+        lexer->mark_end(lexer);
+        any = true;
+    }
+    lexer->result_symbol = ERRONEOUS_END_TAG_NAME;
+    return any;
+}
+
+// Extend a start or end tag's name through any `#…#` spans run onto it, as the
+// name token: each span that closes moves the token's end past it.
+static void scan_dynamic_tag_name_suffix(TSLexer *lexer, TagNameResult *result, bool is_cfquery_context) {
+    if (result->is_cf_tag || is_cfquery_context || lexer->lookahead != '#') return;
+    lexer->mark_end(lexer);
+    while (lexer->lookahead == '#' && scan_tag_name_hash_span(lexer, &result->tag_name)) {
+        lexer->mark_end(lexer);
+    }
+}
+
 static bool scan_comment(TSLexer *lexer, bool is_cfquery_context) {
     if (lexer->lookahead != '-') {
         return false;
@@ -1274,6 +1371,12 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         array_delete(&result.tag_name);
         return false;
     }
+    // The same name the start or end tag will build, so a `</h#x#>` can close
+    // what is open inside its `<h#x#>`. Lookahead only: this token is zero-width,
+    // so what the span reads is never part of it.
+    if (!result.is_cf_tag && !is_cfquery_context) {
+        while (lexer->lookahead == '#' && scan_tag_name_hash_span(lexer, &result.tag_name)) {}
+    }
 
     if (result.is_cf_tag && !is_closing_tag &&
         ((result.tag_name.size == 4 && memcmp(result.tag_name.contents, "ELSE", 4) == 0) ||
@@ -1435,6 +1538,8 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         return false;
     }
 
+    if (!is_cf_context) scan_dynamic_tag_name_suffix(lexer, &result, is_cfquery_context);
+
     // bool is_cf = result.is_cf_tag || is_cf_context;
     Tag tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
 
@@ -1576,6 +1681,8 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
         array_delete(&result.tag_name);
         return false;
     }
+
+    if (!is_cf_context) scan_dynamic_tag_name_suffix(lexer, &result, is_cfquery_context);
 
     // printf("scan_end_tag_name: tag=%.*s, is_cf_context=%d, tags.size=%d, cf_tags.size=%d\n",
     // (int)result.tag_name.size, result.tag_name.contents, is_cf_context,
@@ -1984,34 +2091,62 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
         }
     }
 
-    if (VS(valid_symbols, CF_XML_CONTENT, count)) {
-        return scan_cfxml_content(scanner, lexer, is_cfquery_context);
-    }
+    // Error recovery (#145). While recovering, tree-sitter marks every external
+    // token valid, and this pair is valid together nowhere else — checked against
+    // `ts_external_scanner_states` in both cfml and cfquery.
+    //
+    // Recovery used to get nothing from this scanner: the CF_XML_CONTENT branch
+    // below returned its scan's `false` as the scanner's answer before any other
+    // branch ran, so recovery had only internal tokens to resynchronise on, and a
+    // single bad construct could cost everything to the end of the file.
+    //
+    // It now gets exactly the tokens anchored at a real `<` or at end of input —
+    // a comment, `<`-led text, an implicit end tag — and nothing else. Each of
+    // the other branches was measured doing harm there (the corpus audit in
+    // #145): the content scans run to a delimiter from wherever recovery happens
+    // to be; the default branch reads a "tag name" from arbitrary text, and an
+    // end-tag name that matches the stack pops it; at `/>` every delimiter is
+    // valid, so the first — a CF self-closing delimiter — wins and pops the
+    // enclosing `<cffunction>` at a `<cfreturn … />`. Free-running text is the
+    // subtle one: it pops nothing, yet offering it made recovery take paths that
+    // swallowed a whole file where the local error had cost 107 bytes, and it is
+    // left out for that reason alone.
+    const bool recovering = VS(valid_symbols, AUTOMATIC_SEMICOLON, count) && VS(valid_symbols, HTML_TEXT, count);
 
-    if (VS(valid_symbols, CF_QUERY_CONTENT, count)) {
-        return scan_cfquery_content(scanner, lexer, is_cfquery_context);
-    }
+    if (recovering) {
+        if (lexer->lookahead != '<' && lexer->lookahead != 0) {
+            return false;
+        }
+    } else {
+        if (VS(valid_symbols, CF_XML_CONTENT, count)) {
+            return scan_cfxml_content(scanner, lexer, is_cfquery_context);
+        }
 
-    if (VS(valid_symbols, CF_SCRIPT_CONTENT, count)) {
-        return scan_cfscript_content(scanner, lexer, is_cfquery_context);
-    }
+        if (VS(valid_symbols, CF_QUERY_CONTENT, count)) {
+            return scan_cfquery_content(scanner, lexer, is_cfquery_context);
+        }
 
-    if (VS(valid_symbols, CF_SAVECONTENT_BODY_CFML, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_HTML, count) ||
-        VS(valid_symbols, CF_SAVECONTENT_BODY_SCRIPT, count) ||
-        VS(valid_symbols, CF_SAVECONTENT_BODY_CSS, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_XML, count) ||
-        VS(valid_symbols, CF_SAVECONTENT_BODY_SQL, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_RAW, count)) {
-        if (scan_cfsavecontent_body_type(scanner, lexer, valid_symbols, count, is_cfquery_context)) {
+        if (VS(valid_symbols, CF_SCRIPT_CONTENT, count)) {
+            return scan_cfscript_content(scanner, lexer, is_cfquery_context);
+        }
+
+        if (VS(valid_symbols, CF_SAVECONTENT_BODY_CFML, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_HTML, count) ||
+            VS(valid_symbols, CF_SAVECONTENT_BODY_SCRIPT, count) ||
+            VS(valid_symbols, CF_SAVECONTENT_BODY_CSS, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_XML, count) ||
+            VS(valid_symbols, CF_SAVECONTENT_BODY_SQL, count) || VS(valid_symbols, CF_SAVECONTENT_BODY_RAW, count)) {
+            if (scan_cfsavecontent_body_type(scanner, lexer, valid_symbols, count, is_cfquery_context)) {
+                return true;
+            }
+        }
+
+        if (VS(valid_symbols, CF_SAVECONTENT_CONTENT, count)) {
+            return scan_cfsavecontent_content(scanner, lexer, is_cfquery_context);
+        }
+
+
+        if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(scanner, lexer, is_cfquery_context, valid_symbols, count, false)) {
             return true;
         }
-    }
-
-    if (VS(valid_symbols, CF_SAVECONTENT_CONTENT, count)) {
-        return scan_cfsavecontent_content(scanner, lexer, is_cfquery_context);
-    }
-
-
-    if (VS(valid_symbols, HTML_TEXT, count) && scan_html_text(scanner, lexer, is_cfquery_context, valid_symbols, count, false)) {
-        return true;
     }
 
     switch (lexer->lookahead) {
@@ -2112,6 +2247,9 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             }
 
             if (VS(valid_symbols, ERRONEOUS_END_TAG_NAME, count)) {
+                if (lexer->lookahead == '#' && !is_cfquery_context) {
+                    return scan_erroneous_dynamic_end_tag_name(lexer);
+                }
                 return scan_end_tag_name(scanner, lexer, false, is_cfquery_context);
             } else if (VS(valid_symbols, ERRONEOUS_CF_END_TAG_NAME, count)) {
                 return scan_end_tag_name(scanner, lexer, true, is_cfquery_context);
@@ -2132,6 +2270,10 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                     return true;
                 }
             }
+    }
+
+    if (recovering) {
+        return false;
     }
 
     if (VS(valid_symbols, AUTOMATIC_SEMICOLON, count)) {
