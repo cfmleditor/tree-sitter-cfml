@@ -125,7 +125,7 @@ is naming a witness and not a construct.
 
 | Nodes | Files | Pattern | Example | Probe |
 |---|---|---|---|---|
-| 71 | 1 | CSS in `<style>` with many `#` tokens | Lucee's `debug/Simple.cfc`: 42 `#` across ID selectors and hex colours | — |
+| ~~71~~ | ~~1~~ | CSS in `<style>` with many `#` tokens — **fixed by #146; the trigger was not the CSS** | Lucee's `debug/Simple.cfc`: 42 `#` across ID selectors and hex colours | — |
 | ~~48~~ | ~~10~~ | Dynamic tag name with a static prefix or namespace — **fixed in #154** | `<h#field.getLevel()#>…</h#field.getLevel()#>`, `<dc:#container#>` | `prefixed_dynamic_tag.cfm` |
 | 30 | 1 | Dotted key in a struct literal — **tractable, rejected on cost** | `var objects = { obj_a.meta = { … }, obj_b.meta = { … } };` | — |
 | ~~19~~ 2 | ~~13~~ 1 | Dynamic tag opened and closed in different blocks — **stray close fixed in #154**; a fully dynamic element left open at the end of its block still fails (Mura) | `<cfoutput>#t()#</#g(n)#></cfoutput>`, the open tag being in an earlier `<cfoutput>` | `split_dynamic_tag.cfm` |
@@ -174,9 +174,11 @@ actually took. What is left is a fully dynamic element: `<#expr#>` is never
 pushed onto the scanner's tag stack, so the grammar pairs it with whatever end
 tag comes next and nothing can close it implicitly (`<cfoutput><#t#>x</cfoutput>`).
 
-`Simple.cfc` resists reduction. Hex colours, ID selectors and `<cfif>` inside
-`<style>` all parse individually, and the shortest failing extract is 20 lines
-of its stylesheet — whatever the trigger is, it emerges from accumulation.
+`Simple.cfc` resisted reduction, and the reason is worth keeping. The failure
+did not come from accumulation. A `#` in a function with no `output` was read as
+an expression opener, which is a semantic error in `scanner_in_hash_eval_context`.
+What a reduction preserves is the recovery cascade that follows it, not that one
+character. The 20-line minimum measured the cascade. Fixed by #146, 71 → 0.
 
 ## What is left over — ~212 nodes, ~90 files
 
@@ -289,7 +291,7 @@ Three properties of this grammar drive most of the risk:
 | Pattern | Complexity | Risk | Basis |
 |---|---|---|---|
 | Dotted key in a struct literal | **Low** | **Low** to write, **rejected on runtime cost** | Cheap to implement — one conflict, not the five the estimate assumed, by putting the dotted form in `pair` and `cf_pair` instead of widening `_property_name`. Rejected anyway: that one conflict is live at **every member access in the language**, and measured a 1.8× slowdown on cfscript for 30 nodes in one file. Lexing the key as a single token, the trick that made array return types free, is five times worse again and breaks `f( a.b )`. See [#42](https://github.com/cfmleditor/tree-sitter-cfml/pull/42) |
-| CSS in `<style>` with many `#` | **Med-High** | **Med** | Does not reduce below 20 lines, so the mechanism is not yet understood — understand it before estimating again. One file, but a whole stylesheet is a plausible shape for any CFML admin template |
+| ~~CSS in `<style>` with many `#`~~ | ~~**Med-High**~~ **Med** | **Med** | **Done in #146. The Risk rating was right; Complexity was one step high.** The work was not a reduction. It was one semantic rule, which `docs/GRAMMAR-SCANNER-REVIEW.md` found by reading the scanner. The risk was real: the fix the issue proposed was a three-line deletion, and it was wrong. Lucee evaluates `#` in a function or component body when `output` is a literal true, and the corpus showed that by breaking Lucee's own admin. The shipped version reads `output` ahead of the tag name, about 100 lines in `common/scanner.h`, with no grammar change and no new states. It changes three trees, all toward Lucee's behaviour. 1 file, 71 → 0 |
 | Dynamic tag opened and closed in different blocks | ~~**High**~~ **Low** for the close side | ~~**High**~~ **Low** for the close side | **The close side is done, and the rating was wrong for it:** the open tag's element already ended with its block, so the close needed no tag-stack work at all — the scanner answered END_TAG_NAME where only ERRONEOUS_END_TAG_NAME was valid, and reading the `#…#` span as an erroneous name was the whole fix (8 Taffy files, no new states). The High rating does fit what remains: a fully dynamic element is never on the tag stack, and putting it there touches every end-tag decision. One file |
 | A start tag whose `>` sits inside a `<cfif>` branch | **Low** to write | **rejected: no fix keeps both spellings** | Making `start_tag` terminable by the conditional costs **+18 states** narrowed to `cf_if_tag` (+128 for any `_cf_tags`) and makes the construct parse — while breaking `<a <cfif x>href="a"<cfelse>href="b"</cfif>>`, which parses today and is pinned by two corpus tests. Precedence does not choose between them and a declared conflict reads as **unnecessary**, because the divergence is lexical, not structural: `>` is an external token that is `_close_tag_delim` in one reading and `html_text` in the other, and the choice is already made when `</cfif>` reduces. The issue's second shape — the tag *opening* inside the branches — would need the tag and the conditional to overlap and is not representable at all. 2 files. See [#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119) and `LIMITATIONS.md` |
 | ~~Prefixed / namespaced dynamic tag~~ | ~~**High**~~ **Low** | ~~**High**~~ **Low** | **Done in #154, two steps below the rating in both columns.** No grammar change and no new states: the scanner reads a `#…#` span run onto a name as part of the name, and the existing tag stack matches the whole spelling. The one real risk was the stack's serialized size, handled by a 64-byte cap on dynamic names. 11 files to zero |

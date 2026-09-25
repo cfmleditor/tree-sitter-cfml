@@ -73,20 +73,21 @@ CFML, and one construct the parser rejects **on purpose**.
 ## Gaps already on record — 211 nodes, 34 files (33%)
 
 Each of these is described in [`FAILING-PATTERNS.md`](FAILING-PATTERNS.md) or
-[`LIMITATIONS.md`](../LIMITATIONS.md), with cost estimates where they exist. Two
-rows are already fixed in open pull requests and will disappear when those land.
+[`LIMITATIONS.md`](../LIMITATIONS.md), with cost estimates where they exist. Rows
+marked **fixed** have landed since this table was measured; their counts are kept
+as the record of what each fix removed.
 
 | Nodes | Files | Cause |
 |---|---|---|
-| 71 | 1 | CSS in `<style>` with many `#` tokens |
+| 71 | 1 | CSS in `<style>` with many `#` tokens — **fixed by #146**: the trigger was a `#` in a function with no `output`, not the CSS |
 | 53 | 11 | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
 | 45 | 3 | dotted key in a struct literal — `{ a.b = 1 }` |
 | 13 | 9 | dynamic close tag opened in a different block — `</#expr#>` — **fixed in #154** except Mura `dsp_content_list.cfm` (2 nodes) |
 | 12 | 5 | start tag whose `>` sits inside a `<cfif>` branch |
 | 9 | 1 | backtick tag-island fences nested in one line |
-| 4 | 2 | `</cfscript>` inside a string — fixed by PR #126 |
+| 4 | 2 | `</cfscript>` inside a string — **fixed in #126** |
 | 3 | 1 | `$[ … ]` subscript holding multiple pairs — declined in #80 |
-| 1 | 1 | `savecontent` as an expression — fixed by PR #125 |
+| 1 | 1 | `savecontent` as an expression — **fixed in #125** (Adobe ColdFusion 2021+ syntax; Lucee rejects it) |
 
 ## Gaps not previously recorded — 104 nodes, 48 files (17%)
 
@@ -202,7 +203,7 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `lucee_Lucee/core/src/main/cfml/context/wddx.cfm` | 9 | A | bare JavaScript served from a `.cfm`, no `<script>` element |
 | `lucee_Lucee/core/src/main/java/resource/context/admin/debug/Classic.cfc` | 2 | C | `<cffunction>` body with unbalanced inner markup |
 | `lucee_Lucee/core/src/main/java/resource/context/admin/debug/Modern.cfc` | 1 | C | `</div` / `</p` — close tag split across lines |
-| `lucee_Lucee/core/src/main/java/resource/context/admin/debug/Simple.cfc` | 71 | B | CSS in `<style>` with many `#` tokens |
+| `lucee_Lucee/core/src/main/java/resource/context/admin/debug/Simple.cfc` | 71 | B | CSS in `<style>` with many `#` tokens — **fixed by #146** |
 | `lucee_Lucee/core/src/main/java/resource/context/admin/logging/appender/DatasourceAppender.cfc` | 1 | C | `<cfadmin` multi-line tag with a computed attribute |
 | `lucee_Lucee/test/_setupTestServices.cfc` | 1 | C | newline-separated attrs on an `admin` tag statement |
 | `lucee_Lucee/test/functions/DirectoryCopy.cfc` | 3 | C | space-separated attributes in a script-syntax tag call |
@@ -216,9 +217,9 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `lucee_Lucee/test/tags/Imap.cfc` | 3 | C | space-separated attributes in a script-syntax tag call |
 | `lucee_Lucee/test/tags/Zip.cfc` | 1 | A | deliberately-invalid vendor fixture |
 | `lucee_Lucee/test/tickets/_LDEV0219.cfc` | 1 | A | unbalanced braces / typo — deliberately broken fixture |
-| `lucee_Lucee/test/tickets/_LDEV3623.cfc` | 1 | B | `savecontent` as an expression — fixed by PR #125 |
+| `lucee_Lucee/test/tickets/_LDEV3623.cfc` | 1 | B | `savecontent` as an expression — **fixed in #125** (Adobe ColdFusion 2021+ syntax; Lucee rejects it) |
 | `lucee_Lucee/test/tickets/LDEV0533.cfc` | 1 | C | `silent false { … }` — tag statement with a bare boolean |
-| `lucee_Lucee/test/tickets/LDEV0869.cfc` | 2 | B | `</cfscript>` inside a string — fixed by PR #126 |
+| `lucee_Lucee/test/tickets/LDEV0869.cfc` | 2 | B | `</cfscript>` inside a string — **fixed in #126** |
 | `lucee_Lucee/test/tickets/LDEV1123/lib/Redden.cfc` | 1 | A | unbalanced braces / typo — deliberately broken fixture |
 | `lucee_Lucee/test/tickets/LDEV1606.cfc` | 9 | C | space-separated attributes in a script-syntax tag call |
 | `lucee_Lucee/test/tickets/LDEV1676/LDEV1676.cfm` | 2 | C | `<!ENTITY … >` raw markup inside `<cfoutput>` |
@@ -273,7 +274,7 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `pixl8_preside-ext-saml2-sso/views/page-types/saml_slo_page/index.cfm` | 1 | A | deliberately-invalid vendor fixture |
 | `RustCFML_RustCFML/tests/core/test_parser_lucee_shapes.cfm` | 1 | C | elvis `?:` split across a newline |
 | `RustCFML_RustCFML/tests/java_shims/test_minimal.cfm` | 1 | A | `<cfscript>` never closed before EOF |
-| `RustCFML_RustCFML/tests/oop/test_include_rewrite_freshness.cfm` | 2 | B | `</cfscript>` inside a string — fixed by PR #126 |
+| `RustCFML_RustCFML/tests/oop/test_include_rewrite_freshness.cfm` | 2 | B | `</cfscript>` inside a string — **fixed in #126** |
 | `RustCFML_RustCFML/tests/oop/test_preside_serve_fixes.cfm` | 1 | A | unbalanced braces / typo — deliberately broken fixture |
 | `RustCFML_RustCFML/tests/tags/test_tag_unquoted_attr_literal.cfm` | 1 | C | unquoted attribute value containing `?a=` then `>` |
 | `RustCFML_RustCFML/tests/tags/unclosed/cfoutput.cfm` | 1 | A | deliberately-invalid vendor fixture |
