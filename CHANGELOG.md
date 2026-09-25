@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### cfscript
+- **`queryExecute` recognises single-quoted SQL, escaped quotes, and quotes inside a `#…#` span** ([#149](https://github.com/cfmleditor/tree-sitter-cfml/issues/149)). `query_expression` had a single-quoted arm, but the scanner behind `query_text` stopped only at `"`, so the arm could never complete and GLR fell back to a plain `call_expression`: no error, but no `query_text` for highlighting or for tools that read the SQL. Two double-quoted shapes fell back the same way: a doubled `""`, which is an escaped quote and does not close the string, and a quote inside a hash expression — `"INSERT INTO … ( #columns[ "id" ]# )"`, from ColdBox's `DBAppender`. `query_text` is now two external tokens, one per quote, both still `query_text` in the tree. Each treats its doubled quote as an escape, and skips a `#…#` span without looking for the closing quote inside it (`##` is a literal hash).
+
+  Across the corpus's `.cfc` / `.cfs` files, 7 of the 314 `queryExecute` calls that were plain calls now become `query_expression`; the other 307 pass a variable or a function result, which is correctly a plain call. Lucee's own `LDEV4429` test is the clearest case: `'SELECT ''{"a" : "aab"}''::jsonb AS result'` stopped at the first `"` inside the JSON. The corpus scan goes from **422 to 415 error lines across 112 → 111 files**, all deletions: CommandBox's `TablePrinter.cfc`, whose single-quoted `queryExecute( 'SELECT #columns# …' )` cascaded to the end of the component, now parses. `treediff` changes four files, all in one direction: +6 `query_expression`, +6 `query_text`, and the plain calls they replace. `STATE_COUNT` is unchanged; `node-types.json` is unchanged. Fuzz and truncated inputs are clean. The LSP's formatter corpus audit shows no file changing verdict and identical output on the files concerned.
+
 ## [0.26.37]
 
 ### cfml, cfquery & cfscript

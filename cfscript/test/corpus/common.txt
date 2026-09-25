@@ -202,6 +202,46 @@ q = queryExecute(
               (string_fragment))))))))
 
 ================================================================================
+common: queryExecute with single quotes, escaped quotes and quotes inside a hash
+================================================================================
+
+a = queryExecute('SELECT * FROM t');
+b = queryExecute('SELECT * FROM t WHERE n = ''x''');
+c = queryExecute("SELECT * FROM t WHERE n = ""x""");
+d = queryExecute("INSERT INTO #tbl()# ( #cols[ "id" ]# ) VALUES (1)");
+e = queryExecute('SELECT ' & "1");
+
+--------------------------------------------------------------------------------
+
+(program
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text))))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (query_expression
+        (query_text)
+        (query_text)))))
+
+================================================================================
 common: try catch finally
 ================================================================================
 

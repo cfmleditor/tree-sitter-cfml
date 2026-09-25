@@ -11,7 +11,8 @@ enum TokenType {
     ELVIS_OPERATOR,
     LOGICAL_OR,
     REGEX_PATTERN,
-    QUERY_TEXT,
+    QUERY_TEXT_DOUBLE,
+    QUERY_TEXT_SINGLE,
     TAG_LINEFEED,
     CFML_TEMPLATE_CONTENT,
     CFML_COMMENT,
@@ -430,15 +431,47 @@ static bool scan_jsx_text(TSLexer *lexer) {
 }
 */
 
-static bool scan_query_text(TSLexer *lexer) {
+// The SQL of `queryExecute( "…" )` or `queryExecute( '…' )`, up to the quote
+// that closes it. It used to stop only at `"`, so the single-quoted arm could
+// never complete and fell back to a plain call, and so did two other shapes:
+//
+// - a doubled quote, which is an escaped quote in a CFML string and does not
+//   close it (`'… WHERE a = ''x'''`);
+// - a quote inside a `#…#` span, which is a CFML expression whose own string
+//   literals may use either quote (`"… #columns[ "id" ]# …"`, ColdBox's
+//   DBAppender). The closing quote is not looked for inside one; `##` is a
+//   literal hash, not a span.
+static bool scan_query_text(TSLexer *lexer, int32_t quote, enum TokenType symbol) {
     
     bool saw_text = false;
     bool at_newline = false;
 
-    // The EOF check is not optional: `advance` is a no-op once `lookahead` is 0,
-    // so a loop that only stops at the closing quote spins forever on an
+    // The EOF checks are not optional: `advance` is a no-op once `lookahead` is
+    // 0, so a loop that only stops at the closing quote spins forever on an
     // unterminated string — `queryExecute("` on its own hung the parser.
-    while (lexer->lookahead != 0 && lexer->lookahead != '"') {
+    for (;;) {
+        // Everything consumed so far is SQL; what follows is only lookahead
+        // until the loop comes round again.
+        lexer->mark_end(lexer);
+        if (lexer->lookahead == 0) break;
+        if (lexer->lookahead == quote) {
+            advance(lexer);
+            if (lexer->lookahead != quote) break;
+            advance(lexer);
+            saw_text = true;
+            at_newline = false;
+            continue;
+        }
+        if (lexer->lookahead == '#') {
+            advance(lexer);
+            if (lexer->lookahead != '#') {
+                while (lexer->lookahead != 0 && lexer->lookahead != '#') advance(lexer);
+            }
+            if (lexer->lookahead == '#') advance(lexer);
+            saw_text = true;
+            at_newline = false;
+            continue;
+        }
         bool is_wspace = cf_isspace(lexer->lookahead);
         if (lexer->lookahead == '\n') {
             at_newline = true;
@@ -451,7 +484,7 @@ static bool scan_query_text(TSLexer *lexer) {
         advance(lexer);
     }
 
-    lexer->result_symbol = QUERY_TEXT;
+    lexer->result_symbol = symbol;
     return saw_text;
 }
 
@@ -941,14 +974,19 @@ bool tree_sitter_cfscript_external_scanner_scan(void *payload, TSLexer *lexer, c
     //     return true;
     // }
 
-    // Stands down in error recovery like the three branches above: QUERY_TEXT
+    // Stands down in error recovery like the three branches above: query text
     // is valid alongside AUTOMATIC_SEMICOLON only in the recovery state, where
-    // every external token is, and unguarded it scanned to the next `"` —
+    // every external token is, and unguarded it scanned to the next quote —
     // or to EOF — at every recovery step, and could return a query_text token
-    // from anywhere.
-    if (valid_symbols[QUERY_TEXT] && !valid_symbols[AUTOMATIC_SEMICOLON] &&
-        scan_query_text(lexer)) {
-        return true;
+    // from anywhere. Only one of the two is valid in any real parse state: the
+    // one for the quote the grammar has just consumed.
+    if (!valid_symbols[AUTOMATIC_SEMICOLON]) {
+        if (valid_symbols[QUERY_TEXT_DOUBLE] && scan_query_text(lexer, '"', QUERY_TEXT_DOUBLE)) {
+            return true;
+        }
+        if (valid_symbols[QUERY_TEXT_SINGLE] && scan_query_text(lexer, '\'', QUERY_TEXT_SINGLE)) {
+            return true;
+        }
     }
 
     // A CFML comment where no semicolon or ternary decision is pending. The
