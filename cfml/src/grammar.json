@@ -995,10 +995,6 @@
           "name": "hash_expression"
         },
         {
-          "type": "SYMBOL",
-          "name": "hash_string_expression"
-        },
-        {
           "type": "ALIAS",
           "content": {
             "type": "SYMBOL",
@@ -1032,19 +1028,6 @@
         {
           "type": "SYMBOL",
           "name": "_hash"
-        }
-      ]
-    },
-    "hash_string_expression": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_start_hash_expression"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "string"
         }
       ]
     },
@@ -6757,8 +6740,22 @@
                 "type": "FIELD",
                 "name": "operator",
                 "content": {
-                  "type": "PATTERN",
-                  "value": "[iI][sS]\\s+[nN][oO][tT]"
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "PATTERN",
+                      "value": "[iI][sS]"
+                    },
+                    {
+                      "type": "ALIAS",
+                      "content": {
+                        "type": "PATTERN",
+                        "value": "[nN][oO][tT]"
+                      },
+                      "named": false,
+                      "value": "not"
+                    }
+                  ]
                 }
               },
               {
@@ -7543,22 +7540,26 @@
       }
     },
     "not_operator": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "!"
-        },
-        {
-          "type": "ALIAS",
-          "content": {
-            "type": "PATTERN",
-            "value": "[nN][oO][tT]"
+      "type": "PREC",
+      "value": "binary_not",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "!"
           },
-          "named": false,
-          "value": "not"
-        }
-      ]
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "PATTERN",
+              "value": "[nN][oO][tT]"
+            },
+            "named": false,
+            "value": "not"
+          }
+        ]
+      }
     },
     "not_expression": {
       "type": "PREC_LEFT",
@@ -10005,14 +10006,6 @@
       "pattern"
     ],
     [
-      "hash_string_expression",
-      "primary_expression"
-    ],
-    [
-      "hash_string_expression",
-      "assignment_expression"
-    ],
-    [
       "primary_expression",
       "_property_name"
     ],
@@ -10181,11 +10174,19 @@
       },
       {
         "type": "STRING",
+        "value": "binary_shift"
+      },
+      {
+        "type": "STRING",
         "value": "binary_concat"
       },
       {
         "type": "STRING",
         "value": "binary_compare"
+      },
+      {
+        "type": "STRING",
+        "value": "bitwise_or"
       },
       {
         "type": "STRING",
@@ -10226,14 +10227,6 @@
       {
         "type": "SYMBOL",
         "name": "arrow_function"
-      },
-      {
-        "type": "STRING",
-        "value": "binary_shift"
-      },
-      {
-        "type": "STRING",
-        "value": "bitwise_or"
       }
     ],
     [

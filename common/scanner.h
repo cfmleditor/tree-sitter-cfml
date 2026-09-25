@@ -1897,33 +1897,6 @@ static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
     return true;
 }
 
-// A `#` in an output/eval context opens an embedded expression only when the
-// character that follows can begin an expression.  The closing `#` of an
-// in-flight hash (e.g. the trailing `#` of `#"x"#`, where the string
-// self-terminated the hash) is followed by content/tag/EOF instead.  The
-// scanner uses this to keep the regular lexer in control of the close token.
-static bool hash_expr_start_char(int32_t c) {
-    if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9')) {
-        return true;
-    }
-    switch (c) {
-        case '_':
-        case '$':
-        case '"':
-        case '\'':
-        case '(':
-        case '[':
-        case '{':
-        case '+':
-        case '-':
-        case '~':
-        case '!':
-            return true;
-        default:
-            return false;
-    }
-}
-
 static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols, unsigned count, bool is_cfquery_context) {
 
     if (!VS(valid_symbols, HTML_TEXT, count) && !VS(valid_symbols, RAW_TEXT, count)) {
@@ -1940,17 +1913,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             lexer->mark_end(lexer);
             lexer->result_symbol = HASH_EMPTY;
         } else if (scanner_in_hash_eval_context(scanner, is_cfquery_context)) {
-            if (hash_expr_start_char(lexer->lookahead)) {
-                lexer->result_symbol = START_HASH_EXPRESSION;
-            } else {
-                // The character after `#` cannot start an expression: this is
-                // the close of an in-flight hash, not a new open.  Emit
-                // nothing so the regular lexer produces the plain `_hash`
-                // close token (if this state does not accept the plain `#`,
-                // the parse errors just as it would have when this `#` opened
-                // a degenerate hash-expression).
-                return false;
-            }
+            lexer->result_symbol = START_HASH_EXPRESSION;
         } else {
             lexer->mark_end(lexer);
             lexer->result_symbol = SINGLE_HASH;

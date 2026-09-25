@@ -658,7 +658,7 @@
         ]
       },
       "operator": {
-        "multiple": false,
+        "multiple": true,
         "required": true,
         "types": [
           {
@@ -764,6 +764,10 @@
           {
             "type": "logical_or",
             "named": true
+          },
+          {
+            "type": "not",
+            "named": false
           },
           {
             "type": "|",

@@ -119,12 +119,17 @@ module.exports = grammar({
       'binary_intdiv',
       'binary_mod',
       'binary_plus',
+      // `<<` `>>` `|` are JavaScript leftovers, not CFML. They keep the places
+      // they had relative to the comparisons; below `arrow_function` they made
+      // `(x) => x | 1` parse as `((x) => x) | 1`.
+      'binary_shift',
       // `&` is CFML string concatenation, tighter than comparisons but
       // looser than `+ -` (`'A' & 2 + 3` is `'A' & (2+3)`)
       'binary_concat',
       // one comparison level: EQ/NEQ/LT/LTE/GT/GTE/CONTAINS/DOES NOT
       // CONTAIN/IS/IS NOT and the `==`-family all share a single rank
       'binary_compare',
+      'bitwise_or',
       // logical not binds looser than comparisons (`NOT 0 GT 3` is
       // `NOT (0 GT 3)`) but tighter than `and`
       'binary_not',
@@ -137,9 +142,6 @@ module.exports = grammar({
       'elvis',
       $.sequence_expression,
       $.arrow_function,
-      // JS leftovers accepted by the grammar but not CFML
-      'binary_shift',
-      'bitwise_or',
     ],
     ['assign', $.primary_expression],
     ['member', 'new', 'call', $.expression],
@@ -1509,7 +1511,11 @@ module.exports = grammar({
         ['===', 'binary_compare'],
         [/[eE][qQ]/, 'binary_compare'],
         [/[eE][qQ][uU][aA][lL]/, 'binary_compare'],
-        [/[iI][sS]\s+[nN][oO][tT]/, 'binary_compare'],
+        // `IS NOT` is two tokens, not one `/is\s+not/` regex: a single token
+        // out-lexed `is` followed by any word starting with `not`, so
+        // `a is nothing` read as `a IS NOT hing`. As two tokens the lexer keeps
+        // `nothing` whole, and `IS NOT(x)` still reads as `NEQ`, as in Lucee.
+        [seq(/[iI][sS]/, alias(/[nN][oO][tT]/, 'not')), 'binary_compare'],
         [/[iI][sS]/, 'binary_compare'],
         ['<>', 'binary_compare'],
         ['!=', 'binary_compare'],
@@ -1559,10 +1565,13 @@ module.exports = grammar({
     // tighter than `and` (`not false and false` is `(not false) and false`),
     // so it gets its own `binary_not` level.
     // @ts-ignore
-    not_operator: $ => choice(
+    // `binary_not` so that `a IS NOT b` reads as the two-word `IS NOT` rather
+    // than `a IS (NOT b)`: after `a IS NOT` the parser could either finish this
+    // operator or shift into the `IS NOT` arm, and `binary_compare` outranks it.
+    not_operator: $ => prec('binary_not', choice(
       '!',
       alias(/[nN][oO][tT]/, 'not'),
-    ),
+    )),
 
     not_expression: ($) => prec.left('binary_not', seq(
       field('operator', $.not_operator),

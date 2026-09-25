@@ -26,7 +26,7 @@ finding here changes the explanation of an existing entry, it says so.
 | # | Recommendation | Kind | Measured effect | Cost | Risk |
 |---|---|---|---|---|---|
 | 1 | **Done** — one case-insensitive regex per keyword, and drop the JS `\uXXXX` escape from `identifier` | size, perf, support | as shipped: `parser.c` **−29%** across the three grammars (48.4 → 34.2 MB), `STATE_COUNT` −10.5% / −8.7% / −11.7%, addon 10.1 → 6.6 MB; **zero** tree changes over 14,177 files; `reTURN` now a keyword | ~15 lines plus comments | Low, guarded by `npm run check:keywords` |
-| 2 | CFML operator precedence: `&`, `^`, `NOT`/`!`, `XOR`, `IS NOT`, `EQV`/`IMP` | support (wrong trees) | 81 corpus files carry a mis-nested expression today; +154 / +154 / +176 states | ~40 lines | Med: published tree-shape change |
+| 2 | **Done** — CFML operator precedence: `&`, `^`, `NOT`/`!`, `XOR`, `IS NOT`, `EQV`/`IMP` | support (wrong trees) | landed as #141 (@bokic), with the `IS NOT` word-boundary and bitwise corrections below made after merge; see `CHANGELOG.md` | — | — |
 | 3 | Automatic semicolon before a line-leading `IS`, `CONTAINS`, `XOR`, `IN`, … | support (wrong trees) | silent split into a `tag_statement` today | scanner only | Low |
 | 4 | Give the `cfml` scanner an explicit error-recovery policy | recovery quality, perf | naive version: ERROR-covered bytes **−22%**, error lines 422 → 365, `debug/Simple.cfc` 40,907 bytes of ERROR → 0 | scanner only | Med: 7 files regress in the naive version |
 | 5 | `#` in template text is only an expression inside `<cfoutput>` | support | the real cause of `debug/Simple.cfc`'s residual errors | scanner | Med: semantic |
@@ -175,6 +175,12 @@ the committed tree.
 ---
 
 ## 2. CFML operator precedence
+
+> **Implemented** in #141 by @bokic, which reached the same ladder
+> independently (and unified the comparisons into one level, which is closer to
+> Lucee than the prototype here). The two defects this section predicts — `IS
+> NOT` as one regex splitting `x is nothing`, and a need for a changelog note on
+> the new `not_expression` node — were fixed after merge; see `CHANGELOG.md`.
 
 ### What is there
 

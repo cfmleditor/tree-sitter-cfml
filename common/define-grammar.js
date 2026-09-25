@@ -159,12 +159,17 @@ module.exports = function defineGrammar(dialect) {
         'binary_intdiv',
         'binary_mod',
         'binary_plus',
+        // `<<` `>>` `|` are JavaScript leftovers, not CFML. They keep the places
+        // they had relative to the comparisons; below `arrow_function` they made
+        // `(x) => x | 1` parse as `((x) => x) | 1`.
+        'binary_shift',
         // `&` is CFML string concatenation, tighter than comparisons but
         // looser than `+ -` (`'A' & 2 + 3` is `'A' & (2+3)`)
         'binary_concat',
         // one comparison level: EQ/NEQ/LT/LTE/GT/GTE/CONTAINS/DOES NOT
         // CONTAIN/IS/IS NOT and the `==`-family all share a single rank
         'binary_compare',
+        'bitwise_or',
         // logical not binds looser than comparisons (`NOT 0 GT 3` is
         // `NOT (0 GT 3)`) but tighter than `and`
         'binary_not',
@@ -177,9 +182,6 @@ module.exports = function defineGrammar(dialect) {
         'elvis',
         $.sequence_expression,
         $.arrow_function,
-        // JS leftovers accepted by the grammar but not CFML
-        'binary_shift',
-        'bitwise_or',
         ...(dialect === 'cfquery' ? ['query_repeat'] : []),
       ],
       ['assign', $.primary_expression, ...(dialect === 'cfquery' ? ['query_repeat'] : [])],
@@ -209,15 +211,6 @@ module.exports = function defineGrammar(dialect) {
       [$.primary_expression, $.parameter_type],
       [$.primary_expression, $.parameter_type, $.pattern],
       [$.parameter_type, $.pattern],
-      // cfml-dialect string-led output hash (`#"..."`): after the string, the
-      // parser either closes the expression-led hash (`#"x"#`, `#"x" < y#`)
-      // or reduces the unclosed string form (`#"x"`).  The runtime picks the
-      // closed parse at the close `#` / operator, the unclosed form otherwise.
-      // (cfml-dialect only — the query dialect has no `hash_string_expression`.)
-      ...(dialect === 'cfml' ? [
-        [$.hash_string_expression, $.primary_expression],
-        [$.hash_string_expression, $.assignment_expression],
-      ] : []),
       [$.primary_expression, $._property_name],
       [$.primary_expression, $.method_definition],
       [$.primary_expression, $.rest_pattern],
@@ -499,35 +492,21 @@ module.exports = function defineGrammar(dialect) {
 
         _hash_dialect_eval: ($) => choice(
           $.hash_expression,
-          $.hash_string_expression,
           alias($._hash_empty_external, $.hash_empty),
           alias($._single_hash, $.hash_single),
         ),
 
-        // Closed output hash: `#expr#`.  The closing `#` is REQUIRED — the
-        // external scanner must not be consulted at the post-expression state
-        // (a reducible close would pull the content-loop hash externals into
-        // the scanner's valid set and let it mistake the close for a new
-        // open).  The plain `_hash` token is emitted by the regular lexer.
+        // Output hash: `#expr#`. The closing `#` is required, as in Lucee: `#"x"`
+        // with no close is "missing terminating [#] for expression"
+        // (`CFMLTransformer`). #141 briefly accepted that form as a
+        // `hash_string_expression`; it came out again because Lucee rejects it,
+        // and because the state it added — a binary operator and an HTML
+        // attribute name both valid after the string — knocked `in` and
+        // `instanceof` out of keyword extraction (`npm run check:keywords`).
         hash_expression: ($) => seq(
           $._start_hash_expression,
           $.expression,
           $._hash,
-        ),
-
-        // textparser treats a `#"..."` string-led output hash as
-        // self-terminating: the expression is a DoubleString that ends at its
-        // own closing quote, so NO trailing `#` is required (`#"x"`,
-        // `#"x #a#"` are legal in <cfoutput>).  This rule is the unclosed
-        // alternative; `#"..."#` (explicit close) is handled by
-        // `hash_expression` above.  The post-string choice between closing the
-        // `expression`-led path (`#"x"#`, `#"x" < y#`) and reducing the
-        // unclosed string form (`#"x"`) is a reduce/reduce conflict declared
-        // in `conflicts`; the runtime picks the closed parse when a `#` or an
-        // operator follows the string, and the unclosed form otherwise.
-        hash_string_expression: ($) => seq(
-          $._start_hash_expression,
-          $.string,
         ),
 
       } : {
@@ -1877,7 +1856,11 @@ module.exports = function defineGrammar(dialect) {
           ['===', 'binary_compare'],
           [/[eE][qQ]/, 'binary_compare'],
           [/[eE][qQ][uU][aA][lL]/, 'binary_compare'],
-          [/[iI][sS]\s+[nN][oO][tT]/, 'binary_compare'],
+          // `IS NOT` is two tokens, not one `/is\s+not/` regex: a single token
+          // out-lexed `is` followed by any word starting with `not`, so
+          // `a is nothing` read as `a IS NOT hing`. As two tokens the lexer keeps
+          // `nothing` whole, and `IS NOT(x)` still reads as `NEQ`, as in Lucee.
+          [seq(/[iI][sS]/, alias(/[nN][oO][tT]/, 'not')), 'binary_compare'],
           [/[iI][sS]/, 'binary_compare'],
           ['<>', 'binary_compare'],
           ['!=', 'binary_compare'],
@@ -1927,10 +1910,13 @@ module.exports = function defineGrammar(dialect) {
       // tighter than `and` (`not false and false` is `(not false) and false`),
       // so it gets its own `binary_not` level.
       // @ts-ignore
-      not_operator: $ => choice(
+      // `binary_not` so that `a IS NOT b` reads as the two-word `IS NOT` rather
+      // than `a IS (NOT b)`: after `a IS NOT` the parser could either finish this
+      // operator or shift into the `IS NOT` arm, and `binary_compare` outranks it.
+      not_operator: $ => prec('binary_not', choice(
         '!',
         alias(/[nN][oO][tT]/, 'not'),
-      ),
+      )),
 
       not_expression: ($) => prec.left('binary_not', seq(
         field('operator', $.not_operator),
