@@ -81,8 +81,19 @@ typedef struct {
     Array(Tag) cf_tags;
     uint16_t cfoutput_depth;
     uint16_t cfcomponent_depth;
-    uint16_t cffunction_depth;
+    // `cfcomponent_depth` + 1 at the outermost open `<cfcomponent>` whose
+    // `output` is a literal true, 0 while none is open. `<cfcomponent>` is never
+    // pushed on `cf_tags`, so its flag cannot ride there as a function's does.
+    uint16_t cfcomponent_output_depth;
+    // Bit i: `cf_tags[i]` is a `<cffunction>` whose `output` is a literal true.
+    // Written for index i by every push at i, so a bit left behind by a popped
+    // tag is overwritten before anything reads it — `scanner_in_hash_eval_context`
+    // only looks below `cf_tags.size`. A function deeper than 32 CF tags reads as
+    // not evaluating.
+    uint32_t cffunction_output_mask;
 } Scanner;
+
+#define SCANNER_FLAGS_SIZE (sizeof(uint16_t) * 3 + sizeof(uint32_t))
 
 typedef enum {
     REJECT,     // Semicolon is illegal, ie a syntax error occurred
@@ -275,9 +286,7 @@ static unsigned tag_serialized_size(const Tag *tag, bool is_cfquery_context) {
 
 static bool tag_stack_would_overflow(const Scanner *scanner, const Tag *incoming,
                                      bool is_cfquery_context) {
-    const unsigned depths = sizeof(scanner->cfoutput_depth) +
-                            sizeof(scanner->cfcomponent_depth) +
-                            sizeof(scanner->cffunction_depth);
+    const unsigned depths = SCANNER_FLAGS_SIZE;
     // Headroom, and it is the whole point rather than a safety margin. The tag
     // that overflowed in the bug report was NOT one of the custom tags: 72
     // `<cf_runtest>` tags fit, and the `<cfscript>` after them became the 73rd
@@ -300,10 +309,8 @@ static bool tag_stack_would_overflow(const Scanner *scanner, const Tag *incoming
 
 static unsigned serialize(Scanner *scanner, char *buffer, bool is_cfquery_context) {
     unsigned size = 0;
-    const unsigned depths = sizeof(scanner->cfoutput_depth) +
-                            sizeof(scanner->cfcomponent_depth) +
-                            sizeof(scanner->cffunction_depth);
-    // `tags` must leave room for cf_tags' header and the three depth fields;
+    const unsigned depths = SCANNER_FLAGS_SIZE;
+    // `tags` must leave room for cf_tags' header and the four fields after it;
     // `cf_tags` only for the depths. That keeps every section present even when
     // the tag stacks are deep enough to fill the buffer on their own.
     SERIALIZE_TAGS(scanner->tags, buffer, size, TAGS_HEADER_SIZE + depths, is_cfquery_context);
@@ -313,8 +320,10 @@ static unsigned serialize(Scanner *scanner, char *buffer, bool is_cfquery_contex
         size += sizeof(scanner->cfoutput_depth);
         memcpy(&buffer[size], &scanner->cfcomponent_depth, sizeof(scanner->cfcomponent_depth));
         size += sizeof(scanner->cfcomponent_depth);
-        memcpy(&buffer[size], &scanner->cffunction_depth, sizeof(scanner->cffunction_depth));
-        size += sizeof(scanner->cffunction_depth);
+        memcpy(&buffer[size], &scanner->cfcomponent_output_depth, sizeof(scanner->cfcomponent_output_depth));
+        size += sizeof(scanner->cfcomponent_output_depth);
+        memcpy(&buffer[size], &scanner->cffunction_output_mask, sizeof(scanner->cffunction_output_mask));
+        size += sizeof(scanner->cffunction_output_mask);
     }
     return size;
 }
@@ -385,7 +394,8 @@ static unsigned serialize(Scanner *scanner, char *buffer, bool is_cfquery_contex
 static void deserialize(Scanner *scanner, const char *buffer, unsigned length, bool is_cfquery_context) {
     scanner->cfoutput_depth = 0;
     scanner->cfcomponent_depth = 0;
-    scanner->cffunction_depth = 0;
+    scanner->cfcomponent_output_depth = 0;
+    scanner->cffunction_output_mask = 0;
     if (length > 0) {
         unsigned size = 0;
         DESERIALIZE_TAGS(scanner->tags, buffer, size, length, is_cfquery_context);
@@ -398,9 +408,13 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length, b
             memcpy(&scanner->cfcomponent_depth, &buffer[size], sizeof(scanner->cfcomponent_depth));
             size += sizeof(scanner->cfcomponent_depth);
         }
-        if (size + sizeof(scanner->cffunction_depth) <= length) {
-            memcpy(&scanner->cffunction_depth, &buffer[size], sizeof(scanner->cffunction_depth));
-            size += sizeof(scanner->cffunction_depth);
+        if (size + sizeof(scanner->cfcomponent_output_depth) <= length) {
+            memcpy(&scanner->cfcomponent_output_depth, &buffer[size], sizeof(scanner->cfcomponent_output_depth));
+            size += sizeof(scanner->cfcomponent_output_depth);
+        }
+        if (size + sizeof(scanner->cffunction_output_mask) <= length) {
+            memcpy(&scanner->cffunction_output_mask, &buffer[size], sizeof(scanner->cffunction_output_mask));
+            size += sizeof(scanner->cffunction_output_mask);
         }
     } else {
         for (unsigned i = 0; i < scanner->tags.size; i++) tag_free(&scanner->tags.contents[i]);
@@ -1218,6 +1232,42 @@ static bool scan_cfsavecontent_content(Scanner *scanner, TSLexer *lexer, bool is
     return has_content;
 }
 
+// Whether a `#` in template text here opens an expression. In Lucee it does only
+// inside the body of a tag that turns expression parsing on (CFMLTransformer
+// evaluates text only while `data.parseExpression` is set), and once on it stays
+// on for everything nested inside. The tags that turn it on are the ones whose
+// `body-rtexprvalue` is true in core-base.tld — `output`, `mail`, `objectcache`,
+// and `query`, whose body is the cfquery grammar's — plus `<cffunction>` and
+// `<cfcomponent>` when their `output` is a literal true, which their attribute
+// evaluators decide (see `peek_output_attribute_is_true`). Everywhere else the
+// engine prints `#x#` as written.
+//
+// This used to count every `<cffunction>` and `<cfcomponent>` (#146), so a
+// literal `#` in a tag-based function body — CSS in a `<style>`, `#top` in an
+// href — opened an expression and broke the parse, and `<div>#x#</div>` there
+// was highlighted as an expression the engine never evaluates. Lucee's own admin
+// shows both halves: `debug/Simple.cfc` keeps a stylesheet's `#-lucee-debug` and
+// hex colours in a function with no `output`, while `web_functions.cfm` writes
+// `#arguments.isExpand ? 'expanded' : ''#` into a function with `output="true"`
+// and no `<cfoutput>`, and means it to be evaluated.
+static bool scanner_in_hash_eval_context(Scanner *scanner, bool is_cfquery_context) {
+    if (scanner->cfoutput_depth > 0 || scanner->cfcomponent_output_depth > 0) {
+        return true;
+    }
+    for (unsigned i = scanner->cf_tags.size; i > 0; i--) {
+        if (i - 1 < 32 && (scanner->cffunction_output_mask >> (i - 1)) & 1) {
+            return true;
+        }
+        const Tag *tag = &scanner->cf_tags.contents[i - 1];
+        if (tag->type != CFML) continue;
+        if ((tag->tag_name.size == 4 && memcmp(tag->tag_name.contents, "MAIL", 4) == 0) ||
+            (tag->tag_name.size == 11 && memcmp(tag->tag_name.contents, "OBJECTCACHE", 11) == 0)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context) {
     if (scanner->tags.size == 0) {
         return false;
@@ -1238,7 +1288,7 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_cont
     while (lexer->lookahead) {
         // CFML boundary checks (only when not mid-delimiter match)
         if (stop_at_cfml && delimiter_index == 0) {
-            if (lexer->lookahead == '#' && scanner->cfoutput_depth > 0) {
+            if (lexer->lookahead == '#' && scanner_in_hash_eval_context(scanner, is_cfquery_context)) {
                 break;
             }
             if (lexer->lookahead == '<') {
@@ -1515,6 +1565,86 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
     return false;
 }
 
+// Whether the `output` attribute of the `<cffunction>` or `<cfcomponent>` whose
+// name was just read is a literal true — the one case in which Lucee evaluates
+// `#` in that tag's body. Its attribute evaluators (`attributes.impl.Function`,
+// `.Component`) turn body parsing on exactly then, and a non-literal `output` is
+// a compile error, so `true`, `yes`, a non-zero integer and `#true#` are the
+// whole of it. The caller has marked the token's end at the name; this reads on
+// to the tag's `>` without consuming anything.
+static bool peek_output_attribute_is_true(TSLexer *lexer) {
+    bool output = false;
+    for (;;) {
+        while (cf_isspace(lexer->lookahead)) advance(lexer);
+        // `/>`, `>`, the end of input, or anything that is not an attribute
+        // name (a comment, a stray `<`) ends the tag as far as this is concerned.
+        char name[7];
+        unsigned name_len = 0;
+        while (cf_isalnum(lexer->lookahead) || lexer->lookahead == '-' ||
+               lexer->lookahead == '_' || lexer->lookahead == ':') {
+            if (name_len < sizeof(name)) name[name_len] = (char)cf_toupper(lexer->lookahead);
+            name_len++;
+            advance(lexer);
+        }
+        if (name_len == 0) return output;
+        const bool is_output = name_len == 6 && memcmp(name, "OUTPUT", 6) == 0;
+
+        while (cf_isspace(lexer->lookahead)) advance(lexer);
+        if (lexer->lookahead != '=') {
+            if (is_output) output = false;
+            continue;
+        }
+        advance(lexer);
+        while (cf_isspace(lexer->lookahead)) advance(lexer);
+
+        // The value, upper-cased; anything longer than `#TRUE#` is not true.
+        char value[7];
+        unsigned value_len = 0;
+        int32_t quote = 0;
+        if (lexer->lookahead == '"' || lexer->lookahead == '\'') {
+            quote = lexer->lookahead;
+            advance(lexer);
+        }
+        bool in_hash = false;
+        for (;;) {
+            int32_t c = lexer->lookahead;
+            if (c == 0) return false;
+            if (quote) {
+                if (c == quote && !in_hash) {
+                    advance(lexer);
+                    if (lexer->lookahead != quote) break;
+                } else if (in_hash && (c == '"' || c == '\'')) {
+                    // A string inside `#...#` may hold the attribute's own quote.
+                    advance(lexer);
+                    while (lexer->lookahead && lexer->lookahead != c) advance(lexer);
+                    if (!lexer->lookahead) return false;
+                }
+            } else if (cf_isspace(c) || c == '>' || (c == '/' && !in_hash)) {
+                break;
+            }
+            if (c == '#') in_hash = !in_hash;
+            if (value_len < sizeof(value)) value[value_len] = (char)cf_toupper(c);
+            value_len++;
+            advance(lexer);
+        }
+        if (!is_output) continue;
+
+        output = false;
+        if ((value_len == 4 && memcmp(value, "TRUE", 4) == 0) ||
+            (value_len == 3 && memcmp(value, "YES", 3) == 0) ||
+            (value_len == 6 && memcmp(value, "#TRUE#", 6) == 0)) {
+            output = true;
+        } else if (value_len > 0 && value_len <= sizeof(value)) {
+            bool digits = true, nonzero = false;
+            for (unsigned i = 0; i < value_len; i++) {
+                if (!cf_isdigit(value[i])) digits = false;
+                else if (value[i] != '0') nonzero = true;
+            }
+            output = digits && nonzero;
+        }
+    }
+}
+
 static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_context, bool is_cfquery_context) {
 
     // Dynamic tag name: <#expression#>
@@ -1542,6 +1672,7 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
 
     // bool is_cf = result.is_cf_tag || is_cf_context;
     Tag tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
+    bool function_output = false;
 
     // printf("scan_start_tag_name: tag=%.*s, is_cf_tag=%d, is_cf_context=%d, type=%d\n",
     // (int)result.tag_name.size, result.tag_name.contents, result.is_cf_tag, is_cf_context, tag.type);
@@ -1556,6 +1687,10 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         case CF_VOID:
             if (is_cf_context && tag.tag_name.size == 9 &&
                 memcmp(tag.tag_name.contents, "COMPONENT", 9) == 0) {
+                lexer->mark_end(lexer);
+                if (peek_output_attribute_is_true(lexer) && scanner->cfcomponent_output_depth == 0) {
+                    scanner->cfcomponent_output_depth = scanner->cfcomponent_depth + 1;
+                }
                 scanner->cfcomponent_depth++;
                 lexer->result_symbol = CF_COMPONENT_START_TAG_NAME;
             } else {
@@ -1599,7 +1734,8 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         case CF_FUNCTION:
             lexer->result_symbol = CF_FUNCTION_START_TAG_NAME;
             if (is_cf_context) {
-                scanner->cffunction_depth++;
+                lexer->mark_end(lexer);
+                function_output = peek_output_attribute_is_true(lexer);
             }
             break;
         default:
@@ -1629,6 +1765,14 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
 
     if ( is_cf_context ) {
         tag.html_depth = scanner->tags.size;
+        if (scanner->cf_tags.size < 32) {
+            const uint32_t bit = (uint32_t)1 << scanner->cf_tags.size;
+            if (function_output) {
+                scanner->cffunction_output_mask |= bit;
+            } else {
+                scanner->cffunction_output_mask &= ~bit;
+            }
+        }
         array_push(&scanner->cf_tags, tag);
     } else {
         array_push(&scanner->tags, tag);
@@ -1642,7 +1786,6 @@ static void set_end_tag_symbol(Scanner *scanner, TSLexer *lexer, Tag *tag, bool 
         if (scanner->cfoutput_depth > 0) scanner->cfoutput_depth--;
         lexer->result_symbol = CF_END_TAG_NAME;
     } else if (is_cf_context && tag->type == CF_FUNCTION) {
-        if (scanner->cffunction_depth > 0) scanner->cffunction_depth--;
         lexer->result_symbol = CF_FUNCTION_END_TAG_NAME;
     } else if (is_cf_context && tag->type == CF_XML) {
         lexer->result_symbol = CF_XML_END_TAG_NAME;
@@ -1696,6 +1839,9 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
     if (is_cf_context && tag.type == CF_VOID &&
         tag.tag_name.size == 9 && memcmp(tag.tag_name.contents, "COMPONENT", 9) == 0) {
         if (scanner->cfcomponent_depth > 0) scanner->cfcomponent_depth--;
+        if (scanner->cfcomponent_output_depth > scanner->cfcomponent_depth) {
+            scanner->cfcomponent_output_depth = 0;
+        }
         lexer->result_symbol = CF_COMPONENT_END_TAG_NAME;
         tag_free(&tag);
         return true;
@@ -1977,12 +2123,6 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_con
     }
 }
 
-static bool scanner_in_hash_eval_context(Scanner *scanner, bool is_cfquery_context) {
-    if (scanner->cfoutput_depth > 0 || scanner->cfcomponent_depth > 0 || scanner->cffunction_depth > 0) {
-        return true;
-    }
-    return false;
-}
 
 static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
     // Skip whitespace and script-style comments (// and /* */)

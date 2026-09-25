@@ -78,7 +78,7 @@ rows are already fixed in open pull requests and will disappear when those land.
 
 | Nodes | Files | Cause |
 |---|---|---|
-| 71 | 1 | CSS in `<style>` with many `#` tokens |
+| 71 | 1 | CSS in `<style>` with many `#` tokens — **fixed by #146**: the trigger was a `#` in a function with no `output`, not the CSS |
 | 53 | 11 | dynamic tag name with a static prefix — `<h#n#>`, `<dc:#t#>` — **fixed in #154** |
 | 45 | 3 | dotted key in a struct literal — `{ a.b = 1 }` |
 | 13 | 9 | dynamic close tag opened in a different block — `</#expr#>` — **fixed in #154** except Mura `dsp_content_list.cfm` (2 nodes) |
@@ -202,7 +202,7 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `lucee_Lucee/core/src/main/cfml/context/wddx.cfm` | 9 | A | bare JavaScript served from a `.cfm`, no `<script>` element |
 | `lucee_Lucee/core/src/main/java/resource/context/admin/debug/Classic.cfc` | 2 | C | `<cffunction>` body with unbalanced inner markup |
 | `lucee_Lucee/core/src/main/java/resource/context/admin/debug/Modern.cfc` | 1 | C | `</div` / `</p` — close tag split across lines |
-| `lucee_Lucee/core/src/main/java/resource/context/admin/debug/Simple.cfc` | 71 | B | CSS in `<style>` with many `#` tokens |
+| `lucee_Lucee/core/src/main/java/resource/context/admin/debug/Simple.cfc` | 71 | B | CSS in `<style>` with many `#` tokens — **fixed by #146** |
 | `lucee_Lucee/core/src/main/java/resource/context/admin/logging/appender/DatasourceAppender.cfc` | 1 | C | `<cfadmin` multi-line tag with a computed attribute |
 | `lucee_Lucee/test/_setupTestServices.cfc` | 1 | C | newline-separated attrs on an `admin` tag statement |
 | `lucee_Lucee/test/functions/DirectoryCopy.cfc` | 3 | C | space-separated attributes in a script-syntax tag call |

@@ -29,7 +29,7 @@ finding here changes the explanation of an existing entry, it says so.
 | 2 | **Done** — CFML operator precedence: `&`, `^`, `NOT`/`!`, `XOR`, `IS NOT`, `EQV`/`IMP` | support (wrong trees) | landed as #141 (@bokic), with the `IS NOT` word-boundary and bitwise corrections below made after merge; see `CHANGELOG.md` | — | — |
 | 3 | **Done** — automatic semicolon before a line-leading `IS`, `CONTAINS`, `XOR`, `IN`, … | support (wrong trees) | fixed in both scanners, with a second defect found on the way (`in_stock` at a line start errored); see `CHANGELOG.md` | scanner only | Low |
 | 4 | **Done** — an explicit error-recovery policy for the `cfml` scanner (#145) | recovery quality | as shipped: ERROR-covered bytes **−23%** over the 46 failing `cfml` files, 5 better, **none worse**, no tree changes elsewhere; the naive version's larger gain (−51%) came from free text in recovery, left out because it caused the 7 regressions — see `CHANGELOG.md` | scanner only | Low |
-| 5 | `#` in template text is only an expression inside `<cfoutput>` | support | the real cause of `debug/Simple.cfc`'s residual errors | scanner | Med: semantic |
+| 5 | **Done** — `#` in template text is an expression only where Lucee evaluates it (#146) | support | `debug/Simple.cfc` 71 → 0; the recommendation as written was half wrong: `output="true"` on a function or component *does* evaluate, per Lucee's attribute evaluators — see the section | scanner | Med: semantic |
 | 6 | Stop carrying a full CFScript statement grammar in `cfml` and `cfquery` | size | trimming it to the six statement kinds the corpus uses: **−16% / −19%** states | design choice | Med |
 | 7 | Smaller scanner fixes | support, robustness | see section | a few lines each | Low |
 | 8 | CI: state-count budget and a keyword-extraction check | process | automates the #75 lesson | small script | None |
@@ -372,6 +372,19 @@ Worth confirming against Lucee before changing, since it alters trees: it was
 read from the language rules, not run on an engine. If it holds, dropping the
 two depth conditions is the fix, and `cfcomponent_depth` / `cffunction_depth`
 may then have no other reader.
+
+**Outcome (#146): it held only in part, and "dropping the two depth conditions"
+was wrong.** Lucee's `CFMLTransformer` turns expression parsing on for a tag's
+body when `getParseBody()` is true. For most tags that comes from
+`body-rtexprvalue` in `core-base.tld` (`output`, `mail`, `objectcache`,
+`query`). For `function` and `component`, an attribute evaluator
+(`attributes.impl.Function`, `.Component`) sets it at compile time when
+`output` is a literal true. Dropping both conditions turned Lucee admin's
+`web_functions.cfm` expressions, written in `output="true"` functions, into
+text, and the corpus caught it. The scanner now reads `output` ahead of the tag
+name. `cffunction_depth` is gone. In its place are a per-`cf_tags`-slot bit for
+functions and an output depth for components. The raw-text scan inside
+`<style>` / `<script>` uses the same rule. See `CHANGELOG.md`.
 
 ---
 
