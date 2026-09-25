@@ -278,6 +278,7 @@
 ] @operator
 
 (unary_operator) @operator
+(not_operator) @operator
 
 [
   "("

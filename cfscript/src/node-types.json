@@ -50,6 +50,10 @@
         "named": true
       },
       {
+        "type": "not_expression",
+        "named": true
+      },
+      {
         "type": "object_pattern",
         "named": true
       },
@@ -2178,6 +2182,37 @@
         }
       ]
     }
+  },
+  {
+    "type": "not_expression",
+    "named": true,
+    "fields": {
+      "argument": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "expression",
+            "named": true
+          }
+        ]
+      },
+      "operator": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "not_operator",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "not_operator",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "null",

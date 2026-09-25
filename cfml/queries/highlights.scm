@@ -213,6 +213,7 @@
   "#" @punctuation.special)
 
 (unary_operator) @operator
+(not_operator) @operator
 
 ((identifier) @number
   (#any-of? @number "NaN" "Infinity"))
