@@ -2043,6 +2043,10 @@ static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_conte
 static bool scan_cf_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer, bool is_void, bool is_cfquery_context) {
      if (lexer->lookahead == '>') {
         advance(lexer);
+        // Explicit, because the dispatcher marks an end before its whitespace
+        // skip where an automatic semicolon is valid (#148), and `/>` is
+        // scanned in one of those states.
+        lexer->mark_end(lexer);
         if (is_void) {
             lexer->result_symbol = CF_SELF_CLOSING_VOID_TAG_DELIMITER;
         } else {
@@ -2123,6 +2127,8 @@ static bool scan_cfml_word_operator(TSLexer *lexer) {
     return false;
 }
 
+static bool automatic_semicolon_after_newline(TSLexer *lexer, bool *scanned_comment, bool is_cfquery_context);
+
 static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, bool *scanned_comment, bool is_cfquery_context) {
     lexer->result_symbol = AUTOMATIC_SEMICOLON;
     lexer->mark_end(lexer);
@@ -2167,6 +2173,14 @@ static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, boo
 
     skip(lexer);
 
+    return automatic_semicolon_after_newline(lexer, scanned_comment, is_cfquery_context);
+}
+
+// The half of `scan_automatic_semicolon` that runs once a newline has been
+// crossed: whether what starts the next line continues the statement. Split out
+// for the dispatcher, whose leading whitespace skip can cross that newline
+// before the semicolon branch is reached (#148).
+static bool automatic_semicolon_after_newline(TSLexer *lexer, bool *scanned_comment, bool is_cfquery_context) {
     if (scan_whitespace_and_comments(lexer, scanned_comment, true, is_cfquery_context) == REJECT) {
         return false;
     }
@@ -2346,9 +2360,48 @@ static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
 
 static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *valid_symbols, unsigned count, bool is_cfquery_context) {
 
+    // Where a statement can end, this skip crosses the newline that automatic
+    // semicolon insertion decides from, and the semicolon branch at the bottom
+    // never saw it: every statement in a closure in a tag expression that was
+    // not followed by `}` came out MISSING ";" (#148). So the newline is noted,
+    // and the end is marked first, making a semicolon inserted from it
+    // zero-width at the end of the statement, where cfscript's scanner puts
+    // one, rather than at the start of the next line. HTML_TEXT alongside the
+    // semicolon is error recovery (see `recovering` below), which never skips.
+    const bool semicolon_valid = VS(valid_symbols, AUTOMATIC_SEMICOLON, count) && !VS(valid_symbols, HTML_TEXT, count);
+    bool crossed_newline = false;
+
     if (!VS(valid_symbols, HTML_TEXT, count) && !VS(valid_symbols, RAW_TEXT, count)) {
+        if (semicolon_valid) {
+            lexer->mark_end(lexer);
+        }
         while (cf_isspace(lexer->lookahead)) {
+            if (lexer->lookahead == '\n' || lexer->lookahead == 0x2028 || lexer->lookahead == 0x2029) {
+                crossed_newline = true;
+            }
             skip(lexer);
+        }
+    }
+
+    // Decided here only for what nothing below makes a token of in these
+    // states, where this scan used to return false. `<` (a comment), `/` (`/>`,
+    // or a comment, which the `/` case below reads through), `>`, `?` (the
+    // ternary), and `}` and end of input (which the semicolon branch accepts
+    // without a newline) go the way they always have.
+    if (semicolon_valid && crossed_newline) {
+        switch (lexer->lookahead) {
+            case '<':
+            case '/':
+            case '>':
+            case '?':
+            case '}':
+            case 0:
+                break;
+            default: {
+                bool scanned_comment = false;
+                lexer->result_symbol = AUTOMATIC_SEMICOLON;
+                return automatic_semicolon_after_newline(lexer, &scanned_comment, is_cfquery_context);
+            }
         }
     }
 
@@ -2514,6 +2567,16 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
                     return scan_closetag_delim(scanner, lexer, false, is_cfquery_context);
                 }
             } else if (lexer->lookahead == '/' || lexer->lookahead == '*') {
+                // A comment opening the line after a statement. The semicolon
+                // decision reads through it, as cfscript's scanner does, so the
+                // comment falls between the two statements instead of inside
+                // the first (#148). `scan_script_comment` only consumes.
+                if (semicolon_valid && crossed_newline) {
+                    bool scanned_comment = true;
+                    scan_script_comment(lexer, is_cfquery_context);
+                    lexer->result_symbol = AUTOMATIC_SEMICOLON;
+                    return automatic_semicolon_after_newline(lexer, &scanned_comment, is_cfquery_context);
+                }
                 if (!scan_script_comment(lexer, is_cfquery_context)) {
                     return false;
                 }

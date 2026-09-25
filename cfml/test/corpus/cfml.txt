@@ -3669,3 +3669,50 @@ a dotted key in a struct literal (#136)
             (string_fragment))
           (number))))
     (cf_selfclose_void_tag_end)))
+
+================================================================================
+statements in a closure in a tag expression end at a newline (#148)
+================================================================================
+
+<cfset f = function() {
+  var a = 1
+  var b = a
+    and c
+  x = foo
+    .bar()
+  // a comment on a line of its own
+  ++y
+}>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (function_expression
+        (formal_parameters)
+        (statement_block
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (number)))
+          (variable_declaration
+            (variable_declarator
+              (identifier)
+              (binary_expression
+                (identifier)
+                (identifier))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (call_expression
+                (member_expression
+                  (identifier)
+                  (property_identifier))
+                (arguments))))
+          (comment)
+          (expression_statement
+            (update_expression
+              (identifier))))))
+    (cf_selfclose_void_tag_end)))
