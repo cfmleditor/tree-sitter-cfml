@@ -106,6 +106,20 @@
 
   Scanner-only, so `STATE_COUNT` is unchanged in all three grammars. The corpus scan is unchanged at 231 error lines in 85 files, since its few closures in tag expressions all end each statement with `;` or `}`. Every corpus file that master parses without error gives the same tree with the same node ranges: all 15,454 files parsed as `cfml`, including every `.cfc`, and all 2,420 `<cfquery>` bodies parsed as `cfquery`. `treediff` reports no change in either grammar. Fuzz is clean, and truncated closures recover. A 1-in-10 `cfml` timing sample reads −2.8% against a +3.0% control, which is noise.
 
+- **A `</cfscript>` inside a string or comment no longer ends the script block** — `FileWrite( p, "<cfscript>…</cfscript>" )` ([#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56), RustCFML `test_include_rewrite_freshness.cfm`, Lucee `LDEV0869.cfc`). The raw scan in `common/scanner.h` now tracks strings, `#…#` interpolations and all three comment forms. **Corpus 642 → 638 error nodes across 119 → 117 files**, zero changed trees, `npm run fuzz` clean, and no `STATE_COUNT` movement in either grammar — the change is entirely in the scanner.
+
+  **Lucee agrees, which was the issue's open question.** `cfscript` has a `tagdependent` body handled by `CFMLScriptTransformer`, which ends it through `isFinish()` between complete statements, so the string is consumed by the expression parser long before the tag inside it could be noticed. Read from Lucee's source; Adobe CF was not checked.
+
+  **Three assumptions about CFML's lexical rules had to be corrected, and the corpus scan caught all three while `npm test` stayed green:**
+
+  - Strings alone took the corpus to **7,932** error nodes. CFML has no backslash escape — a quote is escaped by doubling — so the apostrophe in `// don't do this` opens a string that runs to the end of the file. Comments have to be skipped too.
+  - A line comment ends at `\r` as well as `\n`. ColdBox ships CR-only files (`cbi18n`'s `i18n.cfc`; RustCFML has a fixture named `PresideFixCrEndings.cfc`), where one `//` otherwise swallows the whole file — 667 error nodes in that file alone.
+  - A string and an interpolation nest arbitrarily: `'"#replaceNoCase( v, '"', '""', 'all' )#"'` is one string containing an interpolation containing three more strings. A single boolean desynchronises on the first one, so the scan keeps a small context stack.
+
+  **Consequence worth knowing:** a `<cfscript>` block containing an *unterminated* string no longer parses, because the string swallows the close tag. That is invalid CFML and no corpus file does it — no file regressed.
+
+  The benchmark cannot resolve this change on a shared runner: reps varied by 76–86%, and `cfscript`, which `common/scanner.h` does not back, moved further than the subject did. The loop was already character-by-character and gained a few comparisons, with no new unbounded scanning.
+
 ### Tooling
 - **A pull-request check on parse-table size** ([#152](https://github.com/cfmleditor/tree-sitter-cfml/issues/152)). New `Grammar size` workflow and `npm run check:size`: each grammar's `STATE_COUNT`, large-state count and `parser.c` size against the base branch, written to the job summary on every pull request, failing when any grammar's `STATE_COUNT` grows by more than 5%. Growth that is deliberate and measured goes through with the `grammar-size-ok` label, which re-runs the job on its own. Nothing else in CI read the table size, and growth passes every other check: a statement as an arrow-function body doubled `cfscript`'s table (#75), and the first spelling of the visible word operators added 13–15% to all three grammars, both with the suite green. The check reads the committed `parser.c` files through git, so it needs no build and takes seconds; in CI its base is the merge commit's first parent, so the delta is what the pull request adds even when the base has moved on. Checked against real history: v0.26.36 → v0.26.37 reports the shrink, and the reverse fails `cfml` (+7.0%) and `cfscript` (+7.8%) while passing `cfquery` (+3.6%).
 
@@ -231,20 +245,6 @@
   **`'${'` was already a token of this grammar** (`template_substitution`, inside a backtick string), so this admits an existing lexical form in a new position rather than adding one. Every other `${…}` in the corpus sits inside a string literal — Java-style placeholders in Slatwall's shipping URLs, JS template literals in TestBox's coverage browser — and a string lexes as one token. **Corpus 640 → 645 error nodes across 121 files**, and the increase is a single file: `cfwheels`' `tools/vscode-ext/assets/templates/controller.cfc`, a VS Code snippet template rather than CFML, whose `${modelNamePlural}` placeholders sit in code position. It failed before (12 nodes) and fails after (18) — recovery reshaped, validity unchanged.
 
 ### cfml
-- **A `</cfscript>` inside a string or comment no longer ends the script block** — `FileWrite( p, "<cfscript>…</cfscript>" )` ([#56](https://github.com/cfmleditor/tree-sitter-cfml/issues/56), RustCFML `test_include_rewrite_freshness.cfm`, Lucee `LDEV0869.cfc`). The raw scan in `common/scanner.h` now tracks strings, `#…#` interpolations and all three comment forms. **Corpus 642 → 638 error nodes across 119 → 117 files**, zero changed trees, `npm run fuzz` clean, and no `STATE_COUNT` movement in either grammar — the change is entirely in the scanner.
-
-  **Lucee agrees, which was the issue's open question.** `cfscript` has a `tagdependent` body handled by `CFMLScriptTransformer`, which ends it through `isFinish()` between complete statements, so the string is consumed by the expression parser long before the tag inside it could be noticed. Read from Lucee's source; Adobe CF was not checked.
-
-  **Three assumptions about CFML's lexical rules had to be corrected, and the corpus scan caught all three while `npm test` stayed green:**
-
-  - Strings alone took the corpus to **7,932** error nodes. CFML has no backslash escape — a quote is escaped by doubling — so the apostrophe in `// don't do this` opens a string that runs to the end of the file. Comments have to be skipped too.
-  - A line comment ends at `\r` as well as `\n`. ColdBox ships CR-only files (`cbi18n`'s `i18n.cfc`; RustCFML has a fixture named `PresideFixCrEndings.cfc`), where one `//` otherwise swallows the whole file — 667 error nodes in that file alone.
-  - A string and an interpolation nest arbitrarily: `'"#replaceNoCase( v, '"', '""', 'all' )#"'` is one string containing an interpolation containing three more strings. A single boolean desynchronises on the first one, so the scan keeps a small context stack.
-
-  **Consequence worth knowing:** a `<cfscript>` block containing an *unterminated* string no longer parses, because the string swallows the close tag. That is invalid CFML and no corpus file does it — no file regressed.
-
-  The benchmark cannot resolve this change on a shared runner: reps varied by 76–86%, and `cfscript`, which `common/scanner.h` does not back, moved further than the subject did. The loop was already character-by-character and gained a few comparisons, with no new unbounded scanning.
-
 - **Reject an unquoted struct as a tag attribute value** — `<cfcomponent output="false" javasettings={ maven: ["x"] }>` ([#115](https://github.com/cfmleditor/tree-sitter-cfml/issues/115), Lucee `LDEV5763_tag_unquoted_struct.cfc`). It used to parse with **no ERROR node**, the struct shredded into six bogus attributes; it now reports an ERROR at the `{`. **No `STATE_COUNT` change** in either grammar, and the corpus moves *up* on purpose: 640 → 641 error nodes across 121 → 122 files, the one new file being the Lucee test that exercises the construct. The tree-shape diff reports zero changed files.
 
   **Refusing is the correct answer, not a gap left open.** Lucee rejects this syntax and its own test says so — `test/tickets/LDEV5763.cfc` wraps the tag-unquoted-struct component in `expect( … ).toThrow()`, with `struct literal (now throws validation error)` for the tag-in-script spelling and `struct literal (parse error)` for the function-style one. Only the quoted and JSON-string spellings pass there, and both already parsed here.
