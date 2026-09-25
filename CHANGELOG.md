@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.38]
 
 ### cfml, cfquery & cfscript
 - **An operator after a bare `#…#` on the right of `=` no longer swallows the assignment.** Six shapes used to parse with no error and the wrong tree: the suffix or operator applied to the whole assignment instead of to the hash.

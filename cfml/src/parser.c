@@ -288605,7 +288605,7 @@ TS_PUBLIC const TSLanguage *tree_sitter_cfml(void) {
     .metadata = {
       .major_version = 0,
       .minor_version = 26,
-      .patch_version = 37,
+      .patch_version = 38,
     },
   };
   return &language;
