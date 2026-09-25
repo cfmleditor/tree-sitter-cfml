@@ -223,7 +223,6 @@ module.exports = grammar({
     [$.expression, $.expression_statement],
 
     [$.expression, $.arguments],
-    [$.expression, $.assignment_expression],
     [$.expression, $.return_statement],
     [$.expression, $.throw_statement],
     [$.assignment_expression, $._property_name],
@@ -1470,7 +1469,11 @@ module.exports = grammar({
         $._lhs_expression,
       )),
       '=',
-      field('right', choice($.expression, $._hash_always_eval)),
+      // `$.expression` already includes `_hash_always_eval`. Listing it here as
+      // well gave `x = #a#` a second, direct route that finishes the assignment
+      // at the closing `#`, so whatever followed wrapped the whole assignment:
+      // `x = #a# & "s"` was `(x = #a#) & "s"`, `x = #a#.b` was `(x = #a#).b`.
+      field('right', $.expression),
     )),
 
     _augmented_assignment_lhs: ($) => choice(

@@ -4656,17 +4656,8 @@
             "type": "FIELD",
             "name": "right",
             "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "expression"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_hash_always_eval"
-                }
-              ]
+              "type": "SYMBOL",
+              "name": "expression"
             }
           }
         ]
@@ -10479,10 +10470,6 @@
     [
       "expression",
       "arguments"
-    ],
-    [
-      "expression",
-      "assignment_expression"
     ],
     [
       "expression",

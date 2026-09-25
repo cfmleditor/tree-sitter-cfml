@@ -235,7 +235,6 @@ module.exports = function defineGrammar(dialect) {
       [$.parenthesized_expression, $.expression, $.arguments],
       [$.parenthesized_expression, $.arguments],
       [$.sequence_expression, $.arguments],
-      [$.expression, $.assignment_expression],
       [$.expression, $.return_statement],
       [$.expression, $.throw_statement],
       [$.expression, $.for_statement],
@@ -1787,7 +1786,11 @@ module.exports = function defineGrammar(dialect) {
           alias($._hash_expression, $.hash_expression),
         )),
         '=',
-        field('right', choice($.expression, $._hash_always_eval)),
+        // `$.expression` already includes `_hash_always_eval`. Listing it here as
+        // well gave `x = #a#` a second, direct route that finishes the assignment
+        // at the closing `#`, so whatever followed wrapped the whole assignment:
+        // `x = #a# & "s"` was `(x = #a#) & "s"`, `x = #a#.b` was `(x = #a#).b`.
+        field('right', $.expression),
       )),
 
       _augmented_assignment_lhs: ($) => choice(

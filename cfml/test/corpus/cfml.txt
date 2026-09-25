@@ -3587,3 +3587,48 @@ a style block evaluates hashes where its enclosing tag does
       (style_text)
       (end_tag
         (tag_name)))))
+
+================================================================================
+an operator after a bare hash on the right of an assignment
+================================================================================
+
+<cfset x = #a#.b>
+<cfset x = #a#[1]>
+<cfset x = #a#++>
+<cfset x = #a# & "s">
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (member_expression
+        (hash_expression
+          (identifier))
+        (property_identifier)))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (subscript_expression
+        (hash_expression
+          (identifier))
+        (number)))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (update_expression
+        (hash_expression
+          (identifier))))
+    (cf_selfclose_void_tag_end))
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (binary_expression
+        (hash_expression
+          (identifier))
+        (string
+          (string_fragment))))
+    (cf_selfclose_void_tag_end)))
