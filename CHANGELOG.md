@@ -16,6 +16,9 @@
 
   Corpus scan **415 → 362 error lines, 111 → 100 files**, every one of the eleven to zero and no file worse: all five copies of cbfeeds' `SharedGenerator.cfc`, five Lucee admin pages (`server.logging.create.cfm` and friends), and Preside's `stepTitle.cfm`. `treediff` reports no changed `cfml` tree among files that already parsed. Scanner-only, so no generated file changed; the `prefixed_dynamic_tag.cfm` probe flips to pass; fuzz and truncated inputs are clean. In cfmleditor-lsp, all eleven move from refused to formatted, with no guard rejection. The second shape — a dynamic tag opened and closed in different blocks, Taffy's `</#expr#>` — is still open.
 
+### Tooling
+- **A pull-request check on parse-table size** ([#152](https://github.com/cfmleditor/tree-sitter-cfml/issues/152)). New `Grammar size` workflow and `npm run check:size`: each grammar's `STATE_COUNT`, large-state count and `parser.c` size against the base branch, written to the job summary on every pull request, failing when any grammar's `STATE_COUNT` grows by more than 5%. Growth that is deliberate and measured goes through with the `grammar-size-ok` label, which re-runs the job on its own. Nothing else in CI read the table size, and growth passes every other check: a statement as an arrow-function body doubled `cfscript`'s table (#75), and the first spelling of the visible word operators added 13–15% to all three grammars, both with the suite green. The check reads the committed `parser.c` files through git, so it needs no build and takes seconds; in CI its base is the merge commit's first parent, so the delta is what the pull request adds even when the base has moved on. Checked against real history: v0.26.36 → v0.26.37 reports the shrink, and the reverse fails `cfml` (+7.0%) and `cfscript` (+7.8%) while passing `cfquery` (+3.6%).
+
 ## [0.26.37]
 
 ### cfml, cfquery & cfscript

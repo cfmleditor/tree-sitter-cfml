@@ -66,6 +66,7 @@
     "scan:examples": "node scripts/scan.js examples --isolate --retries 3 --expect examples/expected.json",
     "probe": "node scripts/probe.js",
     "check:keywords": "node scripts/check-keywords.js",
+    "check:size": "node scripts/check-size.js",
     "bench": "node scripts/bench.js",
     "fuzz": "node scripts/fuzz.js",
     "corpus:fetch": "node scripts/fetch-corpus.js",

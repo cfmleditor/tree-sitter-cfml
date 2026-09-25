@@ -10,6 +10,7 @@ npm run build      # regenerate parsers (tree-sitter generate) + rebuild native 
 npm test           # run corpus tests for all three grammars
 npm run probe      # parse test/probes/* and fail on any drift from expected.json
 npm run check:keywords  # fail if a keyword() token lost extraction, or a wordOperator() alias its default
+npm run check:size      # parse-table size against origin/master; fails past +5% STATE_COUNT (also a PR check)
 npm run fuzz       # tree-sitter's own fuzzer over the corpus tests
 npm run lint       # ESLint
 npm run lint:fix   # ESLint with auto-fix
