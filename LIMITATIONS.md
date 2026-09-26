@@ -413,6 +413,10 @@ says which.
   [#90](https://github.com/cfmleditor/tree-sitter-cfml/issues/90): same rule,
   opposite direction, so anyone touching `labeled_statement` should read both.
 
+- **An unpaired custom tag swallowing the end tag of the element around it — fixed** ([#160](https://github.com/cfmleditor/tree-sitter-cfml/issues/160)). `<div><cf_foo a="1"></div>` made the `</div>` an `erroneous_end_tag` inside the custom tag, and gave the div an invented `implicit_end_tag`. An HTML end tag already closed open HTML children, and a CF end tag already closed open custom tags, but an HTML end tag did not close a custom tag. It now does, for a tag whose end tag is optional (`<cf_foo>` and `<cfmodule>`), when the element was opened outside it and nothing is open inside it. It does so only when the custom tag is really unpaired, because the engine gives a custom tag a body exactly when its end tag exists. A read-ahead settles that, and it stops at the next `<cf_foo` start tag (the open one is then unpaired), at the end tag of the enclosing block CF tag, or at end of input. That keeps it linear: scanning to the end of the document at every decision took a synthetic file of 4,000 unpaired tags in divs from 132 ms to 3.2 s.
+
+  Two things are unchanged, on purpose. A **paired** custom tag that crosses an HTML end tag, `<div><cf_foo>body</div></cf_foo>`, keeps its body, so the `</div>` stays the stray. Closing it there would strand `</cf_foo>` as an ERROR, and the engine, which reads HTML as text, sees the body. Unpaired custom tags that are **siblings**, with no enclosing end tag between them, still nest. That is the remaining half of #55's question of whether they should nest at all.
+
 ## Removed JavaScript constructs
 
 This grammar is a fork of `tree-sitter-javascript`, and some JS-only rules were

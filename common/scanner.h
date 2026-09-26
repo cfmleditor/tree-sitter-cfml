@@ -1540,6 +1540,115 @@ static void pop_tag(Scanner *scanner, bool is_cf_context) {
     }
 }
 
+// Whether a CF tag's end tag is optional, so an unpaired one is a whole tag
+// with no body: a custom tag (`<cf_foo>`, whose stored name is `_FOO`) or
+// `<cfmodule>`.
+static bool cf_tag_end_is_optional(const Tag *tag) {
+    if (tag->type != CFML) {
+        return false;
+    }
+    const String *name = &tag->tag_name;
+    return (name->size > 0 && name->contents[0] == '_') ||
+           (name->size == 6 && memcmp(name->contents, "MODULE", 6) == 0);
+}
+
+// Whether an HTML element called `name` is open among the first `depth`
+// entries of the HTML stack: the ones already open when a CF tag pushed at
+// that depth was opened.
+static bool html_tag_open_below(const Scanner *scanner, unsigned depth, const String *name) {
+    String copy = array_new();
+    array_extend(&copy, name->size, name->contents);
+    Tag html = tag_for_name(copy);
+    bool found = false;
+    for (unsigned i = depth < scanner->tags.size ? depth : scanner->tags.size; i > 0; i--) {
+        if (tag_eq(&scanner->tags.contents[i - 1], &html)) {
+            found = true;
+            break;
+        }
+    }
+    tag_free(&html);
+    return found;
+}
+
+// The name of the nearest CF tag below the innermost one that must be closed,
+// or NULL when there is none. An optional-end tag (another custom tag) is not a
+// boundary: it may have no end tag at all.
+static const String *enclosing_block_cf_tag_name(const Scanner *scanner) {
+    for (unsigned i = scanner->cf_tags.size - 1; i > 0; i--) {
+        const Tag *tag = &scanner->cf_tags.contents[i - 1];
+        if (!cf_tag_end_is_optional(tag)) {
+            return &tag->tag_name;
+        }
+    }
+    return NULL;
+}
+
+// Whether the rest of the document pairs the CF tag stored as `name`: a
+// `</cf<name>` appears before anything that settles it the other way. The
+// engine gives a custom tag a body exactly when its end tag exists, so this is
+// what tells an unpaired `<cf_foo>` from a paired one that crosses an HTML
+// boundary (`<div><cf_foo>body</div></cf_foo>`). Closing the paired one at
+// `</div>` strands its `</cf_foo>`, which is an ERROR.
+//
+// It stops early, which is what keeps it linear. Scanning to the end of the
+// document at every decision was quadratic in exactly the common case: 4,000
+// unpaired custom tags in divs, with no end tag anywhere, parsed in 3.2 s
+// against 132 ms. The scan stops at:
+//
+// - another `<cf<name>` start tag. The one still open is unpaired, and a later
+//   `</cf<name>` belongs to the new one. Also the more correct answer, since
+//   `<div><cf_foo></div><p><cf_foo>b</cf_foo></p>` closes the first.
+// - the end tag of the nearest enclosing block CF tag, `boundary` (NULL at
+//   the top level). CF tags nest properly, so no end tag lies beyond it.
+// - end of input.
+//
+// CFML comments are skipped. Read-ahead only: the caller's token is zero-width
+// and already marked, so nothing read here becomes part of it.
+static bool cf_end_tag_follows(TSLexer *lexer, const String *name, const String *boundary) {
+    char word[65];
+    while (!lexer->eof(lexer)) {
+        if (lexer->lookahead != '<') {
+            advance(lexer);
+            continue;
+        }
+        advance(lexer);
+        if (lexer->lookahead == '!') {
+            advance(lexer);
+            unsigned dashes = 0;
+            while (lexer->lookahead == '-') {
+                dashes++;
+                advance(lexer);
+            }
+            if (dashes >= 3) {
+                skip_cfml_comment_body(lexer);
+            }
+            continue;
+        }
+        bool closing = lexer->lookahead == '/';
+        if (closing) advance(lexer);
+        if (cf_tolower(lexer->lookahead) != 'c') continue;
+        advance(lexer);
+        if (cf_tolower(lexer->lookahead) != 'f') continue;
+        advance(lexer);
+        unsigned len = 0;
+        for (;;) {
+            int32_t c = lexer->lookahead;
+            if (!cf_isalnum(c) && c != '_' && c != '-' && c != ':' && c != '.') break;
+            if (len < sizeof(word) - 1) word[len] = (char)cf_toupper(c);
+            len++;
+            advance(lexer);
+        }
+        if (len >= sizeof(word)) continue;
+        bool is_name = len == name->size && memcmp(word, name->contents, len) == 0;
+        if (is_name) return closing;
+        if (closing && boundary && len == boundary->size &&
+                memcmp(word, boundary->contents, len) == 0) {
+            return false;
+        }
+    }
+    return false;
+}
+
 static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_context, bool is_cfquery_context, bool from_tag_open) {
 
     Tag *parent = is_cf_context
@@ -1632,6 +1741,25 @@ static bool scan_implicit_end_tag(Scanner *scanner, TSLexer *lexer, bool is_cf_c
         return false;
     }
 
+    // An HTML end tag for an element opened outside the innermost CF tag,
+    // when that tag's end tag is optional. An unpaired `<cf_foo …>` has no
+    // body: the engine runs it once, with `thisTag.hasEndTag` false. So in
+    // `<div><cf_foo></div>` the `</div>` is the div's. It used to be an
+    // `erroneous_end_tag` inside the custom tag, and the div got an invented
+    // end instead (#160). Closing the custom tag here is what an HTML end tag
+    // already does to an open HTML child. Only when no HTML element is open
+    // inside the custom tag: those close first, through the HTML path. And
+    // only when the custom tag is really unpaired: a `</cf_foo>` later in the
+    // document gives it a body, and it stays open (see cf_end_tag_follows).
+    if (is_cf_context && is_closing_tag && !result.is_cf_tag && parent &&
+            cf_tag_end_is_optional(parent) && scanner->tags.size <= parent->html_depth &&
+            html_tag_open_below(scanner, parent->html_depth, &result.tag_name) &&
+            !cf_end_tag_follows(lexer, &parent->tag_name, enclosing_block_cf_tag_name(scanner))) {
+        array_delete(&result.tag_name);
+        pop_tag(scanner, true);
+        lexer->result_symbol = IMPLICIT_CF_END_TAG;
+        return true;
+    }
 
     Tag next_tag = is_cf_context ? cf_tag_for_name(result.tag_name) : tag_for_name(result.tag_name);
 
