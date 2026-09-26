@@ -103,7 +103,7 @@ case, and most are a single file.
 | 6 | 1 | regex literal with escaped quotes and `>` in a string |
 | 4 | 2 | stray `<` inside tag text — `cl<ass=`, `<#context#/…?` |
 | 4 | 2 | missing comma between parameters |
-| 4 | 4 | `var` declaration inside a `while` condition |
+| ~~4~~ | ~~4~~ | `var` declaration inside a `while` condition — **fixed**: `( var x = … )` is a `variable_declaration` inside `parenthesized_expression` |
 | 4 | 4 | arrow function with a statement body — `=> return x` |
 | 4 | 3 | compound assignment in a `var` declaration — `var x &= …` |
 | 4 | 2 | `<cffunction>` body with unbalanced inner markup |
@@ -256,12 +256,12 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `ortus-boxlang_BoxLang/src/test/java/ortus/boxlang/compiler/LargeMethod.cfc` | 1 | C | arrow function with a statement body — `=> return x` |
 | `ortus-boxlang_BoxLang/src/test/java/TestCases/phase3/StaticTestCF.cfc` | 1 | C | `static foo = 9000;` field declaration |
 | `ortus-boxlang_BoxLang/src/test/java/TestCases/phase3/StaticTestCF2.cfc` | 1 | C | `static foo = 9000;` field declaration |
-| `Ortus-Solutions_commandbox/src/cfml/system/modules_app/system-commands/commands/run.cfc` | 1 | C | `var` declaration inside a `while` condition |
+| `Ortus-Solutions_commandbox/src/cfml/system/modules_app/system-commands/commands/run.cfc` | ~~1~~ | C | `var` declaration inside a `while` condition — **fixed** |
 | `Ortus-Solutions_commandbox/src/cfml/system/services/ServerService.cfc` | 1 | C | arrow function with a statement body — `=> return x` |
-| `Ortus-Solutions_commandbox/src/cfml/system/util/FileSystem.cfc` | 1 | C | `var` declaration inside a `while` condition |
-| `Ortus-Solutions_commandbox/src/cfml/system/util/MultiSelect.cfc` | 1 | C | `var` declaration inside a `while` condition |
+| `Ortus-Solutions_commandbox/src/cfml/system/util/FileSystem.cfc` | ~~1~~ | C | `var` declaration inside a `while` condition — **fixed** |
+| `Ortus-Solutions_commandbox/src/cfml/system/util/MultiSelect.cfc` | ~~1~~ | C | `var` declaration inside a `while` condition — **fixed** |
 | `Ortus-Solutions_commandbox/src/cfml/system/util/Print.cfc` | 1 | C | compound assignment in a `var` declaration — `var x &= …` |
-| `Ortus-Solutions_commandbox/src/cfml/system/util/ProgressableDownloader.cfc` | 1 | C | `var` declaration inside a `while` condition |
+| `Ortus-Solutions_commandbox/src/cfml/system/util/ProgressableDownloader.cfc` | ~~1~~ | C | `var` declaration inside a `while` condition — **fixed** |
 | `Ortus-Solutions_commandbox/src/cfml/system/util/TablePrinter.cfc` | 7 | C | single-quoted `queryExecute` SQL with a `#…#` span (#149) — **fixed in #154**; the label here was wrong |
 | `Ortus-Solutions_ContentBox/modules/contentbox/models/system/CBHelper.cfc` | 2 | C | missing comma between parameters |
 | `Ortus-Solutions_ContentBox/modules/contentbox/modules/contentbox-admin/views/authors/editor.cfm` | 1 | B | start tag whose `>` sits inside a `<cfif>` branch |

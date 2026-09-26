@@ -789,8 +789,34 @@ module.exports = grammar({
 
     parenthesized_expression: ($) => seq(
       '(',
-      $._expressions,
+      choice(
+        $._expressions,
+        // `while( ( var size = reader.read( cb ) ) != -1 )` — CommandBox reads
+        // a stream this way in four files. Lucee takes `var <name>` as a
+        // local-scope variable anywhere a variable can go
+        // (AbstrCFMLExprTransformer.scope), so the assignment both declares the
+        // name and yields the value tested. It is admitted only directly inside
+        // parentheses, the one place the corpus writes it: at the head of an
+        // expression statement it would be ambiguous with a `var` statement,
+        // and in general expression position it would make `var` valid, and so
+        // lex as the keyword, after every operator.
+        alias($._var_expression, $.variable_declaration),
+      ),
       ')',
+    ),
+
+    // A plain name only. The full `variable_declarator` also takes scoped,
+    // subscripted and destructured names, and reaching all of those from inside
+    // parentheses made the cfml table 2.9% larger rather than 0.1%, for a form
+    // the corpus only ever writes with a bare identifier.
+    _var_expression: ($) => seq(
+      $._kw_var,
+      alias($._var_expression_declarator, $.variable_declarator),
+    ),
+
+    _var_expression_declarator: ($) => seq(
+      field('name', $.identifier),
+      optional($._initializer),
     ),
 
     //

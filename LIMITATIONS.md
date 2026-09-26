@@ -106,6 +106,20 @@ is rare enough that the trade is not worth it.
 identifier wherever the `import` statement is not valid, so `x = import.foo`
 parses as an ordinary member expression.
 
+### `var` as a variable name straight after `(`
+
+`x = (var)` and `x = (var.a)` do not parse: directly inside parentheses `var`
+lexes as the keyword, because `( var name = value )` — a `var` declaration used
+as an expression, which CommandBox writes in `while` conditions — is valid there.
+A variable named `var` does not occur in the corpus, and `var` could not start a
+statement as a name before either. Elsewhere (`f(var)`, `a == var`) it is still
+an identifier.
+
+Only a plain name is accepted in the parenthesized form (`( var x = … )`, not
+`( var local.x = … )`): the full declarator's scoped and destructured names made
+the `cfml` table 2.9% larger instead of 0.1%, and appear nowhere in that
+position.
+
 ### Bare reserved words parse as expressions
 
 `new;`, `static;`, `public;`, `final;` and the other `_reserved_identifier`

@@ -247,3 +247,70 @@ component {
         (statement_block
           (return_statement
             (number)))))))
+
+================================================================================
+real world: var declared inside parentheses (CommandBox FileSystem)
+================================================================================
+
+component {
+
+	function copy( reader, cb ) {
+		while( ( var size = reader.read( cb ) ) != -1 ) {
+			write( size );
+		}
+		while( var key = next() ) {
+			write( key );
+		}
+	}
+
+}
+
+--------------------------------------------------------------------------------
+
+(program
+  (component
+    (component_body
+      (function_declaration
+        (identifier)
+        (formal_parameters
+          (parameter_type
+            (identifier))
+          (parameter_type
+            (identifier)))
+        (statement_block
+          (while_statement
+            (parenthesized_expression
+              (binary_expression
+                (parenthesized_expression
+                  (variable_declaration
+                    (variable_declarator
+                      (identifier)
+                      (call_expression
+                        (member_expression
+                          (identifier)
+                          (property_identifier))
+                        (arguments
+                          (identifier))))))
+                (unary_expression
+                  (unary_operator)
+                  (number))))
+            (statement_block
+              (expression_statement
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (identifier))))))
+          (while_statement
+            (parenthesized_expression
+              (variable_declaration
+                (variable_declarator
+                  (identifier)
+                  (call_expression
+                    (identifier)
+                    (arguments)))))
+            (statement_block
+              (expression_statement
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (identifier)))))))))))
