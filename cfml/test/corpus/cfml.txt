@@ -3716,3 +3716,120 @@ statements in a closure in a tag expression end at a newline (#148)
             (update_expression
               (identifier))))))
     (cf_selfclose_void_tag_end)))
+
+================================================================================
+an unpaired custom tag closes at the end tag of the element around it (#160)
+================================================================================
+
+<div><cf_X a="1"></div>
+<ul><li><cf_X a="1"></li></ul>
+<div><cfmodule template="a"></div>
+<div><cf_X a="1"></div><p><cf_X b="2">body</cf_X></p>
+
+--------------------------------------------------------------------------------
+
+(program
+  (element
+    (start_tag
+      (tag_name))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))))
+      (implicit_cf_end_tag))
+    (end_tag
+      (tag_name)))
+  (element
+    (start_tag
+      (tag_name))
+    (element
+      (start_tag
+        (tag_name))
+      (cf_tag
+        (cf_start_tag
+          (cf_tag_name)
+          (cf_tag_attributes
+            (cf_attribute
+              (cf_attribute_name)
+              (quoted_cf_attribute_value
+                (attribute_value)))))
+        (implicit_cf_end_tag))
+      (end_tag
+        (tag_name)))
+    (end_tag
+      (tag_name)))
+  (element
+    (start_tag
+      (tag_name))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))))
+      (implicit_cf_end_tag))
+    (end_tag
+      (tag_name)))
+  (element
+    (start_tag
+      (tag_name))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))))
+      (implicit_cf_end_tag))
+    (end_tag
+      (tag_name)))
+  (element
+    (start_tag
+      (tag_name))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))))
+      (html_text)
+      (cf_end_tag
+        (cf_tag_name)))
+    (end_tag
+      (tag_name))))
+
+================================================================================
+a paired custom tag that crosses an HTML end tag stays paired (#160)
+================================================================================
+
+<div><cf_X a="1">body</div></cf_X>
+
+--------------------------------------------------------------------------------
+
+(program
+  (element
+    (start_tag
+      (tag_name))
+    (cf_tag
+      (cf_start_tag
+        (cf_tag_name)
+        (cf_tag_attributes
+          (cf_attribute
+            (cf_attribute_name)
+            (quoted_cf_attribute_value
+              (attribute_value)))))
+      (html_text)
+      (erroneous_end_tag
+        (erroneous_end_tag_name))
+      (cf_end_tag
+        (cf_tag_name)))
+    (implicit_end_tag)))

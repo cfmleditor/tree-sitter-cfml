@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### cfml
+- **An unpaired custom tag no longer swallows the end tag of the element around it** ([#160](https://github.com/cfmleditor/tree-sitter-cfml/issues/160)). In `<div><cf_foo a="1"></div>` the `</div>` was an `erroneous_end_tag` inside the custom tag, and the div got an invented end. An HTML end tag for an element opened outside an open `<cf_foo>` or `<cfmodule>` now closes it first with `implicit_cf_end_tag`, as it already closed open HTML children. It does so only when the custom tag is really unpaired. A read-ahead looks for its end tag, and stops at the next start tag of the same name, at the end of the enclosing block CF tag, or at end of input, so it stays linear. A paired custom tag that crosses an HTML end tag keeps its body, and that `</div>` stays a stray, since closing it would strand the `</cf_foo>` as an ERROR.
+
+  Scanner-only, so `STATE_COUNT` is unchanged. The corpus scan is unchanged at 231 error lines in 85 files, because these trees had no ERROR node. `treediff` changes 129 `cfml` files, all one way: 520 `erroneous_end_tag`s become `end_tag`s and 520 invented `implicit_end_tag`s go. In 52 places a custom tag that had been emitted bodyless by #55's overflow guard is now an ordinary `cf_tag`, because the stack no longer grows deep enough to need the guard. Slatwall's `admin/views/toolbar/menu.cfm` goes from 16 stray end tags and 42 overflow fallbacks to none. `cfscript` trees and all 2,420 `<cfquery>` bodies are unchanged. Fuzz is clean, truncated inputs recover, and a 1-in-10 timing sample reads −0.3% against a +1.0% control.
+
 ## [0.26.38]
 
 ### cfml, cfquery & cfscript
