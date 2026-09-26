@@ -1,0 +1,115 @@
+==================
+cfimport prefix: hash expressions in a prefixed tag's attributes
+==================
+
+<cfimport prefix="control" taglib="../controls">
+<control:button click="#URLEncodedFormat("a=b")#">
+
+---
+
+(program
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_selfclose_void_tag_end))
+  (element
+    (start_tag
+      (tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (hash_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (string
+                    (string_fragment)))))))))
+    (implicit_end_tag)))
+
+==================
+cfimport prefix: single-quoted and upper-case spellings
+==================
+
+<CFIMPORT taglib='../controls' PREFIX='control' />
+<CONTROL:button click="#f("a=b")#" />
+
+---
+
+(program
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_selfclose_void_tag_end
+      (self_closing_tag_delimiter)))
+  (element
+    (self_closing_tag
+      (tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (hash_expression
+              (call_expression
+                (identifier)
+                (arguments
+                  (string
+                    (string_fragment))))))))
+      (self_closing_tag_delimiter))))
+
+==================
+cfimport prefix: an HTML attribute outside the imported prefix stays text
+==================
+
+<cfimport prefix="control" taglib="../controls">
+<other:button click="#x#">
+<div click="#x#"></div>
+
+---
+
+(program
+  (cf_selfclose_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_selfclose_void_tag_end))
+  (element
+    (start_tag
+      (tag_name)
+      (tag_attributes
+        (attribute
+          (attribute_name)
+          (quoted_attribute_value
+            (hash_single)
+            (attribute_value)
+            (hash_single)))))
+    (element
+      (start_tag
+        (tag_name)
+        (tag_attributes
+          (attribute
+            (attribute_name)
+            (quoted_attribute_value
+              (hash_single)
+              (attribute_value)
+              (hash_single)))))
+      (end_tag
+        (tag_name)))
+    (implicit_end_tag)))

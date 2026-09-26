@@ -26,6 +26,11 @@ typedef enum {
     SOURCE,
     TRACK,
     WBR,
+    // An unrecognised tag the scanner declined to nest because its name would
+    // no longer fit in the serialised tag stack. It has no name in the table:
+    // `scan_start_tag_name` assigns it in place of `CUSTOM`, and being inside
+    // the void range is what closes it like `<input>`.
+    CUSTOM_VOID,
     END_OF_VOID_TAGS,
 
     CUSTOM,
