@@ -1,6 +1,8 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.42]
+
+The same changes were tagged `v0.26.41`, but on the commit before its release commit, so that tag's manifests still read 0.26.40 and npm, PyPI and crates.io skipped it as already published. 0.26.42 is the first release to carry them to the registries. The `v0.26.41` tag is left where it is, so nothing that has already fetched it changes underneath.
 
 ### cfml, cfquery & cfscript
 - **A `var` declaration inside parentheses parses.** `while( ( var size = reader.read( cb ) ) != -1 )` is how CommandBox reads a stream, in four files: `FileSystem.cfc`, `MultiSelect.cfc`, `ProgressableDownloader.cfc` and `commands/run.cfc`. Lucee takes `var <name>` as a local-scope variable anywhere a variable can go, so the assignment both declares the name and yields the value tested. `parenthesized_expression` now accepts `var name` with an optional initializer, as a `variable_declaration` holding a `variable_declarator`, in both script grammars. Only directly inside parentheses, the one position the corpus writes it: at the head of an expression statement it would be ambiguous with a `var` statement, and in general expression position `var` would lex as the keyword after every operator. Only a plain name, too: the full declarator's scoped and destructured names cost `cfml` 2.9% more states instead of 0.1%. The one casualty is a variable literally named `var` straight after `(` — `x = (var)` — which no corpus file writes (LIMITATIONS.md).
