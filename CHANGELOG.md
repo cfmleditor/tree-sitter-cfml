@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.42]
 
 The same changes were tagged `v0.26.41`, but on the commit before its release commit, so that tag's manifests still read 0.26.40 and npm, PyPI and crates.io skipped it as already published. 0.26.42 is the first release to carry them to the registries. The `v0.26.41` tag is left where it is, so nothing that has already fetched it changes underneath.
 
