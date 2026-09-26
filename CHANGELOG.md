@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.39]
 
 ### cfml
 - **An unpaired custom tag no longer swallows the end tag of the element around it** ([#160](https://github.com/cfmleditor/tree-sitter-cfml/issues/160)). In `<div><cf_foo a="1"></div>` the `</div>` was an `erroneous_end_tag` inside the custom tag, and the div got an invented end. An HTML end tag for an element opened outside an open `<cf_foo>` or `<cfmodule>` now closes it first with `implicit_cf_end_tag`, as it already closed open HTML children. It does so only when the custom tag is really unpaired. A read-ahead looks for its end tag, and stops at the next start tag of the same name, at the end of the enclosing block CF tag, or at end of input, so it stays linear. A paired custom tag that crosses an HTML end tag keeps its body, and that `</div>` stays a stray, since closing it would strand the `</cf_foo>` as an ERROR.
