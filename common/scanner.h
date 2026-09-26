@@ -76,6 +76,14 @@ enum TokenType {
     SCANNER_SYMBOL_COUNT
 };
 
+// Room for the prefixes a template declares with `<cfimport prefix="…">`, each
+// stored as a length byte and its upper-cased name. tassweb's busiest pages
+// import two or three (`control`, `container`, `content`), so this is several
+// times what real code needs while staying a small, fixed share of the
+// serialisation buffer the tag stacks also live in.
+#define IMPORT_PREFIX_BYTES 64
+#define IMPORT_PREFIX_MAX_LEN 32
+
 typedef struct {
     Array(Tag) tags;
     Array(Tag) cf_tags;
@@ -91,9 +99,20 @@ typedef struct {
     // only looks below `cf_tags.size`. A function deeper than 32 CF tags reads as
     // not evaluating.
     uint32_t cffunction_output_mask;
+    char import_prefixes[IMPORT_PREFIX_BYTES];
+    uint8_t import_prefixes_len;
+    // Set while the scanner is inside the start tag of an element whose name
+    // carries an imported prefix, so `#` in its attributes opens an expression.
+    bool in_prefixed_start_tag;
 } Scanner;
 
 #define SCANNER_FLAGS_SIZE (sizeof(uint16_t) * 3 + sizeof(uint32_t))
+
+// The bytes `serialize` writes after the flag fields: the start-tag flag, the
+// prefix buffer's length, and the buffer.
+static inline unsigned import_section_size(const Scanner *scanner) {
+    return 2 + scanner->import_prefixes_len;
+}
 
 typedef enum {
     REJECT,     // Semicolon is illegal, ie a syntax error occurred
@@ -284,9 +303,40 @@ static unsigned tag_serialized_size(const Tag *tag, bool is_cfquery_context) {
 // nesting depth is a handful of tags, so the loop is not measurable.
 #define TAG_STACK_HEADROOM 256
 
-static bool tag_stack_would_overflow(const Scanner *scanner, const Tag *incoming,
-                                     bool is_cfquery_context) {
-    const unsigned depths = SCANNER_FLAGS_SIZE;
+// A second margin, below the first, for the HTML side. An unrecognised HTML tag
+// left unclosed — tassweb's `<control:hiddenfield …>`, written thirty times in
+// a row — nests exactly as an unpaired `<cf_foo>` does, and costs its name's
+// bytes on the stack. Held only to the budget above, such a run fills the
+// stack right up to it, and the `<cfloop>` after it is then the tag that
+// cannot be pushed: `CFML` is the type an ordinary `<cfloop>` gets too, so it
+// meets the same check and is completed as void, leaving its `</cfloop>` with
+// no opener. Stopping HTML custom tags this much earlier keeps room for the CF
+// tags that genuinely nest inside such a page — about ten `<cfloop>` levels.
+#define CUSTOM_HTML_TAG_HEADROOM 128
+
+static inline unsigned scanner_depths_size(const Scanner *scanner) {
+    (void)scanner;
+    return SCANNER_FLAGS_SIZE;
+}
+
+// Every byte `serialize` needs except the two tag stacks' entries.
+static inline unsigned scanner_fixed_size(const Scanner *scanner) {
+    return 2 * TAGS_HEADER_SIZE + scanner_depths_size(scanner) + import_section_size(scanner);
+}
+
+static unsigned tag_stacks_size(const Scanner *scanner, bool is_cfquery_context) {
+    unsigned used = 0;
+    for (unsigned i = 0; i < scanner->tags.size; i++) {
+        used += tag_serialized_size(&scanner->tags.contents[i], is_cfquery_context);
+    }
+    for (unsigned i = 0; i < scanner->cf_tags.size; i++) {
+        used += tag_serialized_size(&scanner->cf_tags.contents[i], is_cfquery_context);
+    }
+    return used;
+}
+
+static bool tag_stack_would_overflow_by(const Scanner *scanner, const Tag *incoming,
+                                        bool is_cfquery_context, unsigned headroom) {
     // Headroom, and it is the whole point rather than a safety margin. The tag
     // that overflowed in the bug report was NOT one of the custom tags: 72
     // `<cf_runtest>` tags fit, and the `<cfscript>` after them became the 73rd
@@ -295,26 +345,26 @@ static bool tag_stack_would_overflow(const Scanner *scanner, const Tag *incoming
     // `<cfscript>`, `<cfoutput>`, `<cfquery>` — to still fit after it. 256 bytes
     // is roughly 18 further named tags, well past any real nesting depth.
     const unsigned budget =
-        TREE_SITTER_SERIALIZATION_BUFFER_SIZE -
-        (2 * TAGS_HEADER_SIZE + depths) - TAG_STACK_HEADROOM;
-    unsigned used = 0;
-    for (unsigned i = 0; i < scanner->tags.size; i++) {
-        used += tag_serialized_size(&scanner->tags.contents[i], is_cfquery_context);
-    }
-    for (unsigned i = 0; i < scanner->cf_tags.size; i++) {
-        used += tag_serialized_size(&scanner->cf_tags.contents[i], is_cfquery_context);
-    }
-    return used + tag_serialized_size(incoming, is_cfquery_context) > budget;
+        TREE_SITTER_SERIALIZATION_BUFFER_SIZE - scanner_fixed_size(scanner) - headroom;
+    return tag_stacks_size(scanner, is_cfquery_context) +
+           tag_serialized_size(incoming, is_cfquery_context) > budget;
+}
+
+static bool tag_stack_would_overflow(const Scanner *scanner, const Tag *incoming,
+                                     bool is_cfquery_context) {
+    return tag_stack_would_overflow_by(scanner, incoming, is_cfquery_context, TAG_STACK_HEADROOM);
 }
 
 static unsigned serialize(Scanner *scanner, char *buffer, bool is_cfquery_context) {
     unsigned size = 0;
     const unsigned depths = SCANNER_FLAGS_SIZE;
-    // `tags` must leave room for cf_tags' header and the four fields after it;
-    // `cf_tags` only for the depths. That keeps every section present even when
-    // the tag stacks are deep enough to fill the buffer on their own.
-    SERIALIZE_TAGS(scanner->tags, buffer, size, TAGS_HEADER_SIZE + depths, is_cfquery_context);
-    SERIALIZE_TAGS(scanner->cf_tags, buffer, size, depths, is_cfquery_context);
+    const unsigned imports = import_section_size(scanner);
+    // `tags` must leave room for cf_tags' header, the four fields after it and
+    // the import section; `cf_tags` for the last two. That keeps every section
+    // present even when the tag stacks are deep enough to fill the buffer on
+    // their own.
+    SERIALIZE_TAGS(scanner->tags, buffer, size, TAGS_HEADER_SIZE + depths + imports, is_cfquery_context);
+    SERIALIZE_TAGS(scanner->cf_tags, buffer, size, depths + imports, is_cfquery_context);
     if (size + depths <= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
         memcpy(&buffer[size], &scanner->cfoutput_depth, sizeof(scanner->cfoutput_depth));
         size += sizeof(scanner->cfoutput_depth);
@@ -324,6 +374,14 @@ static unsigned serialize(Scanner *scanner, char *buffer, bool is_cfquery_contex
         size += sizeof(scanner->cfcomponent_output_depth);
         memcpy(&buffer[size], &scanner->cffunction_output_mask, sizeof(scanner->cffunction_output_mask));
         size += sizeof(scanner->cffunction_output_mask);
+    }
+    if (size + imports <= TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
+        buffer[size++] = (char)scanner->in_prefixed_start_tag;
+        buffer[size++] = (char)scanner->import_prefixes_len;
+        if (scanner->import_prefixes_len) {
+            memcpy(&buffer[size], scanner->import_prefixes, scanner->import_prefixes_len);
+            size += scanner->import_prefixes_len;
+        }
     }
     return size;
 }
@@ -396,6 +454,8 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length, b
     scanner->cfcomponent_depth = 0;
     scanner->cfcomponent_output_depth = 0;
     scanner->cffunction_output_mask = 0;
+    scanner->in_prefixed_start_tag = false;
+    scanner->import_prefixes_len = 0;
     if (length > 0) {
         unsigned size = 0;
         DESERIALIZE_TAGS(scanner->tags, buffer, size, length, is_cfquery_context);
@@ -415,6 +475,19 @@ static void deserialize(Scanner *scanner, const char *buffer, unsigned length, b
         if (size + sizeof(scanner->cffunction_output_mask) <= length) {
             memcpy(&scanner->cffunction_output_mask, &buffer[size], sizeof(scanner->cffunction_output_mask));
             size += sizeof(scanner->cffunction_output_mask);
+        }
+        // Bounded like every read above (#57): the length comes out of the
+        // buffer, and one that overruns it or the field leaves no prefixes
+        // rather than a read past either end.
+        if (size + 2 <= length) {
+            scanner->in_prefixed_start_tag = buffer[size] != 0;
+            uint8_t len = (uint8_t)buffer[size + 1];
+            size += 2;
+            if (len <= IMPORT_PREFIX_BYTES && size + len <= length) {
+                if (len) memcpy(scanner->import_prefixes, &buffer[size], len);
+                scanner->import_prefixes_len = len;
+                size += len;
+            }
         }
     } else {
         for (unsigned i = 0; i < scanner->tags.size; i++) tag_free(&scanner->tags.contents[i]);
@@ -1414,7 +1487,11 @@ static bool scanner_in_hash_eval_context(Scanner *scanner, bool is_cfquery_conte
             return true;
         }
     }
-    return false;
+    // A custom tag's attributes are evaluated wherever the tag is, which is
+    // what lets `click="#URLEncodedFormat("a=b")#"` hold a quote of its own.
+    // Outside this, an HTML attribute's `#` is text and the inner `"` really
+    // does end the value, so the flag covers only an imported prefix's tag.
+    return scanner->in_prefixed_start_tag;
 }
 
 static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context) {
@@ -1922,7 +1999,115 @@ static bool peek_output_attribute_is_true(TSLexer *lexer) {
     }
 }
 
+// Whether an HTML-side tag name — `CONTROL:HIDDENFIELD`, upper-cased by
+// `scan_tag_name` — starts with a prefix the template imported.
+static bool has_import_prefix(const Scanner *scanner, const String *name) {
+    unsigned colon = 0;
+    while (colon < name->size && name->contents[colon] != ':') colon++;
+    if (colon == 0 || colon == name->size) return false;
+    for (unsigned i = 0; i < scanner->import_prefixes_len;) {
+        uint8_t len = (uint8_t)scanner->import_prefixes[i];
+        if (len == colon && memcmp(&scanner->import_prefixes[i + 1], name->contents, len) == 0) {
+            return true;
+        }
+        i += 1 + len;
+    }
+    return false;
+}
+
+static void record_import_prefix(Scanner *scanner, const char *prefix, unsigned len,
+                                 bool is_cfquery_context) {
+    if (len == 0 || len > IMPORT_PREFIX_MAX_LEN) return;
+    for (unsigned i = 0; i < scanner->import_prefixes_len;) {
+        uint8_t have = (uint8_t)scanner->import_prefixes[i];
+        if (have == len && memcmp(&scanner->import_prefixes[i + 1], prefix, len) == 0) return;
+        i += 1 + have;
+    }
+    if (scanner->import_prefixes_len + 1 + len > IMPORT_PREFIX_BYTES) return;
+    // A prefix is only kept if the state still serialises with it. Tags already
+    // on the stack were pushed against the budget without it, so this is the
+    // one place the import section can grow past what they left free; dropping
+    // the prefix leaves its tags parsed as plain HTML, which is today's answer.
+    if (tag_stacks_size(scanner, is_cfquery_context) + scanner_fixed_size(scanner) + 1 + len >
+        TREE_SITTER_SERIALIZATION_BUFFER_SIZE) {
+        return;
+    }
+    scanner->import_prefixes[scanner->import_prefixes_len] = (char)len;
+    memcpy(&scanner->import_prefixes[scanner->import_prefixes_len + 1], prefix, len);
+    scanner->import_prefixes_len += 1 + len;
+}
+
+// Reads the attributes of a `<cfimport …>` for `prefix="…"`, as lookahead: the
+// caller has already fixed the tag-name token with `mark_end`, so nothing
+// consumed here belongs to it, and the grammar lexes the attributes itself.
+//
+// The scan is the scanner's own because a custom tag's attributes are the one
+// place the grammar needs to know a prefix before it has parsed anything that
+// names one. It stops at the tag's end, at anything that is not an attribute,
+// and after a fixed number of characters, so a malformed or unterminated
+// `<cfimport` costs at most that — the state an editor is in mid-keystroke.
+// A `#…#` prefix is dynamic and is not recorded.
+static void capture_import_prefix(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context) {
+    unsigned budget = 1024;
+    while (budget > 0 && lexer->lookahead != 0) {
+        while (budget > 0 && cf_isspace(lexer->lookahead)) { advance(lexer); budget--; }
+
+        char name[8];
+        unsigned name_len = 0;
+        bool name_fits = true;
+        while (budget > 0 && (cf_isalnum(lexer->lookahead) || lexer->lookahead == '_' ||
+                              lexer->lookahead == '-')) {
+            if (name_len < sizeof(name)) name[name_len++] = (char)cf_tolower(lexer->lookahead);
+            else name_fits = false;
+            advance(lexer);
+            budget--;
+        }
+        if (name_len == 0) return;
+
+        while (budget > 0 && cf_isspace(lexer->lookahead)) { advance(lexer); budget--; }
+        if (lexer->lookahead != '=') continue;
+        advance(lexer);
+        budget--;
+        while (budget > 0 && cf_isspace(lexer->lookahead)) { advance(lexer); budget--; }
+
+        int32_t quote = 0;
+        if (lexer->lookahead == '"' || lexer->lookahead == '\'') {
+            quote = lexer->lookahead;
+            advance(lexer);
+            budget--;
+        }
+
+        char value[IMPORT_PREFIX_MAX_LEN];
+        unsigned value_len = 0;
+        bool value_ok = true;
+        while (budget > 0 && lexer->lookahead != 0) {
+            int32_t c = lexer->lookahead;
+            if (quote ? c == quote : (cf_isspace(c) || c == '>' || c == '/')) break;
+            if (c == '<' && !quote) return;
+            if ((cf_isalnum(c) || c == '_' || c == '-') && c < 128 && value_len < sizeof(value)) {
+                value[value_len++] = (char)cf_toupper(c);
+            } else {
+                value_ok = false;
+            }
+            advance(lexer);
+            budget--;
+        }
+        if (quote) {
+            if (lexer->lookahead != quote) return;
+            advance(lexer);
+            budget--;
+        }
+
+        if (name_fits && name_len == 6 && memcmp(name, "prefix", 6) == 0) {
+            if (value_ok) record_import_prefix(scanner, value, value_len, is_cfquery_context);
+            return;
+        }
+    }
+}
+
 static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_context, bool is_cfquery_context) {
+
+    scanner->in_prefixed_start_tag = false;
 
     // Dynamic tag name: <#expression#>
     if (lexer->lookahead == '#') {
@@ -1972,6 +2157,11 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
                 lexer->result_symbol = CF_COMPONENT_START_TAG_NAME;
             } else {
                 lexer->result_symbol = CF_VOID_START_TAG_NAME;
+                if (is_cf_context && tag.tag_name.size == 6 &&
+                    memcmp(tag.tag_name.contents, "IMPORT", 6) == 0) {
+                    lexer->mark_end(lexer);
+                    capture_import_prefix(scanner, lexer, is_cfquery_context);
+                }
             }
             tag_free(&tag);
             return true;
@@ -2040,6 +2230,22 @@ static bool scan_start_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         return true;
     }
 
+    // The HTML side of the same problem, with a wider margin — see
+    // `CUSTOM_HTML_TAG_HEADROOM`. The symbol is already START_TAG_NAME; what
+    // changes is that the pushed tag is void, so the next token closes it the
+    // way it closes an `<input>`, instead of everything after it nesting inside.
+    if (!is_cf_context && tag.type == CUSTOM) {
+        // A `<control:x>` whose prefix the template imported is a custom tag
+        // call, and CFML evaluates `#…#` in its attributes.
+        scanner->in_prefixed_start_tag = has_import_prefix(scanner, &tag.tag_name);
+        if (tag_stack_would_overflow_by(scanner, &tag, is_cfquery_context,
+                                        TAG_STACK_HEADROOM + CUSTOM_HTML_TAG_HEADROOM)) {
+            tag_free(&tag);
+            tag = tag_new();
+            tag.type = CUSTOM_VOID;
+        }
+    }
+
     if ( is_cf_context ) {
         tag.html_depth = scanner->tags.size;
         if (scanner->cf_tags.size < 32) {
@@ -2080,6 +2286,8 @@ static void set_end_tag_symbol(Scanner *scanner, TSLexer *lexer, Tag *tag, bool 
 }
 
 static bool scan_end_tag_name(Scanner *scanner, TSLexer *lexer, bool is_cf_context, bool is_cfquery_context) {
+
+    scanner->in_prefixed_start_tag = false;
 
     // Dynamic closing tag: </#expression#>
     if (lexer->lookahead == '#') {
@@ -2191,6 +2399,7 @@ static bool scan_cf_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer,
 
 static bool scan_self_closing_tag_delimiter(Scanner *scanner, TSLexer *lexer, bool is_cfquery_context) {
      if (lexer->lookahead == '>') {
+        scanner->in_prefixed_start_tag = false;
         advance(lexer);
         if (scanner->tags.size > 0) {
             pop_tag(scanner, false);
@@ -2411,6 +2620,7 @@ static bool scan_ternary_qmark(TSLexer *lexer, bool is_cfquery_context) {
 
 static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_context, bool is_cfquery_context) {
     if ( lexer->lookahead == '>' ) {
+        if (!is_cf_context) scanner->in_prefixed_start_tag = false;
         advance(lexer);
         lexer->mark_end(lexer);
         lexer->result_symbol = is_cf_context ? CLOSE_CF_TAG_DELIM : CLOSE_TAG_DELIM;
@@ -2419,7 +2629,6 @@ static bool scan_closetag_delim(Scanner *scanner, TSLexer *lexer, bool is_cf_con
         return false;
     }
 }
-
 
 static bool scan_cf_component_content(TSLexer *lexer, bool is_cfquery_context) {
     // Skip whitespace and script-style comments (// and /* */)
