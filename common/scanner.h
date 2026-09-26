@@ -2257,9 +2257,15 @@ static bool scan_cfml_word_operator(TSLexer *lexer) {
 
 static bool automatic_semicolon_after_newline(TSLexer *lexer, bool *scanned_comment, bool is_cfquery_context);
 
-static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, bool *scanned_comment, bool is_cfquery_context) {
+// `end_marked`: the dispatcher marked the end before skipping the whitespace
+// that precedes the lexer, so the semicolon is already fixed, zero-width, at the
+// end of the statement. Marking again here would move it past that whitespace,
+// and the statement and every node it closes would end there too.
+static bool scan_automatic_semicolon(TSLexer *lexer, bool comment_condition, bool *scanned_comment, bool is_cfquery_context, bool end_marked) {
     lexer->result_symbol = AUTOMATIC_SEMICOLON;
-    lexer->mark_end(lexer);
+    if (!end_marked) {
+        lexer->mark_end(lexer);
+    }
 
     for (;;) {
         if (lexer->lookahead == 0) {
@@ -2496,12 +2502,20 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
     // zero-width at the end of the statement, where cfscript's scanner puts
     // one, rather than at the start of the next line. HTML_TEXT alongside the
     // semicolon is error recovery (see `recovering` below), which never skips.
+    //
+    // The semicolon branch at the bottom keeps that mark too (`end_marked`). It
+    // used to mark again after the skip, so a statement closed by `}` rather
+    // than by a newline — `{ return 1 }`, or a closure that ends a struct
+    // literal spanning lines — ran on over the whitespace before the `}`, and
+    // took any comment there inside it.
     const bool semicolon_valid = VS(valid_symbols, AUTOMATIC_SEMICOLON, count) && !VS(valid_symbols, HTML_TEXT, count);
     bool crossed_newline = false;
+    bool end_marked = false;
 
     if (!VS(valid_symbols, HTML_TEXT, count) && !VS(valid_symbols, RAW_TEXT, count)) {
         if (semicolon_valid) {
             lexer->mark_end(lexer);
+            end_marked = true;
         }
         while (cf_isspace(lexer->lookahead)) {
             if (lexer->lookahead == '\n' || lexer->lookahead == 0x2028 || lexer->lookahead == 0x2029) {
@@ -2625,6 +2639,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
         break;
         case '<':
             lexer->mark_end(lexer);
+            end_marked = false;
             advance(lexer);
 
             if (VS(valid_symbols, CFML_COMMENT, count) && lexer->lookahead == '!') {
@@ -2758,7 +2773,7 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
 
     if (VS(valid_symbols, AUTOMATIC_SEMICOLON, count)) {
         bool scanned_comment = false;
-        bool ret = scan_automatic_semicolon(lexer, !VS(valid_symbols, LOGICAL_OR, count), &scanned_comment, is_cfquery_context);
+        bool ret = scan_automatic_semicolon(lexer, !VS(valid_symbols, LOGICAL_OR, count), &scanned_comment, is_cfquery_context, end_marked);
         if (!ret && !scanned_comment && VS(valid_symbols, TERNARY_QMARK, count) && lexer->lookahead == '?') {
             return scan_ternary_qmark(lexer, is_cfquery_context);
         }
