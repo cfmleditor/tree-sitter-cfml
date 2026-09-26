@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### cfml & cfquery
+- **A statement closed by `}` in a tag expression no longer runs on over the whitespace before the `}`** ([#163](https://github.com/cfmleditor/tree-sitter-cfml/issues/163)). In `<cfset x = function(){ return 1 }>`, the `return_statement` covered `return 1 ` with its trailing space. In `<cfset x = {a = function(){ … }\n}>`, the closure's `statement_block`, the `function_expression` and the struct entry all ran on over the newline. The automatic semicolon was placed after the whitespace instead of at the end of the statement. The dispatcher marks the end before skipping the whitespace (#148), and `scan_automatic_semicolon` then marked it again after the skip. It now keeps the first mark, as cfscript's scanner does. `.cfs` files and `<cfscript>` were never affected.
+
+  Scanner-only, so `STATE_COUNT` is unchanged. `treediff` shows no tree-shape change anywhere in the corpus, and the scan is unchanged at 231 error lines in 85 files. Comparing node ranges, the only change in the corpus is in Lucee's `test/tags/query/inc.cfm`: three nodes' ends move back over a newline. That newline was making the cfmleditor-lsp formatter add a blank line on every pass. `bindings/node/ranges_test.js` pins the extents, which corpus tests cannot express.
+
 ## [0.26.39]
 
 ### cfml
