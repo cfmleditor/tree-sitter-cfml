@@ -235,3 +235,47 @@ real world: `new` as a variable name in a tag component (Mura fileWriter.cfc)
       (identifier)
       (cf_selfclose_void_tag_end)))
   (cf_component_close_tag))
+
+================================================================================
+real world: var declared inside parentheses, in a closure in cfset (CommandBox FileSystem)
+================================================================================
+
+<cfset copy = function( reader ) {
+	while( ( var size = reader.read() ) != -1 ) {
+		write( size );
+	}
+}>
+
+--------------------------------------------------------------------------------
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (function_expression
+        (formal_parameters
+          (parameter_type
+            (identifier)))
+        (statement_block
+          (while_statement
+            (parenthesized_expression
+              (binary_expression
+                (parenthesized_expression
+                  (variable_declaration
+                    (variable_declarator
+                      (identifier)
+                      (call_expression
+                        (member_expression
+                          (identifier)
+                          (property_identifier))
+                        (arguments)))))
+                (unary_expression
+                  (unary_operator)
+                  (number))))
+            (statement_block
+              (expression_statement
+                (call_expression
+                  (identifier)
+                  (arguments
+                    (identifier)))))))))
+    (cf_selfclose_void_tag_end)))

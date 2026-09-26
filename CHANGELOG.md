@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### cfml, cfquery & cfscript
+- **A `var` declaration inside parentheses parses.** `while( ( var size = reader.read( cb ) ) != -1 )` is how CommandBox reads a stream, in four files: `FileSystem.cfc`, `MultiSelect.cfc`, `ProgressableDownloader.cfc` and `commands/run.cfc`. Lucee takes `var <name>` as a local-scope variable anywhere a variable can go, so the assignment both declares the name and yields the value tested. `parenthesized_expression` now accepts `var name` with an optional initializer, as a `variable_declaration` holding a `variable_declarator`, in both script grammars. Only directly inside parentheses, the one position the corpus writes it: at the head of an expression statement it would be ambiguous with a `var` statement, and in general expression position `var` would lex as the keyword after every operator. Only a plain name, too: the full declarator's scoped and destructured names cost `cfml` 2.9% more states instead of 0.1%. The one casualty is a variable literally named `var` straight after `(` — `x = (var)` — which no corpus file writes (LIMITATIONS.md).
+
+  The corpus scan goes from 231 error lines in 85 files to 227 in 81: the four CommandBox files parse, and nothing else moves. `treediff` shows no tree-shape change in any file that already parsed. `STATE_COUNT`: `cfscript` 5,019 → 5,163 (+2.9%), `cfml` +6, `cfquery` +6; no new conflicts. A sampled benchmark at 12 runs reads `cfscript` +0.9% against controls of −0.2% (`cfquery`) and ±5% (`cfml`, which gained six states), so no cost is measurable.
+
 ## [0.26.40]
 
 ### cfml & cfquery

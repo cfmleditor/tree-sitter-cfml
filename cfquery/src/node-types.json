@@ -3097,6 +3097,10 @@
         {
           "type": "sequence_expression",
           "named": true
+        },
+        {
+          "type": "variable_declaration",
+          "named": true
         }
       ]
     }
