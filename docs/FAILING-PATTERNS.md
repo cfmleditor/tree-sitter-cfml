@@ -69,7 +69,7 @@ several small ones. `DirectoryCreate.cfc` went 5 → 6 that way, while its first
 error moved from `1:1` to `13:11`. Judge a change by per-file totals, and reduce
 any suspect line to a one-liner before concluding anything.
 
-## Not grammar defects — 265 nodes, 9 files (41%)
+## Not grammar defects — 263 nodes, 8 files (41%)
 
 Listed first so they do not distort the rest. **This category has grown from 35%
 to 41% of all failures**, not because more bad input appeared but because eight
@@ -78,7 +78,7 @@ real gaps were fixed out from under it.
 | Nodes | Files | Cause | Example |
 |---|---|---|---|
 | ~~185~~ | ~~1~~ | Bare `#` inside a cfscript string — **fixed upstream**: ColdBox now writes `##`. A lone `#` is an error in Lucee too, and the error now stays inside its statement (#134) | `md.append( "# ColdBox Performance Analysis Report" )` — CFML needs `##`. `PerformanceSuite.cfc`, which cascaded from line 1 |
-| 44 | 4 | Generator template with placeholders | cfwheels' `basic-model.cfc` (`{{ModelName}}`), its vscode-ext `controller.cfc` and `view-index.cfm` (`${modelName}`), Mura's `web.config.template.cfm` |
+| 42 | 3 | Generator template with placeholders | cfwheels' `basic-model.cfc` (`{{ModelName}}`), its vscode-ext `controller.cfc` and `view-index.cfm` (`${modelName}`) |
 | 36 | 4 | JavaScript served from a `.cfm` template | Lucee's `context/form.cfm`, Mura's `*.js.cfm` — no `<script>` element anywhere |
 
 `PerformanceSuite.cfc` was 198 nodes at the last baseline and is 185 now; the
@@ -86,8 +86,11 @@ file did not change, the parser's recovery did. JavaScript inside a real
 `<script>` element parses fine — `test/probes/cfml/script_block_js.cfm` covers
 that.
 
-The template row grew from 29 nodes in 1 file to 44 in 4. Three of those four
-files sit under a `templates/` directory and are not CFML at all. Beware the
+The template row grew from 29 nodes in 1 file to 44 in 4, and is back to 42 in
+3: Mura's `web.config.template.cfm` was filed here on its `{{…}}` placeholders,
+but those were never what failed. Its two error nodes came from
+`</system.webServer>`, an HTML end tag with a dot in its name, which is fixed in
+#169. The three left sit under a `templates/` directory and are not CFML at all. Beware the
 obvious grep: `ServerService.cfc`, `LargeMethod.cfc` and Preside's
 `ScaffoldingService.cfc` all contain `${…}` **inside string literals** and are
 ordinary CFML — a first pass at re-deriving this table counted them here

@@ -367,3 +367,35 @@ cfsavecontent with an xml declaration
             (tag_name)))
         (end_tag
           (tag_name))))))
+
+===================================
+HTML tag name containing a dot
+===================================
+
+<cfsavecontent variable="s"><system.webServer><x/></system.webServer></cfsavecontent>
+<cfoutput><a.b></a.b></cfoutput>
+
+---
+
+(program
+  (cf_savecontent_tag
+    (cf_attribute
+      (cf_attribute_name)
+      (quoted_cf_attribute_value
+        (attribute_value)))
+    (cf_savecontent_body
+      (element
+        (start_tag
+          (tag_name))
+        (element
+          (self_closing_tag
+            (tag_name)
+            (self_closing_tag_delimiter)))
+        (end_tag
+          (tag_name)))))
+  (cf_output_tag
+    (element
+      (start_tag
+        (tag_name))
+      (end_tag
+        (tag_name)))))
