@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.43]
 
 ### cfml & cfquery
 - **An HTML tag name can contain a dot** ([#169](https://github.com/cfmleditor/tree-sitter-cfml/issues/169)). `<system.webServer>…</system.webServer>`, the IIS `web.config` section often built in a `<cfsavecontent>`, read as the tag `<system` with an attribute `.webServer`. Its end tag then matched nothing, and the ERROR ran on to the end of the file, taking every `<cffunction>` after it with it. `scan_tag_name` now accepts `.` after the first character of a non-CF tag name, as XML does. CF tag names are unchanged.
