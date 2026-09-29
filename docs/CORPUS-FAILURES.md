@@ -54,7 +54,7 @@ Node counts measure what people happened to write, not what the language
 defines — see the function-listener case in `FAILING-PATTERNS.md` for how badly
 that can mislead.
 
-## Not parser defects — 308 nodes, 34 files (48%)
+## Not parser defects — 306 nodes, 33 files (48%)
 
 Listed first so they do not distort the rest. Invalid CFML, files that are not
 CFML, and one construct the parser rejects **on purpose**.
@@ -251,7 +251,6 @@ All 116, alphabetical. **Cat** is the section above: **A** not a parser defect,
 | `MSU-NatSci_MuraCMS/core/modules/v1/nav/dsp_archive.cfm` | 1 | C | `<nav id="#…#">` dynamic attribute in a `<cfif>` body |
 | `MSU-NatSci_MuraCMS/core/mura/client/api/resource/variation.js.cfm` | 2 | A | bare JavaScript served from a `.cfm`, no `<script>` element |
 | `MSU-NatSci_MuraCMS/core/setup/inc/_form.cfm` | 2 | C | stray `<` inside tag text — `cl<ass=`, `<#context#/…?` |
-| `MSU-NatSci_MuraCMS/core/templates/web.config.template.cfm` | 2 | A | generator template, not CFML (`{{…}}` / `${…}` placeholders) |
 | `MSU-NatSci_MuraCMS/core/vendor/ckeditor/config.js.cfm` | 1 | A | bare JavaScript served from a `.cfm`, no `<script>` element |
 | `ortus-boxlang_BoxLang/src/test/java/ortus/boxlang/compiler/LargeMethod.cfc` | 1 | C | arrow function with a statement body — `=> return x` |
 | `ortus-boxlang_BoxLang/src/test/java/TestCases/phase3/StaticTestCF.cfc` | 1 | C | `static foo = 9000;` field declaration |

@@ -522,7 +522,12 @@ static TagNameResult scan_tag_name(TSLexer *lexer, bool is_cfquery_context) {
         }
     }
 
-    while (( cf_isalnum(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '_' || lexer->lookahead == ':' )) {
+    // `.` is a name character in XML (`<system.webServer>` in an IIS
+    // web.config), but not in a CF tag name, and never the first character.
+    // Without it the start tag read as `<system` with an attribute
+    // `.webServer`, and its end tag matched nothing (#169).
+    while (( cf_isalnum(lexer->lookahead) || lexer->lookahead == '-' || lexer->lookahead == '_' || lexer->lookahead == ':' ||
+             (lexer->lookahead == '.' && !is_cf_tag && tag_name.size > 0) )) {
         array_push(&tag_name, cf_toupper(lexer->lookahead));
         advance(lexer);
     }

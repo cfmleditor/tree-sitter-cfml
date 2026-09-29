@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### cfml & cfquery
+- **An HTML tag name can contain a dot** ([#169](https://github.com/cfmleditor/tree-sitter-cfml/issues/169)). `<system.webServer>…</system.webServer>`, the IIS `web.config` section often built in a `<cfsavecontent>`, read as the tag `<system` with an attribute `.webServer`. Its end tag then matched nothing, and the ERROR ran on to the end of the file, taking every `<cffunction>` after it with it. `scan_tag_name` now accepts `.` after the first character of a non-CF tag name, as XML does. CF tag names are unchanged.
+
+  Scanner-only, so `STATE_COUNT` is unchanged. The corpus scan goes from 414 error lines in 81 files to 412 in 80: Mura's `core/templates/web.config.template.cfm` parses. `docs/FAILING-PATTERNS.md` had put that file down to generator placeholders. `treediff` shows no tree-shape change in any file that already parsed, and `npm run fuzz` passes. The issue's second case, `SET #process the pairs#` outside `<cfoutput>`, already parses cleanly on 0.26.42. Both cases are now probes.
+
 ## [0.26.42]
 
 The same changes were tagged `v0.26.41`, but on the commit before its release commit, so that tag's manifests still read 0.26.40 and npm, PyPI and crates.io skipped it as already published. 0.26.42 is the first release to carry them to the registries. The `v0.26.41` tag is left where it is, so nothing that has already fetched it changes underneath.
