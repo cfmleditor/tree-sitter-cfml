@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased]
+
+### cfml & cfquery
+- **An HTML comment opener inside a CFML comment, or a `<script>` string that looks like an end tag, no longer breaks the parse.** Three scanner gaps, all found by scanning [Galaxie Blog](https://github.com/GregoryAlexander77/Galaxie-Blog) `d40017b`, each reduced to a probe:
+  - `<!--- … ("<!--") … --->`. A CFML comment nests only on another `<!---`, and now also closes only on `--->`; `scan_comment` counted the two-dash `<!--` as a nested comment, so the comment never closed. An HTML comment written inside a CFML one (`<!--- <!-- x --> --->`, as MuraCMS's `feed/index.cfm` has) used to balance only because its opener was counted too; it still does, now because neither is.
+  - `"<!--<a">` in a string, followed anywhere by a comment. A state that accepts nothing but the comment (the inside of a string) took `<!--<` for an IE conditional comment and ran it to the next `-->`; a two-dash opener there is now text. `<!---` still tokenises in a string, as the engine strips it.
+  - `'</scripty'` or `'</script'` in a `<script>` (or `<style>`) body. `scan_raw_text` and `scan_html_text` ended the element at the first `</script`; HTML ends it only on the whole name followed by whitespace, `/` or `>`.
+
+  Scanner-only, so `STATE_COUNT` is unchanged. Against the corpus (17,176 files): the scan is identical per file (235 error lines, 96 files), and `treediff` reports no tree-shape change in 15,793 files that parsed before. Galaxie Blog goes from 16 error lines in 11 files to 9 in 6; the rest are invalid source or [#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119). New corpus tests are in `cfml/test/corpus/comment_openers_and_raw_text_ends.txt` and three probes, `html_comment_opener_in_cfml_comment.cfm`, `html_comment_opener_in_string.cfm` and `script_text_end_tag_prefix.cfm`.
+
 ## [0.26.43]
 
 ### cfml & cfquery
