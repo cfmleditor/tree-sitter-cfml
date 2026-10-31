@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.26.44]
 
 ### cfml & cfquery
 - **An HTML comment opener inside a CFML comment, or a `<script>` string that looks like an end tag, no longer breaks the parse.** Three scanner gaps, all found by scanning [Galaxie Blog](https://github.com/GregoryAlexander77/Galaxie-Blog) `d40017b`, each reduced to a probe:
