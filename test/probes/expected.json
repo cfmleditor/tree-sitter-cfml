@@ -3,6 +3,8 @@
   "probes": {
     "cfml/cfcontinue_in_cfloop.cfm": "pass",
     "cfml/cfif_function_call.cfm": "pass",
+    "cfml/cfif_opens_element_in_one_branch.cfm": "fail",
+    "cfml/cfif_quote_spans_branch.cfm": "fail",
     "cfml/cfif_supplies_close_delimiter.cfm": "fail",
     "cfml/cfif_supplies_tag_opening.cfm": "fail",
     "cfml/cfimport_prefix_hash_attribute.cfm": "pass",
@@ -22,6 +24,7 @@
     "cfml/hash_prose_outside_output.cfc": "pass",
     "cfml/html_comment_opener_in_cfml_comment.cfm": "pass",
     "cfml/html_comment_opener_in_string.cfm": "pass",
+    "cfml/literal_lt_before_hash_expression.cfm": "fail",
     "cfml/lt_at_line_start.cfm": "pass",
     "cfml/lt_in_text.cfm": "pass",
     "cfml/new_java_prefix.cfm": "pass",
