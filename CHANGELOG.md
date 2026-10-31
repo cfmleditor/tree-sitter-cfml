@@ -10,6 +10,11 @@
 
   Scanner-only, so `STATE_COUNT` is unchanged. Against the corpus (17,176 files): the scan is identical per file (235 error lines, 96 files), and `treediff` reports no tree-shape change in 15,793 files that parsed before. Galaxie Blog goes from 16 error lines in 11 files to 9 in 6; the rest are invalid source or [#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119). New corpus tests are in `cfml/test/corpus/comment_openers_and_raw_text_ends.txt` and three probes, `html_comment_opener_in_cfml_comment.cfm`, `html_comment_opener_in_string.cfm` and `script_text_end_tag_prefix.cfm`.
 
+### cfscript
+- **A tag comment after the block of a tag statement parses** ([#176](https://github.com/cfmleditor/tree-sitter-cfml/issues/176)). `cflock( name = "x" ) { }`, `cftransaction() { }` and `thread name = "t" { }` followed by `<!--- … --->` was an `ERROR`: the rule demanded a `;` after the closing `}`, so the only external tokens valid there were the semicolon's, the scanner was never offered the comment, and the comment's `<` read as less-than (its closing `->` then read as a thin-arrow lambda, which is why the tree looked so unrelated). A block already ends the statement, so the semicolon is now optional after one, in both the `tag(…) { }` and the attribute-form branches of `tag_statement`; a bodyless tag statement still needs it, and a `;` after the block still belongs to it. `STATE_COUNT` 5,163 → 5,174 (+0.2%).
+
+  Against the corpus (17,176 files): the scan goes from 235 error lines to 225 (Lucee's `DirectoryCreate.cfc` and RustCFML's `bench/ws/probe.cfm`, a `savecontent` block, parse; nothing is added) and `treediff` reports no tree-shape change in any file that parsed before. New corpus tests are in `cfscript/test/corpus/tag_statement_block_then_comment.txt` and the probe is `cfscript/tag_comment_after_block_statement.cfc`.
+
 ## [0.26.43]
 
 ### cfml & cfquery

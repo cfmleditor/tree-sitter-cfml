@@ -68,6 +68,7 @@
     "cfscript/string_slice.cfc": "pass",
     "cfscript/subscript_multiple_pairs.cfc": "fail",
     "cfscript/subscript_var_name.cfc": "pass",
+    "cfscript/tag_comment_after_block_statement.cfc": "pass",
     "cfscript/tag_comment_in_script_body.cfc": "pass",
     "cfscript/tag_island_after_thread.cfc": "pass",
     "cfscript/thin_arrow_lambda.cfc": "pass",
