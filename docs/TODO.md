@@ -203,3 +203,9 @@ Recorded so they do not get re-proposed and re-argued.
   about 150 s, and its value is the *diff* between two builds, which a single CI
   run cannot produce. It stays a manual gate, described in
   [`../CORPUS.md`](../CORPUS.md) and in the `parse-gap` skill.
+- **Supporting a tag split across `<cfif>` branches ([#119](https://github.com/cfmleditor/tree-sitter-cfml/issues/119))
+  and a literal `<` before a hash expression ([#177](https://github.com/cfmleditor/tree-sitter-cfml/issues/177)).**
+  Both stay unsupported by decision. #119 was measured and reverted (no rule shape keeps the spelling that parses
+  today), and Galaxie Blog adds two more shapes of it (an element opened in one branch, an attribute quote spanning
+  a `</cfif>`). #177 needs start-tag-name scanning restructured for one corpus file. Each has a probe recorded `fail`
+  and an entry in `LIMITATIONS.md`; the issues stay open so the question can be reopened.
