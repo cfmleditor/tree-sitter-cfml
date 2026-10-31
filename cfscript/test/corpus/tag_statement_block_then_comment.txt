@@ -1,0 +1,71 @@
+===================================
+tag comment after a block-bodied tag statement
+===================================
+cflock(name="x"){
+}
+<!--- c --->
+x = 1;
+
+---
+
+(program
+  (tag_statement
+    (identifier)
+    (arguments
+      (assignment_expression
+        (identifier)
+        (string
+          (string_fragment))))
+    (statement_block))
+  (cf_comment)
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number))))
+
+===================================
+tag comment after a thread block
+===================================
+thread name="t" {
+}
+<!--- c --->
+x = 1;
+
+---
+
+(program
+  (tag_statement
+    (identifier)
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (statement_block))
+  (cf_comment)
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number))))
+
+===================================
+a semicolon after a block-bodied tag statement still belongs to it
+===================================
+cflock(name="x"){
+};
+x = 1;
+
+---
+
+(program
+  (tag_statement
+    (identifier)
+    (arguments
+      (assignment_expression
+        (identifier)
+        (string
+          (string_fragment))))
+    (statement_block))
+  (expression_statement
+    (assignment_expression
+      (identifier)
+      (number))))

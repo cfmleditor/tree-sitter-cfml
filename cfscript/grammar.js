@@ -2253,7 +2253,7 @@ module.exports = grammar({
         field('name', choice($.identifier, $.member_expression, $.string)),
         $._semicolon,
       )),
-      seq(
+      prec.right(seq(
         field('tag', $.identifier),
         optional($.tag_linefeed),
         // The space-separated attribute form reaches the bodyless call through
@@ -2265,17 +2265,30 @@ module.exports = grammar({
           alias($.tag_call_arguments, $.arguments),
         ))),
         field('body', $.statement_block),
-        $._semicolon,
-      ),
+        optional($._semicolon),
+      )),
       // Negative dynamic precedence so an ordinary expression statement wins
       // the tie. `r[ a ][ b ] = new R( v=1 );` matches this branch too, reading
       // `r` as a tag and `[ a ]` as an array literal, and that reading is never
       // the right one for a subscript assignment.
-      prec.dynamic(-1, seq(
-        field('tag', $.identifier),
-        field('arguments', repeat1(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
-        optional(field('body', $.statement_block)),
-        $._semicolon,
+      //
+      // The semicolon is required after a bodyless statement and optional after
+      // a block: a block already ends the statement, and demanding the token
+      // there left the parser in a state where nothing but `;` or an automatic
+      // semicolon was valid, so a tag comment (`<!--- --->`) written after the
+      // `}` was not offered to the scanner and its `<` read as less-than.
+      prec.dynamic(-1, choice(
+        seq(
+          field('tag', $.identifier),
+          field('arguments', repeat1(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
+          $._semicolon,
+        ),
+        prec.right(seq(
+          field('tag', $.identifier),
+          field('arguments', repeat1(seq(optional($.tag_linefeed), $.assignment_expression, optional(',')))),
+          field('body', $.statement_block),
+          optional($._semicolon),
+        )),
       )),
     ),
 

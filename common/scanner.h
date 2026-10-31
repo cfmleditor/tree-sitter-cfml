@@ -635,7 +635,9 @@ static void scan_dynamic_tag_name_suffix(TSLexer *lexer, TagNameResult *result, 
     }
 }
 
-static bool scan_comment(TSLexer *lexer, bool is_cfquery_context) {
+// `html_comment_ok` is false where a two-dash `<!--` cannot be a comment, only
+// text that looks like one: see the caller.
+static bool scan_comment(TSLexer *lexer, bool is_cfquery_context, bool html_comment_ok) {
     if (lexer->lookahead != '-') {
         return false;
     }
@@ -645,6 +647,10 @@ static bool scan_comment(TSLexer *lexer, bool is_cfquery_context) {
     }
 
     advance(lexer);
+
+    if (!html_comment_ok && lexer->lookahead != '-') {
+        return false;
+    }
 
     // IE conditional comments: <!--[if ...]>...<![endif]--> or <!--<![endif]-->
     // These don't nest — just scan until -->
@@ -669,19 +675,25 @@ static bool scan_comment(TSLexer *lexer, bool is_cfquery_context) {
     unsigned dashes = 0;
     unsigned direction = -1;
     unsigned nesting = 1;
+    // `<!---` opens a CFML comment, `<!--` an HTML one. CFML comments nest, but
+    // only on another `<!---`, and close only on `--->`. An HTML comment written
+    // inside one -- `("<!--")` in a note about escaping, or a whole commented-out
+    // `<!-- ... -->` -- is plain text: counting its opener left the comment
+    // unclosed to the end of the file, and counting only its `-->` closed it early.
+    const unsigned nest_dashes = lexer->lookahead == '-' ? 3 : 2;
 
     while (lexer->lookahead) {
         switch (lexer->lookahead) {
             case '-':
                 ++dashes;
-                if ( direction == 1 && dashes >= 2 ) {
+                if ( direction == 1 && dashes >= nest_dashes ) {
                     ++nesting;
                     direction = -1;
                     dashes = 0;
                 }
                 break;
             case '>':
-                if (dashes >= 2) {
+                if (dashes >= nest_dashes) {
                     --nesting;
                     lexer->result_symbol = CFML_COMMENT;
                     advance(lexer);
@@ -800,6 +812,26 @@ static void skip_cfml_comment_body(TSLexer *lexer) {
     }
 }
 
+// The lexer sits on the `s` of `</s`. True when what follows is the name of the
+// enclosing raw-text element (`script` or `style`) and then whitespace, `/`,
+// `>` or the end of input, which is where HTML ends the element. Consumes what
+// it reads either way; the caller marks the end of its text after a `false`.
+static bool at_raw_text_end_tag(TSLexer *lexer, TagType type) {
+    const char *name = type == SCRIPT ? "SCRIPT" : "STYLE";
+
+    for (; *name; name++) {
+        if (cf_toupper(lexer->lookahead) != *name) {
+            return false;
+        }
+
+        advance(lexer);
+    }
+
+    int32_t c = lexer->lookahead;
+
+    return c == 0 || c == '/' || c == '>' || c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f';
+}
+
 // `lt_consumed` means the caller has already advanced past a `<` that belongs
 // to this text run, having decided from the character after it that no tag can
 // start there. See the dispatcher's `case '<'`.
@@ -851,8 +883,13 @@ static bool scan_html_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_con
                         saw_any = true;
                         continue;
                     } else if (cf_toupper(lexer->lookahead) == 'S') {
-                        // Potential </script or </style - stop
-                        break;
+                        // Potential </script or </style. HTML ends the element
+                        // only on the whole name followed by whitespace, `/` or
+                        // `>`: `'</scripty'` and a JavaScript string holding
+                        // `'</script'` are text.
+                        if (at_raw_text_end_tag(lexer, array_back(&scanner->tags)->type)) {
+                            break;
+                        }
                     }
                     lexer->mark_end(lexer);
                     saw_text = true;
@@ -1586,10 +1623,19 @@ static bool scan_raw_text(Scanner *scanner, TSLexer *lexer, bool is_cfquery_cont
 
         if (cf_toupper(lexer->lookahead) == end_delimiter[delimiter_index]) {
             delimiter_index++;
-            if (delimiter_index == end_delimiter_len) {
-                break;
-            }
             advance(lexer);
+            if (delimiter_index == end_delimiter_len) {
+                // HTML ends the element only on the whole name followed by
+                // whitespace, `/` or `>`. A longer name (`'</scripty'`) is text.
+                int32_t after = lexer->lookahead;
+                if (after == 0 || after == '/' || after == '>' || after == ' ' || after == '\t' || after == '\n' ||
+                    after == '\r' || after == '\f') {
+                    break;
+                }
+                delimiter_index = 0;
+                lexer->mark_end(lexer);
+                has_content = true;
+            }
         } else if (delimiter_index > 0) {
             // A failed partial match: keep what it consumed as content and
             // re-test this character, which may open the delimiter (`</s</script>`).
@@ -2857,8 +2903,20 @@ static bool external_scanner_scan(Scanner *scanner, TSLexer *lexer, const bool *
             advance(lexer);
 
             if (VS(valid_symbols, CFML_COMMENT, count) && lexer->lookahead == '!') {
+                // A state that accepts nothing but the comment is the inside of
+                // a quoted string or similar, where the comment is only an
+                // extra. The engine strips a CFML comment (`<!---`) there, but
+                // an HTML one (`<!--`) is just characters: `"<!--<script"` in
+                // a `replace()` call is a string, and taken as a comment it
+                // ran on to the next `-->` in the file.
+                bool only_comment = true;
+
+                for (unsigned i = 0; i < count && only_comment; i++) {
+                    only_comment = i == CFML_COMMENT || !valid_symbols[i];
+                }
+
                 advance(lexer);
-                return scan_comment(lexer, is_cfquery_context);
+                return scan_comment(lexer, is_cfquery_context, !only_comment);
             }
 
             // A `<` that opens a run of template text — `<- back` written as

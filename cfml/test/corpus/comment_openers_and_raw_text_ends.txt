@@ -1,0 +1,88 @@
+===================================
+html comment opener inside a cfml comment
+===================================
+<!--- a ("<!--") b --->
+<cfset x = 1>
+
+---
+
+(program
+  (cf_comment)
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end)))
+
+===================================
+html comment opener inside a string, a comment after it
+===================================
+<cfset s = "<!--<a">
+<!--- c --->
+<cfset t = 1>
+
+---
+
+(program
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (string
+        (string_fragment)))
+    (cf_selfclose_void_tag_end))
+  (cf_comment)
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end)))
+
+===================================
+script text containing a longer end tag name
+===================================
+<script>
+var s = '</scripty';
+</script>
+
+---
+
+(program
+  (script_element
+    (start_tag
+      (tag_name))
+    (script_text)
+    (end_tag
+      (tag_name))))
+
+===================================
+script text containing an end tag name with no closing delimiter
+===================================
+<script>
+var s = '</script';
+</script>
+
+---
+
+(program
+  (script_element
+    (start_tag
+      (tag_name))
+    (script_text)
+    (end_tag
+      (tag_name))))
+
+===================================
+html comment written inside a cfml comment
+===================================
+<!--- a <!-- b --> c --->
+<cfset x = 1>
+
+---
+
+(program
+  (cf_comment)
+  (cf_set_tag
+    (assignment_expression
+      (identifier)
+      (number))
+    (cf_selfclose_void_tag_end)))
