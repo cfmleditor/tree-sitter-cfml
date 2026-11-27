@@ -27,7 +27,7 @@
   ":" @punctuation.delimiter)
 
 (property_declaration
-  name: (identifier) @property)
+  name: [(identifier) (path)] @property)
 
 (spread_element
   "..." @operator)
