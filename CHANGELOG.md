@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.26.45]
+
+### cfscript
+- **Five `cfscript` grammar gaps closed** ([#183](https://github.com/cfmleditor/tree-sitter-cfml/pull/183)):
+  - Bare `throw;` statement (optional argument on `throw_statement`).
+  - `include "path.cfm" runonce=true;` and `include template="header.cfm" runOnce=true;` (trailing `parameter_attribute`s after `include <string>`, and boolean/number/identifier values in `parameter_attribute`).
+  - Namespaced function metadata attributes with values (`function setStatus(rc) my:role="support:admin" {}`).
+  - Statement-head `import(...)` calls (`_kw_import` in `_reserved_identifier`, `import_statement` at `prec(1)` matching `include_statement`).
+  - Dotted/scoped property names (`property struct variables.displays;`), with matching `highlights.scm` query (`name: [(identifier) (path)] @property`).
+
+  `cfscript` `STATE_COUNT`: 5,174 → 5,215 (+41 states, +0.79%); 0 new conflicts; `cfml` and `cfquery` unchanged. Against the 14,974-file corpus: 0 regressions, and Lucee's `core/src/main/cfml/context/admin/Jira.cfc` now parses cleanly. New corpus tests in `cfscript/test/corpus/cfparser_gaps.txt`.
+
 ## [0.26.44]
 
 ### cfml & cfquery
