@@ -321,7 +321,7 @@ module.exports = grammar({
     // Import declarations
     //
 
-    import_statement: ($) => seq(
+    import_statement: ($) => prec(1, seq(
       $._kw_import,
       choice(
         seq($.import_clause, $._from_clause),
@@ -331,7 +331,7 @@ module.exports = grammar({
       ),
       optional($.import_attribute),
       $._semicolon,
-    ),
+    )),
 
     import_path: ($) => seq($.identifier, repeat1(seq('.', choice($.identifier, '*')))),
 
@@ -695,7 +695,7 @@ module.exports = grammar({
     // `pair` is only reachable from `arguments`, so accept those explicitly.
     throw_statement: ($) => seq(
       $._kw_throw,
-      choice(
+      optional(choice(
         prec.dynamic(1, $.arguments),
         // `throw message="x" type="y";` — the bodyless tag-statement spelling,
         // which every other tag reaches through `tag_statement`. `throw` cannot:
@@ -707,7 +707,7 @@ module.exports = grammar({
         // *space*-separated pair rather than the first attribute.
         repeat1($.parameter_attribute),
         $._expressions,
-      ),
+      )),
       $._semicolon,
     ),
 
@@ -715,6 +715,7 @@ module.exports = grammar({
       $._kw_include,
       choice(
         seq(repeat1($.parameter_attribute), $._semicolon),
+        seq($.string, repeat1($.parameter_attribute), $._semicolon),
         seq($._expressions, $._semicolon),
       ),
     )),
@@ -1167,7 +1168,10 @@ module.exports = grammar({
     function_annotation: ($) => seq(
       alias($.identifier, $.attribute_label),
       ':',
-      choice($.identifier, $.string),
+      choice(
+        seq($.identifier, optional(seq('=', choice($.string, $.identifier, $.number, $.true, $.false)))),
+        $.string,
+      ),
     ),
 
     // A single token, not `seq('[', ']')`: as two tokens the `[` is reachable
@@ -1301,7 +1305,7 @@ module.exports = grammar({
     parameter_attribute: ($) => prec.dynamic(-2, seq(
       $.identifier,
       '=',
-      $.string,
+      choice($.string, $.identifier, $.number, $.true, $.false),
     )),
 
     optional_chain: (_) => '?.',
@@ -1994,7 +1998,7 @@ module.exports = grammar({
       choice(
         prec.dynamic(1, seq(
           optional(field('type', choice($.path, $.identifier))),
-          field('name', $.identifier),
+          field('name', choice($.identifier, $.path)),
           repeat(seq(optional($.tag_linefeed), $.component_attribute)),
         )),
         repeat1(seq(optional($.tag_linefeed), $.component_attribute)),
@@ -2122,6 +2126,7 @@ module.exports = grammar({
       $._kw_private,
       $._kw_public,
       $._kw_include,
+      $._kw_import,
       keyword('Query'),
       keyword('QueryExecute'),
       $._kw_new,
