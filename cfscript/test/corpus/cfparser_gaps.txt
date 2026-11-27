@@ -1,0 +1,86 @@
+===================================
+bare throw statement
+===================================
+throw;
+
+---
+
+(program
+  (throw_statement))
+
+===================================
+namespaced function metadata attribute with value
+===================================
+function setStatus(rc) my:role="support:admin" {}
+
+---
+
+(program
+  (function_declaration
+    name: (identifier)
+    parameters: (formal_parameters
+      (parameter_type
+        (identifier)))
+    (component_attribute
+      (attribute_label)
+      (identifier)
+      (string
+        (string_fragment)))
+    body: (statement_block)))
+
+===================================
+include statement with runonce boolean attribute
+===================================
+include "mypage.cfm" runonce=true;
+include template="header.cfm" runOnce=true;
+
+---
+
+(program
+  (include_statement
+    (string
+      (string_fragment))
+    (parameter_attribute
+      (identifier)
+      (true)))
+  (include_statement
+    (parameter_attribute
+      (identifier)
+      (string
+        (string_fragment)))
+    (parameter_attribute
+      (identifier)
+      (true))))
+
+===================================
+import called as a function at statement start
+===================================
+import(event, path);
+
+---
+
+(program
+  (expression_statement
+    (call_expression
+      function: (identifier)
+      arguments: (arguments
+        (identifier)
+        (identifier)))))
+
+===================================
+property declaration with dotted name
+===================================
+component {
+  property struct variables.displays;
+}
+
+---
+
+(program
+  (component
+    body: (component_body
+      (property_declaration
+        type: (identifier)
+        name: (path
+          (identifier)
+          (identifier))))))

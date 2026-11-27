@@ -102,9 +102,9 @@ makes the bare statement `function;` parse, which is not valid CFML, and it
 costs a further 8 GLR conflicts and ~4% parser size. A variable named `function`
 is rare enough that the trade is not worth it.
 
-`import` needs no such entry: keyword extraction already lets it fall back to an
-identifier wherever the `import` statement is not valid, so `x = import.foo`
-parses as an ordinary member expression.
+`import` is in `_reserved_identifier` (with `import_statement` at `prec(1)`,
+matching `include_statement`), so both `x = import.foo` and statement-head
+calls like `import(event, path);` parse alongside `import` statements.
 
 ### `var` as a variable name straight after `(`
 
